@@ -1,0 +1,4625 @@
+  { "name": "Maze",
+
+	"gameMode": "SingleHero",
+	"description": "templates_description_maze",
+    "displayWinCondition": "win_condition_1",
+
+	"sizeX": 160,
+	"sizeZ": 160,
+	
+	"globalBans": 
+		{
+			"items": [ "voodoosh_doll_artifact", "flag_of_truce_artifact", "wanderers_way_boots_of_travel_artifact", "wanderers_way_backpack_artifact", 
+						"pole_star_artifact", "shackles_of_war_artifact", "swamp_boots_artifact", "magic_key_ring_artifact", "seven_league_boots_artifact" ]
+		},
+	
+	"gameRules":
+	{
+		"heroCountMin": 1,
+		"heroCountMax": 1,
+		"heroCountIncrement": 1,
+		"heroHireBan": true,
+		"encounterHoles": false,
+		"winConditions":
+		{
+			"classic" : true,
+			"desertion" : true,
+			"desertionDay" : 3,
+			"desertionValue" : 3000,
+			"heroLighting" : true,
+			"heroLightingDay" : 1,			
+			"lostStartCity" : false,
+			"lostStartHero" : true
+		}
+
+	},
+	
+	  "valueOverrides": 
+	[
+		{
+			"sid": "mine_gold",
+			"guardValue": 1000000
+		}
+	],
+	"variants":
+	[
+
+	{
+
+			"orientation":
+			{
+				"mode": "MinimalBoundingSquare"
+			},
+
+
+	"zones": 
+	[
+		
+		{
+			"name": "Spawn-A",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player1",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+			
+			],
+
+			"guardedContentPool": ["content_pool_template_maze_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn_A"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 50000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 50000,
+			"resourcesValuePerArea": 0
+		
+		},
+		{
+			"name": "Spawn-B",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player2",
+					"placement": "Uniform"
+				}
+			],
+			
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+		
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn_B"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 50000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 50000,
+			"resourcesValuePerArea": 0
+		},
+		{
+			"name": "Bronze-1",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+		{
+			"name": "Bronze-2",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Bronze-3",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Bronze-4",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+				[
+					
+				],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+
+		},
+        {
+			"name": "Bronze-5",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			],
+			
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+        "name": "Bronze-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+		{
+			"name": "Silver-1",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+		{
+			"name": "Silver-2",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Silver-3",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Silver-4",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+				[
+					
+				],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+
+		},
+        {
+			"name": "Silver-5",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			],
+			
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+        "name": "Silver-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "Silver-7",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "Silver-8",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "Gold-1",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+		"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+{
+        "name": "Gold-2",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+       	"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-3",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+      	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-4",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+     	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-5",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+       	"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+       	"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-7",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+     	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-8",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+     	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+    {
+		"name": "Center-Treasure",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+			{
+				"type": "AbandonedOutpost",
+				"guardChance": 1.0,
+				"guardValue": 30000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "siege_buildings_construction",
+				"placement": "Uniform"
+			}
+		],
+
+		"zoneBiome": { "type": "FromList", "args": [  ] },
+		"contentBiome": { "type": "FromList", "args": [  ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [  ] },
+		"roads": 
+		[
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_1"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	},
+    {
+		"name": "Corner-Treasure A",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+		],
+		"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"contentBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"roads": 
+		[
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_2"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	},
+    {
+		"name": "Corner-Treasure B",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+		],
+		"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"contentBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"roads": 
+		[
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_2"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	}
+	,
+    {
+		"name": "SuperTreasure",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+		],
+		"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"contentBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"roads": 
+		[
+	
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_3"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	}
+	
+    ],
+	"connections": [
+		{
+			"name": "Spawn-A-Gold-1",
+			"from": "Spawn-A",
+			  "to": "Gold-1",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-B-Gold-5",
+			"from": "Spawn-B",
+			  "to": "Gold-5",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-1-Gold-2",
+			"from": "Gold-1",
+			  "to": "Gold-2",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},{
+			"name": "Gold-2-Gold-3",
+			"from": "Gold-2",
+			  "to": "Gold-3",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-3-Gold-4",
+			"from": "Gold-3",
+			  "to": "Gold-4",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-5-Gold-6",
+			"from": "Gold-5",
+			  "to": "Gold-6",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},{
+			"name": "Gold-6-Gold-7",
+			"from": "Gold-6",
+			  "to": "Gold-7",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-7-Gold-8",
+			"from": "Gold-7",
+			  "to": "Gold-8",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-Gold-4",
+			"from": "Gold-4",
+			  "to": "SuperTreasure",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-Gold-8",
+			"from": "Gold-8",
+			  "to": "SuperTreasure",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-A-Silver-1",
+			"from": "Spawn-A",
+			  "to": "Silver-1",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-B-Silver-5",
+			"from": "Spawn-B",
+			  "to": "Silver-5",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-1-Silver-2",
+			"from": "Silver-1",
+			  "to": "Silver-2",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-2-Silver-3",
+			"from": "Silver-2",
+			  "to": "Silver-3",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-3-Silver-4",
+			"from": "Silver-3",
+			  "to": "Silver-4",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-5-Silver-6",
+			"from": "Silver-5",
+			  "to": "Silver-6",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-6-Silver-7",
+			"from": "Silver-6",
+			  "to": "Silver-7",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-7-Silver-8",
+			"from": "Silver-7",
+			  "to": "Silver-8",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-4-Corner-Treasure A",
+			"from": "Silver-4",
+			  "to": "Corner-Treasure A",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-8-Corner-Treasure B",
+			"from": "Silver-8",
+			  "to": "Corner-Treasure B",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-A-Bronze-1",
+			"from": "Spawn-A",
+			  "to": "Bronze-1",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-B-Bronze-4",
+			"from": "Spawn-B",
+			  "to": "Bronze-4",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-1-Bronze-2",
+			"from": "Bronze-1",
+			  "to": "Bronze-2",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-2-Bronze-3",
+			"from": "Bronze-2",
+			  "to": "Bronze-3",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-4-Bronze-5",
+			"from": "Bronze-4",
+			  "to": "Bronze-5",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-5-Bronze-6",
+			"from": "Bronze-5",
+			  "to": "Bronze-6",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-3-Center-Treasure",
+			"from": "Bronze-3",
+			  "to": "Center-Treasure",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		}
+	]
+	},
+	{
+
+			"orientation":
+			{
+				"mode": "MinimalBoundingSquare"
+			},
+
+
+	"zones": 
+	[
+		
+		{
+			"name": "Spawn-A",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player1",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+			
+			],
+
+			"guardedContentPool": ["content_pool_template_maze_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn_A"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 50000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 50000,
+			"resourcesValuePerArea": 0
+		
+		},
+		{
+			"name": "Spawn-B",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player2",
+					"placement": "Uniform"
+				}
+			],
+			
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+		
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn_B"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 50000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 50000,
+			"resourcesValuePerArea": 0
+		},
+		{
+			"name": "Bronze-1",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+		{
+			"name": "Bronze-2",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Bronze-3",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Bronze-4",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+				[
+					
+				],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+
+		},
+        {
+			"name": "Bronze-5",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			],
+			
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+        "name": "Bronze-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+		{
+			"name": "Silver-1",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+		{
+			"name": "Silver-2",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Silver-3",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Silver-4",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+				[
+					
+				],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+
+		},
+        {
+			"name": "Silver-5",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			],
+			
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+        "name": "Silver-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "Silver-7",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "Silver-8",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "Gold-1",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+		"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+{
+        "name": "Gold-2",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+       	"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-3",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+      	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-4",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+     	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-5",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+       	"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+       	"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-7",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+     	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-8",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+     	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+    {
+		"name": "Center-Treasure",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+			{
+				"type": "AbandonedOutpost",
+				"guardChance": 1.0,
+				"guardValue": 30000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "siege_buildings_construction",
+				"placement": "Uniform"
+			}
+		],
+		"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"contentBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"roads": 
+		[
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_2"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	},
+    {
+		"name": "Corner-Treasure A",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+		],
+		"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"contentBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"roads": 
+		[
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_3"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	},
+    {
+		"name": "Corner-Treasure B",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+		],
+		"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"contentBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"roads": 
+		[
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_3"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	}
+	,
+    {
+		"name": "SuperTreasure",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+		],
+		"zoneBiome": { "type": "FromList", "args": [  ] },
+		"contentBiome": { "type": "FromList", "args": [  ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [  ] },
+		"roads": 
+		[
+	
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_1"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	}
+	
+    ],
+	"connections": [
+		{
+			"name": "Spawn-A-Gold-1",
+			"from": "Spawn-A",
+			  "to": "Gold-1",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-B-Gold-5",
+			"from": "Spawn-B",
+			  "to": "Gold-5",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-1-Gold-2",
+			"from": "Gold-1",
+			  "to": "Gold-2",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},{
+			"name": "Gold-2-Gold-3",
+			"from": "Gold-2",
+			  "to": "Gold-3",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-3-Gold-4",
+			"from": "Gold-3",
+			  "to": "Gold-4",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-5-Gold-6",
+			"from": "Gold-5",
+			  "to": "Gold-6",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},{
+			"name": "Gold-6-Gold-7",
+			"from": "Gold-6",
+			  "to": "Gold-7",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-7-Gold-8",
+			"from": "Gold-7",
+			  "to": "Gold-8",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-Gold-4",
+			"from": "Gold-4",
+			  "to": "SuperTreasure",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-Gold-8",
+			"from": "Gold-8",
+			  "to": "SuperTreasure",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-A-Silver-1",
+			"from": "Spawn-A",
+			  "to": "Silver-1",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-B-Silver-5",
+			"from": "Spawn-B",
+			  "to": "Silver-5",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-1-Silver-2",
+			"from": "Silver-1",
+			  "to": "Silver-2",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-2-Silver-3",
+			"from": "Silver-2",
+			  "to": "Silver-3",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-3-Silver-4",
+			"from": "Silver-3",
+			  "to": "Silver-4",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-5-Silver-6",
+			"from": "Silver-5",
+			  "to": "Silver-6",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-6-Silver-7",
+			"from": "Silver-6",
+			  "to": "Silver-7",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-7-Silver-8",
+			"from": "Silver-7",
+			  "to": "Silver-8",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-4-Corner-Treasure A",
+			"from": "Silver-4",
+			  "to": "Corner-Treasure A",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-8-Corner-Treasure B",
+			"from": "Silver-8",
+			  "to": "Corner-Treasure B",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-A-Bronze-1",
+			"from": "Spawn-A",
+			  "to": "Bronze-1",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-B-Bronze-4",
+			"from": "Spawn-B",
+			  "to": "Bronze-4",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-1-Bronze-2",
+			"from": "Bronze-1",
+			  "to": "Bronze-2",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-2-Bronze-3",
+			"from": "Bronze-2",
+			  "to": "Bronze-3",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-4-Bronze-5",
+			"from": "Bronze-4",
+			  "to": "Bronze-5",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-5-Bronze-6",
+			"from": "Bronze-5",
+			  "to": "Bronze-6",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-3-Center-Treasure",
+			"from": "Bronze-3",
+			  "to": "Center-Treasure",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		}
+	]
+	},
+	{
+
+			"orientation":
+			{
+				"mode": "MinimalBoundingSquare"
+			},
+
+
+	"zones": 
+	[
+		
+		{
+			"name": "Spawn-A",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player1",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+			
+			],
+
+			"guardedContentPool": ["content_pool_template_maze_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn_A"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 50000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 50000,
+			"resourcesValuePerArea": 0
+		
+		},
+		{
+			"name": "Spawn-B",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player2",
+					"placement": "Uniform"
+				}
+			],
+			
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+		
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn_B"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 50000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 50000,
+			"resourcesValuePerArea": 0
+		},
+		{
+			"name": "Bronze-1",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+		{
+			"name": "Bronze-2",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Bronze-3",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Bronze-4",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+				[
+					
+				],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+
+		},
+        {
+			"name": "Bronze-5",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			],
+			
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+        "name": "Bronze-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+		{
+			"name": "Silver-1",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+		{
+			"name": "Silver-2",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			
+			],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Silver-3",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+
+			],
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+					
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Silver-4",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+				[
+					
+				],
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+
+		},
+        {
+			"name": "Silver-5",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+			"roads": 
+			[
+			],
+			
+			
+			
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+        "name": "Silver-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "Silver-7",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "Silver-8",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+			
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        "roads": 
+		[
+		],
+       
+        
+			"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+			"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "Gold-1",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+		"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+{
+        "name": "Gold-2",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+       	"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-3",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+      	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-4",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+     	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-5",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+       	"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+       	"guardedContentPool": ["content_pool_template_maze_guarded_green_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_green_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_green"],
+			"contentCountLimits": ["content_limits_green"],
+				
+			"guardedContentValue": 300000,
+			"guardedContentValuePerArea": 4000,
+			"unguardedContentValue": 100000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 75000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-7",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+     	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Gold-8",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 2.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "FromList", "args": [ ]  },
+        	"metaObjectsBiome": { "type": "FromList", "args": [ ]  },
+        	"roads": 
+        [
+
+		],
+
+        
+     	"guardedContentPool": ["content_pool_template_maze_guarded_yellow_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_yellow_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_yellow"],
+			"contentCountLimits": ["content_limits_yellow"],
+				
+			"guardedContentValue": 500000,
+			"guardedContentValuePerArea": 7000,
+			"unguardedContentValue": 150000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 20000,
+			"resourcesValuePerArea": 0
+    },
+    {
+		"name": "Center-Treasure",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+			{
+				"type": "AbandonedOutpost",
+				"guardChance": 1.0,
+				"guardValue": 30000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "siege_buildings_construction",
+				"placement": "Uniform"
+			}
+		],
+		"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"contentBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"roads": 
+		[
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_3"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	},
+    {
+		"name": "Corner-Treasure A",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+		],
+		"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"contentBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"roads": 
+		[
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_1"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	},
+    {
+		"name": "Corner-Treasure B",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+		],
+		"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"contentBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"roads": 
+		[
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_1"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	}
+	,
+    {
+		"name": "SuperTreasure",
+
+		"size": 1.5,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 3.0,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+		],
+		"zoneBiome": { "type": "FromList", "args": [  ] },
+		"contentBiome": { "type": "FromList", "args": [  ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [  ] },
+		"roads": 
+		[
+	
+		],
+
+ 		"guardedContentPool": ["content_pool_template_maze_guarded_red_zone"],
+		"unguardedContentPool": ["content_pool_template_maze_unguarded_red_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_treasure_2"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	}
+	
+    ],
+	"connections": [
+		{
+			"name": "Spawn-A-Gold-1",
+			"from": "Spawn-A",
+			  "to": "Gold-1",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-B-Gold-5",
+			"from": "Spawn-B",
+			  "to": "Gold-5",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-1-Gold-2",
+			"from": "Gold-1",
+			  "to": "Gold-2",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},{
+			"name": "Gold-2-Gold-3",
+			"from": "Gold-2",
+			  "to": "Gold-3",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-3-Gold-4",
+			"from": "Gold-3",
+			  "to": "Gold-4",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-5-Gold-6",
+			"from": "Gold-5",
+			  "to": "Gold-6",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},{
+			"name": "Gold-6-Gold-7",
+			"from": "Gold-6",
+			  "to": "Gold-7",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Gold-7-Gold-8",
+			"from": "Gold-7",
+			  "to": "Gold-8",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-Gold-4",
+			"from": "Gold-4",
+			  "to": "SuperTreasure",
+			"connectionType": "Portal",
+			"road": false,					
+			"simTurnSquad": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-Gold-8",
+			"from": "Gold-8",
+			  "to": "SuperTreasure",
+			"connectionType": "Portal",
+			"road": false,					
+			"simTurnSquad": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-A-Silver-1",
+			"from": "Spawn-A",
+			  "to": "Silver-1",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-B-Silver-5",
+			"from": "Spawn-B",
+			  "to": "Silver-5",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-1-Silver-2",
+			"from": "Silver-1",
+			  "to": "Silver-2",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-2-Silver-3",
+			"from": "Silver-2",
+			  "to": "Silver-3",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-3-Silver-4",
+			"from": "Silver-3",
+			  "to": "Silver-4",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-5-Silver-6",
+			"from": "Silver-5",
+			  "to": "Silver-6",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-6-Silver-7",
+			"from": "Silver-6",
+			  "to": "Silver-7",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-7-Silver-8",
+			"from": "Silver-7",
+			  "to": "Silver-8",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-4-Corner-Treasure A",
+			"from": "Silver-4",
+			  "to": "Corner-Treasure A",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Silver-8-Corner-Treasure B",
+			"from": "Silver-8",
+			  "to": "Corner-Treasure B",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-A-Bronze-1",
+			"from": "Spawn-A",
+			  "to": "Bronze-1",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-B-Bronze-4",
+			"from": "Spawn-B",
+			  "to": "Bronze-4",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 4000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-1-Bronze-2",
+			"from": "Bronze-1",
+			  "to": "Bronze-2",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-2-Bronze-3",
+			"from": "Bronze-2",
+			  "to": "Bronze-3",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-4-Bronze-5",
+			"from": "Bronze-4",
+			  "to": "Bronze-5",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-5-Bronze-6",
+			"from": "Bronze-5",
+			  "to": "Bronze-6",
+			"connectionType": "Portal",
+			"road": false,
+			"guardValue": 30000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Bronze-3-Center-Treasure",
+			"from": "Bronze-3",
+			  "to": "Center-Treasure",
+			"connectionType": "Portal",
+			"road": false,					
+			"simTurnSquad": true,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		}
+		,
+		{
+			"name": "Bronze-6-Center-Treasure",
+			"from": "Bronze-6",
+			  "to": "Center-Treasure",
+			"connectionType": "Portal",
+			"road": false,					
+			"simTurnSquad": true,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		}
+	]
+	}
+
+	],
+	"zoneLayouts": 
+	[
+		{
+			"name": "zone_layout_center",
+
+			"obstaclesFill": 0.56,
+			"obstaclesFillVoid": 0.56,
+			"lakesFill": 0.2,
+			"elevationClusterScale": 0.16,
+			"elevationModes": [
+				{ "weight": 2, "minElevatedFraction": 0.2, "maxElevatedFraction": 0.4 },
+				{ "weight": 1, "minElevatedFraction": 0.6, "maxElevatedFraction": 0.8 }
+			],
+			"roadClusterArea": 160,
+
+			"guardedEncounterResourceFractions": 
+			{
+				"countBounds" : [],
+				"fractions": [ 0.5 ]
+			},
+
+			"ambientPickupDistribution": 
+			{  
+				"repulsion": 1.0,
+				"noise": 0.3,
+				"roadAttraction": 0.5,
+				"obstacleAttraction": 0.0,
+				"groupSizeWeights": [ 4, 1, 1 ]
+			}
+		},
+
+		{
+			"name": "zone_layout_spawns",
+
+			"obstaclesFill": 0.48,
+			"obstaclesFillVoid": 0.48,
+			"lakesFill": 0.2,
+			"elevationClusterScale": 0.16,
+			"elevationModes": [
+				{ "weight": 2, "minElevatedFraction": 0.2, "maxElevatedFraction": 0.4 },
+				{ "weight": 1, "minElevatedFraction": 0.6, "maxElevatedFraction": 0.8 }
+			],
+			"roadClusterArea": 160,
+
+			"guardedEncounterResourceFractions": 
+			{
+				"countBounds" : [],
+				"fractions": [ 0.66 ]
+			},
+
+			"ambientPickupDistribution": 
+			{  
+				"repulsion": 1.0,
+				"noise": 0.3,
+				"roadAttraction": 0.5,
+				"obstacleAttraction": 0.0,
+				"groupSizeWeights": [ 4, 1, 1 ]
+			}
+		}
+	],
+				"mandatoryContent": 
+	[
+		{
+			"name": "mandatory_content_spawn_A",
+			"content":
+			[
+				{
+					"sid": "watchtower",
+					"isGuarded": false,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.05, "targetMax": 0.15, "weight": 1 }]
+				},
+				{
+					"sid": "mine_wood",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false
+				},
+				{
+					"sid": "mine_ore",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false
+				},
+				{
+					"sid": "mine_gold",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": true,
+					"owner": "Player2",
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.05, "targetMax": 0.15, "weight": 1 }]
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_spawn_B",
+			"content":
+			[
+				{
+					"sid": "watchtower",
+					"isGuarded": false,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.05, "targetMax": 0.15, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.05, "targetMax": 0.15, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_wood",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false
+				},
+				{
+					"sid": "mine_ore",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false
+				},
+				{
+					"sid": "mine_gold",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": true,
+					"owner": "Player1",
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.05, "targetMax": 0.15, "weight": 1 }]
+
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_green",
+			"content":
+			[
+				{
+					"sid": "mine_wood",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false
+				},
+				{
+					"sid": "mine_ore",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_yellow",
+			"content":
+			[
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				},
+				{
+					"sid": "celestial_sphere"
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_treasure_1",
+			"content":
+			[
+				{
+					"sid": "mine_crystals",
+					"isMine": true,
+					"owner": "Player1"
+				},
+				{
+					"sid": "mine_gemstones",
+					"isMine": true,
+					"owner": "Player2"
+				},
+				{
+					"sid": "random_item_legendary"
+				},
+				{
+					"sid": "random_item_legendary"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+
+				{
+					"sid": "random_item_epic"
+				},
+				{
+					"sid": "random_item_epic"
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_treasure_2",
+			"content":
+			[
+				{
+					"sid": "mine_mercury",
+					"isMine": true,
+					"owner": "Player1"
+				},
+				{
+					"sid": "mine_crystals",
+					"isMine": true,
+					"owner": "Player2"
+				},
+				{
+					"sid": "random_item_legendary"
+				},
+				{
+					"sid": "random_item_legendary"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+
+				{
+					"sid": "random_item_epic"
+				},
+				{
+					"sid": "random_item_epic"
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_treasure_3",
+			"content":
+			[
+				{
+					"sid": "mine_gemstones",
+					"isMine": true,
+					"owner": "Player1"
+				},
+				{
+					"sid": "mine_mercury",
+					"isMine": true,
+					"owner": "Player2"
+				},
+				{
+					"sid": "random_item_legendary"
+				},
+				{
+					"sid": "random_item_legendary"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+
+				{
+					"sid": "random_item_epic"
+				},
+				{
+					"sid": "random_item_epic"
+				}
+			]
+		}
+	],
+		"contentCountLimits":
+		[
+			{
+			"name": "content_limits_spawn",
+			"limits":
+			[
+				{
+					"sid": "stables",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "watchtower",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "crystal_trail",
+					"variant": -1,
+					"maxCount": 1
+				},
+				{
+					"sid": "tear_of_truth",
+					"variant": -1,
+					"maxCount": 1
+				},	
+				{
+					"sid": "celestial_sphere",
+					"variant": -1,
+					"maxCount": 1
+				}
+			]
+		},
+{
+			"name": "content_limits_green",
+			"limits":
+			[
+				{
+					"sid": "stables",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "watchtower",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "crystal_trail",
+					"variant": -1,
+					"maxCount": 1
+				},
+				{
+					"sid": "tear_of_truth",
+					"variant": -1,
+					"maxCount": 1
+				},	
+				{
+					"sid": "celestial_sphere",
+					"variant": -1,
+					"maxCount": 1
+				}
+			]
+		},{
+			"name": "content_limits_yellow",
+			"limits":
+			[
+				{
+					"sid": "stables",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "watchtower",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "crystal_trail",
+					"variant": -1,
+					"maxCount": 1
+				},
+				{
+					"sid": "tear_of_truth",
+					"variant": -1,
+					"maxCount": 1
+				},	
+				{
+					"sid": "celestial_sphere",
+					"variant": -1,
+					"maxCount": 1
+				}
+			]
+		},
+		{
+			"name": "content_limits_treasure",
+			"limits":
+			[
+
+				{
+					"sid": "stables",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "watchtower",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "crystal_trail",
+					"variant": -1,
+					"maxCount": 1
+				},
+				{
+					"sid": "tear_of_truth",
+					"variant": -1,
+					"maxCount": 1
+				},	
+				{
+					"sid": "celestial_sphere",
+					"variant": -1,
+					"maxCount": 1
+				}
+			]
+		}
+	],
+	"contentPools": 
+	[
+
+	],
+	"contentLists": 
+	[
+
+	]
+}

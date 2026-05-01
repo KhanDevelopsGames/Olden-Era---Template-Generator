@@ -1,0 +1,5756 @@
+  { "name": "Anarchy",
+
+	"gameMode": "Classic",
+	"description": "templates_description_anarchy",
+    "displayWinCondition": "win_condition_1",
+
+	"sizeX": 160,
+	"sizeZ": 160,
+	
+	
+	"gameRules":
+	{
+		"heroCountMin": 5,
+		"heroCountMax": 10,
+		"heroCountIncrement": 1,
+		"heroHireBan": false,
+		"encounterHoles": true,
+		"tournamentRules": false,
+		"winConditions":
+		{
+			"classic" : true,
+			"desertion" : true,
+			"desertionDay" : 3,
+			"desertionValue" : 3000,
+			"heroLighting" : true,
+			"heroLightingDay" : 1,
+			"lostStartCity" : false,
+			"lostStartHero" : false
+		}
+	},
+	  "valueOverrides": 
+	[
+		{
+			"sid": "boreal_call",
+			"variant": -1,
+			"guardValue": 6000
+		},
+		{
+			"sid": "jousting_range",
+			"variant": -1,
+			"guardValue": 6000
+		},
+		{
+			"sid": "petrified_memorial",
+			"variant": -1,
+			"guardValue": 6000
+		},
+		{
+			"sid": "point_of_balance",
+			"variant": -1,
+			"guardValue": 7500
+		},
+		{
+			"sid": "the_gorge",
+			"variant": -1,
+			"guardValue": 6000
+		},
+		{
+			"sid": "unforgotten_grave",
+			"variant": -1,
+			"guardValue": 6000
+		},
+		{
+			"sid": "ritual_pyre",
+			"variant": -1,
+			"guardValue": 6000
+		}
+	],
+	"variants":
+	[
+
+	{
+
+			"orientation":
+			{
+				"mode": "MinimalBoundingSquare"
+			},
+
+
+	"zones": 
+	[
+		
+		{
+			"name": "Spawn-Poor-A",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player1",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-3"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Center"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 150000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		
+		},
+		{
+			"name": "Spawn-Poor-B",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player2",
+					"placement": "Uniform"
+				}
+			],
+			
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-5"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-6"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-7"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-8"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Center"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 150000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+		
+		{
+			"name": "Treasure-1",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-1-SuperTreasure-1"] }  }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_treasure_1"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+		{
+			"name": "Treasure-2",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-2-SuperTreasure-2"] }  }
+			],
+			
+			
+				"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_treasure_2"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 225000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+			"name": "Treasure-3",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-3"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-3-SuperTreasure-3"] }  }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_treasure_3"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 225000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+			"name": "Treasure-4",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+				[
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-4"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-4-SuperTreasure-4"] }  }
+				],
+			
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_treasure_4"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 225000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+
+		},
+        {
+			"name": "Treasure-5",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-5"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-5-SuperTreasure-1"] }  }
+			],
+			
+			
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_treasure_1"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 225000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+        "name": "Treasure-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[
+			{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-6"] }  },
+			{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-6-SuperTreasure-2"] }  }
+		],
+       
+        
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure_2"],
+		"contentCountLimits": ["content_limits_treasure"],
+			
+		"guardedContentValue": 225000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+    {
+        "name": "Treasure-7",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+		[
+			{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-7"] }  },
+			{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-7-SuperTreasure-3"] }  }
+		],
+        
+        
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure_3"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+    {
+        "name": "Treasure-8",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-8"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-8-SuperTreasure-4"] }  }
+		],
+
+        
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure_4"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 225000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "SuperTreasure-1",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-1-SuperTreasure-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-5-SuperTreasure-1"] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-2",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-2-SuperTreasure-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-6-SuperTreasure-2"] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-3",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+			{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-3-SuperTreasure-3"] }  },
+			{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-7-SuperTreasure-3"] }  }
+		],
+
+        
+      "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-4",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+        	"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-4-SuperTreasure-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-8-SuperTreasure-4"] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+    {
+		"name": "Center",
+
+		"size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+			"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+		[
+		],
+		"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"contentBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"metaObjectsBiome": { "type": "FromList", "args": [ "Sand" ] },
+		"roads": 
+		[
+			{ "type": "Stone", "from": { "type": "Connection", "args": ["Spawn-Poor-A-Center"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Center"] }  }
+		],
+
+		"guardedContentPool": ["content_pool_anarchy_guarded_supertreasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_unguarded_supertreasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_zero"],
+
+		"mandatoryContent": ["mandatory_content_center"],
+		"contentCountLimits": ["content_limits_treasure"],
+					
+		"guardedContentValue": 800000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 0,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+	}
+	
+    ],
+	"connections": [
+		{
+			"name": "Spawn-Poor-A-Treasure-1",
+			"from": "Spawn-Poor-A",
+			  "to": "Treasure-1",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-Treasure-2",
+			"from": "Spawn-Poor-A",
+			  "to": "Treasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-Treasure-3",
+			"from": "Spawn-Poor-A",
+			  "to": "Treasure-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+        {
+			"name": "Spawn-Poor-A-Treasure-4",
+			"from": "Spawn-Poor-A",
+			  "to": "Treasure-4",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Treasure-5",
+			"from": "Spawn-Poor-B",
+			  "to": "Treasure-5",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Treasure-6",
+			"from": "Spawn-Poor-B",
+			  "to": "Treasure-6",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Treasure-7",
+			"from": "Spawn-Poor-B",
+			  "to": "Treasure-7",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Treasure-8",
+			"from": "Spawn-Poor-B",
+			  "to": "Treasure-8",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-1-SuperTreasure-1",
+			"from": "Treasure-1",
+			  "to": "SuperTreasure-1",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-5-SuperTreasure-1",
+			"from": "SuperTreasure-1",
+			  "to": "Treasure-5",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-2-SuperTreasure-2",
+			"from": "Treasure-2",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-6-SuperTreasure-2",
+			"from": "SuperTreasure-2",
+			  "to": "Treasure-6",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-3-SuperTreasure-3",
+			"from": "Treasure-3",
+			  "to": "SuperTreasure-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-7-SuperTreasure-3",
+			"from": "SuperTreasure-3",
+			  "to": "Treasure-7",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-4-SuperTreasure-4",
+			"from": "Treasure-4",
+			  "to": "SuperTreasure-4",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-8-SuperTreasure-4",
+			"from": "SuperTreasure-4",
+			  "to": "Treasure-8",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-Center",
+			"from": "Spawn-Poor-A",
+			  "to": "Center",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Center",
+			"from": "Spawn-Poor-B",
+			  "to": "Center",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		}
+	]
+	},
+
+	{
+
+			"orientation":
+			{
+				"mode": "MinimalBoundingSquare"
+			},
+
+
+	"zones": 
+	[
+		
+		{
+			"name": "Spawn-Rich-A",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+							"type": "Spawn",	"spawn": "Player1",
+							"removeGuardIfHasOwner": true,
+							"guardChance": 0.5,
+							"guardValue": 2000,
+							"guardWeeklyIncrement": 0.20,
+							"buildingsConstructionSid": "default_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "true", "0.7", "0" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 2000,
+							"guardWeeklyIncrement": 0.20,
+							"buildingsConstructionSid": "poor_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "3" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 2000,
+							"guardWeeklyIncrement": 0.20,
+							"buildingsConstructionSid": "poor_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "3" ]
+						}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-A-Treasure-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-A-Treasure-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-A-Treasure-3"] }  },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-A-SuperTreasure-1"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_rich"],
+
+			"mandatoryContent": ["mandatory_content_spawn"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		
+		},
+		{
+			"name": "Spawn-Rich-B",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+			{
+							"type": "Spawn",	"spawn": "Player2",
+							"removeGuardIfHasOwner": true,
+							"guardChance": 0.5,
+							"guardValue": 2000,
+							"guardWeeklyIncrement": 0.20,
+							"buildingsConstructionSid": "default_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "true", "0.7", "0" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 2000,
+							"guardWeeklyIncrement": 0.20,
+							"buildingsConstructionSid": "poor_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "3" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 2000,
+							"guardWeeklyIncrement": 0.20,
+							"buildingsConstructionSid": "poor_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "3" ]
+						}
+			],
+			
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-B-Treasure-4"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-B-Treasure-5"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-B-Treasure-6"] }  },
+					{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+					{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-B-SuperTreasure-2"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_rich"],
+
+			"mandatoryContent": ["mandatory_content_spawn"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+		{
+			"name": "Treasure-1",
+
+			"size": 0.75,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "poor_buildings_construction",
+					"placement": "Center"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-A-Treasure-1"] }  }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_treasure_1"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 5000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+		},
+		{
+			"name": "Treasure-2",
+
+			"size": 0.75,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "poor_buildings_construction",
+					"placement": "Center"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-A-Treasure-2"] }  }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_treasure_2"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 5000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Treasure-3",
+
+			"size": 0.75,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "poor_buildings_construction",
+					"placement": "Center"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-A-Treasure-3"] }  }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_treasure_3"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 5000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+		},
+        {
+			"name": "Treasure-4",
+
+			"size": 0.75,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "poor_buildings_construction",
+					"placement": "Center"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-B-Treasure-4"] }  }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_treasure_1"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 5000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+
+		},
+        {
+			"name": "Treasure-5",
+
+			"size": 0.75,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "poor_buildings_construction",
+					"placement": "Center"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-B-Treasure-5"] }  }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_treasure_2"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 5000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+		},
+        {
+        "name": "Treasure-6",
+
+        "size": 0.75,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "poor_buildings_construction",
+					"placement": "Center"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Rich-B-Treasure-6"] }  }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+			"mandatoryContent": ["mandatory_content_treasure_3"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 5000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    	},
+		{
+					"name": "SuperTreasure-1",
+
+					"size": 1.4,
+					"layout": "zone_layout_center",
+
+					"guardCutoffValue": 3000,
+					"guardRandomization": 0.05,
+					"guardMultiplier": 1.3,
+					"guardWeeklyIncrement": 0.20,
+					"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+					
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+					"guardedContentPool": [ "content_pool_anarchy_guarded_supertreasure_zone" ],
+					"unguardedContentPool": [ "content_pool_anarchy_unguarded_supertreasure_zone" ],
+					"resourcesContentPool": [ "content_pool_general_resources_treasure_zone_rich_no_scrolls" ],
+					
+					"mandatoryContent": [ "mandatory_content_treasure" ],
+					"contentCountLimits": [ "content_limits_treasure"],
+					
+					"guardedContentValue": 1500000,
+					"guardedContentValuePerArea": 0,
+					"unguardedContentValue": 0,
+					"unguardedContentValuePerArea": 0,
+					"resourcesValue": 0,
+					"resourcesValuePerArea": 0,
+
+					"mainObjects": 
+					[
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Center"
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "Spawn-Rich-A-SuperTreasure-1" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "SuperTreasure-1-Center" ]
+						}
+					],
+					"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+					"contentBiome": { "type": "MatchZone", "args": [  ] },
+					"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"crossroadsPosition" : 0,
+					"roads": [
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "1" ] }, "to": { "type": "Connection", "args": [ "Spawn-Rich-A-SuperTreasure-1" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "2" ] }, "to": { "type": "Connection", "args": [ "SuperTreasure-1-Center" ] }  }
+					]
+				},
+				{
+				"name": "SuperTreasure-2",
+
+				"size": 1.4,
+				"layout": "zone_layout_center",
+
+				"guardCutoffValue": 3000,
+				"guardRandomization": 0.05,
+				"guardMultiplier": 1.3,
+				"guardWeeklyIncrement": 0.20,
+				"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+				"guardedContentPool": [ "content_pool_anarchy_guarded_supertreasure_zone" ],
+				"unguardedContentPool": [ "content_pool_anarchy_unguarded_supertreasure_zone" ],
+				"resourcesContentPool": [ "content_pool_general_resources_treasure_zone_rich_no_scrolls" ],
+						
+				"mandatoryContent": [ "mandatory_content_treasure" ],
+				"contentCountLimits": [ "content_limits_treasure"],
+						
+				"guardedContentValue": 1500000,
+				"guardedContentValuePerArea": 0,
+				"unguardedContentValue": 0,
+				"unguardedContentValuePerArea": 0,
+				"resourcesValue": 0,
+				"resourcesValuePerArea": 0,
+
+					"mainObjects": 
+					[
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Center"
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "Spawn-Rich-B-SuperTreasure-2" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "SuperTreasure-2-Center" ]
+						}
+					],
+					"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+					"contentBiome": { "type": "MatchZone", "args": [  ] },
+					"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"crossroadsPosition" : 0,
+					"roads": [
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "1" ] }, "to": { "type": "Connection", "args": [ "Spawn-Rich-B-SuperTreasure-2" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "2" ] }, "to": { "type": "Connection", "args": [ "SuperTreasure-2-Center" ] }  }
+					]
+				},
+					{
+					"name": "Center",
+
+					"size": 1.4,
+					"layout": "zone_layout_center",
+
+					"guardCutoffValue": 3000,
+					"guardRandomization": 0.05,
+					"guardMultiplier": 1.3,
+					"guardWeeklyIncrement": 0.20,
+					"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+					"guardedContentPool": [ "content_pool_anarchy_guarded_supertreasure_zone" ],
+					"unguardedContentPool": [ "content_pool_anarchy_unguarded_supertreasure_zone" ],
+					"resourcesContentPool": [ "content_pool_general_resources_treasure_zone_rich_no_scrolls" ],
+					
+					"mandatoryContent": [ "mandatory_content_treasure" ],
+					"contentCountLimits": [ "content_limits_treasure"],
+					
+					"guardedContentValue": 1500000,
+					"guardedContentValuePerArea": 0,
+					"unguardedContentValue": 0,
+					"unguardedContentValuePerArea": 0,
+					"resourcesValue": 0,
+					"resourcesValuePerArea": 0,
+
+					"mainObjects": 
+					[
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Center"
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "SuperTreasure-1-Center" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "SuperTreasure-2-Center" ]
+						}
+					],
+					"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+					"contentBiome": { "type": "MatchZone", "args": [  ] },
+					"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"crossroadsPosition" : 0,
+					"roads": [
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "1" ] }, "to": { "type": "Connection", "args": [ "SuperTreasure-1-Center" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "2" ] }, "to": { "type": "Connection", "args": [ "SuperTreasure-2-Center" ] }  }
+					]
+				}
+	
+    ],
+	"connections": [
+		{
+			"name": "Spawn-Rich-A-Treasure-1",
+			"from": "Spawn-Rich-A",
+			  "to": "Treasure-1",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Rich-A-Treasure-2",
+			"from": "Spawn-Rich-A",
+			  "to": "Treasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Rich-A-Treasure-3",
+			"from": "Spawn-Rich-A",
+			  "to": "Treasure-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+        {
+			"name": "Spawn-Rich-A-SuperTreasure-1",
+			"from": "Spawn-Rich-A",
+			  "to": "SuperTreasure-1",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Rich-B-Treasure-4",
+			"from": "Spawn-Rich-B",
+			  "to": "Treasure-4",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Rich-B-Treasure-5",
+			"from": "Spawn-Rich-B",
+			  "to": "Treasure-5",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Rich-B-Treasure-6",
+			"from": "Spawn-Rich-B",
+			  "to": "Treasure-6",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Rich-B-SuperTreasure-2",
+			"from": "Spawn-Rich-B",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-1-Center",
+			"from": "SuperTreasure-1",
+			  "to": "Center",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		},
+        {
+			"name": "SuperTreasure-2-Center",
+			"from": "SuperTreasure-2",
+			  "to": "Center",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 45000,
+			"guardWeeklyIncrement": 0.20
+		}
+	]
+	},
+
+	{
+
+			"orientation":
+			{
+				"mode": "MinimalBoundingSquare"
+			},
+
+
+			"zones": 
+			[
+		
+		{
+			"name": "Spawn-Poor-A",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player1",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-3"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		
+		},
+		{
+			"name": "Spawn-Poor-B",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player2",
+					"placement": "Uniform"
+				}
+			],
+			
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-4"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-5"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-6"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+		
+		{
+			"name": "Treasure-1",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-1-SuperTreasure-1"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-1-SuperTreasure-2"] } }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_treasure_1"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+		{
+			"name": "Treasure-2",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+			{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-2-SuperTreasure-1"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-2-SuperTreasure-3"] } }
+			],
+			
+			
+				"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_treasure_2"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+			"name": "Treasure-3",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Treasure-3"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-3-SuperTreasure-2"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-3-SuperTreasure-3"] } }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_treasure_3"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+			"name": "Treasure-4",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+				[
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-4"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-4-SuperTreasure-7"] }},
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-4-SuperTreasure-8"] } }
+				],
+			
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_treasure_1"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+
+		},
+        {
+			"name": "Treasure-5",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-5"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-5-SuperTreasure-7"] }},
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-5-SuperTreasure-9"] } }
+			],
+			
+			
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_treasure_2"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+        "name": "Treasure-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+			[
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Treasure-6"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-6-SuperTreasure-8"] }},
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-6-SuperTreasure-9"] } }
+			],
+       
+        
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure_3"],
+		"contentCountLimits": ["content_limits_treasure"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "SuperTreasure-1",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-1-SuperTreasure-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-2-SuperTreasure-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-1-SuperTreasure-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-1-SuperTreasure-5"] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_treasure_2"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-2",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-1-SuperTreasure-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-3-SuperTreasure-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-2-SuperTreasure-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-2-SuperTreasure-6"] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-3",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-2-SuperTreasure-3"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-3-SuperTreasure-3"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-3-SuperTreasure-5"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-3-SuperTreasure-6"] }  }
+		],
+
+        
+      "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-4",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+        	"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-1-SuperTreasure-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-2-SuperTreasure-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-4-SuperTreasure-7"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-4-SuperTreasure-8"] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-5",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+        	"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-1-SuperTreasure-5"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-3-SuperTreasure-5"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-5-SuperTreasure-7"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-5-SuperTreasure-9"] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-6",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+        	"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-2-SuperTreasure-6"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-3-SuperTreasure-6"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-6-SuperTreasure-8"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-6-SuperTreasure-9"] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-7",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+        	"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-4-SuperTreasure-7"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-5-SuperTreasure-7"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-4-SuperTreasure-7"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-5-SuperTreasure-7"] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-8",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+        	"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-4-SuperTreasure-8"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-6-SuperTreasure-8"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-4-SuperTreasure-8"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-6-SuperTreasure-8"] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-9",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "rich_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+        	"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-5-SuperTreasure-9"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Treasure-6-SuperTreasure-9"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-5-SuperTreasure-9"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-6-SuperTreasure-9"] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+
+		"mandatoryContent": ["mandatory_content_treasure"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+		"guardedContentValue": 600000,
+		"guardedContentValuePerArea": 12500,
+		"unguardedContentValue": 15000,
+		"unguardedContentValuePerArea": 0,
+		"resourcesValue": 0,
+		"resourcesValuePerArea": 0
+    }
+	
+    ],
+	"connections": [
+		{
+			"name": "Spawn-Poor-A-Treasure-1",
+			"from": "Spawn-Poor-A",
+			  "to": "Treasure-1",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-Treasure-2",
+			"from": "Spawn-Poor-A",
+			  "to": "Treasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-Treasure-3",
+			"from": "Spawn-Poor-A",
+			  "to": "Treasure-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Treasure-4",
+			"from": "Spawn-Poor-B",
+			  "to": "Treasure-4",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Treasure-5",
+			"from": "Spawn-Poor-B",
+			  "to": "Treasure-5",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Treasure-6",
+			"from": "Spawn-Poor-B",
+			  "to": "Treasure-6",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-1-SuperTreasure-1",
+			"from": "Treasure-1",
+			  "to": "SuperTreasure-1",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-1-SuperTreasure-2",
+			"from": "Treasure-1",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-2-SuperTreasure-1",
+			"from": "Treasure-2",
+			  "to": "SuperTreasure-1",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-2-SuperTreasure-3",
+			"from": "Treasure-2",
+			  "to": "SuperTreasure-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-3-SuperTreasure-2",
+			"from": "Treasure-3",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-3-SuperTreasure-3",
+			"from": "Treasure-3",
+			  "to": "SuperTreasure-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-2-SuperTreasure-1",
+			"from": "Treasure-2",
+			  "to": "SuperTreasure-1",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-2-SuperTreasure-3",
+			"from": "Treasure-2",
+			  "to": "SuperTreasure-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-3-SuperTreasure-2",
+			"from": "Treasure-3",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-3-SuperTreasure-3",
+			"from": "Treasure-3",
+			  "to": "SuperTreasure-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-1-SuperTreasure-4",
+			"from": "SuperTreasure-1",
+			  "to": "SuperTreasure-4",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-1-SuperTreasure-5",
+			"from": "SuperTreasure-1",
+			  "to": "SuperTreasure-5",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-2-SuperTreasure-4",
+			"from": "SuperTreasure-2",
+			  "to": "SuperTreasure-4",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-2-SuperTreasure-6",
+			"from": "SuperTreasure-2",
+			  "to": "SuperTreasure-6",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-3-SuperTreasure-5",
+			"from": "SuperTreasure-3",
+			  "to": "SuperTreasure-5",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-3-SuperTreasure-6",
+			"from": "SuperTreasure-3",
+			  "to": "SuperTreasure-6",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-4-SuperTreasure-7",
+			"from": "SuperTreasure-4",
+			  "to": "SuperTreasure-7",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-4-SuperTreasure-8",
+			"from": "SuperTreasure-4",
+			  "to": "SuperTreasure-8",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-5-SuperTreasure-7",
+			"from": "SuperTreasure-5",
+			  "to": "SuperTreasure-7",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-5-SuperTreasure-9",
+			"from": "SuperTreasure-5",
+			  "to": "SuperTreasure-9",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-6-SuperTreasure-8",
+			"from": "SuperTreasure-6",
+			  "to": "SuperTreasure-8",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-6-SuperTreasure-9",
+			"from": "SuperTreasure-6",
+			  "to": "SuperTreasure-9",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-4-SuperTreasure-7",
+			"from": "Treasure-4",
+			  "to": "SuperTreasure-7",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-4-SuperTreasure-8",
+			"from": "Treasure-4",
+			  "to": "SuperTreasure-8",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-5-SuperTreasure-7",
+			"from": "Treasure-5",
+			  "to": "SuperTreasure-7",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-5-SuperTreasure-9",
+			"from": "Treasure-5",
+			  "to": "SuperTreasure-9",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+			{
+			"name": "Treasure-6-SuperTreasure-8",
+			"from": "Treasure-6",
+			  "to": "SuperTreasure-8",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Treasure-6-SuperTreasure-9",
+			"from": "Treasure-6",
+			  "to": "SuperTreasure-9",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		}
+	]
+	},
+
+	{
+
+			"orientation":
+			{
+				"mode": "MinimalBoundingSquare"
+			},
+
+
+	"zones": 
+	[
+		
+		{
+			"name": "Spawn-Poor-A",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player1",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Connector-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Connector-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Connector-3"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Connector-4"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		
+		},
+		{
+			"name": "Spawn-Poor-B",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player2",
+					"placement": "Uniform"
+				}
+			],
+			
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Connector-5"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Connector-6"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Connector-7"] }  },
+					{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Connector-8"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+		
+		{
+			"name": "Connector-1",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Connector-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-SuperTreasure-1"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-Treasure-1"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-Connector-2"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-Connector-3"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-Connector-4"] } }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_connector_1"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+		{
+			"name": "Connector-2",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Connector-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-2-SuperTreasure-1"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-2-Treasure-2"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-Connector-2"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-2-Connector-3"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-2-Connector-4"] } }
+			],
+			
+			
+				"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_connector_2"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+			"name": "Connector-3",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Connector-3"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-3-SuperTreasure-1"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-3-Treasure-3"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-Connector-3"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-2-Connector-3"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-3-Connector-4"] } }
+			],
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+			"mandatoryContent": ["mandatory_content_connector_3"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+			"name": "Connector-4",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+				[
+
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-Connector-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-4-SuperTreasure-1"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-4-Treasure-4"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-Connector-4"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-2-Connector-4"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-3-Connector-4"] } }
+				],
+			
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_connector_4"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+
+		},
+        {
+			"name": "Connector-5",
+
+			"size": 1.0,
+			"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"roads": 
+			[
+
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Connector-5"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-5-SuperTreasure-2"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-5-Treasure-5"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-5-Connector-6"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-5-Connector-7"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-5-Connector-8"] } }
+			],
+			
+			
+			
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_connector_1"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 250000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+        {
+        "name": "Connector-6",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Connector-6"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-6-SuperTreasure-2"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-6-Treasure-6"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-5-Connector-6"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-6-Connector-7"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-6-Connector-8"] } }
+			],
+       
+        
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+		"mandatoryContent": ["mandatory_content_connector_2"],
+		"contentCountLimits": ["content_limits_treasure"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "Connector-7",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+			[	
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Connector-7"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-7-SuperTreasure-2"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-7-Treasure-7"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-5-Connector-7"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-6-Connector-7"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-7-Connector-8"] } }
+			],
+       
+        
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+		"mandatoryContent": ["mandatory_content_connector_3"],
+		"contentCountLimits": ["content_limits_treasure"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "Connector-8",
+
+        "size": 1.0,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.4,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+					{
+					"type": "City",
+					"guardChance": 0.5,
+					"guardValue": 3000,
+					"guardWeeklyIncrement": 0.20,
+					"buildingsConstructionSid": "default_buildings_construction",
+					"placement": "Uniform"
+				}
+			],
+			"zoneBiome": { "type": "FromList", "args": [ ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-Connector-8"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-8-SuperTreasure-2"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-8-Treasure-8"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-5-Connector-8"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-6-Connector-8"] } },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-7-Connector-8"] } }
+			],
+       
+        
+			"guardedContentPool": ["content_pool_anarchy_rich_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_rich_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+
+		"mandatoryContent": ["mandatory_content_connector_4"],
+		"contentCountLimits": ["content_limits_treasure"],
+			
+		"guardedContentValue": 250000,
+		"guardedContentValuePerArea": 1000,
+		"unguardedContentValue": 35000,
+		"unguardedContentValuePerArea": 1000,
+		"resourcesValue": 3000,
+		"resourcesValuePerArea": 100
+    },
+	{
+        "name": "SuperTreasure-1",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Center"
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Uniform"
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Uniform"
+						}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-SuperTreasure-1"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-2-SuperTreasure-1"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-3-SuperTreasure-1"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-4-SuperTreasure-1"] }},
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-1-SuperTreasure-2"] } }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_guarded_supertreasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_unguarded_supertreasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_center"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+			"guardedContentValue": 1000000,
+			"guardedContentValuePerArea": 20000,
+			"unguardedContentValue": 0,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-2",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+					{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Center"
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Uniform"
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Uniform"
+						}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-5-SuperTreasure-2"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-6-SuperTreasure-2"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-7-SuperTreasure-2"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-8-SuperTreasure-2"] }},
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-1-SuperTreasure-2"] } }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_guarded_supertreasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_unguarded_supertreasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_center"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+			"guardedContentValue": 1000000,
+			"guardedContentValuePerArea": 20000,
+			"unguardedContentValue": 0,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-1",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[
+            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-Treasure-1"] }  }
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_1"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-2",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-2-Treasure-2"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_2"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-3",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+		"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-3-Treasure-3"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_3"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-4",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-4-Treasure-4"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_4"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-5",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-5-Treasure-5"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_1"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-6",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-6-Treasure-6"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_2"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-7",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-7-Treasure-7"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_3"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-8",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-8-Treasure-8"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_4"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    }
+	
+    ],
+	"connections": [
+		{
+			"name": "Spawn-Poor-A-Connector-1",
+			"from": "Spawn-Poor-A",
+			  "to": "Connector-1",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-Connector-2",
+			"from": "Spawn-Poor-A",
+			  "to": "Connector-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-Connector-3",
+			"from": "Spawn-Poor-A",
+			  "to": "Connector-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-Connector-4",
+			"from": "Spawn-Poor-A",
+			  "to": "Connector-4",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Connector-5",
+			"from": "Spawn-Poor-B",
+			  "to": "Connector-5",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Connector-6",
+			"from": "Spawn-Poor-B",
+			  "to": "Connector-6",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Connector-7",
+			"from": "Spawn-Poor-B",
+			  "to": "Connector-7",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-Connector-8",
+			"from": "Spawn-Poor-B",
+			  "to": "Connector-8",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 3000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-1-Treasure-1",
+			"from": "Connector-1",
+			  "to": "Treasure-1",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-2-Treasure-2",
+			"from": "Connector-2",
+			  "to": "Treasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-3-Treasure-3",
+			"from": "Connector-3",
+			  "to": "Treasure-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-4-Treasure-4",
+			"from": "Connector-4",
+			  "to": "Treasure-4",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-5-Treasure-5",
+			"from": "Connector-5",
+			  "to": "Treasure-5",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-6-Treasure-6",
+			"from": "Connector-6",
+			  "to": "Treasure-6",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 13000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-7-Treasure-7",
+			"from": "Connector-7",
+			  "to": "Treasure-7",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-8-Treasure-8",
+			"from": "Connector-8",
+			  "to": "Treasure-8",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 15000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-1-Connector-2",
+			"from": "Connector-1",
+			  "to": "Connector-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-1-Connector-3",
+			"from": "Connector-1",
+			  "to": "Connector-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-1-Connector-4",
+			"from": "Connector-1",
+			  "to": "Connector-4",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-2-Connector-3",
+			"from": "Connector-2",
+			  "to": "Connector-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-2-Connector-4",
+			"from": "Connector-2",
+			  "to": "Connector-4",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-3-Connector-4",
+			"from": "Connector-3",
+			  "to": "Connector-4",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-5-Connector-6",
+			"from": "Connector-5",
+			  "to": "Connector-6",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-5-Connector-7",
+			"from": "Connector-5",
+			  "to": "Connector-7",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-5-Connector-8",
+			"from": "Connector-5",
+			  "to": "Connector-8",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-6-Connector-7",
+			"from": "Connector-6",
+			  "to": "Connector-7",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-6-Connector-8",
+			"from": "Connector-6",
+			  "to": "Connector-8",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-7-Connector-8",
+			"from": "Connector-7",
+			  "to": "Connector-8",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-1-SuperTreasure-1",
+			"from": "Connector-1",
+			  "to": "SuperTreasure-1",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-2-SuperTreasure-1",
+			"from": "Connector-2",
+			  "to": "SuperTreasure-1",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-3-SuperTreasure-1",
+			"from": "Connector-3",
+			  "to": "SuperTreasure-1",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-4-SuperTreasure-1",
+			"from": "Connector-4",
+			  "to": "SuperTreasure-1",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-5-SuperTreasure-2",
+			"from": "Connector-5",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-6-SuperTreasure-2",
+			"from": "Connector-6",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-7-SuperTreasure-2",
+			"from": "Connector-7",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-8-SuperTreasure-2",
+			"from": "Connector-8",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-1-SuperTreasure-2",
+			"from": "SuperTreasure-1",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		}
+	]
+	},
+
+	{
+
+			"orientation":
+			{
+				"mode": "MinimalBoundingSquare"
+			},
+
+
+	"zones": 
+	[
+		
+		{
+			"name": "Spawn-Poor-A-1",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player1",
+					"placement": "Uniform"
+				},
+				{
+					"type": "City",	
+					"placement": "Uniform"
+				}
+
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-1-Spawn-Poor-A-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-1-Connector-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-1-Connector-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-1-Treasure-1"] }  },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		
+		},
+		{
+			"name": "Spawn-Poor-A-2",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player1",
+					"placement": "Uniform"
+				},
+				{
+					"type": "City",	
+					"placement": "Uniform"
+				}
+
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-1-Spawn-Poor-A-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-2-Connector-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-2-Connector-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-2-Treasure-2"] }  },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		
+		},
+		{
+			"name": "Connector-1",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",	
+					"placement": "Uniform"
+				}
+
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-Connector-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-1-Connector-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-2-Connector-1"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-SuperTreasure-1"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_connector_12"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		
+		},
+		{
+			"name": "Connector-2",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",	
+					"placement": "Uniform"
+				}
+
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-Connector-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-1-Connector-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-2-Connector-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-2-Treasure-3"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_connector_34"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		
+		},
+		{
+			"name": "Spawn-Poor-B-1",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player2",
+					"placement": "Uniform"
+				},
+				{
+					"type": "City",	
+					"placement": "Uniform"
+				}
+			],
+			
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-1-Spawn-Poor-B-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-1-Connector-3"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-1-Connector-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-1-Treasure-5"] }  },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_spawn"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+		{
+			"name": "Spawn-Poor-B-2",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+
+			"mainObjects": 
+			[
+				{
+					"type": "Spawn",	
+					"spawn": "Player2",
+					"placement": "Uniform"
+				},
+				{
+					"type": "City",	
+					"placement": "Uniform"
+				}
+			],
+			
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-1-Spawn-Poor-B-2"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-2-Connector-3"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-2-Connector-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-2-Treasure-6"] }  },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_connector_34"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		},
+		{
+			"name": "Connector-3",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",	
+					"placement": "Uniform"
+				}
+
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-3-Connector-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-1-Connector-3"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-2-Connector-3"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-3-SuperTreasure-2"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_connector_12"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		
+		},
+		{
+			"name": "Connector-4",
+
+			"size": 0.75,
+			"layout": "zone_layout_spawns",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+			"mainObjects": 
+			[
+				{
+					"type": "City",	
+					"placement": "Uniform"
+				}
+
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+			"crossroadsPosition" : 0,
+			"roads": 
+			[
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-3-Connector-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-1-Connector-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-2-Connector-4"] }  },
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-4-Treasure-4"] }  }
+			],
+
+			"guardedContentPool": ["content_pool_anarchy_poor_guarded_start_zone"],
+			"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_start_zone"],
+			"resourcesContentPool": ["content_pool_general_resources_start_zone_medium"],
+
+			"mandatoryContent": ["mandatory_content_connector_34"],
+			"contentCountLimits": ["content_limits_spawn"],
+					
+			"guardedContentValue": 200000,
+			"guardedContentValuePerArea": 1000,
+			"unguardedContentValue": 35000,
+			"unguardedContentValuePerArea": 1000,
+			"resourcesValue": 3000,
+			"resourcesValuePerArea": 100
+		
+		},
+		{
+        "name": "SuperTreasure-1",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+				{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Center"
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "Connector-1-SuperTreasure-1" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "Connector-1-SuperTreasure-1" ]
+						}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-SuperTreasure-1"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-1-SuperTreasure-1"] } },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_guarded_supertreasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_unguarded_supertreasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_center"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+			"guardedContentValue": 1000000,
+			"guardedContentValuePerArea": 20000,
+			"unguardedContentValue": 0,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "SuperTreasure-2",
+
+        "size": 1.25,
+		"layout": "zone_layout_center",
+
+			"guardCutoffValue": 1500,
+    		"guardRandomization": 0.05,
+			"guardMultiplier": 1.6,
+			"guardWeeklyIncrement": 0.10,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+		"mainObjects": 
+			[
+					{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Center"
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "Connector-3-SuperTreasure-2" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "SuperTreasure-1-SuperTreasure-2" ]
+						}
+			],
+			"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        	"roads": 
+        [
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-3-SuperTreasure-2"] }},
+				{ "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["SuperTreasure-1-SuperTreasure-2"] } },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+				{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  }
+		],
+
+        
+        "guardedContentPool": ["content_pool_anarchy_guarded_supertreasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_unguarded_supertreasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_treasure_zone_poor"],
+
+		"mandatoryContent": ["mandatory_content_center"],
+		"contentCountLimits": ["content_limits_treasure"],
+				
+			"guardedContentValue": 1000000,
+			"guardedContentValuePerArea": 20000,
+			"unguardedContentValue": 0,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-1",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[
+            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-1-Treasure-1"] }  }
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_3"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-2",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[            
+            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-A-2-Treasure-2"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_3"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-3",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-2-Treasure-3"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_3"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-4",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Connector-4-Treasure-4"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_1"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-5",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[
+            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-1-Treasure-5"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_2"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    },
+	{
+        "name": "Treasure-6",
+
+        "size": 0.85,
+        "layout": "zone_layout_center",
+
+		"guardCutoffValue": 1500,
+    	"guardRandomization": 0.05,
+		"guardMultiplier": 1.6,
+		"guardWeeklyIncrement": 0.20,
+			"guardReactionDistribution": [ 1, 1, 4, 4, 2, 1 ],
+			"encounterHolesSettings": { "affectedEncounters": 0.66, "twoHoleEncounters": 0.66 },
+
+        "mainObjects": 
+        [
+            {
+                "type": "City",
+				"guardChance": 0.5,
+				"guardValue": 3000,
+				"guardWeeklyIncrement": 0.20,
+				"buildingsConstructionSid": "poor_buildings_construction",
+                "placement": "Center"
+            }
+        ],
+        "zoneBiome": { "type": "MatchMainObject", "args": [ "0" ]},
+		"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+		"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+        "roads": 
+		[            
+            { "type": "Stone", "from": { "type": "MainObject", "args": ["0"] }, "to": { "type": "Connection", "args": ["Spawn-Poor-B-2-Treasure-6"] }  }
+
+        ],
+    
+        
+        "guardedContentPool": ["content_pool_anarchy_poor_guarded_treasure_zone"],
+		"unguardedContentPool": ["content_pool_anarchy_poor_unguarded_treasure_zone"],
+		"resourcesContentPool": ["content_pool_general_resources_start_zone_very_poor"],
+
+       		"mandatoryContent": ["mandatory_content_treasure_3"],
+			"contentCountLimits": ["content_limits_treasure"],
+					
+			"guardedContentValue": 700000,
+			"guardedContentValuePerArea": 15000,
+			"unguardedContentValue": 15000,
+			"unguardedContentValuePerArea": 0,
+			"resourcesValue": 0,
+			"resourcesValuePerArea": 0
+    }
+	
+    ],
+	"connections": [
+		{
+			"name": "Spawn-Poor-A-1-Connector-1",
+			"from": "Spawn-Poor-A-1",
+			  "to": "Connector-1",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-1-Connector-2",
+			"from": "Spawn-Poor-A-1",
+			  "to": "Connector-2",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-1-Treasure-1",
+			"from": "Spawn-Poor-A-1",
+			  "to": "Treasure-1",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 12000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-1-Spawn-Poor-A-2",
+			"from": "Spawn-Poor-A-1",
+			  "to": "Spawn-Poor-A-2",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-2-Connector-1",
+			"from": "Spawn-Poor-A-2",
+			  "to": "Connector-1",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-2-Connector-2",
+			"from": "Spawn-Poor-A-2",
+			  "to": "Connector-2",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-A-2-Treasure-2",
+			"from": "Spawn-Poor-A-2",
+			  "to": "Treasure-2",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 12000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-1-SuperTreasure-1",
+			"from": "Connector-1",
+			  "to": "SuperTreasure-1",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-2-Treasure-3",
+			"from": "Connector-2",
+			  "to": "Treasure-3",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 12000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-1-Connector-2",
+			"from": "Connector-1",
+			  "to": "Connector-2",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-3-SuperTreasure-2",
+			"from": "Connector-3",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-4-Treasure-4",
+			"from": "Connector-4",
+			  "to": "Treasure-4",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 12000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Connector-3-Connector-4",
+			"from": "Connector-3",
+			  "to": "Connector-4",
+			"connectionType": "Default",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "SuperTreasure-1-SuperTreasure-2",
+			"from": "SuperTreasure-1",
+			  "to": "SuperTreasure-2",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 60000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-1-Connector-3",
+			"from": "Spawn-Poor-B-1",
+			  "to": "Connector-3",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-1-Connector-4",
+			"from": "Spawn-Poor-B-1",
+			  "to": "Connector-4",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-1-Treasure-5",
+			"from": "Spawn-Poor-B-1",
+			  "to": "Treasure-5",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 12000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-1-Spawn-Poor-B-2",
+			"from": "Spawn-Poor-B-1",
+			  "to": "Spawn-Poor-B-2",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-2-Connector-3",
+			"from": "Spawn-Poor-B-2",
+			  "to": "Connector-3",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-2-Connector-4",
+			"from": "Spawn-Poor-B-2",
+			  "to": "Connector-4",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 6000,
+			"guardWeeklyIncrement": 0.20
+		},
+		{
+			"name": "Spawn-Poor-B-2-Treasure-6",
+			"from": "Spawn-Poor-B-2",
+			  "to": "Treasure-6",
+			"connectionType": "Direct",
+			"road": true,
+			"guardValue": 12000,
+			"guardWeeklyIncrement": 0.20
+		}
+	]
+	}
+
+	],
+	"zoneLayouts": 
+	[
+		{
+			"name": "zone_layout_center",
+
+			"obstaclesFill": 0.56,
+			"obstaclesFillVoid": 0.56,
+			"lakesFill": 0.2,
+			"elevationClusterScale": 0.16,
+			"elevationModes": [
+				{ "weight": 2, "minElevatedFraction": 0.2, "maxElevatedFraction": 0.4 },
+				{ "weight": 1, "minElevatedFraction": 0.6, "maxElevatedFraction": 0.8 }
+			],
+			"roadClusterArea": 160,
+
+			"guardedEncounterResourceFractions": 
+			{
+				"countBounds" : [],
+				"fractions": [ 0.5 ]
+			},
+
+			"ambientPickupDistribution": 
+			{  
+				"repulsion": 1.0,
+				"noise": 0.3,
+				"roadAttraction": 0.5,
+				"obstacleAttraction": 0.0,
+				"groupSizeWeights": [ 4, 1, 1 ]
+			}
+		},
+
+		{
+			"name": "zone_layout_spawns",
+
+			"obstaclesFill": 0.48,
+			"obstaclesFillVoid": 0.48,
+			"lakesFill": 0.2,
+			"elevationClusterScale": 0.16,
+			"elevationModes": [
+				{ "weight": 2, "minElevatedFraction": 0.2, "maxElevatedFraction": 0.4 },
+				{ "weight": 1, "minElevatedFraction": 0.6, "maxElevatedFraction": 0.8 }
+			],
+			"roadClusterArea": 160,
+
+			"guardedEncounterResourceFractions": 
+			{
+				"countBounds" : [],
+				"fractions": [ 0.66 ]
+			},
+
+			"ambientPickupDistribution": 
+			{  
+				"repulsion": 1.0,
+				"noise": 0.3,
+				"roadAttraction": 0.5,
+				"obstacleAttraction": 0.0,
+				"groupSizeWeights": [ 4, 1, 1 ]
+			}
+		}
+	],
+				"mandatoryContent": 
+	[
+		{
+			"name": "mandatory_content_spawn",
+			"content":
+			[
+				{
+					"sid": "watchtower",
+					"isGuarded": false,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.05, "targetMax": 0.15, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.05, "targetMax": 0.15, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_wood",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2,  "weight": 1 } ]
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_connector_1",
+			"content":
+			[
+				{
+					"sid": "mine_wood",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2,  "weight": 1 } ]
+				},
+				{
+					"sid": "mine_gemstones",
+					"isMine": true
+				}
+
+			]
+		},
+		{
+			"name": "mandatory_content_connector_2",
+			"content":
+			[
+				{
+					"sid": "mine_wood",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2,  "weight": 1 } ]
+				},
+				{
+					"sid": "mine_crystals",
+					"isMine": true
+				}
+
+			]
+		},
+		{
+			"name": "mandatory_content_connector_3",
+			"content":
+			[
+				{
+					"sid": "mine_wood",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2,  "weight": 1 } ]
+				},
+				{
+					"sid": "mine_mercury",
+					"isMine": true
+				}
+
+			]
+		},
+		{
+			"name": "mandatory_content_connector_4",
+			"content":
+			[
+				{
+					"sid": "mine_wood",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2,  "weight": 1 } ]
+				},
+				{
+					"sid": "mine_mercury",
+					"isMine": true
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				}
+
+			]
+		},
+		{
+			"name": "mandatory_content_connector_12",
+			"content":
+			[
+				{
+					"sid": "mine_wood",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2,  "weight": 1 } ]
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				}
+
+			]
+		},
+		{
+			"name": "mandatory_content_connector_34",
+			"content":
+			[
+				{
+					"sid": "mine_wood",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"designatedEncounter":false,
+					"isMine": true,
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.2,  "weight": 1 } ]
+				},
+				{
+					"sid": "mine_crystals",
+					"isMine": true
+				},
+				{
+					"sid": "mine_gemstones",
+					"isMine": true
+				}
+
+			]
+		},
+		{
+			"name": "mandatory_content_treasure_1",
+			"content":
+			[
+				{
+					"sid": "dragon_utopia",
+					"variant": -1
+				},
+				{
+					"sid": "mythic_scroll_box",
+					"variant": -1
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_treasure_2",
+			"content":
+			[
+				{
+					"sid": "dragon_utopia",
+					"variant": -1
+				},
+				{
+					"sid": "mythic_scroll_box",
+					"variant": -1
+				},
+				{
+					"sid": "mine_gemstones",
+					"isMine": true
+				}
+			]
+		}
+		,
+		{
+			"name": "mandatory_content_treasure_3",
+			"content":
+			[
+				{
+					"sid": "dragon_utopia",
+					"variant": -1
+				},
+
+				{
+					"sid": "mythic_scroll_box",
+					"variant": -1
+				},
+				{
+					"sid": "mine_mercury",
+					"isMine": true
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_treasure_4",
+			"content":
+			[
+				{
+					"sid": "dragon_utopia",
+					"variant": -1
+				},
+				{
+					"sid": "mythic_scroll_box",
+					"variant": -1
+				},
+				{
+					"sid": "mine_crystals",
+					"isMine": true
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_treasure",
+			"content":
+			[
+				{ 
+					"sid": "dragon_utopia",
+					"variant": -1
+				},
+				{
+					"sid": "dragon_utopia",	
+					"variant": -1
+				},
+				{
+					"sid": "random_item_legendary"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+				
+	
+				{
+					"sid": "mine_gold",	
+					"isMine": true
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				},
+				{
+					"sid": "wind_rose"
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_center",
+			"content":
+			[
+				{ 
+					"sid": "dragon_utopia",
+					"variant": -1
+				},
+				{
+					"sid": "dragon_utopia",	
+					"variant": -1
+				},
+				{
+					"sid": "random_item_legendary"
+				},
+				{
+					"sid": "random_item_legendary"
+				},
+	
+				{
+					"sid": "mine_gold",	
+					"isMine": true
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				},
+				{
+					"sid": "wind_rose"
+				}
+			]
+		}
+	],
+		"contentCountLimits":
+		[
+			{
+			"name": "content_limits_spawn",
+			"limits":
+			[
+				{
+					"sid": "stables",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "watchtower",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "crystal_trail",
+					"variant": -1,
+					"maxCount": 1
+				},
+				{
+					"sid": "tear_of_truth",
+					"variant": -1,
+					"maxCount": 1
+				},	
+				{
+					"sid": "celestial_sphere",
+					"variant": -1,
+					"maxCount": 1
+				}
+			]
+		},
+
+		{
+			"name": "content_limits_treasure",
+			"limits":
+			[
+
+				{
+					"sid": "stables",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "watchtower",
+					"variant": -1,
+					"maxCount": 0
+				},
+				{
+					"sid": "crystal_trail",
+					"variant": -1,
+					"maxCount": 1
+				},
+				{
+					"sid": "tear_of_truth",
+					"variant": -1,
+					"maxCount": 1
+				},	
+				{
+					"sid": "celestial_sphere",
+					"variant": -1,
+					"maxCount": 1
+				}
+			]
+		}
+	],
+	"contentPools": 
+	[
+
+	],
+	"contentLists": 
+	[
+
+	]
+}

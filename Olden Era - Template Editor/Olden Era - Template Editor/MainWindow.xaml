@@ -1,0 +1,140 @@
+﻿<Window x:Class="Olden_Era___Template_Editor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Olden_Era___Template_Editor"
+        mc:Ignorable="d"
+        Title="Olden Era – Template Generator" Height="530" Width="460"
+        ResizeMode="CanMinimize">
+
+    <Window.Resources>
+        <Style TargetType="Label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="3,0"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="Slider">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="180"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="50"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="3"
+                   Text="Random Map Generator" FontSize="18" FontWeight="Bold"
+                   HorizontalAlignment="Center"/>
+
+        <!-- Template name -->
+        <Label Grid.Row="2" Grid.Column="0" Content="Template Name"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                 x:Name="TxtTemplateName" Text="Custom Template"/>
+
+        <!-- Game mode -->
+        <Label Grid.Row="3" Grid.Column="0" Content="Game Mode" Margin="0,6,0,0"/>
+        <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                  x:Name="CmbGameMode" Margin="0,6,0,0"/>
+
+        <!-- Players -->
+        <Label Grid.Row="4" Grid.Column="0" Content="Players" Margin="0,6,0,0"/>
+        <Slider Grid.Row="4" Grid.Column="1"
+                x:Name="SldPlayers" Margin="0,6,0,0"
+                Minimum="2" Maximum="8" Value="2"
+                TickFrequency="1" IsSnapToTickEnabled="True"
+                ValueChanged="Slider_ValueChanged"/>
+        <TextBlock Grid.Row="4" Grid.Column="2"
+                   x:Name="TxtPlayers" Text="2"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                   FontSize="13" Margin="0,6,0,0"/>
+
+        <!-- Min heroes -->
+        <Label Grid.Row="5" Grid.Column="0" Content="Min Heroes" Margin="0,6,0,0"/>
+        <Slider Grid.Row="5" Grid.Column="1"
+                x:Name="SldHeroMin" Margin="0,6,0,0"
+                Minimum="1" Maximum="10" Value="5"
+                TickFrequency="1" IsSnapToTickEnabled="True"
+                ValueChanged="Slider_ValueChanged"/>
+        <TextBlock Grid.Row="5" Grid.Column="2"
+                   x:Name="TxtHeroMin" Text="5"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                   FontSize="13" Margin="0,6,0,0"/>
+
+        <!-- Max heroes -->
+        <Label Grid.Row="6" Grid.Column="0" Content="Max Heroes" Margin="0,6,0,0"/>
+        <Slider Grid.Row="6" Grid.Column="1"
+                x:Name="SldHeroMax" Margin="0,6,0,0"
+                Minimum="1" Maximum="10" Value="10"
+                TickFrequency="1" IsSnapToTickEnabled="True"
+                ValueChanged="Slider_ValueChanged"/>
+        <TextBlock Grid.Row="6" Grid.Column="2"
+                   x:Name="TxtHeroMax" Text="10"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                   FontSize="13" Margin="0,6,0,0"/>
+
+        <!-- Neutral zones -->
+        <Label Grid.Row="7" Grid.Column="0" Content="Neutral Zones" Margin="0,6,0,0"/>
+        <Slider Grid.Row="7" Grid.Column="1"
+                x:Name="SldNeutral" Margin="0,6,0,0"
+                Minimum="0" Maximum="8" Value="0"
+                TickFrequency="1" IsSnapToTickEnabled="True"
+                ValueChanged="Slider_ValueChanged"/>
+        <TextBlock Grid.Row="7" Grid.Column="2"
+                   x:Name="TxtNeutral" Text="0"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                   FontSize="13" Margin="0,6,0,0"/>
+
+        <!-- Map size -->
+        <Label Grid.Row="8" Grid.Column="0" Content="Map Size" Margin="0,6,0,0"/>
+        <ComboBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2"
+                  x:Name="CmbMapSize" Margin="0,6,0,0"/>
+
+        <!-- Victory condition -->
+        <Label Grid.Row="9" Grid.Column="0" Content="Victory Condition" Margin="0,6,0,0"/>
+        <ComboBox Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2"
+                  x:Name="CmbVictory" Margin="0,6,0,0"/>
+
+        <!-- Validation message -->
+        <TextBlock Grid.Row="11" Grid.ColumnSpan="3"
+                   x:Name="TxtValidation"
+                   Foreground="Red" FontSize="12" TextWrapping="Wrap"
+                   HorizontalAlignment="Center"/>
+
+        <!-- Generate button -->
+        <Button Grid.Row="13" Grid.ColumnSpan="3"
+                x:Name="BtnGenerate" Content="Generate &amp; Save…"
+                Height="34" FontSize="14" FontWeight="SemiBold"
+                Click="BtnGenerate_Click"/>
+    </Grid>
+</Window>

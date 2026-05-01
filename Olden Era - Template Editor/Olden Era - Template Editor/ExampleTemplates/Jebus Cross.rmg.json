@@ -1,0 +1,3330 @@
+{
+	"name": "Jebus Cross",
+
+	"gameMode": "Classic",
+    "description": "templates_description_jebus_cross",
+    "displayWinCondition": "win_condition_5",
+
+	"sizeX": 160,
+	"sizeZ": 160,
+
+	"gameRules":
+	{
+		"heroCountMin": 5,
+		"heroCountMax": 10,
+		"heroCountIncrement": 1,
+		"heroHireBan": false,
+		"encounterHoles": false,
+
+		"bonuses":
+		[
+			{
+				"sid": "add_bonus_hero_stat",
+				"receiverSide": -1,
+				"receiverFilter": "all_heroes",
+				"parameters": [ "movementBonus", "0" ]
+			}
+		],
+
+		"winConditions":
+		{
+			"classic" : true,
+			"desertion" : true,
+			"desertionDay" : 3,
+			"desertionValue" : 3000,
+			"heroLighting" : true,
+			"heroLightingDay" : 1,
+			"lostStartCity" : false,
+			"lostStartCityDay" : 3,
+			"lostStartHero" : false,
+			"cityHold" : true,
+			"cityHoldDays" : 6
+		},
+
+		"factionLawsExpModifier": 1.0,
+		"astrologyExpModifier": 1.0
+	},
+
+	"variants":
+	[
+		{
+			"orientation": 
+			{
+				"zeroAngleZone": "Spawn-A",
+				"baseAngleMin": 45,
+				"baseAngleMax": 45,
+				"randomAngleAmplitude": 360,
+				"randomAngleStep": 90
+			},
+
+			"border":
+			{
+				"cornerRadius": 0.0,
+				"obstaclesWidth": 3,
+				"obstaclesNoise": [ {"amp": 1, "freq": 12 } ],
+				"waterWidth": 0,
+				"waterNoise": [ {"amp": 1, "freq": 12 } ],
+				"waterType": "water grass"
+			},
+			
+			"zones": 
+			[
+				{
+					"name": "Center",
+
+					"size": 1.35,
+					"layout": "zone_layout_center",
+
+					"guardCutoffValue": 3000,
+					"guardRandomization": 0.05,
+					"guardMultiplier": 1.6,
+					"guardWeeklyIncrement": 0.20,
+					"guardReactionDistribution": [ 40, 20, 10, 5, 2, 0 ],
+					"diplomacyModifier": -0.5,
+
+					"guardedContentPool": [ "template_pool_jebus_cross_guarded_center_zone" ],
+					"unguardedContentPool": [ "template_pool_jebus_cross_unguarded_center_zone" ],
+					"resourcesContentPool": [ "content_pool_general_resources_treasure_zone_rich_no_scrolls" ],
+					
+					"mandatoryContent": [ "mandatory_content_center" ],
+					"contentCountLimits": [ 
+						"content_limits_center_1", "content_limits_center_2", "content_limits_center_3", "content_limits_center_4", "content_limits_center_5", "content_limits_center_6"
+					],
+					
+					"guardedContentValue": 2150000,
+					"guardedContentValuePerArea": 0,
+					"unguardedContentValue": 125000,
+					"unguardedContentValuePerArea": 0,
+					"resourcesValue": 0,
+					"resourcesValuePerArea": 0,
+
+					"mainObjects": 
+					[
+						{
+							"type": "City",
+							"guardValue": 25000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "ultra_rich_buildings_construction",
+							"faction": { "type": "FromList", "args": [] },
+							"placement": "Center",
+							"holdCityWinCon": true
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "Center-A-Main" ],
+							"faction": { "type": "FromList", "args": [ "differentFrom: 0 Spawn-A" ] }
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "Center-B-Main" ],
+							"faction": { "type": "FromList", "args": [ "differentFrom: 0 Spawn-B" ] }
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "Center-C-Main" ],
+							"faction": { "type": "FromList", "args": [ "differentFrom: 0 Side-C" ] }
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Connection",
+							"placementArgs": [ "Center-D-Main" ],
+							"faction": { "type": "FromList", "args": [ "differentFrom: 0 Side-D" ] }
+						}
+					],
+					"zoneBiome": { "type": "FromList", "args": [ "Sand" ] },
+					"contentBiome": { "type": "MatchZone", "args": [  ] },
+					"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"crossroadsPosition" : 0,
+					"roads": [
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "Connection", "args": [ "Center-A-Main" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "Connection", "args": [ "Center-B-Main" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "Connection", "args": [ "Center-C-Main" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "Connection", "args": [ "Center-D-Main" ] }  },
+
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "1" ] }, "to": { "type": "Connection", "args": [ "Center-A-Main" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "2" ] }, "to": { "type": "Connection", "args": [ "Center-B-Main" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "3" ] }, "to": { "type": "Connection", "args": [ "Center-C-Main" ] }  },
+						{ "type": "Stone", "from": { "type": "MainObject", "args": [ "4" ] }, "to": { "type": "Connection", "args": [ "Center-D-Main" ] }  },
+						
+						{ "type": "Dirt", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MandatoryContent", "args": [ "name_remote_foothold_1" ] }  },						
+						{ "type": "Dirt", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MandatoryContent", "args": [ "name_remote_foothold_2" ] }  },						
+						{ "type": "Dirt", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MandatoryContent", "args": [ "name_remote_foothold_3" ] }  },						
+						{ "type": "Dirt", "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MandatoryContent", "args": [ "name_remote_foothold_4" ] }  }
+					]
+				},
+				{
+					"name": "Spawn-A",
+
+					"size": 1.0,
+					"layout": "zone_layout_spawns",
+
+					"guardCutoffValue": 2000,
+					"guardRandomization": 0.05,
+					"guardMultiplier": 1.0,
+					"guardWeeklyIncrement": 0.20,
+					"guardReactionDistribution": [ 60, 20, 10, 10, 2, 0 ],
+					"diplomacyModifier": -0.5,
+
+					"guardedContentPool": [ "template_pool_jebus_cross_guarded_start_zone" ],
+					"unguardedContentPool": [ "template_pool_jebus_cross_unguarded_start_zone" ],
+					"resourcesContentPool": [ "content_pool_general_resources_start_zone_rich" ],
+					
+					"mandatoryContent": [ "mandatory_content_side_A" ],
+					"contentCountLimits": [ 
+						"content_limits_side_1_2", "content_limits_side_1_3", "content_limits_side_1_4", "content_limits_side_1_5", "content_limits_side_1_6",
+						"content_limits_side_2_3", "content_limits_side_2_4", "content_limits_side_2_5", "content_limits_side_2_6",
+						"content_limits_side_3_4", "content_limits_side_3_5", "content_limits_side_3_6",
+						"content_limits_side_4_5", "content_limits_side_4_6",
+						"content_limits_side_5_6"
+					],
+
+					"guardedContentValue": 500000,
+					"guardedContentValuePerArea": 0,
+					"unguardedContentValue": 125000,
+					"unguardedContentValuePerArea": 0,
+					"resourcesValue": 200000,
+					"resourcesValuePerArea": 0,
+
+					"mainObjects": 
+					[
+						{
+							"type": "Spawn",	"spawn": "Player1",
+							"removeGuardIfHasOwner": true,
+							"guardChance": 0.5,
+							"guardValue": 5000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "default_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "true", "0.7", "0" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 2500,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "poor_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "3" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 2500,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "poor_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "3" ]
+						}
+					],
+					"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"crossroadsPosition" : 0,
+					"roads": [
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "Connection", "args": [ "Center-A-Main" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MandatoryContent", "args": [ "name_remote_foothold_1" ] }  }
+					]
+				},
+				{
+					"name": "Spawn-B",
+
+					"size": 1.0,
+					"layout": "zone_layout_spawns",
+
+					"guardCutoffValue": 2000,
+					"guardRandomization": 0.05,
+					"guardMultiplier": 1.0,
+					"guardWeeklyIncrement": 0.20,
+					"guardReactionDistribution": [ 60, 20, 10, 10, 2, 0 ],
+					"diplomacyModifier": -0.5,
+					
+					"guardedContentPool": [ "template_pool_jebus_cross_guarded_start_zone" ],
+					"unguardedContentPool": [ "template_pool_jebus_cross_unguarded_start_zone" ],
+					"resourcesContentPool": [ "content_pool_general_resources_start_zone_rich" ],
+					
+					"mandatoryContent": [ "mandatory_content_side_B" ],
+					"contentCountLimits": [ 
+						"content_limits_side_1_2", "content_limits_side_1_3", "content_limits_side_1_4", "content_limits_side_1_5", "content_limits_side_1_6",
+						"content_limits_side_2_3", "content_limits_side_2_4", "content_limits_side_2_5", "content_limits_side_2_6",
+						"content_limits_side_3_4", "content_limits_side_3_5", "content_limits_side_3_6",
+						"content_limits_side_4_5", "content_limits_side_4_6",
+						"content_limits_side_5_6"
+					],
+
+					"guardedContentValue": 500000,
+					"guardedContentValuePerArea": 0,
+					"unguardedContentValue": 125000,
+					"unguardedContentValuePerArea": 0,
+					"resourcesValue": 200000,
+					"resourcesValuePerArea": 0,
+
+					"mainObjects": 
+					[
+						{
+							"type": "Spawn",	"spawn": "Player2",
+							"removeGuardIfHasOwner": true,
+							"guardChance": 0.5,
+							"guardValue": 5000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "default_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "true", "0.7", "0" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 2500,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "poor_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "3" ]
+						},
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 2500,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "poor_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "3" ]
+						}
+					],
+					"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"crossroadsPosition" : 0,
+					"roads": [
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "Connection", "args": [ "Center-B-Main" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MandatoryContent", "args": [ "name_remote_foothold_1" ] }  }
+					]
+				},
+				{
+					"name": "Side-C",
+
+					"size": 1.0,
+					"layout": "zone_layout_spawns",
+
+					"guardCutoffValue": 2000,
+					"guardRandomization": 0.05,
+					"guardMultiplier": 1.3,
+					"guardWeeklyIncrement": 0.20,
+					"guardReactionDistribution": [ 0, 10, 10, 10, 10, 0 ],
+					"diplomacyModifier": -0.5,
+					
+					"guardedContentPool": [ "template_pool_jebus_cross_guarded_side_zone" ],
+					"unguardedContentPool": [ "template_pool_jebus_cross_unguarded_side_zone" ],
+					"resourcesContentPool": [ "content_pool_general_resources_start_zone_rich" ],
+					
+					"mandatoryContent": [ "mandatory_content_side_C" ],
+					"contentCountLimits": [ 
+						"content_limits_side_1_2", "content_limits_side_1_3", "content_limits_side_1_4", "content_limits_side_1_5", "content_limits_side_1_6",
+						"content_limits_side_2_3", "content_limits_side_2_4", "content_limits_side_2_5", "content_limits_side_2_6",
+						"content_limits_side_3_4", "content_limits_side_3_5", "content_limits_side_3_6",
+						"content_limits_side_4_5", "content_limits_side_4_6",
+						"content_limits_side_5_6"
+					],
+
+					"guardedContentValue": 650000,
+					"guardedContentValuePerArea": 0,
+					"unguardedContentValue": 100000,
+					"unguardedContentValuePerArea": 0,
+					"resourcesValue": 150000,
+					"resourcesValuePerArea": 0,
+
+					"mainObjects": 
+					[
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "true", "0.8", "2" ]
+						},
+						{
+							"type": "City",
+							"faction": { "type": "Match", "args": [ "0" ] },
+							"guardChance": 0.5,
+							"guardValue": 2500,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "extra_rich_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "4" ]
+						},
+						{
+							"type": "City",
+							"faction": { "type": "Match", "args": [ "0" ] },
+							"guardChance": 0.5,
+							"guardValue": 2500,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "4" ]
+						}
+					],
+
+					"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"crossroadsPosition" : 0,
+					"roads": [
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "Connection", "args": [ "Center-C-Main" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MandatoryContent", "args": [ "name_remote_foothold_1" ] }  }
+					]
+				},
+				{
+					"name": "Side-D",
+
+					"size": 1.0,
+					"layout": "zone_layout_spawns",
+
+					"guardCutoffValue": 2000,
+					"guardRandomization": 0.05,
+					"guardMultiplier": 1.3,
+					"guardWeeklyIncrement": 0.20,
+					"guardReactionDistribution": [ 0, 10, 10, 10, 10, 0 ],
+					"diplomacyModifier": -0.5,
+					
+					"guardedContentPool": [ "template_pool_jebus_cross_guarded_side_zone" ],
+					"unguardedContentPool": [ "template_pool_jebus_cross_unguarded_side_zone" ],
+					"resourcesContentPool": [ "content_pool_general_resources_start_zone_rich" ],
+					
+					"mandatoryContent": [ "mandatory_content_side_D" ],
+					"contentCountLimits": [ 
+						"content_limits_side_1_2", "content_limits_side_1_3", "content_limits_side_1_4", "content_limits_side_1_5", "content_limits_side_1_6",
+						"content_limits_side_2_3", "content_limits_side_2_4", "content_limits_side_2_5", "content_limits_side_2_6",
+						"content_limits_side_3_4", "content_limits_side_3_5", "content_limits_side_3_6",
+						"content_limits_side_4_5", "content_limits_side_4_6",
+						"content_limits_side_5_6"
+					],
+
+					"guardedContentValue": 650000,
+					"guardedContentValuePerArea": 0,
+					"unguardedContentValue": 100000,
+					"unguardedContentValuePerArea": 0,
+					"resourcesValue": 150000,
+					"resourcesValuePerArea": 0,
+
+
+					"mainObjects": 
+					[
+						{
+							"type": "City",
+							"guardChance": 0.5,
+							"guardValue": 10000,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "true", "0.8", "2" ]
+						},
+						{
+							"type": "City",
+							"faction": { "type": "Match", "args": [ "0" ] },
+							"guardChance": 0.5,
+							"guardValue": 2500,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "extra_rich_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "4" ]
+						},
+						{
+							"type": "City",
+							"faction": { "type": "Match", "args": [ "0" ] },
+							"guardChance": 0.5,
+							"guardValue": 2500,
+							"guardWeeklyIncrement": 0.10,
+							"buildingsConstructionSid": "rich_buildings_construction",
+							"placement": "Uniform",
+							"placementArgs": [ "false", "-0.8", "4" ]
+						}
+					],
+
+					"zoneBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"contentBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"metaObjectsBiome": { "type": "MatchMainObject", "args": [ "0" ] },
+					"crossroadsPosition" : 0,
+					"roads": [
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "Connection", "args": [ "Center-D-Main" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "1" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MainObject", "args": [ "2" ] }  },
+						{ "from": { "type": "MainObject", "args": [ "0" ] }, "to": { "type": "MandatoryContent", "args": [ "name_remote_foothold_1" ] }  }
+					]
+				}
+			],
+
+			"connections": [
+				{
+					"name": "Center-A-Main",
+					"from": "Center",
+					"to": "Spawn-A",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 66666,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_main_guard",
+
+					"gatePlacement": "Center"
+				},
+				{
+					"from": "Center",
+					"to": "Spawn-A",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 66666,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_main_guard_1"
+				},
+				{
+					"from": "Center",
+					"to": "Spawn-A",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 66666,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_main_guard_2"
+				},
+				{
+					"from": "Center",
+					"to": "Spawn-A",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 66666,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_main_guard_3"
+				},
+				{
+					"from": "Center",
+					"to": "Spawn-A",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 66666,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_main_guard_4"
+				},
+				{
+					"name": "Center-B-Main",
+					"from": "Center",
+					"to": "Spawn-B",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 66666,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_main_guard",
+
+					"gatePlacement": "Center"
+				},
+				{
+					"from": "Center",
+					"to": "Spawn-B",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 66666,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_main_guard_1"
+				},
+				{
+					"from": "Center",
+					"to": "Spawn-B",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 66666,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_main_guard_2"
+				},
+				{
+					"from": "Center",
+					"to": "Spawn-B",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 66666,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_main_guard_3"
+				},
+				{
+					"from": "Center",
+					"to": "Spawn-B",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 66666,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_main_guard_4"
+				},
+				{
+					"name": "Center-C-Main",
+					"from": "Center",
+					"to": "Side-C",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 55555,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_side_guard",
+
+					"gatePlacement": "Center"
+				},
+				{
+					"from": "Center",
+					"to": "Side-C",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 55555,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_side_guard_1"
+				},
+				{
+					"from": "Center",
+					"to": "Side-C",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 55555,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_side_guard_2"
+				},
+				{
+					"from": "Center",
+					"to": "Side-C",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 55555,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_side_guard_3"
+				},
+				{
+					"from": "Center",
+					"to": "Side-C",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 55555,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_side_guard_4"
+				},
+				{
+					"name": "Center-D-Main",
+					"from": "Center",
+					"to": "Side-D",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 55555,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_side_guard",
+
+					"gatePlacement": "Center"
+				},
+				{
+					"from": "Center",
+					"to": "Side-D",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 55555,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_side_guard_1"
+				},
+				{
+					"from": "Center",
+					"to": "Side-D",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 55555,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_side_guard_2"
+				},
+				{
+					"from": "Center",
+					"to": "Side-D",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 55555,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_side_guard_3"
+				},
+				{
+					"from": "Center",
+					"to": "Side-D",
+					"connectionType": "Direct",
+					"guardZone": "Center",
+					"guardEscape": false,	"simTurnSquad": true,
+					"guardValue": 55555,
+					"guardWeeklyIncrement": 0.20,
+					"guardMatchGroup": "spawn_side_guard_4"
+				},
+
+				{
+					"name": "Pseudo-A-C",
+					"from": "Spawn-A",
+					"to": "Side-C",
+					"connectionType": "Proximity",
+					"length": 0.5
+				},
+				{
+					"name": "Pseudo-A-D",
+					"from": "Spawn-A",
+					"to": "Side-D",
+					"connectionType": "Proximity",
+					"length": 0.5
+				},
+
+				{
+					"name": "Pseudo-B-C",
+					"from": "Spawn-B",
+					"to": "Side-C",
+					"connectionType": "Proximity",
+					"length": 0.5
+				},
+				{
+					"name": "Pseudo-B-D",
+					"from": "Spawn-B",
+					"to": "Side-D",
+					"connectionType": "Proximity",
+					"length": 0.5
+				}
+			]
+		}
+	],
+
+	"zoneLayouts": 
+	[
+		{
+			"name": "zone_layout_center",
+
+			"obstaclesFill": 0.36,
+			"obstaclesFillVoid": 0.55,
+			"lakesFill": 0.3,
+			"minLakeArea": 16,
+			
+			"elevationClusterScale": 0.16,
+			"elevationModes": [
+				{ "weight": 2, "minElevatedFraction": 0.2, "maxElevatedFraction": 0.4 },
+				{ "weight": 1, "minElevatedFraction": 0.6, "maxElevatedFraction": 0.8 }
+			],
+
+			"roadClusterArea": 160,
+
+			"guardedEncounterResourceFractions": 
+			{
+				"countBounds" : [],
+				"fractions": [ 0.50 ]
+			},
+
+			"ambientPickupDistribution": 
+			{  
+				"repulsion": 1.0,
+				"noise": 0.3,
+				"roadAttraction": -0.30,
+				"obstacleAttraction": 0.0,
+				"groupSizeWeights": [ 20, 2, 1 ]
+			}
+		},
+
+		{
+			"name": "zone_layout_spawns",
+
+			"obstaclesFill": 0.24,
+			"obstaclesFillVoid": 0.48,
+			"lakesFill": 0.3,
+			"minLakeArea": 16,
+			
+			"elevationClusterScale": 0.16,
+			"elevationModes": [
+				{ "weight": 2, "minElevatedFraction": 0.2, "maxElevatedFraction": 0.4 },
+				{ "weight": 1, "minElevatedFraction": 0.6, "maxElevatedFraction": 0.8 }
+			],
+
+			"roadClusterArea": 160,
+
+			"guardedEncounterResourceFractions": 
+			{
+				"countBounds" : [],
+				"fractions": [ 0.66 ]
+			},
+
+			"ambientPickupDistribution": 
+			{  
+				"repulsion": 1.0,
+				"noise": 0.4,
+				"roadAttraction": -0.30,
+				"obstacleAttraction": 0.0,
+				"groupSizeWeights": [ 20, 2, 1 ]
+			}
+		}
+	],
+
+	"mandatoryContent": 
+	[
+		{
+			"name": "mandatory_content_center",
+			"content":
+			[
+				{ 
+					"sid": "unstable_ruins",
+					"variant": 1,
+					"rules":  [ { "type": "Sid", "args": [ "unstable_ruins" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{ 
+					"sid": "unstable_ruins",
+					"variant": 2,
+					"rules":  [ { "type": "Sid", "args": [ "unstable_ruins" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{ 
+					"sid": "unstable_ruins",
+					"variant": 3,
+					"rules":  [ { "type": "Sid", "args": [ "unstable_ruins" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "dragon_utopia",	
+					"variant": 1,
+					"rules":  [ { "type": "Sid", "args": [ "dragon_utopia" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "dragon_utopia",	
+					"variant": 2,
+					"rules":  [ { "type": "Sid", "args": [ "dragon_utopia" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "dragon_utopia",	
+					"variant": 3,
+					"rules":  [ { "type": "Sid", "args": [ "dragon_utopia" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "research_laboratory",	
+					"variant": 1,
+					"rules":  [ { "type": "Sid", "args": [ "research_laboratory" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "research_laboratory",	
+					"variant": 2,
+					"rules":  [ { "type": "Sid", "args": [ "research_laboratory" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "research_laboratory",	
+					"variant": 3,
+					"rules":  [ { "type": "Sid", "args": [ "research_laboratory" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+
+				{
+					"name": "name_remote_foothold_1",
+					"sid": "remote_foothold",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "remote_foothold" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.3, "weight": 1 } ]
+				},
+				{
+					"name": "name_remote_foothold_2",
+					"sid": "remote_foothold",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "remote_foothold" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.3, "weight": 1 } ]
+				},
+				{
+					"name": "name_remote_foothold_3",
+					"sid": "remote_foothold",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "remote_foothold" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.3, "weight": 1 } ]
+				},
+				{
+					"name": "name_remote_foothold_4",
+					"sid": "remote_foothold",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "remote_foothold" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.3, "weight": 1 } ]
+				},
+				{
+					"sid": "mystical_tower"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+				{
+					"sid": "pandora_box"
+				},
+				{
+					"sid": "pandora_box"
+				},
+				{
+					"sid": "pandora_box"
+				},
+				{
+					"sid": "pandora_box"
+				},
+				{
+					"sid": "pandora_box"
+				},
+				{
+					"sid": "pandora_box"
+				},
+
+				{
+					"sid": "tree_of_abundance"
+				},
+				{
+					"sid": "tree_of_abundance"
+				},
+
+				{
+					"sid": "mirage",
+					"isGuarded": true,
+					"soloEncounter": true
+				},
+
+				{ 
+					"sid": "watchtower",
+					"isMine": false,
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "watchtower" ], "targetMin": 0.75, "targetMax": 0.75, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.05, "targetMax": 0.1, "weight": 1 } ]
+				},
+				{ 
+					"sid": "watchtower",
+					"isMine": false,
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "watchtower" ], "targetMin": 0.75, "targetMax": 0.75, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.05, "targetMax": 0.1, "weight": 1 } ]
+				},
+				{ 
+					"sid": "watchtower",
+					"isMine": false,
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "watchtower" ], "targetMin": 0.75, "targetMax": 0.75, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.05, "targetMax": 0.1, "weight": 1 } ]
+				},
+				{ 
+					"sid": "watchtower",
+					"isMine": false,
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "watchtower" ], "targetMin": 0.75, "targetMax": 0.75, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.05, "targetMax": 0.1, "weight": 1 } ]
+				},	
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "mana_well" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "mana_well" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "mana_well" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "mana_well" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+
+				{
+					"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+				},
+
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+
+				{
+					"sid": "mine_gold",	
+					"isMine": true
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_side_A",
+			"content":
+			[
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_base" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_base" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_pro" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				
+				{
+					"name": "name_remote_foothold_1",
+					"isGuarded": false,
+					"sid": "remote_foothold",
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.2, "targetMax": 0.3, "weight": 0 },
+					{ "type": "MainObject", "args": [ "0" ], "targetMin": 0.2, "targetMax": 0.4, "weight": 0 },
+					{ "type": "MainObject", "args": [ "1" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 2 },
+					{ "type": "MainObject", "args": [ "2" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 2 },
+					{ "type": "Connection", "args": [ "Center-A-Main" ], "targetMin": 0.75, "targetMax": 0.75, "weight": 6 } ]
+				},
+
+				{
+					"sid": "fountain_2",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+
+				{
+					"sid": "fountain",
+					"isGuarded": false
+				},
+
+				{
+					"sid": "watchtower",
+					"isGuarded": false,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "mana_well" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "market"
+				},
+				{
+					"sid": "forge"
+				},
+				{
+					"sid": "tavern",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.4, "weight": 1 } ]
+				},
+				{
+					"sid": "stables",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+
+				{
+					"sid": "university"
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+				},
+				{
+					"sid": "college_of_wonder"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+
+
+
+				{
+					"sid": "prison",
+					"variant": 0,
+					"isGuarded": false
+				},
+				{
+					"sid": "prison",
+					"variant": 1
+				},
+				{
+					"sid": "prison",
+					"variant": 3
+				},
+
+				{
+					"sid": "random_hire_7"
+				},
+				{
+					"sid": "random_hire_6"
+				},
+				{
+					"sid": "random_hire_5"
+				},
+
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ],
+					"isGuarded": false
+				},
+
+				{
+					"sid": "random_item_legendary",
+					"soloEncounter": true
+				},
+				{
+					"sid": "random_item_epic"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+
+				{
+					"sid": "pandora_box",
+					"variant": 0,
+					"soloEncounter": true
+				},
+				{
+					"sid": "pandora_box",
+					"variant": 1
+				},
+
+				{
+					"sid": "pandora_box",
+					"variant": 4,
+					"soloEncounter": true
+				},
+				{
+					"sid": "pandora_box",
+					"variant": 5
+				},
+
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "1" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "2" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.05, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "1" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "2" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.05, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true,
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.1, "targetMax": 0.3, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true,
+					"rules":  [ { "type": "Sid", "args": [ "mine_gold" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_crystals",
+					"isMine": true
+				},
+				{
+					"sid": "mine_mercury",
+					"isMine": true
+				},
+				{
+					"sid": "mine_gemstones",
+					"isMine": true
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_side_B",
+			"content":
+			[
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_base" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_base" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_pro" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				
+				{
+					"name": "name_remote_foothold_1",
+					"isGuarded": false,
+					"sid": "remote_foothold",
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.2, "targetMax": 0.3, "weight": 0 },
+					{ "type": "MainObject", "args": [ "0" ], "targetMin": 0.2, "targetMax": 0.4, "weight": 0 },
+					{ "type": "MainObject", "args": [ "1" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 2 },
+					{ "type": "MainObject", "args": [ "2" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 2 },
+					{ "type": "Connection", "args": [ "Center-B-Main" ], "targetMin": 0.75, "targetMax": 0.75, "weight": 6 } ]
+				},
+
+				{
+					"sid": "fountain_2",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+
+				{
+					"sid": "fountain",
+					"isGuarded": false
+				},
+
+				{
+					"sid": "watchtower",
+					"isGuarded": false,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "mana_well" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "market"
+				},
+				{
+					"sid": "forge"
+				},
+				{
+					"sid": "tavern",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.4, "weight": 1 } ]
+				},
+				{
+					"sid": "stables",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+
+				{
+					"sid": "university"
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+				},
+				{
+					"sid": "college_of_wonder"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+
+
+
+				{
+					"sid": "prison",
+					"variant": 0,
+					"isGuarded": false
+				},
+				{
+					"sid": "prison",
+					"variant": 1
+				},
+				{
+					"sid": "prison",
+					"variant": 3
+				},
+
+				{
+					"sid": "random_hire_7"
+				},
+				{
+					"sid": "random_hire_6"
+				},
+				{
+					"sid": "random_hire_5"
+				},
+
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ],
+					"isGuarded": false
+				},
+
+				{
+					"sid": "random_item_legendary",
+					"soloEncounter": true
+				},
+				{
+					"sid": "random_item_epic"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+
+				{
+					"sid": "pandora_box",
+					"variant": 0,
+					"soloEncounter": true
+				},
+				{
+					"sid": "pandora_box",
+					"variant": 1
+				},
+
+				{
+					"sid": "pandora_box",
+					"variant": 4,
+					"soloEncounter": true
+				},
+				{
+					"sid": "pandora_box",
+					"variant": 5
+				},
+
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "1" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "2" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.05, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "1" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "2" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.05, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true,
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.1, "targetMax": 0.3, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true,
+					"rules":  [ { "type": "Sid", "args": [ "mine_gold" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_crystals",
+					"isMine": true
+				},
+				{
+					"sid": "mine_mercury",
+					"isMine": true
+				},
+				{
+					"sid": "mine_gemstones",
+					"isMine": true
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_side_C",
+			"content":
+			[
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_base" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_base" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_pro" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				
+				{
+					"name": "name_remote_foothold_1",
+					"isGuarded": false,
+					"sid": "remote_foothold",
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.2, "targetMax": 0.3, "weight": 0 },
+					{ "type": "MainObject", "args": [ "0" ], "targetMin": 0.2, "targetMax": 0.4, "weight": 0 },
+					{ "type": "MainObject", "args": [ "1" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 2 },
+					{ "type": "MainObject", "args": [ "2" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 2 },
+					{ "type": "Connection", "args": [ "Center-C-Main" ], "targetMin": 0.75, "targetMax": 0.75, "weight": 6 } ]
+				},
+
+				{
+					"sid": "fountain_2",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+
+				{
+					"sid": "fountain",
+					"isGuarded": false
+				},
+
+				{
+					"sid": "watchtower",
+					"isGuarded": false,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "mana_well" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "market"
+				},
+				{
+					"sid": "forge"
+				},
+				{
+					"sid": "tavern",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.4, "weight": 1 } ]
+				},
+				{
+					"sid": "stables",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+
+				{
+					"sid": "university"
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+				},
+				{
+					"sid": "college_of_wonder"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+
+
+
+				{
+					"sid": "prison",
+					"variant": 0,
+					"isGuarded": false
+				},
+				{
+					"sid": "prison",
+					"variant": 1
+				},
+				{
+					"sid": "prison",
+					"variant": 3
+				},
+
+				{
+					"sid": "random_hire_7"
+				},
+				{
+					"sid": "random_hire_6"
+				},
+				{
+					"sid": "random_hire_5"
+				},
+
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+
+				{
+					"sid": "random_item_legendary",
+					"soloEncounter": true
+				},
+				{
+					"sid": "random_item_epic"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+
+				{
+					"sid": "pandora_box",
+					"variant": 0,
+					"soloEncounter": true
+				},
+				{
+					"sid": "pandora_box",
+					"variant": 1
+				},
+
+				{
+					"sid": "pandora_box",
+					"variant": 4,
+					"soloEncounter": true
+				},
+				{
+					"sid": "pandora_box",
+					"variant": 5
+				},
+
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "1" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "2" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.05, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "1" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "2" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.05, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true,
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.1, "targetMax": 0.3, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true,
+					"rules":  [ { "type": "Sid", "args": [ "mine_gold" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_crystals",
+					"isMine": true
+				},
+				{
+					"sid": "mine_mercury",
+					"isMine": true
+				},
+				{
+					"sid": "mine_gemstones",
+					"isMine": true
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				}
+			]
+		},
+		{
+			"name": "mandatory_content_side_D",
+			"content":
+			[
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_base" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_base" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"includeLists": 	[ "template_pool_jebus_cross_guarded_resource_banks_tier_3_pro" ],
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.3, "targetMax": 0.6, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.5, "weight": 1 } ]
+				},
+				
+				{
+					"name": "name_remote_foothold_1",
+					"isGuarded": false,
+					"sid": "remote_foothold",
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.2, "targetMax": 0.3, "weight": 0 },
+					{ "type": "MainObject", "args": [ "0" ], "targetMin": 0.2, "targetMax": 0.4, "weight": 0 },
+					{ "type": "MainObject", "args": [ "1" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 2 },
+					{ "type": "MainObject", "args": [ "2" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 2 },
+					{ "type": "Connection", "args": [ "Center-D-Main" ], "targetMin": 0.75, "targetMax": 0.75, "weight": 6 } ]
+				},
+
+				{
+					"sid": "fountain_2",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+
+				{
+					"sid": "fountain",
+					"isGuarded": false
+				},
+
+				{
+					"sid": "watchtower",
+					"isGuarded": false,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+				{
+					"sid": "mana_well",
+					"isGuarded": false,
+					"rules":  [ { "type": "Sid", "args": [ "mana_well" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "market"
+				},
+				{
+					"sid": "forge"
+				},
+				{
+					"sid": "tavern",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.2, "targetMax": 0.4, "weight": 1 } ]
+				},
+				{
+					"sid": "stables",
+					"isGuarded": false,
+					"rules":  [ { "type": "Road", "args": [ ], "targetMin": 0.15, "targetMax": 0.30, "weight": 1 } ]
+				},
+
+				{
+					"sid": "university"
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+				},
+				{
+					"sid": "college_of_wonder"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+				{
+					"sid": "mystical_tower"
+				},
+
+
+
+				{
+					"sid": "prison",
+					"variant": 0,
+					"isGuarded": false
+				},
+				{
+					"sid": "prison",
+					"variant": 1
+				},
+				{
+					"sid": "prison",
+					"variant": 3
+				},
+
+				{
+					"sid": "random_hire_7"
+				},
+				{
+					"sid": "random_hire_6"
+				},
+				{
+					"sid": "random_hire_5"
+				},
+
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_random_hires" ]
+				},
+
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+				{
+					"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+				},
+
+				{
+					"sid": "random_item_legendary",
+					"soloEncounter": true
+				},
+				{
+					"sid": "random_item_epic"
+				},
+				{
+					"sid": "random_item_epic"
+				},
+
+				{
+					"sid": "pandora_box",
+					"variant": 0,
+					"soloEncounter": true
+				},
+				{
+					"sid": "pandora_box",
+					"variant": 1
+				},
+
+				{
+					"sid": "pandora_box",
+					"variant": 4,
+					"soloEncounter": true
+				},
+				{
+					"sid": "pandora_box",
+					"variant": 5
+				},
+
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "1" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "2" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_wood",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.05, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "1" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.0, "weight": 1 }, { "type": "MainObject", "args": [ "2" ], "targetMin": 0.03, "targetMax": 0.05, "weight": 2 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_ore",
+					"isMine": true,
+					"rules":  [ { "type": "MainObject", "args": [ "0" ], "targetMin": 0.0, "targetMax": 0.05, "weight": 1 }, { "type": "Road", "args": [ ], "targetMin": 0.1, "targetMax": 0.4, "weight": 2 } ]
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true,
+					"rules":  [ { "type": "Crossroads", "args": [ ], "targetMin": 0.1, "targetMax": 0.3, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_gold",
+					"isMine": true,
+					"rules":  [ { "type": "Sid", "args": [ "mine_gold" ], "targetMin": 0.5, "targetMax": 0.5, "weight": 1 } ]
+				},
+				{
+					"sid": "mine_crystals",
+					"isMine": true
+				},
+				{
+					"sid": "mine_mercury",
+					"isMine": true
+				},
+				{
+					"sid": "mine_gemstones",
+					"isMine": true
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				},
+				{
+					"sid": "alchemy_lab",
+					"isMine": true
+				}
+			]
+		}
+	],
+
+	"contentCountLimits":
+	[
+		{
+			"name": "content_limits_center",
+			"limits":
+			[
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 3 },
+				{	"sid": "tear_of_truth",		"maxCount": 3 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 2 },
+
+				{	"sid": "celestial_sphere",	"maxCount": 4 },
+				{	"sid": "arena",				"maxCount": 4 },
+				{	"sid": "sacrificial_shrine","maxCount": 4 },
+				{	"sid": "chimerologist",		"maxCount": 4 },
+				{	"sid": "wise_owl",			"maxCount": 4 },
+				{	"sid": "circus",			"maxCount": 4 },
+				{	"sid": "infernal_cirque",	"maxCount": 4 },
+				{	"sid": "university",		"maxCount": 4 },
+				{	"sid": "tree_of_abundance",	"maxCount": 3 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 4 },
+				{ 	"sid": "flattering_mirror", "maxCount": 4 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "pandora_box", "variant": 27, "maxCount": 3 }, { "sid": "pandora_box", "variant": 26, "maxCount": 3 }, { "sid": "pandora_box", "variant": 25, "maxCount": 2 }, { "sid": "pandora_box", "variant": 24, "maxCount": 1 }, { "sid": "pandora_box", "variant": 23, "maxCount": 1 },
+				{ "sid": "pandora_box", "variant": 19, "maxCount": 2 }, { "sid": "pandora_box", "variant": 20, "maxCount": 2 }, { "sid": "pandora_box", "variant": 21, "maxCount": 2 }, { "sid": "pandora_box", "variant": 22, "maxCount": 2 }
+			]
+		},
+
+		{
+			"name": "content_limits_center_0_0",
+			"limits":
+			[
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 3 },
+				{	"sid": "tear_of_truth",		"maxCount": 3 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 2 },
+
+				{	"sid": "celestial_sphere",	"maxCount": 4 },
+				{	"sid": "arena",				"maxCount": 4 },
+				{	"sid": "sacrificial_shrine","maxCount": 4 },
+				{	"sid": "chimerologist",		"maxCount": 4 },
+				{	"sid": "wise_owl",			"maxCount": 4 },
+				{	"sid": "circus",			"maxCount": 4 },
+				{	"sid": "infernal_cirque",	"maxCount": 4 },
+				{	"sid": "university",		"maxCount": 4 },
+				{	"sid": "tree_of_abundance",	"maxCount": 3 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 4 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+				{ "sid": "point_of_balance",	"maxCount": 0 },
+
+				{ "sid": "pandora_box", "variant": 27, "maxCount": 3 }, { "sid": "pandora_box", "variant": 26, "maxCount": 3 }, { "sid": "pandora_box", "variant": 25, "maxCount": 2 }, { "sid": "pandora_box", "variant": 24, "maxCount": 1 }, { "sid": "pandora_box", "variant": 23, "maxCount": 1 },
+				{ "sid": "pandora_box", "variant": 19, "maxCount": 2 }, { "sid": "pandora_box", "variant": 20, "maxCount": 2 }, { "sid": "pandora_box", "variant": 21, "maxCount": 2 }, { "sid": "pandora_box", "variant": 22, "maxCount": 2 }
+			]
+		},
+
+		{
+			"name": "content_limits_center_1",
+			"limits":
+			[
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 3 },
+				{	"sid": "tear_of_truth",		"maxCount": 3 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 2 },
+
+				{	"sid": "celestial_sphere",	"maxCount": 4 },
+				{	"sid": "arena",				"maxCount": 4 },
+				{	"sid": "sacrificial_shrine","maxCount": 4 },
+				{	"sid": "chimerologist",		"maxCount": 4 },
+				{	"sid": "wise_owl",			"maxCount": 4 },
+				{	"sid": "circus",			"maxCount": 4 },
+				{	"sid": "infernal_cirque",	"maxCount": 4 },
+				{	"sid": "university",		"maxCount": 4 },
+				{	"sid": "tree_of_abundance",	"maxCount": 3 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 4 },
+				{ 	"sid": "flattering_mirror", "maxCount": 4 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 99 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+				{ "sid": "point_of_balance",	"maxCount": 99 },
+
+				{ "sid": "pandora_box", "variant": 27, "maxCount": 3 }, { "sid": "pandora_box", "variant": 26, "maxCount": 3 }, { "sid": "pandora_box", "variant": 25, "maxCount": 2 }, { "sid": "pandora_box", "variant": 24, "maxCount": 1 }, { "sid": "pandora_box", "variant": 23, "maxCount": 1 },
+				{ "sid": "pandora_box", "variant": 19, "maxCount": 2 }, { "sid": "pandora_box", "variant": 20, "maxCount": 2 }, { "sid": "pandora_box", "variant": 21, "maxCount": 2 }, { "sid": "pandora_box", "variant": 22, "maxCount": 2 }
+			]
+		},
+
+		{
+			"name": "content_limits_center_2",
+			"limits":
+			[
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 3 },
+				{	"sid": "tear_of_truth",		"maxCount": 3 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 2 },
+
+				{	"sid": "celestial_sphere",	"maxCount": 4 },
+				{	"sid": "arena",				"maxCount": 4 },
+				{	"sid": "sacrificial_shrine","maxCount": 4 },
+				{	"sid": "chimerologist",		"maxCount": 4 },
+				{	"sid": "wise_owl",			"maxCount": 4 },
+				{	"sid": "circus",			"maxCount": 4 },
+				{	"sid": "infernal_cirque",	"maxCount": 4 },
+				{	"sid": "university",		"maxCount": 4 },
+				{	"sid": "tree_of_abundance",	"maxCount": 3 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 4 },
+				{ 	"sid": "flattering_mirror", "maxCount": 4 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 99 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+				{ "sid": "point_of_balance",	"maxCount": 99 },
+
+				{ "sid": "pandora_box", "variant": 27, "maxCount": 3 }, { "sid": "pandora_box", "variant": 26, "maxCount": 3 }, { "sid": "pandora_box", "variant": 25, "maxCount": 2 }, { "sid": "pandora_box", "variant": 24, "maxCount": 1 }, { "sid": "pandora_box", "variant": 23, "maxCount": 1 },
+				{ "sid": "pandora_box", "variant": 19, "maxCount": 2 }, { "sid": "pandora_box", "variant": 20, "maxCount": 2 }, { "sid": "pandora_box", "variant": 21, "maxCount": 2 }, { "sid": "pandora_box", "variant": 22, "maxCount": 2 }
+			]
+		},
+
+		{
+			"name": "content_limits_center_3",
+			"limits":
+			[
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 3 },
+				{	"sid": "tear_of_truth",		"maxCount": 3 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 2 },
+
+				{	"sid": "celestial_sphere",	"maxCount": 4 },
+				{	"sid": "arena",				"maxCount": 4 },
+				{	"sid": "sacrificial_shrine","maxCount": 4 },
+				{	"sid": "chimerologist",		"maxCount": 4 },
+				{	"sid": "wise_owl",			"maxCount": 4 },
+				{	"sid": "circus",			"maxCount": 4 },
+				{	"sid": "infernal_cirque",	"maxCount": 4 },
+				{	"sid": "university",		"maxCount": 4 },
+				{	"sid": "tree_of_abundance",	"maxCount": 3 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 4 },
+				{ 	"sid": "flattering_mirror", "maxCount": 4 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 99 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+				{ "sid": "point_of_balance",	"maxCount": 99 },
+
+				{ "sid": "pandora_box", "variant": 27, "maxCount": 3 }, { "sid": "pandora_box", "variant": 26, "maxCount": 3 }, { "sid": "pandora_box", "variant": 25, "maxCount": 2 }, { "sid": "pandora_box", "variant": 24, "maxCount": 1 }, { "sid": "pandora_box", "variant": 23, "maxCount": 1 },
+				{ "sid": "pandora_box", "variant": 19, "maxCount": 2 }, { "sid": "pandora_box", "variant": 20, "maxCount": 2 }, { "sid": "pandora_box", "variant": 21, "maxCount": 2 }, { "sid": "pandora_box", "variant": 22, "maxCount": 2 }
+			]
+		},
+
+		{
+			"name": "content_limits_center_4",
+			"limits":
+			[
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 3 },
+				{	"sid": "tear_of_truth",		"maxCount": 3 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 2 },
+
+				{	"sid": "celestial_sphere",	"maxCount": 4 },
+				{	"sid": "arena",				"maxCount": 4 },
+				{	"sid": "sacrificial_shrine","maxCount": 4 },
+				{	"sid": "chimerologist",		"maxCount": 4 },
+				{	"sid": "wise_owl",			"maxCount": 4 },
+				{	"sid": "circus",			"maxCount": 4 },
+				{	"sid": "infernal_cirque",	"maxCount": 4 },
+				{	"sid": "university",		"maxCount": 4 },
+				{	"sid": "tree_of_abundance",	"maxCount": 3 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 4 },
+				{ 	"sid": "flattering_mirror", "maxCount": 4 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 99 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+				{ "sid": "point_of_balance",	"maxCount": 99 },
+
+				{ "sid": "pandora_box", "variant": 27, "maxCount": 3 }, { "sid": "pandora_box", "variant": 26, "maxCount": 3 }, { "sid": "pandora_box", "variant": 25, "maxCount": 2 }, { "sid": "pandora_box", "variant": 24, "maxCount": 1 }, { "sid": "pandora_box", "variant": 23, "maxCount": 1 },
+				{ "sid": "pandora_box", "variant": 19, "maxCount": 2 }, { "sid": "pandora_box", "variant": 20, "maxCount": 2 }, { "sid": "pandora_box", "variant": 21, "maxCount": 2 }, { "sid": "pandora_box", "variant": 22, "maxCount": 2 }
+			]
+		},
+
+		{
+			"name": "content_limits_center_5",
+			"limits":
+			[
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 3 },
+				{	"sid": "tear_of_truth",		"maxCount": 3 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 2 },
+
+				{	"sid": "celestial_sphere",	"maxCount": 4 },
+				{	"sid": "arena",				"maxCount": 4 },
+				{	"sid": "sacrificial_shrine","maxCount": 4 },
+				{	"sid": "chimerologist",		"maxCount": 4 },
+				{	"sid": "wise_owl",			"maxCount": 4 },
+				{	"sid": "circus",			"maxCount": 4 },
+				{	"sid": "infernal_cirque",	"maxCount": 4 },
+				{	"sid": "university",		"maxCount": 4 },
+				{	"sid": "tree_of_abundance",	"maxCount": 3 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 4 },
+				{ 	"sid": "flattering_mirror", "maxCount": 4 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 99 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+				{ "sid": "point_of_balance",	"maxCount": 99 },
+
+				{ "sid": "pandora_box", "variant": 27, "maxCount": 3 }, { "sid": "pandora_box", "variant": 26, "maxCount": 3 }, { "sid": "pandora_box", "variant": 25, "maxCount": 2 }, { "sid": "pandora_box", "variant": 24, "maxCount": 1 }, { "sid": "pandora_box", "variant": 23, "maxCount": 1 },
+				{ "sid": "pandora_box", "variant": 19, "maxCount": 2 }, { "sid": "pandora_box", "variant": 20, "maxCount": 2 }, { "sid": "pandora_box", "variant": 21, "maxCount": 2 }, { "sid": "pandora_box", "variant": 22, "maxCount": 2 }
+			]
+		},
+
+		{
+			"name": "content_limits_center_6",
+			"limits":
+			[
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 3 },
+				{	"sid": "tear_of_truth",		"maxCount": 3 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 2 },
+
+				{	"sid": "celestial_sphere",	"maxCount": 4 },
+				{	"sid": "arena",				"maxCount": 4 },
+				{	"sid": "sacrificial_shrine","maxCount": 4 },
+				{	"sid": "chimerologist",		"maxCount": 4 },
+				{	"sid": "wise_owl",			"maxCount": 4 },
+				{	"sid": "circus",			"maxCount": 4 },
+				{	"sid": "infernal_cirque",	"maxCount": 4 },
+				{	"sid": "university",		"maxCount": 4 },
+				{	"sid": "tree_of_abundance",	"maxCount": 3 },
+				{	"sid": "fickle_shrine",		"maxCount": 3 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 4 },
+				{ 	"sid": "flattering_mirror", "maxCount": 4 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 99 },
+				{ "sid": "point_of_balance",	"maxCount": 99 },
+
+				{ "sid": "pandora_box", "variant": 27, "maxCount": 3 }, { "sid": "pandora_box", "variant": 26, "maxCount": 3 }, { "sid": "pandora_box", "variant": 25, "maxCount": 2 }, { "sid": "pandora_box", "variant": 24, "maxCount": 1 }, { "sid": "pandora_box", "variant": 23, "maxCount": 1 },
+				{ "sid": "pandora_box", "variant": 19, "maxCount": 2 }, { "sid": "pandora_box", "variant": 20, "maxCount": 2 }, { "sid": "pandora_box", "variant": 21, "maxCount": 2 }, { "sid": "pandora_box", "variant": 22, "maxCount": 2 }
+			]
+		},
+
+		{
+			"name": "content_limits_side",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_0_0",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+
+				{ "sid": "point_of_balance",	"maxCount": 0 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_1_2",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 99 },
+				{ "sid": "unforgotten_grave",	"maxCount": 99 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+				
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_1_3",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 99 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 99 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_1_4",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 99 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 99 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_1_5",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 99 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 99 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_1_6",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 99 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 99 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_2_3",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 99 },
+				{ "sid": "petrified_memorial",	"maxCount": 99 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_2_4",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 99 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 99 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_2_5",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 99 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 99 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_2_6",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 99 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 99 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_3_4",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 99 },
+				{ "sid": "the_gorge",			"maxCount": 99 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_3_5",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 99 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 99 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_3_6",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 99 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 99 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_4_5",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 99 },
+				{ "sid": "ritual_pyre",			"maxCount": 99 },
+				{ "sid": "boreal_call",			"maxCount": 0 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_4_6",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 99 },
+				{ "sid": "ritual_pyre",			"maxCount": 0 },
+				{ "sid": "boreal_call",			"maxCount": 99 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		},
+
+		{
+			"name": "content_limits_side_5_6",
+			"limits":
+			[
+				{ "includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ], "content": [ { "sid": "dragon_utopia" }, { "sid": "unstable_ruins" }, { "sid": "research_laboratory" } ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ], "maxCount": 6 },
+				{ "includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ], "maxCount": 16 },
+
+				{ "sid": "prison", "variant": -1, "maxCount": 6 },
+
+				{ "sid": "random_hire_1", "maxCount": 6 },
+				{ "sid": "random_hire_2", "maxCount": 6 },
+				{ "sid": "random_hire_3", "maxCount": 6 },
+				{ "sid": "random_hire_4", "maxCount": 6 },
+				{ "sid": "random_hire_5", "maxCount": 6 },
+				{ "sid": "random_hire_6", "maxCount": 6 },
+				{ "sid": "random_hire_7", "maxCount": 6 },
+
+				{	"sid": "beer_fountain",		"maxCount": 2 },
+				{	"sid": "quixs_path",		"maxCount": 2 },
+				{	"sid": "mysterious_stone",	"maxCount": 2 },
+				{	"sid": "pile_of_books",		"maxCount": 2 },
+				{	"sid": "stables",			"maxCount": 1 },
+				
+				{	"sid": "crystal_trail",		"maxCount": 1 },
+				{	"sid": "tear_of_truth",		"maxCount": 1 },
+				{	"sid": "fountain",			"maxCount": 2 },
+				{	"sid": "fountain_2",		"maxCount": 2 },
+				{	"sid": "mana_well",			"maxCount": 2 },
+				{	"sid": "huntsmans_camp",	"maxCount": 1 },
+
+				{	"sid": "market",			"maxCount": 1 },
+				{	"sid": "forge",				"maxCount": 2 },
+				{	"sid": "celestial_sphere",	"maxCount": 2 },
+				{	"sid": "arena",				"maxCount": 1 },
+				{	"sid": "sacrificial_shrine","maxCount": 1 },
+				{	"sid": "chimerologist",		"maxCount": 1 },
+				{	"sid": "wise_owl",			"maxCount": 3 },
+				{	"sid": "circus",			"maxCount": 2 },
+				{	"sid": "infernal_cirque",	"maxCount": 2 },
+				{	"sid": "university",		"maxCount": 2 },
+				{	"sid": "tree_of_abundance",	"maxCount": 1 },
+				{	"sid": "fickle_shrine",		"maxCount": 1 },
+
+				{	"sid": "insaras_eye",		"maxCount": 2 },
+				{ 	"sid": "watchtower", 		"maxCount": 1 },
+				{ 	"sid": "flattering_mirror", "maxCount": 2 },
+				{ 	"sid": "wind_rose", 		"maxCount": 1 },
+
+				{ "sid": "jousting_range",		"maxCount": 0 },
+				{ "sid": "unforgotten_grave",	"maxCount": 0 },
+				{ "sid": "petrified_memorial",	"maxCount": 0 },
+				{ "sid": "the_gorge",			"maxCount": 0 },
+				{ "sid": "ritual_pyre",			"maxCount": 99 },
+				{ "sid": "boreal_call",			"maxCount": 99 },
+
+				{ "sid": "point_of_balance",	"maxCount": 3 }
+			]
+		}
+	],
+
+	"contentPools": 
+	[
+
+	],
+
+	"contentLists": 
+	[
+
+	]
+}
