@@ -21,9 +21,9 @@ namespace Olden_Era___Template_Editor
         [
             (MapTopology.Random,      "Random",        "Zones are placed at random positions. Each zone connects to all zones that border it — no fixed structure."),
             (MapTopology.Default,     "Ring",          "All zones are arranged in a circle. Each zone connects to the two zones next to it."),
-            (MapTopology.HubAndSpoke, "Hub & Spoke",   "All zones connect to a shared central hub. Players never border each other directly."),
+            (MapTopology.HubAndSpoke, "Hub & Spoke [EXPERIMENTAL]",   "All zones connect to a shared central hub. Players never border each other directly."),
             (MapTopology.Chain,       "Chain",         "Zones are connected in a straight line from one end to the other, with no wrap-around."),
-            (MapTopology.SharedWeb,   "Shared Web",    "Player zones connect to shared neutral zones. Neutrals form a ring between all players."),
+            (MapTopology.SharedWeb,   "Shared Web [EXPERIMENTAL]",    "Player zones connect to shared neutral zones. Neutrals form a ring between all players."),
         ];
 
         public MainWindow()
@@ -156,6 +156,8 @@ namespace Olden_Era___Template_Editor
 
             var template = TemplateGenerator.Generate(settings);
 
+            string? gameTemplatesPath = FindOldenEraTemplatesPath();
+
             var dlg = new SaveFileDialog
             {
                 Title = "Save Template",
@@ -163,13 +165,66 @@ namespace Olden_Era___Template_Editor
                 FileName = $"{settings.TemplateName}.rmg.json"
             };
 
+            if (gameTemplatesPath != null)
+                dlg.InitialDirectory = gameTemplatesPath;
+
             if (dlg.ShowDialog() != true) return;
 
             string json = JsonSerializer.Serialize(template, JsonOptions);
             File.WriteAllText(dlg.FileName, json);
 
-            MessageBox.Show($"Template saved to:\n{dlg.FileName}",
-                "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+            string savedMsg = $"Template saved to:\n{dlg.FileName}";
+            if (gameTemplatesPath == null)
+                savedMsg += "\n\n💡 Tip: Templates must be placed in:\n<Olden Era install folder>\\HeroesOldenEra_Data\\StreamingAssets\\map_templates";
+
+            MessageBox.Show(savedMsg, "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        /// <summary>
+        /// Tries to locate the Olden Era map_templates folder via the Steam registry.
+        /// Returns null if the game installation cannot be found.
+        /// </summary>
+        private static string? FindOldenEraTemplatesPath()
+        {
+            // Olden Era Steam App ID
+            const string appId = "3105440";
+
+            // Steam stores per-app install paths under this key.
+            string[] registryRoots =
+            [
+                $@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {appId}",
+                $@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {appId}"
+            ];
+
+            foreach (var keyPath in registryRoots)
+            {
+                try
+                {
+                    using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(keyPath);
+                    if (key?.GetValue("InstallLocation") is string installDir && Directory.Exists(installDir))
+                    {
+                        string templatesDir = Path.Combine(installDir, "HeroesOldenEra_Data", "StreamingAssets", "map_templates");
+                        if (Directory.Exists(templatesDir))
+                            return templatesDir;
+                    }
+                }
+                catch { /* registry access denied — skip */ }
+            }
+
+            // Fallback: check common Steam library locations manually.
+            string[] steamLibraryRoots =
+            [
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Steam", "steamapps", "common", "Heroes of Might and Magic Olden Era"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),    "Steam", "steamapps", "common", "Heroes of Might and Magic Olden Era"),
+            ];
+
+            foreach (var candidate in steamLibraryRoots)
+            {
+                string templatesDir = Path.Combine(candidate, "HeroesOldenEra_Data", "StreamingAssets", "map_templates");
+                if (Directory.Exists(templatesDir))
+                    return templatesDir;
+            }
+            return null;
         }
     }
 }
