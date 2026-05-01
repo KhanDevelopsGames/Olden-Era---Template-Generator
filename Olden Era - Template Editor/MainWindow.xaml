@@ -3,228 +3,250 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Olden_Era___Template_Editor"
         mc:Ignorable="d"
-        Title="Olden Era - Simple Template Generator" Height="720" Width="460"
-        ResizeMode="CanMinimize">
+        Title="Olden Era - Simple Template Generator"
+        Height="560" Width="960"
+        MinHeight="500" MinWidth="800"
+        ResizeMode="CanMinimize"
+        Background="#1A1510"
+        FontFamily="Segoe UI, Arial, sans-serif">
 
+    <!-- Hidden combo boxes required by code-behind -->
     <Window.Resources>
-        <Style TargetType="Label">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="13"/>
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Height" Value="26"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Padding" Value="3,0"/>
-        </Style>
-        <Style TargetType="ComboBox">
-            <Setter Property="Height" Value="26"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-        <Style TargetType="Slider">
-            <Setter Property="VerticalAlignment" Value="Center"/>
+        <Style x:Key="RowSpacer" TargetType="RowDefinition">
+            <Setter Property="Height" Value="8"/>
         </Style>
     </Window.Resources>
 
-    <Grid Margin="20">
+    <Grid Margin="14,8,14,12">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="16"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>  <!-- thin divider -->
+            <RowDefinition Height="6"/>
+            <RowDefinition Height="*"/>     <!-- main content -->
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>  <!-- validation -->
+            <RowDefinition Height="6"/>
+            <RowDefinition Height="Auto"/>  <!-- WIP warning -->
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>  <!-- generate button -->
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="180"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="50"/>
-        </Grid.ColumnDefinitions>
 
-        <!-- Title -->
-        <TextBlock Grid.Row="0" Grid.ColumnSpan="3"
-                   x:Name="TxtAppTitle"
-                   Text="Olden Era - Simple Template Generator"
-                   FontSize="18" FontWeight="Bold"
-                   HorizontalAlignment="Center"/>
+        <!-- ════════ HEADER ════════════════════════════════════════════ -->
+        <Rectangle Grid.Row="0" Height="1" Fill="{StaticResource BrushBorder}" VerticalAlignment="Bottom"/>
 
-        <!-- Template name -->
-        <Label Grid.Row="2" Grid.Column="0" Content="Template Name"/>
-        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-                 x:Name="TxtTemplateName" Text="Custom Template"/>
+        <!-- ════════ MAIN CONTENT — two columns ════════════════════════ -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- Map size -->
-        <Label Grid.Row="3" Grid.Column="0" Content="Map Size" Margin="0,6,0,0"/>
-        <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
-                  x:Name="CmbMapSize" Margin="0,6,0,0"
-                  SelectionChanged="CmbMapSize_SelectionChanged"/>
+            <!-- ─── LEFT COLUMN ─────────────────────────────────────── -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>  <!-- template -->
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="*"/>     <!-- zone config -->
+                </Grid.RowDefinitions>
 
-        <!-- Game mode (hidden – Classic only) -->
-        <Label Grid.Row="4" Grid.Column="0" Content="Game Mode" Margin="0,6,0,0" Visibility="Collapsed"/>
-        <ComboBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
-                  x:Name="CmbGameMode" Margin="0,6,0,0" Visibility="Collapsed"/>
+                <!-- TEMPLATE -->
+                <Border Grid.Row="0" Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <TextBlock Text="◆  TEMPLATE" Style="{StaticResource SectionHeader}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="155"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" Content="Template Name"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtTemplateName" Text="Custom Template"/>
+                            <Label Grid.Row="2" Grid.Column="0" Content="Map Size"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="CmbMapSize"
+                                      SelectionChanged="CmbMapSize_SelectionChanged"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
 
-        <!-- Players -->
-        <Label Grid.Row="5" Grid.Column="0" Content="Players" Margin="0,6,0,0"/>
-        <Slider Grid.Row="5" Grid.Column="1"
-                x:Name="SldPlayers" Margin="0,6,0,0"
-                Minimum="2" Maximum="8" Value="2"
-                TickFrequency="1" IsSnapToTickEnabled="True"
-                ValueChanged="Slider_ValueChanged"/>
-        <TextBlock Grid.Row="5" Grid.Column="2"
-                   x:Name="TxtPlayers" Text="2"
-                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontSize="13" Margin="0,6,0,0"/>
+                <!-- ZONE CONFIGURATION -->
+                <Border Grid.Row="2" Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <TextBlock Text="◆  ZONE CONFIGURATION" Style="{StaticResource SectionHeader}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="155"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="32"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-        <!-- Neutral zones -->
-        <Label Grid.Row="6" Grid.Column="0" Content="Additional Neutral Zones" Margin="0,6,0,0"/>
-        <Slider Grid.Row="6" Grid.Column="1"
-                x:Name="SldNeutral" Margin="0,6,0,0"
-                Minimum="0" Maximum="8" Value="0"
-                TickFrequency="1" IsSnapToTickEnabled="True"
-                ValueChanged="Slider_ValueChanged"/>
-        <TextBlock Grid.Row="6" Grid.Column="2"
-                   x:Name="TxtNeutral" Text="0"
-                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontSize="13" Margin="0,6,0,0"/>
+                            <Label Grid.Row="0" Grid.Column="0" Content="Players"/>
+                            <Slider Grid.Row="0" Grid.Column="1" x:Name="SldPlayers"
+                                    Minimum="2" Maximum="8" Value="2"
+                                    TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" x:Name="TxtPlayers" Text="2"
+                                       Style="{StaticResource ValueText}"/>
 
-        <!-- Castles per player zone -->
-        <Label Grid.Row="7" Grid.Column="0" Content="Castles / Player Zone" Margin="0,6,0,0"/>
-        <Slider Grid.Row="7" Grid.Column="1"
-                x:Name="SldPlayerCastles" Margin="0,6,0,0"
-                Minimum="1" Maximum="4" Value="1"
-                TickFrequency="1" IsSnapToTickEnabled="True"
-                ValueChanged="Slider_ValueChanged"/>
-        <TextBlock Grid.Row="7" Grid.Column="2"
-                   x:Name="TxtPlayerCastles" Text="1"
-                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontSize="13" Margin="0,6,0,0"/>
+                            <Label Grid.Row="2" Grid.Column="0" Content="Additional Neutral Zones"/>
+                            <Slider Grid.Row="2" Grid.Column="1" x:Name="SldNeutral"
+                                    Minimum="0" Maximum="8" Value="0"
+                                    TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+                            <TextBlock Grid.Row="2" Grid.Column="2" x:Name="TxtNeutral" Text="0"
+                                       Style="{StaticResource ValueText}"/>
 
-        <!-- Castles per neutral zone -->
-        <Label Grid.Row="8" Grid.Column="0" Content="Castles / Neutral Zone" Margin="0,6,0,0"/>
-        <Slider Grid.Row="8" Grid.Column="1"
-                x:Name="SldNeutralCastles" Margin="0,6,0,0"
-                Minimum="1" Maximum="4" Value="1"
-                TickFrequency="1" IsSnapToTickEnabled="True"
-                ValueChanged="Slider_ValueChanged"/>
-        <TextBlock Grid.Row="8" Grid.Column="2"
-                   x:Name="TxtNeutralCastles" Text="1"
-                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontSize="13" Margin="0,6,0,0"/>
+                            <Label Grid.Row="4" Grid.Column="0" Content="Castles / Player Zone"/>
+                            <Slider Grid.Row="4" Grid.Column="1" x:Name="SldPlayerCastles"
+                                    Minimum="1" Maximum="4" Value="1"
+                                    TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+                            <TextBlock Grid.Row="4" Grid.Column="2" x:Name="TxtPlayerCastles" Text="1"
+                                       Style="{StaticResource ValueText}"/>
 
-        <!-- Victory condition (hidden – Standard only) -->
-        <Label Grid.Row="9" Grid.Column="0" Content="Victory Condition" Margin="0,6,0,0" Visibility="Collapsed"/>
-        <ComboBox Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2"
-                  x:Name="CmbVictory" Margin="0,6,0,0" Visibility="Collapsed"/>
+                            <Label Grid.Row="6" Grid.Column="0" Content="Castles / Neutral Zone"/>
+                            <Slider Grid.Row="6" Grid.Column="1" x:Name="SldNeutralCastles"
+                                    Minimum="1" Maximum="4" Value="1"
+                                    TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+                            <TextBlock Grid.Row="6" Grid.Column="2" x:Name="TxtNeutralCastles" Text="1"
+                                       Style="{StaticResource ValueText}"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
 
-        <!-- No direct player connections -->
-        <CheckBox Grid.Row="10" Grid.ColumnSpan="3"
-                  x:Name="ChkNoDirectPlayerConn"
-                  Content="Isolate player zones (connect via neutrals only) [EXPERIMENTAL]"
-                  Margin="0,8,0,0" FontSize="13" VerticalAlignment="Center"
-                  Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
+            <!-- ─── RIGHT COLUMN ─────────────────────────────────────── -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>  <!-- options -->
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="Auto"/>  <!-- topology -->
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="*"/>     <!-- heroes -->
+                </Grid.RowDefinitions>
 
-        <!-- Random portals -->
-        <CheckBox Grid.Row="11" Grid.ColumnSpan="3"
-                  x:Name="ChkRandomPortals"
-                  Content="Spawn portals"
-                  Margin="0,6,0,0" FontSize="13" VerticalAlignment="Center"/>
+                <!-- OPTIONS -->
+                <Border Grid.Row="0" Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <TextBlock Text="◆  OPTIONS" Style="{StaticResource SectionHeader}"/>
+                        <CheckBox x:Name="ChkNoDirectPlayerConn"
+                                  Content="Isolate player zones (connect via neutrals only)"
+                                  Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
+                        <CheckBox x:Name="ChkRandomPortals"  Content="Spawn portals"         Margin="0,6,0,0"/>
+                        <CheckBox x:Name="ChkSpawnFootholds" Content="Spawn remote footholds" IsChecked="True" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </Border>
 
-        <!-- Remote footholds -->
-        <CheckBox Grid.Row="12" Grid.ColumnSpan="3"
-                  x:Name="ChkSpawnFootholds"
-                  Content="Spawn remote footholds"
-                  IsChecked="True"
-                  Margin="0,6,0,0" FontSize="13" VerticalAlignment="Center"/>
+                <!-- TOPOLOGY -->
+                <Border Grid.Row="2" Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <TextBlock Text="◆  TOPOLOGY" Style="{StaticResource SectionHeader}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="Map Topology"/>
+                            <ComboBox Grid.Column="1" x:Name="CmbTopology"
+                                      SelectionChanged="CmbTopology_SelectionChanged"/>
+                        </Grid>
+                        <TextBlock x:Name="TxtTopologyDesc"
+                                   Foreground="{StaticResource BrushTextDim}"
+                                   FontSize="11" TextWrapping="Wrap"
+                                   Margin="0,6,0,0"/>
+                    </StackPanel>
+                </Border>
 
-        <!-- Map Topology -->
-        <Label Grid.Row="13" Grid.Column="0" Content="Map Topology" Margin="0,10,0,0"/>
-        <ComboBox Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2"
-                  x:Name="CmbTopology" Margin="0,10,0,0"
-                  SelectionChanged="CmbTopology_SelectionChanged"/>
+                <!-- HEROES -->
+                <Border Grid.Row="4" Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <TextBlock Text="◆  HEROES" Style="{StaticResource SectionHeader}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="155"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="32"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-        <!-- Topology description -->
-        <TextBlock Grid.Row="14" Grid.ColumnSpan="3"
-                   x:Name="TxtTopologyDesc"
-                   FontSize="11" Foreground="Gray" TextWrapping="Wrap"
-                   HorizontalAlignment="Stretch"
-                   Margin="0,2,0,0"/>
+                            <Label Grid.Row="0" Grid.Column="0" Content="Min Heroes"/>
+                            <Slider Grid.Row="0" Grid.Column="1" x:Name="SldHeroMin"
+                                    Minimum="1" Maximum="10" Value="10"
+                                    TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" x:Name="TxtHeroMin" Text="10"
+                                       Style="{StaticResource ValueText}"/>
 
-        <!-- Min heroes -->
-        <Label Grid.Row="15" Grid.Column="0" Content="Min Heroes" Margin="0,10,0,0"/>
-        <Slider Grid.Row="15" Grid.Column="1"
-                x:Name="SldHeroMin" Margin="0,10,0,0"
-                Minimum="1" Maximum="10" Value="10"
-                TickFrequency="1" IsSnapToTickEnabled="True"
-                ValueChanged="Slider_ValueChanged"/>
-        <TextBlock Grid.Row="15" Grid.Column="2"
-                   x:Name="TxtHeroMin" Text="10"
-                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontSize="13" Margin="0,10,0,0"/>
+                            <Label Grid.Row="2" Grid.Column="0" Content="Max Heroes"/>
+                            <Slider Grid.Row="2" Grid.Column="1" x:Name="SldHeroMax"
+                                    Minimum="1" Maximum="50" Value="10"
+                                    TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+                            <TextBlock Grid.Row="2" Grid.Column="2" x:Name="TxtHeroMax" Text="10"
+                                       Style="{StaticResource ValueText}"/>
 
-        <!-- Max heroes -->
-        <Label Grid.Row="16" Grid.Column="0" Content="Max Heroes" Margin="0,6,0,0"/>
-        <Slider Grid.Row="16" Grid.Column="1"
-                x:Name="SldHeroMax" Margin="0,6,0,0"
-                Minimum="1" Maximum="50" Value="10"
-                TickFrequency="1" IsSnapToTickEnabled="True"
-                ValueChanged="Slider_ValueChanged"/>
-        <TextBlock Grid.Row="16" Grid.Column="2"
-                   x:Name="TxtHeroMax" Text="10"
-                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontSize="13" Margin="0,6,0,0"/>
+                            <Label Grid.Row="4" Grid.Column="0" Content="Increase heroes / castle"/>
+                            <Slider Grid.Row="4" Grid.Column="1" x:Name="SldHeroIncrement"
+                                    Minimum="0" Maximum="10" Value="1"
+                                    TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+                            <TextBlock Grid.Row="4" Grid.Column="2" x:Name="TxtHeroIncrement" Text="1"
+                                       Style="{StaticResource ValueText}"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
 
-        <!-- Hero count increment -->
-        <Label Grid.Row="17" Grid.Column="0" Content="Increase heroes / castle" Margin="0,6,0,0"/>
-        <Slider Grid.Row="17" Grid.Column="1"
-                x:Name="SldHeroIncrement" Margin="0,6,0,0"
-                Minimum="0" Maximum="10" Value="1"
-                TickFrequency="1" IsSnapToTickEnabled="True"
-                ValueChanged="Slider_ValueChanged"/>
-        <TextBlock Grid.Row="17" Grid.Column="2"
-                   x:Name="TxtHeroIncrement" Text="1"
-                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontSize="13" Margin="0,6,0,0"/>
+        <!-- Hidden combos required by code-behind -->
+        <ComboBox Grid.Row="0" x:Name="CmbGameMode" Visibility="Collapsed"/>
+        <ComboBox Grid.Row="0" x:Name="CmbVictory"  Visibility="Collapsed"/>
+        <TextBlock Grid.Row="0" x:Name="TxtAppTitle" Visibility="Collapsed"/>
 
-        <!-- Validation message -->
-        <TextBlock Grid.Row="18" Grid.ColumnSpan="3"
+        <!-- ════════ VALIDATION ════════════════════════════════════════ -->
+        <TextBlock Grid.Row="4"
                    x:Name="TxtValidation"
-                   Foreground="Red" FontSize="12" TextWrapping="Wrap"
-                   HorizontalAlignment="Stretch" TextAlignment="Center"
-                   Margin="0,4,0,0"/>
+                   Foreground="{StaticResource BrushError}"
+                   FontSize="12" TextWrapping="Wrap"
+                   HorizontalAlignment="Stretch" TextAlignment="Center"/>
 
-        <!-- WIP warning -->
-        <Border Grid.Row="19" Grid.ColumnSpan="3"
-                Background="#FFF3CD" BorderBrush="#FFC107" BorderThickness="1"
-                CornerRadius="3" Margin="0,6,0,0" Padding="8,6">
-            <TextBlock x:Name="TxtWipWarning" TextWrapping="Wrap" FontSize="11" Foreground="#856404"/>
+        <!-- ════════ WIP WARNING ═══════════════════════════════════════ -->
+        <Border Grid.Row="6"
+                Background="{StaticResource BrushWarnBg}"
+                BorderBrush="{StaticResource BrushWarnBorder}"
+                BorderThickness="1" CornerRadius="3"
+                Padding="10,7">
+            <TextBlock x:Name="TxtWipWarning"
+                       Foreground="{StaticResource BrushWarnText}"
+                       FontSize="11" TextWrapping="Wrap"/>
         </Border>
 
-        <!-- Generate button -->
-        <Button Grid.Row="20" Grid.ColumnSpan="3"
-                x:Name="BtnGenerate" Content="Generate &amp; Save…"
-                Height="34" FontSize="14" FontWeight="SemiBold"
-                Margin="0,6,0,0"
+        <!-- ════════ GENERATE BUTTON ═══════════════════════════════════ -->
+        <Button Grid.Row="8"
+                x:Name="BtnGenerate"
+                Content="⚔  Generate &amp; Save…"
+                Style="{StaticResource GenerateButton}"
                 Click="BtnGenerate_Click"/>
+
     </Grid>
 </Window>
