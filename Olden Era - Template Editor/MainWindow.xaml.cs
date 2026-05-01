@@ -43,7 +43,7 @@ namespace Olden_Era___Template_Editor
             string versionLabel = version != null ? $"v{version.Major}.{version.Minor}" : "v?";
             Title = $"Olden Era - Simple Template Generator {versionLabel}";
             TxtAppTitle.Text = $"Olden Era - Simple Template Generator  {versionLabel}";
-            TxtWipWarning.Text = $"⚠️ Work in progress ({versionLabel}) — Some generated templates may contain game-breaking bugs or issues.";
+            TxtWipWarning.Text = $"⚠️ Work in progress — Some generated templates may contain game-breaking bugs or issues.";
 
             CmbGameMode.ItemsSource = KnownValues.GameModes;
             CmbGameMode.SelectedIndex = 0;
