@@ -36,7 +36,10 @@ namespace Olden_Era___Template_Editor
             TxtPlayers.Text = ((int)SldPlayers.Value).ToString();
             TxtHeroMin.Text = ((int)SldHeroMin.Value).ToString();
             TxtHeroMax.Text = ((int)SldHeroMax.Value).ToString();
+            TxtHeroIncrement.Text = ((int)SldHeroIncrement.Value).ToString();
             TxtNeutral.Text = ((int)SldNeutral.Value).ToString();
+            TxtPlayerCastles.Text = ((int)SldPlayerCastles.Value).ToString();
+            TxtNeutralCastles.Text = ((int)SldNeutralCastles.Value).ToString();
 
             Validate();
         }
@@ -85,9 +88,12 @@ namespace Olden_Era___Template_Editor
                 PlayerCount = (int)SldPlayers.Value,
                 HeroCountMin = (int)SldHeroMin.Value,
                 HeroCountMax = (int)SldHeroMax.Value,
+                HeroCountIncrement = (int)SldHeroIncrement.Value,
                 NeutralZoneCount = (int)SldNeutral.Value,
                 MapSize = CmbMapSize.SelectedItem is int size ? size : 160,
-                VictoryCondition = KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+                VictoryCondition = KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex],
+                PlayerZoneCastles = (int)SldPlayerCastles.Value,
+                NeutralZoneCastles = (int)SldNeutralCastles.Value
             };
 
             var template = TemplateGenerator.Generate(settings);

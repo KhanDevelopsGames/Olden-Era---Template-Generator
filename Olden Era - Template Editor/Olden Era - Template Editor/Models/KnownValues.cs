@@ -17,7 +17,7 @@ namespace OldenEraTemplateEditor.Models
         /// <summary>Map sizes (sizeX = sizeZ) found across all example templates.</summary>
         public static readonly int[] MapSizes =
         [
-            80, 96, 112, 128, 144, 160, 176, 192, 208, 240
+            64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 240
         ];
 
         /// <summary>

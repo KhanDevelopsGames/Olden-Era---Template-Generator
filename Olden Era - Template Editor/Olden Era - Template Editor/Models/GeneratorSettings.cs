@@ -5,10 +5,13 @@ namespace Olden_Era___Template_Editor.Models
         public string TemplateName { get; set; } = "Custom Template";
         public string GameMode { get; set; } = "Classic";
         public int PlayerCount { get; set; } = 2;
-        public int HeroCountMin { get; set; } = 5;
+        public int HeroCountMin { get; set; } = 10;
         public int HeroCountMax { get; set; } = 10;
+        public int HeroCountIncrement { get; set; } = 1;
         public int NeutralZoneCount { get; set; } = 0;
         public int MapSize { get; set; } = 160;
         public string VictoryCondition { get; set; } = "win_condition_5";
+        public int PlayerZoneCastles { get; set; } = 1;
+        public int NeutralZoneCastles { get; set; } = 1;
     }
 }

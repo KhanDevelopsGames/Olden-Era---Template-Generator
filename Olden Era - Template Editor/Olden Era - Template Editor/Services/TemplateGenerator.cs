@@ -34,7 +34,7 @@ namespace Olden_Era___Template_Editor.Services
                 GameRules = BuildGameRules(settings),
                 Variants = [BuildVariant(settings, playerLetters, neutralLetters)],
                 ZoneLayouts = BuildZoneLayouts(),
-                MandatoryContent = BuildAllMandatoryContent(playerLetters, neutralLetters),
+                MandatoryContent = BuildAllMandatoryContent(playerLetters, neutralLetters, settings),
                 ContentCountLimits = BuildAllContentCountLimits(),
                 ContentPools = [],
                 ContentLists = []
@@ -49,7 +49,7 @@ namespace Olden_Era___Template_Editor.Services
         {
             HeroCountMin = settings.HeroCountMin,
             HeroCountMax = settings.HeroCountMax,
-            HeroCountIncrement = 1,
+            HeroCountIncrement = settings.HeroCountIncrement,
             HeroHireBan = false,
             EncounterHoles = false,
             FactionLawsExpModifier = 1.0,
@@ -70,12 +70,12 @@ namespace Olden_Era___Template_Editor.Services
                 Desertion = true,
                 DesertionDay = 3,
                 DesertionValue = 3000,
-                HeroLighting = true,
+                HeroLighting = false,
                 HeroLightingDay = 1,
                 LostStartCity = false,
                 LostStartCityDay = 3,
                 LostStartHero = false,
-                CityHold = true,
+                CityHold = false,
                 CityHoldDays = 6
             }
         };
@@ -89,37 +89,49 @@ namespace Olden_Era___Template_Editor.Services
             var zones = new List<Zone>();
             var connections = new List<Connection>();
 
-            // Center zone
-            zones.Add(BuildCenterZone(playerLetters, neutralLetters));
+            // Pre-compute ring connection names between adjacent outer zones.
+            var allLetters = playerLetters.Concat(neutralLetters).ToList();
+            int outerCount = allLetters.Count;
+
+            var ringConnRight = new string[outerCount];
+            var ringConnLeft  = new string[outerCount];
+            for (int i = 0; i < outerCount; i++)
+            {
+                int next = (i + 1) % outerCount;
+                ringConnRight[i] = $"Ring-{allLetters[i]}-{allLetters[next]}";
+                ringConnLeft[next] = ringConnRight[i];
+            }
 
             // Player spawn zones
             for (int i = 0; i < playerLetters.Count; i++)
             {
                 string letter = playerLetters[i];
                 string player = $"Player{i + 1}";
-                string connName = $"Center-{letter}-Main";
-                zones.Add(BuildSpawnZone(letter, player, connName));
-                connections.AddRange(BuildZoneConnections(letter, "Spawn", connName, 66666));
+                var ringConns = outerCount > 1
+                    ? new[] { ringConnLeft[i], ringConnRight[i] }.Distinct().ToArray()
+                    : [];
+                zones.Add(BuildSpawnZone(letter, player, ringConns, settings.PlayerZoneCastles));
             }
 
             // Neutral zones
             for (int i = 0; i < neutralLetters.Count; i++)
             {
+                int outerIdx = playerLetters.Count + i;
                 string letter = neutralLetters[i];
-                string connName = $"Center-{letter}-Main";
-                zones.Add(BuildNeutralZone(letter, connName));
-                connections.AddRange(BuildZoneConnections(letter, "Neutral", connName, 55555));
+                var ringConns = outerCount > 1
+                    ? new[] { ringConnLeft[outerIdx], ringConnRight[outerIdx] }.Distinct().ToArray()
+                    : [];
+                zones.Add(BuildNeutralZone(letter, ringConns, settings.NeutralZoneCastles));
             }
 
-            // Proximity (pseudo) connections between adjacent outer zones to
-            // keep the same "no direct border" layout feel as JCC.
-            connections.AddRange(BuildProximityConnections(playerLetters, neutralLetters));
+            // Direct guarded connections forming a ring between all outer zones.
+            connections.AddRange(BuildRingConnections(playerLetters, neutralLetters));
 
             return new Variant
             {
                 Orientation = new Orientation
                 {
-                    ZeroAngleZone = playerLetters.Count > 0 ? $"Spawn-{playerLetters[0]}" : "Center",
+                    ZeroAngleZone = playerLetters.Count > 0 ? $"Spawn-{playerLetters[0]}" : $"Neutral-{neutralLetters[0]}",
                     BaseAngleMin = 45,
                     BaseAngleMax = 45,
                     RandomAngleAmplitude = 360,
@@ -139,119 +151,42 @@ namespace Olden_Era___Template_Editor.Services
             };
         }
 
-        // ── Center zone ──────────────────────────────────────────────────────────
+        // ── Spawn zone ───────────────────────────────────────────────────────────
 
-        private static Zone BuildCenterZone(List<string> playerLetters, List<string> neutralLetters)
+        private static Zone BuildSpawnZone(string letter, string player, string[] ringConns, int castleCount)
         {
-            // The center city's additional connection-placed cities reference each arm connection.
-            var centerCityObjects = new List<MainObject>
+            // Index 0 = Spawn (player town), indices 1..castleCount = extra same-faction cities.
+            var mainObjects = new List<MainObject>
             {
                 new()
                 {
-                    Type = "City",
-                    GuardValue = 25000,
+                    Type = "Spawn",
+                    Spawn = player,
+                    RemoveGuardIfHasOwner = true,
+                    GuardChance = 0.5,
+                    GuardValue = 5000,
                     GuardWeeklyIncrement = 0.10,
-                    BuildingsConstructionSid = "ultra_rich_buildings_construction",
-                    Faction = new TypedSelector { Type = "FromList", Args = [] },
-                    Placement = "Center",
-                    HoldCityWinCon = true
+                    BuildingsConstructionSid = "default_buildings_construction",
+                    Placement = "Uniform",
+                    PlacementArgs = ["true", "0.7", "0"]
                 }
             };
 
-            // One extra city per player arm (differentFrom player faction).
-            foreach (var letter in playerLetters)
+            for (int i = 1; i < castleCount; i++)
             {
-                centerCityObjects.Add(new MainObject
+                mainObjects.Add(new MainObject
                 {
                     Type = "City",
+                    Faction = new TypedSelector { Type = "Random", Args = [] },
                     GuardChance = 0.5,
-                    GuardValue = 10000,
+                    GuardValue = 2500,
                     GuardWeeklyIncrement = 0.10,
-                    BuildingsConstructionSid = "rich_buildings_construction",
-                    Placement = "Connection",
-                    PlacementArgs = [$"Center-{letter}-Main"],
-                    Faction = new TypedSelector
-                    {
-                        Type = "FromList",
-                        Args = [$"differentFrom: 0 Spawn-{letter}"]
-                    }
+                    BuildingsConstructionSid = "poor_buildings_construction",
+                    Placement = "Uniform",
+                    PlacementArgs = ["false", "-0.8", "3"]
                 });
             }
 
-            // One neutral city per neutral arm (no faction constraint).
-            foreach (var letter in neutralLetters)
-            {
-                centerCityObjects.Add(new MainObject
-                {
-                    Type = "City",
-                    GuardChance = 0.5,
-                    GuardValue = 10000,
-                    GuardWeeklyIncrement = 0.10,
-                    BuildingsConstructionSid = "rich_buildings_construction",
-                    Placement = "Connection",
-                    PlacementArgs = [$"Center-{letter}-Main"],
-                    Faction = new TypedSelector { Type = "FromList", Args = [] }
-                });
-            }
-
-            // Roads from center city (index 0) to each arm connection.
-            var allLetters = playerLetters.Concat(neutralLetters).ToList();
-            var roads = new List<Road>();
-            foreach (var letter in allLetters)
-            {
-                roads.Add(StoneRoad(MainObjectEndpoint("0"), ConnectionEndpoint($"Center-{letter}-Main")));
-            }
-
-            // Roads from each arm city to its connection.
-            for (int i = 0; i < allLetters.Count; i++)
-            {
-                roads.Add(StoneRoad(MainObjectEndpoint($"{i + 1}"), ConnectionEndpoint($"Center-{allLetters[i]}-Main")));
-            }
-
-            // Dirt roads from center city to remote footholds (one per player arm).
-            for (int i = 1; i <= playerLetters.Count; i++)
-            {
-                roads.Add(DirtRoad(MainObjectEndpoint("0"), MandatoryContentEndpoint($"name_remote_foothold_{i}")));
-            }
-
-            // Mandatory content limits per player count.
-            var countLimits = BuildCenterContentLimits(playerLetters.Count);
-
-            return new Zone
-            {
-                Name = "Center",
-                Size = 1.35,
-                Layout = "zone_layout_center",
-                GuardCutoffValue = 3000,
-                GuardRandomization = 0.05,
-                GuardMultiplier = 1.6,
-                GuardWeeklyIncrement = 0.20,
-                GuardReactionDistribution = [40, 20, 10, 5, 2, 0],
-                DiplomacyModifier = -0.5,
-                GuardedContentPool = ["template_pool_jebus_cross_guarded_center_zone"],
-                UnguardedContentPool = ["template_pool_jebus_cross_unguarded_center_zone"],
-                ResourcesContentPool = ["content_pool_general_resources_treasure_zone_rich_no_scrolls"],
-                MandatoryContent = ["mandatory_content_center"],
-                ContentCountLimits = countLimits,
-                GuardedContentValue = 2150000,
-                GuardedContentValuePerArea = 0,
-                UnguardedContentValue = 125000,
-                UnguardedContentValuePerArea = 0,
-                ResourcesValue = 0,
-                ResourcesValuePerArea = 0,
-                MainObjects = centerCityObjects,
-                ZoneBiome = new BiomeSelector { Type = "FromList", Args = ["Sand"] },
-                ContentBiome = new BiomeSelector { Type = "MatchZone", Args = [] },
-                MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
-                CrossroadsPosition = 0,
-                Roads = roads
-            };
-        }
-
-        // ── Spawn zone ───────────────────────────────────────────────────────────
-
-        private static Zone BuildSpawnZone(string letter, string player, string mainConnName)
-        {
             return new Zone
             {
                 Name = $"Spawn-{letter}",
@@ -268,67 +203,57 @@ namespace Olden_Era___Template_Editor.Services
                 ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
                 MandatoryContent = [$"mandatory_content_side_{letter}"],
                 ContentCountLimits = BuildSideContentLimits(),
-                GuardedContentValue = 500000,
+                GuardedContentValue = 200000,
                 GuardedContentValuePerArea = 0,
-                UnguardedContentValue = 125000,
+                UnguardedContentValue = 50000,
                 UnguardedContentValuePerArea = 0,
-                ResourcesValue = 200000,
+                ResourcesValue = 80000,
                 ResourcesValuePerArea = 0,
-                MainObjects =
-                [
-                    new()
-                    {
-                        Type = "Spawn",
-                        Spawn = player,
-                        RemoveGuardIfHasOwner = true,
-                        GuardChance = 0.5,
-                        GuardValue = 5000,
-                        GuardWeeklyIncrement = 0.10,
-                        BuildingsConstructionSid = "default_buildings_construction",
-                        Placement = "Uniform",
-                        PlacementArgs = ["true", "0.7", "0"]
-                    },
-                    new()
-                    {
-                        Type = "City",
-                        Faction = new TypedSelector { Type = "Match", Args = ["0"] },
-                        GuardChance = 0.5,
-                        GuardValue = 2500,
-                        GuardWeeklyIncrement = 0.10,
-                        BuildingsConstructionSid = "poor_buildings_construction",
-                        Placement = "Uniform",
-                        PlacementArgs = ["false", "-0.8", "3"]
-                    },
-                    new()
-                    {
-                        Type = "City",
-                        Faction = new TypedSelector { Type = "Match", Args = ["0"] },
-                        GuardChance = 0.5,
-                        GuardValue = 2500,
-                        GuardWeeklyIncrement = 0.10,
-                        BuildingsConstructionSid = "poor_buildings_construction",
-                        Placement = "Uniform",
-                        PlacementArgs = ["false", "-0.8", "3"]
-                    }
-                ],
+                MainObjects = mainObjects,
                 ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 CrossroadsPosition = 0,
-                Roads =
-                [
-                    PlainRoad(MainObjectEndpoint("0"), ConnectionEndpoint(mainConnName)),
-                    PlainRoad(MainObjectEndpoint("0"), MainObjectEndpoint("1")),
-                    PlainRoad(MainObjectEndpoint("0"), MainObjectEndpoint("2")),
-                    PlainRoad(MainObjectEndpoint("0"), MandatoryContentEndpoint("name_remote_foothold_1"))
-                ]
+                Roads = BuildOuterZoneRoads(ringConns, castleCount)
             };
         }
 
         // ── Neutral zone ─────────────────────────────────────────────────────────
 
-        private static Zone BuildNeutralZone(string letter, string mainConnName)
+        private static Zone BuildNeutralZone(string letter, string[] ringConns, int castleCount)
         {
+            // Index 0 = primary neutral city; indices 1..castleCount-1 = extra neutral cities.
+            // All cities use FromList [] (neutral faction, not biome-matched).
+            var mainObjects = new List<MainObject>
+            {
+                new()
+                {
+                    Type = "City",
+                    GuardChance = 0.5,
+                    GuardValue = 10000,
+                    GuardWeeklyIncrement = 0.10,
+                    BuildingsConstructionSid = "rich_buildings_construction",
+                    Faction = new TypedSelector { Type = "FromList", Args = [] },
+                    Placement = "Uniform",
+                    PlacementArgs = ["true", "0.8", "2"]
+                }
+            };
+
+            for (int i = 1; i < castleCount; i++)
+            {
+                mainObjects.Add(new MainObject
+                {
+                    Type = "City",
+                    GuardChance = 0.5,
+                    GuardValue = 5000,
+                    GuardWeeklyIncrement = 0.10,
+                    BuildingsConstructionSid = "poor_buildings_construction",
+                    Faction = new TypedSelector { Type = "FromList", Args = [] },
+                    Placement = "Uniform",
+                    PlacementArgs = ["false", "-0.8", "3"]
+                });
+            }
+
             return new Zone
             {
                 Name = $"Neutral-{letter}",
@@ -345,121 +270,38 @@ namespace Olden_Era___Template_Editor.Services
                 ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
                 MandatoryContent = [$"mandatory_content_neutral_{letter}"],
                 ContentCountLimits = BuildSideContentLimits(),
-                GuardedContentValue = 650000,
+                GuardedContentValue = 260000,
                 GuardedContentValuePerArea = 0,
-                UnguardedContentValue = 100000,
+                UnguardedContentValue = 40000,
                 UnguardedContentValuePerArea = 0,
-                ResourcesValue = 150000,
+                ResourcesValue = 60000,
                 ResourcesValuePerArea = 0,
-                MainObjects =
-                [
-                    new()
-                    {
-                        Type = "City",
-                        GuardChance = 0.5,
-                        GuardValue = 10000,
-                        GuardWeeklyIncrement = 0.10,
-                        BuildingsConstructionSid = "rich_buildings_construction",
-                        Faction = new TypedSelector { Type = "FromList", Args = [] },
-                        Placement = "Uniform",
-                        PlacementArgs = ["true", "0.8", "2"]
-                    },
-                    new()
-                    {
-                        Type = "City",
-                        Faction = new TypedSelector { Type = "Match", Args = ["0"] },
-                        GuardChance = 0.5,
-                        GuardValue = 2500,
-                        GuardWeeklyIncrement = 0.10,
-                        BuildingsConstructionSid = "extra_rich_buildings_construction",
-                        Placement = "Uniform",
-                        PlacementArgs = ["false", "-0.8", "4"]
-                    },
-                    new()
-                    {
-                        Type = "City",
-                        Faction = new TypedSelector { Type = "Match", Args = ["0"] },
-                        GuardChance = 0.5,
-                        GuardValue = 2500,
-                        GuardWeeklyIncrement = 0.10,
-                        BuildingsConstructionSid = "rich_buildings_construction",
-                        Placement = "Uniform",
-                        PlacementArgs = ["false", "-0.8", "4"]
-                    }
-                ],
+                MainObjects = mainObjects,
                 ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 CrossroadsPosition = 0,
-                Roads =
-                [
-                    PlainRoad(MainObjectEndpoint("0"), ConnectionEndpoint(mainConnName)),
-                    PlainRoad(MainObjectEndpoint("0"), MainObjectEndpoint("1")),
-                    PlainRoad(MainObjectEndpoint("0"), MainObjectEndpoint("2")),
-                    PlainRoad(MainObjectEndpoint("0"), MandatoryContentEndpoint("name_remote_foothold_1"))
-                ]
+                Roads = BuildOuterZoneRoads(ringConns, castleCount)
             };
         }
 
         // ── Connections ──────────────────────────────────────────────────────────
 
-        private static IEnumerable<Connection> BuildZoneConnections(
-            string letter, string zonePrefix, string mainConnName, int guardValue)
-        {
-            string zoneName = zonePrefix == "Spawn" ? $"Spawn-{letter}" : $"Neutral-{letter}";
-            string matchGroupBase = zonePrefix == "Spawn" ? "spawn_main_guard" : "spawn_side_guard";
-
-            // Named main connection (gate at center).
-            yield return new Connection
-            {
-                Name = mainConnName,
-                From = "Center",
-                To = zoneName,
-                ConnectionType = "Direct",
-                GuardZone = "Center",
-                GuardEscape = false,
-                SimTurnSquad = true,
-                GuardValue = guardValue,
-                GuardWeeklyIncrement = 0.20,
-                GuardMatchGroup = matchGroupBase,
-                GatePlacement = "Center"
-            };
-
-            // Four additional unnamed guard connections (same as JCC).
-            for (int i = 1; i <= 4; i++)
-            {
-                yield return new Connection
-                {
-                    From = "Center",
-                    To = zoneName,
-                    ConnectionType = "Direct",
-                    GuardZone = "Center",
-                    GuardEscape = false,
-                    SimTurnSquad = true,
-                    GuardValue = guardValue,
-                    GuardWeeklyIncrement = 0.20,
-                    GuardMatchGroup = $"{matchGroupBase}_{i}"
-                };
-            }
-        }
-
         /// <summary>
-        /// Adds Proximity (pseudo) connections between every pair of adjacent outer zones
-        /// in a ring. Each pair gets one connection (no duplicates in both directions).
+        /// Creates guarded Direct connections between every adjacent pair of outer zones
+        /// arranged in a ring (zone[i] ↔ zone[i+1], wrapping around).
+        /// Each pair gets one named connection plus road references.
         /// </summary>
-        private static IEnumerable<Connection> BuildProximityConnections(
+        private static IEnumerable<Connection> BuildRingConnections(
             List<string> playerLetters, List<string> neutralLetters)
         {
             var allLetters = playerLetters.Concat(neutralLetters).ToList();
             int count = allLetters.Count;
+            if (count < 2) yield break;
 
             for (int i = 0; i < count; i++)
             {
                 int next = (i + 1) % count;
-                // Skip the last→first wrap when there are only 2 zones (they already share
-                // the ring via i=0→1, so i=1→0 would be a duplicate).
-                if (next == 0 && i != 0 && count == 2) continue;
-
                 string fromLetter = allLetters[i];
                 string toLetter = allLetters[next];
 
@@ -470,11 +312,16 @@ namespace Olden_Era___Template_Editor.Services
 
                 yield return new Connection
                 {
-                    Name = $"Pseudo-{fromLetter}-{toLetter}",
+                    Name = $"Ring-{fromLetter}-{toLetter}",
                     From = fromZone,
                     To = toZone,
-                    ConnectionType = "Proximity",
-                    Length = 0.5
+                    ConnectionType = "Direct",
+                    GuardZone = fromZone,
+                    GuardEscape = false,
+                    SimTurnSquad = true,
+                    GuardValue = 30000,
+                    GuardWeeklyIncrement = 0.15,
+                    GuardMatchGroup = $"ring_guard_{fromLetter}_{toLetter}"
                 };
             }
         }
@@ -501,11 +348,23 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Road / endpoint factories ────────────────────────────────────────────
 
-        private static Road StoneRoad(RoadEndpoint from, RoadEndpoint to) =>
-            new() { Type = "Stone", From = from, To = to };
+        /// <summary>
+        /// Builds the road list for a spawn or neutral outer zone:
+        /// roads to each adjacent ring connection, to the secondary city (index 1),
+        /// and to the remote foothold.
+        /// </summary>
+        private static List<Road> BuildOuterZoneRoads(string[] ringConns, int castleCount)
+        {
+            // Road from spawn/primary city to each additional castle in this zone.
+            var roads = new List<Road>();
+            for (int i = 1; i < castleCount; i++)
+                roads.Add(PlainRoad(MainObjectEndpoint("0"), MainObjectEndpoint(i.ToString())));
 
-        private static Road DirtRoad(RoadEndpoint from, RoadEndpoint to) =>
-            new() { Type = "Dirt", From = from, To = to };
+            roads.Add(PlainRoad(MainObjectEndpoint("0"), MandatoryContentEndpoint("name_remote_foothold_1")));
+            foreach (var rc in ringConns)
+                roads.Add(PlainRoad(MainObjectEndpoint("0"), ConnectionEndpoint(rc)));
+            return roads;
+        }
 
         private static Road PlainRoad(RoadEndpoint from, RoadEndpoint to) =>
             new() { From = from, To = to };
@@ -523,34 +382,6 @@ namespace Olden_Era___Template_Editor.Services
 
         private static List<ZoneLayout> BuildZoneLayouts() =>
         [
-            new ZoneLayout
-            {
-                Name = "zone_layout_center",
-                ObstaclesFill = 0.36,
-                ObstaclesFillVoid = 0.55,
-                LakesFill = 0.3,
-                MinLakeArea = 16,
-                ElevationClusterScale = 0.16,
-                ElevationModes =
-                [
-                    new ElevationMode { Weight = 2, MinElevatedFraction = 0.2, MaxElevatedFraction = 0.4 },
-                    new ElevationMode { Weight = 1, MinElevatedFraction = 0.6, MaxElevatedFraction = 0.8 }
-                ],
-                RoadClusterArea = 160,
-                GuardedEncounterResourceFractions = new GuardedEncounterResourceFractions
-                {
-                    CountBounds = [],
-                    Fractions = [0.50]
-                },
-                AmbientPickupDistribution = new AmbientPickupDistribution
-                {
-                    Repulsion = 1.0,
-                    Noise = 0.3,
-                    RoadAttraction = -0.30,
-                    ObstacleAttraction = 0.0,
-                    GroupSizeWeights = [20, 2, 1]
-                }
-            },
             new ZoneLayout
             {
                 Name = "zone_layout_spawns",
@@ -584,156 +415,76 @@ namespace Olden_Era___Template_Editor.Services
         // ── Mandatory content ────────────────────────────────────────────────────
 
         private static List<MandatoryContentGroup> BuildAllMandatoryContent(
-            List<string> playerLetters, List<string> neutralLetters)
+            List<string> playerLetters, List<string> neutralLetters, GeneratorSettings settings)
         {
-            var groups = new List<MandatoryContentGroup> { BuildCenterMandatoryContent(playerLetters.Count) };
+            var groups = new List<MandatoryContentGroup>();
 
             foreach (var letter in playerLetters)
-                groups.Add(BuildSpawnMandatoryContent(letter, $"Center-{letter}-Main"));
+                groups.Add(BuildSpawnMandatoryContent(letter, settings.PlayerZoneCastles));
 
             foreach (var letter in neutralLetters)
-                groups.Add(BuildNeutralMandatoryContent(letter, $"Center-{letter}-Main"));
+                groups.Add(BuildNeutralMandatoryContent(letter, settings.NeutralZoneCastles));
 
             return groups;
         }
 
-        private static MandatoryContentGroup BuildCenterMandatoryContent(int playerCount)
-        {
-            var content = new List<ContentItem>();
-
-            // High-value guarded objects
-            foreach (var sid in new[] { "unstable_ruins", "dragon_utopia", "research_laboratory" })
-                for (int v = 1; v <= 3; v++)
-                    content.Add(new ContentItem
-                    {
-                        Sid = sid, Variant = v,
-                        Rules = [new ContentPlacementRule { Type = "Sid", Args = [sid], TargetMin = 0.5, TargetMax = 0.5, Weight = 1 }]
-                    });
-
-            // Remote footholds — one per player arm
-            for (int i = 1; i <= playerCount; i++)
-                content.Add(new ContentItem
-                {
-                    Name = $"name_remote_foothold_{i}",
-                    Sid = "remote_foothold",
-                    IsGuarded = false,
-                    Rules =
-                    [
-                        new ContentPlacementRule { Type = "Sid", Args = ["remote_foothold"], TargetMin = 0.5, TargetMax = 0.5, Weight = 1 },
-                        new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 1 }
-                    ]
-                });
-
-            // Ambient objects
-            for (int i = 0; i < 4; i++) content.Add(new ContentItem { Sid = "mystical_tower" });
-            for (int i = 0; i < 6; i++) content.Add(new ContentItem { Sid = "pandora_box" });
-            for (int i = 0; i < 2; i++) content.Add(new ContentItem { Sid = "tree_of_abundance" });
-            content.Add(new ContentItem { Sid = "mirage", IsGuarded = true, SoloEncounter = true });
-
-            for (int i = 0; i < 4; i++)
-                content.Add(new ContentItem
-                {
-                    Sid = "watchtower", IsMine = false, IsGuarded = false,
-                    Rules = [new ContentPlacementRule { Type = "Sid", Args = ["watchtower"], TargetMin = 0.75, TargetMax = 0.75, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.1, Weight = 1 }]
-                });
-
-            for (int i = 0; i < 4; i++)
-                content.Add(new ContentItem
-                {
-                    Sid = "mana_well", IsGuarded = false,
-                    Rules = [new ContentPlacementRule { Type = "Sid", Args = ["mana_well"], TargetMin = 0.5, TargetMax = 0.5, Weight = 1 }]
-                });
-
-            for (int i = 0; i < 6; i++) content.Add(new ContentItem { IncludeLists = ["basic_content_list_pickup_mythic_scroll_box"] });
-            for (int i = 0; i < 6; i++) content.Add(new ContentItem { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"] });
-            for (int i = 0; i < 4; i++) content.Add(new ContentItem { Sid = "mine_gold", IsMine = true });
-
-            return new MandatoryContentGroup { Name = "mandatory_content_center", Content = content };
-        }
-
-        private static MandatoryContentGroup BuildSpawnMandatoryContent(string letter, string mainConnName)
+        private static MandatoryContentGroup BuildSpawnMandatoryContent(string letter, int castleCount)
         {
             return new MandatoryContentGroup
             {
                 Name = $"mandatory_content_side_{letter}",
-                Content = BuildOuterZoneMandatoryContent(mainConnName, isNeutral: false)
+                Content = BuildOuterZoneMandatoryContent(isNeutral: false, castleCount)
             };
         }
 
-        private static MandatoryContentGroup BuildNeutralMandatoryContent(string letter, string mainConnName)
+        private static MandatoryContentGroup BuildNeutralMandatoryContent(string letter, int castleCount)
         {
             return new MandatoryContentGroup
             {
                 Name = $"mandatory_content_neutral_{letter}",
-                Content = BuildOuterZoneMandatoryContent(mainConnName, isNeutral: true)
+                Content = BuildOuterZoneMandatoryContent(isNeutral: true, castleCount)
             };
         }
 
-        private static List<ContentItem> BuildOuterZoneMandatoryContent(string mainConnName, bool isNeutral)
+        private static List<ContentItem> BuildOuterZoneMandatoryContent(bool isNeutral, int castleCount)
         {
+            // Remote foothold placement: prefer near castle at index 1 if it exists, else near spawn.
+            var footholdRules = new List<ContentPlacementRule>
+            {
+                new() { Type = "Crossroads", Args = [], TargetMin = 0.2, TargetMax = 0.3, Weight = 0 },
+                new() { Type = "MainObject", Args = ["0"], TargetMin = 0.2, TargetMax = 0.4, Weight = 0 },
+            };
+            if (castleCount > 1)
+                footholdRules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["1"], TargetMin = 0.5, TargetMax = 0.5, Weight = 2 });
+
             var content = new List<ContentItem>
             {
                 new() { IncludeLists = ["template_pool_jebus_cross_guarded_resource_banks_tier_3_base"], Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 }] },
-                new() { IncludeLists = ["template_pool_jebus_cross_guarded_resource_banks_tier_3_base"], Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 }] },
                 new() { IncludeLists = ["template_pool_jebus_cross_guarded_resource_banks_tier_3_pro"], Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 }] },
 
-                new() {
-                    Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false,
-                    Rules = [
-                        new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.2, TargetMax = 0.3, Weight = 0 },
-                        new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.2, TargetMax = 0.4, Weight = 0 },
-                        new ContentPlacementRule { Type = "MainObject", Args = ["1"], TargetMin = 0.5, TargetMax = 0.5, Weight = 2 },
-                        new ContentPlacementRule { Type = "MainObject", Args = ["2"], TargetMin = 0.5, TargetMax = 0.5, Weight = 2 },
-                        new ContentPlacementRule { Type = "Connection", Args = [mainConnName], TargetMin = 0.75, TargetMax = 0.75, Weight = 6 }
-                    ]
-                },
+                new() { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules },
 
-                new() { Sid = "fountain_2", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
                 new() { Sid = "fountain", IsGuarded = false },
                 new() { Sid = "watchtower", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
                 new() { Sid = "mana_well", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                new() { Sid = "mana_well", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "Sid", Args = ["mana_well"], TargetMin = 0.5, TargetMax = 0.5, Weight = 1 }] },
                 new() { Sid = "market" },
                 new() { Sid = "forge" },
                 new() { Sid = "tavern", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.4, Weight = 1 }] },
                 new() { Sid = "stables", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
                 new() { Sid = "university" },
                 new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
-                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
-                new() { Sid = "college_of_wonder" },
-                new() { Sid = "mystical_tower" },
                 new() { Sid = "mystical_tower" },
                 new() { Sid = "prison", Variant = 0, IsGuarded = false },
-                new() { Sid = "prison", Variant = 1 },
-                new() { Sid = "prison", Variant = 3 },
-                new() { Sid = "random_hire_7" },
-                new() { Sid = "random_hire_6" },
                 new() { Sid = "random_hire_5" },
                 new() { IncludeLists = ["basic_content_list_building_random_hires"] },
-                new() { IncludeLists = ["basic_content_list_building_random_hires"] },
-                new() { IncludeLists = ["basic_content_list_building_random_hires"] },
-                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"] },
-                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"] },
                 new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"], IsGuarded = isNeutral ? null : false },
-                new() { Sid = "random_item_legendary", SoloEncounter = true },
-                new() { Sid = "random_item_epic" },
-                new() { Sid = "random_item_epic" },
                 new() { Sid = "pandora_box", Variant = 0, SoloEncounter = true },
-                new() { Sid = "pandora_box", Variant = 1 },
-                new() { Sid = "pandora_box", Variant = 4, SoloEncounter = true },
-                new() { Sid = "pandora_box", Variant = 5 },
-                new() { Sid = "mine_wood", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.0, Weight = 1 }, new ContentPlacementRule { Type = "MainObject", Args = ["1"], TargetMin = 0.03, TargetMax = 0.05, Weight = 2 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
-                new() { Sid = "mine_wood", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.0, Weight = 1 }, new ContentPlacementRule { Type = "MainObject", Args = ["2"], TargetMin = 0.03, TargetMax = 0.05, Weight = 2 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
-                new() { Sid = "mine_wood", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.05, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
-                new() { Sid = "mine_ore", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.0, Weight = 1 }, new ContentPlacementRule { Type = "MainObject", Args = ["1"], TargetMin = 0.03, TargetMax = 0.05, Weight = 2 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
-                new() { Sid = "mine_ore", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.0, Weight = 1 }, new ContentPlacementRule { Type = "MainObject", Args = ["2"], TargetMin = 0.03, TargetMax = 0.05, Weight = 2 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
-                new() { Sid = "mine_ore", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.05, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
+                new() { Sid = "mine_wood", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.0, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
+                new() { Sid = "mine_ore", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.0, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
                 new() { Sid = "mine_gold", IsMine = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 1 }] },
-                new() { Sid = "mine_gold", IsMine = true, Rules = [new ContentPlacementRule { Type = "Sid", Args = ["mine_gold"], TargetMin = 0.5, TargetMax = 0.5, Weight = 1 }] },
                 new() { Sid = "mine_crystals", IsMine = true },
                 new() { Sid = "mine_mercury", IsMine = true },
                 new() { Sid = "mine_gemstones", IsMine = true },
-                new() { Sid = "alchemy_lab", IsMine = true },
                 new() { Sid = "alchemy_lab", IsMine = true },
             };
 
@@ -779,14 +530,7 @@ namespace Olden_Era___Template_Editor.Services
                 new() { Sid = "point_of_balance", MaxCount = 3 },
             };
 
-            var limits = new List<ContentCountLimit>
-            {
-                new() { Name = "content_limits_center", Limits = sidLimits },
-                new() { Name = "content_limits_center_0_0", PlayerMin = 0, PlayerMax = 0, Limits = sidLimits },
-            };
-
-            for (int i = 1; i <= 6; i++)
-                limits.Add(new ContentCountLimit { Name = $"content_limits_center_{i}", PlayerMin = i, PlayerMax = i, Limits = sidLimits });
+            var limits = new List<ContentCountLimit>();
 
             limits.Add(new ContentCountLimit { Name = "content_limits_side", Limits = sidLimits });
             limits.Add(new ContentCountLimit { Name = "content_limits_side_0_0", PlayerMin = 0, PlayerMax = 0, Limits = sidLimits });

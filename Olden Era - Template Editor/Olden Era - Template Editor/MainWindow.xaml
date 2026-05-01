@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Olden_Era___Template_Editor"
         mc:Ignorable="d"
-        Title="Olden Era – Template Generator" Height="530" Width="460"
+        Title="Olden Era – Template Generator" Height="660" Width="460"
         ResizeMode="CanMinimize">
 
     <Window.Resources>
@@ -41,6 +41,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="16"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -62,10 +66,10 @@
         <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
                  x:Name="TxtTemplateName" Text="Custom Template"/>
 
-        <!-- Game mode -->
-        <Label Grid.Row="3" Grid.Column="0" Content="Game Mode" Margin="0,6,0,0"/>
+        <!-- Game mode (hidden – Classic only) -->
+        <Label Grid.Row="3" Grid.Column="0" Content="Game Mode" Margin="0,6,0,0" Visibility="Collapsed"/>
         <ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
-                  x:Name="CmbGameMode" Margin="0,6,0,0"/>
+                  x:Name="CmbGameMode" Margin="0,6,0,0" Visibility="Collapsed"/>
 
         <!-- Players -->
         <Label Grid.Row="4" Grid.Column="0" Content="Players" Margin="0,6,0,0"/>
@@ -83,11 +87,11 @@
         <Label Grid.Row="5" Grid.Column="0" Content="Min Heroes" Margin="0,6,0,0"/>
         <Slider Grid.Row="5" Grid.Column="1"
                 x:Name="SldHeroMin" Margin="0,6,0,0"
-                Minimum="1" Maximum="10" Value="5"
+                Minimum="1" Maximum="10" Value="10"
                 TickFrequency="1" IsSnapToTickEnabled="True"
                 ValueChanged="Slider_ValueChanged"/>
         <TextBlock Grid.Row="5" Grid.Column="2"
-                   x:Name="TxtHeroMin" Text="5"
+                   x:Name="TxtHeroMin" Text="10"
                    VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="13" Margin="0,6,0,0"/>
 
@@ -103,36 +107,72 @@
                    VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="13" Margin="0,6,0,0"/>
 
-        <!-- Neutral zones -->
-        <Label Grid.Row="7" Grid.Column="0" Content="Neutral Zones" Margin="0,6,0,0"/>
+        <!-- Hero count increment -->
+        <Label Grid.Row="7" Grid.Column="0" Content="Increase heroes / castle" Margin="0,6,0,0"/>
         <Slider Grid.Row="7" Grid.Column="1"
+                x:Name="SldHeroIncrement" Margin="0,6,0,0"
+                Minimum="0" Maximum="10" Value="1"
+                TickFrequency="1" IsSnapToTickEnabled="True"
+                ValueChanged="Slider_ValueChanged"/>
+        <TextBlock Grid.Row="7" Grid.Column="2"
+                   x:Name="TxtHeroIncrement" Text="1"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                   FontSize="13" Margin="0,6,0,0"/>
+
+        <!-- Neutral zones -->
+        <Label Grid.Row="8" Grid.Column="0" Content="Neutral Zones" Margin="0,6,0,0"/>
+        <Slider Grid.Row="8" Grid.Column="1"
                 x:Name="SldNeutral" Margin="0,6,0,0"
                 Minimum="0" Maximum="8" Value="0"
                 TickFrequency="1" IsSnapToTickEnabled="True"
                 ValueChanged="Slider_ValueChanged"/>
-        <TextBlock Grid.Row="7" Grid.Column="2"
+        <TextBlock Grid.Row="8" Grid.Column="2"
                    x:Name="TxtNeutral" Text="0"
                    VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="13" Margin="0,6,0,0"/>
 
+        <!-- Castles per player zone -->
+        <Label Grid.Row="9" Grid.Column="0" Content="Castles / Player Zone" Margin="0,6,0,0"/>
+        <Slider Grid.Row="9" Grid.Column="1"
+                x:Name="SldPlayerCastles" Margin="0,6,0,0"
+                Minimum="1" Maximum="4" Value="1"
+                TickFrequency="1" IsSnapToTickEnabled="True"
+                ValueChanged="Slider_ValueChanged"/>
+        <TextBlock Grid.Row="9" Grid.Column="2"
+                   x:Name="TxtPlayerCastles" Text="1"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                   FontSize="13" Margin="0,6,0,0"/>
+
+        <!-- Castles per neutral zone -->
+        <Label Grid.Row="10" Grid.Column="0" Content="Castles / Neutral Zone" Margin="0,6,0,0"/>
+        <Slider Grid.Row="10" Grid.Column="1"
+                x:Name="SldNeutralCastles" Margin="0,6,0,0"
+                Minimum="1" Maximum="4" Value="1"
+                TickFrequency="1" IsSnapToTickEnabled="True"
+                ValueChanged="Slider_ValueChanged"/>
+        <TextBlock Grid.Row="10" Grid.Column="2"
+                   x:Name="TxtNeutralCastles" Text="1"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                   FontSize="13" Margin="0,6,0,0"/>
+
         <!-- Map size -->
-        <Label Grid.Row="8" Grid.Column="0" Content="Map Size" Margin="0,6,0,0"/>
-        <ComboBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2"
+        <Label Grid.Row="11" Grid.Column="0" Content="Map Size" Margin="0,6,0,0"/>
+        <ComboBox Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2"
                   x:Name="CmbMapSize" Margin="0,6,0,0"/>
 
-        <!-- Victory condition -->
-        <Label Grid.Row="9" Grid.Column="0" Content="Victory Condition" Margin="0,6,0,0"/>
-        <ComboBox Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2"
-                  x:Name="CmbVictory" Margin="0,6,0,0"/>
+        <!-- Victory condition (hidden – Standard only) -->
+        <Label Grid.Row="12" Grid.Column="0" Content="Victory Condition" Margin="0,6,0,0" Visibility="Collapsed"/>
+        <ComboBox Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2"
+                  x:Name="CmbVictory" Margin="0,6,0,0" Visibility="Collapsed"/>
 
         <!-- Validation message -->
-        <TextBlock Grid.Row="11" Grid.ColumnSpan="3"
+        <TextBlock Grid.Row="14" Grid.ColumnSpan="3"
                    x:Name="TxtValidation"
                    Foreground="Red" FontSize="12" TextWrapping="Wrap"
                    HorizontalAlignment="Center"/>
 
         <!-- Generate button -->
-        <Button Grid.Row="13" Grid.ColumnSpan="3"
+        <Button Grid.Row="16" Grid.ColumnSpan="3"
                 x:Name="BtnGenerate" Content="Generate &amp; Save…"
                 Height="34" FontSize="14" FontWeight="SemiBold"
                 Click="BtnGenerate_Click"/>
