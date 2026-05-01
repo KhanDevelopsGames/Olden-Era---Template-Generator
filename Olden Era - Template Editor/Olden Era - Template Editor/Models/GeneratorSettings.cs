@@ -13,5 +13,8 @@ namespace Olden_Era___Template_Editor.Models
         public string VictoryCondition { get; set; } = "win_condition_5";
         public int PlayerZoneCastles { get; set; } = 1;
         public int NeutralZoneCastles { get; set; } = 1;
+        public bool NoDirectPlayerConnections { get; set; } = false;
+        public bool RandomPortals { get; set; } = false;
+        public bool SpawnRemoteFootholds { get; set; } = true;
     }
 }

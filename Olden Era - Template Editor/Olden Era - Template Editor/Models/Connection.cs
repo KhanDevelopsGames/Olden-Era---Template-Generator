@@ -34,6 +34,15 @@ namespace OldenEraTemplateEditor.Models
         [JsonPropertyName("guardMatchGroup")]
         public string? GuardMatchGroup { get; set; }
 
+        [JsonPropertyName("portalPlacementRulesFrom")]
+        public List<ContentPlacementRule>? PortalPlacementRulesFrom { get; set; }
+
+        [JsonPropertyName("portalPlacementRulesTo")]
+        public List<ContentPlacementRule>? PortalPlacementRulesTo { get; set; }
+
+        [JsonPropertyName("road")]
+        public bool? Road { get; set; }
+
         [JsonPropertyName("gatePlacement")]
         public string? GatePlacement { get; set; }
 

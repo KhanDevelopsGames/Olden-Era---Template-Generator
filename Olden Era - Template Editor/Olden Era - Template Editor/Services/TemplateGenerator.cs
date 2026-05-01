@@ -21,7 +21,15 @@ namespace Olden_Era___Template_Editor.Services
         public static RmgTemplate Generate(GeneratorSettings settings)
         {
             var playerLetters = ZoneLetters.Take(settings.PlayerCount).ToList();
-            var neutralLetters = ZoneLetters.Skip(settings.PlayerCount).Take(settings.NeutralZoneCount).ToList();
+
+            // When no direct player connections are requested, ensure there are enough
+            // neutral zones to separate every adjacent player pair in the ring.
+            // A ring of P players needs at least P neutral buffers (one between each pair).
+            int neutralCount = settings.NeutralZoneCount;
+            if (settings.NoDirectPlayerConnections && settings.PlayerCount > 1)
+                neutralCount = Math.Max(neutralCount, settings.PlayerCount);
+
+            var neutralLetters = ZoneLetters.Skip(settings.PlayerCount).Take(neutralCount).ToList();
 
             var template = new RmgTemplate
             {
@@ -84,54 +92,69 @@ namespace Olden_Era___Template_Editor.Services
 
         private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters)
         {
-            int totalZones = settings.PlayerCount + settings.NeutralZoneCount;
+            // When NoDirectPlayerConnections is on, interleave players and neutrals in the
+            // ring so that every player zone is flanked only by neutral zones.
+            // Layout: P0, N0, P1, N1, … with any extra neutrals appended at the end.
+            List<string> orderedLetters;
+            if (settings.NoDirectPlayerConnections && playerLetters.Count > 1 && neutralLetters.Count >= playerLetters.Count)
+            {
+                orderedLetters = [];
+                for (int i = 0; i < playerLetters.Count; i++)
+                {
+                    orderedLetters.Add(playerLetters[i]);
+                    orderedLetters.Add(neutralLetters[i]);
+                }
+                // Append any remaining neutral zones after the interleaved pairs.
+                orderedLetters.AddRange(neutralLetters.Skip(playerLetters.Count));
+            }
+            else
+            {
+                orderedLetters = playerLetters.Concat(neutralLetters).ToList();
+            }
+
+            int totalZones = orderedLetters.Count;
 
             var zones = new List<Zone>();
             var connections = new List<Connection>();
 
-            // Pre-compute ring connection names between adjacent outer zones.
-            var allLetters = playerLetters.Concat(neutralLetters).ToList();
-            int outerCount = allLetters.Count;
-
+            // Pre-compute ring connection names between adjacent zones in the ordered ring.
+            int outerCount = orderedLetters.Count;
             var ringConnRight = new string[outerCount];
             var ringConnLeft  = new string[outerCount];
             for (int i = 0; i < outerCount; i++)
             {
                 int next = (i + 1) % outerCount;
-                ringConnRight[i] = $"Ring-{allLetters[i]}-{allLetters[next]}";
+                ringConnRight[i] = $"Ring-{orderedLetters[i]}-{orderedLetters[next]}";
                 ringConnLeft[next] = ringConnRight[i];
             }
 
-            // Player spawn zones
-            for (int i = 0; i < playerLetters.Count; i++)
+            // Build zones in ring order.
+            for (int i = 0; i < outerCount; i++)
             {
-                string letter = playerLetters[i];
-                string player = $"Player{i + 1}";
+                string letter = orderedLetters[i];
                 var ringConns = outerCount > 1
                     ? new[] { ringConnLeft[i], ringConnRight[i] }.Distinct().ToArray()
                     : [];
-                zones.Add(BuildSpawnZone(letter, player, ringConns, settings.PlayerZoneCastles));
+
+                int playerIdx = playerLetters.IndexOf(letter);
+                if (playerIdx >= 0)
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", ringConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds));
+                else
+                    zones.Add(BuildNeutralZone(letter, ringConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds));
             }
 
-            // Neutral zones
-            for (int i = 0; i < neutralLetters.Count; i++)
-            {
-                int outerIdx = playerLetters.Count + i;
-                string letter = neutralLetters[i];
-                var ringConns = outerCount > 1
-                    ? new[] { ringConnLeft[outerIdx], ringConnRight[outerIdx] }.Distinct().ToArray()
-                    : [];
-                zones.Add(BuildNeutralZone(letter, ringConns, settings.NeutralZoneCastles));
-            }
+            // Direct ring connections between adjacent zones.
+            connections.AddRange(BuildRingConnections(playerLetters, neutralLetters, orderedLetters));
 
-            // Direct guarded connections forming a ring between all outer zones.
-            connections.AddRange(BuildRingConnections(playerLetters, neutralLetters));
+            // Random portal connections (non-adjacent pairings).
+            if (settings.RandomPortals)
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters));
 
             return new Variant
             {
                 Orientation = new Orientation
                 {
-                    ZeroAngleZone = playerLetters.Count > 0 ? $"Spawn-{playerLetters[0]}" : $"Neutral-{neutralLetters[0]}",
+                    ZeroAngleZone = playerLetters.Count > 0 ? $"Spawn-{orderedLetters[0]}" : $"Neutral-{orderedLetters[0]}",
                     BaseAngleMin = 45,
                     BaseAngleMax = 45,
                     RandomAngleAmplitude = 360,
@@ -153,7 +176,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Spawn zone ───────────────────────────────────────────────────────────
 
-        private static Zone BuildSpawnZone(string letter, string player, string[] ringConns, int castleCount)
+        private static Zone BuildSpawnZone(string letter, string player, string[] ringConns, int castleCount, bool spawnFootholds)
         {
             // Index 0 = Spawn (player town), indices 1..castleCount = extra same-faction cities.
             var mainObjects = new List<MainObject>
@@ -214,13 +237,13 @@ namespace Olden_Era___Template_Editor.Services
                 ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 CrossroadsPosition = 0,
-                Roads = BuildOuterZoneRoads(ringConns, castleCount)
+                Roads = BuildOuterZoneRoads(ringConns, castleCount, spawnFootholds)
             };
         }
 
         // ── Neutral zone ─────────────────────────────────────────────────────────
 
-        private static Zone BuildNeutralZone(string letter, string[] ringConns, int castleCount)
+        private static Zone BuildNeutralZone(string letter, string[] ringConns, int castleCount, bool spawnFootholds)
         {
             // Index 0 = primary neutral city; indices 1..castleCount-1 = extra neutral cities.
             // All cities use FromList [] (neutral faction, not biome-matched).
@@ -281,11 +304,11 @@ namespace Olden_Era___Template_Editor.Services
                 ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 CrossroadsPosition = 0,
-                Roads = BuildOuterZoneRoads(ringConns, castleCount)
+                Roads = BuildOuterZoneRoads(ringConns, castleCount, spawnFootholds)
             };
         }
 
-        // ── Connections ──────────────────────────────────────────────────────────
+        // ── Connections
 
         /// <summary>
         /// Creates guarded Direct connections between every adjacent pair of outer zones
@@ -293,23 +316,23 @@ namespace Olden_Era___Template_Editor.Services
         /// Each pair gets one named connection plus road references.
         /// </summary>
         private static IEnumerable<Connection> BuildRingConnections(
-            List<string> playerLetters, List<string> neutralLetters)
+            List<string> playerLetters, List<string> neutralLetters, List<string> orderedLetters)
         {
-            var allLetters = playerLetters.Concat(neutralLetters).ToList();
-            int count = allLetters.Count;
+            int count = orderedLetters.Count;
             if (count < 2) yield break;
 
             for (int i = 0; i < count; i++)
             {
                 int next = (i + 1) % count;
-                string fromLetter = allLetters[i];
-                string toLetter = allLetters[next];
+                string fromLetter = orderedLetters[i];
+                string toLetter = orderedLetters[next];
 
                 string fromZone = playerLetters.Contains(fromLetter)
                     ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
                 string toZone = playerLetters.Contains(toLetter)
                     ? $"Spawn-{toLetter}" : $"Neutral-{toLetter}";
 
+                // Keep the normal Direct road connection.
                 yield return new Connection
                 {
                     Name = $"Ring-{fromLetter}-{toLetter}",
@@ -324,6 +347,91 @@ namespace Olden_Era___Template_Editor.Services
                     GuardMatchGroup = $"ring_guard_{fromLetter}_{toLetter}"
                 };
             }
+        }
+
+        /// <summary>
+        /// Pairs each zone with a random non-adjacent zone and emits a Portal connection.
+        /// Uses a shuffled derangement so every zone gets exactly one outgoing portal
+        /// that does NOT lead to its immediate ring neighbours.
+        /// </summary>
+        private static IEnumerable<Connection> BuildRandomPortalConnections(
+            List<string> playerLetters, List<string> orderedLetters)
+        {
+            int count = orderedLetters.Count;
+            if (count < 2) yield break; // Need at least 2 zones for a portal.
+
+            // Build a derangement where zone[i] -> zone[dest[i]] and dest[i] is never an
+            // immediate neighbour (i-1, i, i+1 mod count).
+            var rng = new Random();
+            int[] dest = BuildNonAdjacentDerangement(count, rng);
+
+            for (int i = 0; i < count; i++)
+            {
+                string fromLetter = orderedLetters[i];
+                string toLetter   = orderedLetters[dest[i]];
+
+                string fromZone = playerLetters.Contains(fromLetter)
+                    ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
+                string toZone = playerLetters.Contains(toLetter)
+                    ? $"Spawn-{toLetter}" : $"Neutral-{toLetter}";
+
+                yield return new Connection
+                {
+                    Name = $"Portal-{fromLetter}-{toLetter}",
+                    From = fromZone,
+                    To = toZone,
+                    ConnectionType = "Portal",
+                    PortalPlacementRulesFrom = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 2 }],
+                    PortalPlacementRulesTo   = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 2 }],
+                    Road = true,
+                    GuardEscape = false,
+                    GuardValue = 25000,
+                    GuardWeeklyIncrement = 0.15
+                };
+            }
+        }
+
+        /// <summary>
+        /// Returns an array where result[i] != i and every index appears exactly once as a destination.
+        /// Prefers non-adjacent targets; falls back to adjacent neighbours when no better option exists.
+        /// </summary>
+        private static int[] BuildNonAdjacentDerangement(int count, Random rng)
+        {
+            int[] dest = new int[count];
+            int attempts = 0;
+            while (true)
+            {
+                attempts++;
+                var candidates = Enumerable.Range(0, count).OrderBy(_ => rng.Next()).ToList();
+                bool valid = true;
+                for (int i = 0; i < count; i++)
+                {
+                    // Prefer non-adjacent; fall back to adjacent (but never self).
+                    int found = -1;
+                    for (int j = 0; j < candidates.Count; j++)
+                    {
+                        int c = candidates[j];
+                        if (c != i && c != (i + 1) % count && c != (i - 1 + count) % count)
+                        { found = j; break; }
+                    }
+                    if (found < 0)
+                    {
+                        // No non-adjacent candidate left — accept any non-self candidate.
+                        for (int j = 0; j < candidates.Count; j++)
+                        {
+                            if (candidates[j] != i) { found = j; break; }
+                        }
+                    }
+                    if (found < 0) { valid = false; break; }
+                    dest[i] = candidates[found];
+                    candidates.RemoveAt(found);
+                }
+                if (valid) return dest;
+                if (attempts > 100) break; // Should never happen, but guard against infinite loop.
+            }
+            // Ultimate fallback: simple rotation by half.
+            int shift = Math.Max(1, count / 2);
+            return Enumerable.Range(0, count).Select(i => (i + shift) % count).ToArray();
         }
 
         // ── Content limit helpers ────────────────────────────────────────────────
@@ -353,14 +461,14 @@ namespace Olden_Era___Template_Editor.Services
         /// roads to each adjacent ring connection, to the secondary city (index 1),
         /// and to the remote foothold.
         /// </summary>
-        private static List<Road> BuildOuterZoneRoads(string[] ringConns, int castleCount)
+        private static List<Road> BuildOuterZoneRoads(string[] ringConns, int castleCount, bool includeFoothold)
         {
-            // Road from spawn/primary city to each additional castle in this zone.
             var roads = new List<Road>();
             for (int i = 1; i < castleCount; i++)
                 roads.Add(PlainRoad(MainObjectEndpoint("0"), MainObjectEndpoint(i.ToString())));
 
-            roads.Add(PlainRoad(MainObjectEndpoint("0"), MandatoryContentEndpoint("name_remote_foothold_1")));
+            if (includeFoothold)
+                roads.Add(PlainRoad(MainObjectEndpoint("0"), MandatoryContentEndpoint("name_remote_foothold_1")));
             foreach (var rc in ringConns)
                 roads.Add(PlainRoad(MainObjectEndpoint("0"), ConnectionEndpoint(rc)));
             return roads;
@@ -420,35 +528,34 @@ namespace Olden_Era___Template_Editor.Services
             var groups = new List<MandatoryContentGroup>();
 
             foreach (var letter in playerLetters)
-                groups.Add(BuildSpawnMandatoryContent(letter, settings.PlayerZoneCastles));
+                groups.Add(BuildSpawnMandatoryContent(letter, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds));
 
             foreach (var letter in neutralLetters)
-                groups.Add(BuildNeutralMandatoryContent(letter, settings.NeutralZoneCastles));
+                groups.Add(BuildNeutralMandatoryContent(letter, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds));
 
             return groups;
         }
 
-        private static MandatoryContentGroup BuildSpawnMandatoryContent(string letter, int castleCount)
+        private static MandatoryContentGroup BuildSpawnMandatoryContent(string letter, int castleCount, bool spawnFootholds)
         {
             return new MandatoryContentGroup
             {
                 Name = $"mandatory_content_side_{letter}",
-                Content = BuildOuterZoneMandatoryContent(isNeutral: false, castleCount)
+                Content = BuildOuterZoneMandatoryContent(isNeutral: false, castleCount, spawnFootholds)
             };
         }
 
-        private static MandatoryContentGroup BuildNeutralMandatoryContent(string letter, int castleCount)
+        private static MandatoryContentGroup BuildNeutralMandatoryContent(string letter, int castleCount, bool spawnFootholds)
         {
             return new MandatoryContentGroup
             {
                 Name = $"mandatory_content_neutral_{letter}",
-                Content = BuildOuterZoneMandatoryContent(isNeutral: true, castleCount)
+                Content = BuildOuterZoneMandatoryContent(isNeutral: true, castleCount, spawnFootholds)
             };
         }
 
-        private static List<ContentItem> BuildOuterZoneMandatoryContent(bool isNeutral, int castleCount)
+        private static List<ContentItem> BuildOuterZoneMandatoryContent(bool isNeutral, int castleCount, bool spawnFootholds)
         {
-            // Remote foothold placement: prefer near castle at index 1 if it exists, else near spawn.
             var footholdRules = new List<ContentPlacementRule>
             {
                 new() { Type = "Crossroads", Args = [], TargetMin = 0.2, TargetMax = 0.3, Weight = 0 },
@@ -457,13 +564,15 @@ namespace Olden_Era___Template_Editor.Services
             if (castleCount > 1)
                 footholdRules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["1"], TargetMin = 0.5, TargetMax = 0.5, Weight = 2 });
 
-            var content = new List<ContentItem>
+            var content = new List<ContentItem>();
+
+            if (spawnFootholds)
+                content.Add(new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules });
+
+            content.AddRange(new List<ContentItem>
             {
                 new() { IncludeLists = ["template_pool_jebus_cross_guarded_resource_banks_tier_3_base"], Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 }] },
                 new() { IncludeLists = ["template_pool_jebus_cross_guarded_resource_banks_tier_3_pro"], Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 }] },
-
-                new() { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules },
-
                 new() { Sid = "fountain", IsGuarded = false },
                 new() { Sid = "watchtower", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
                 new() { Sid = "mana_well", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
@@ -486,7 +595,7 @@ namespace Olden_Era___Template_Editor.Services
                 new() { Sid = "mine_mercury", IsMine = true },
                 new() { Sid = "mine_gemstones", IsMine = true },
                 new() { Sid = "alchemy_lab", IsMine = true },
-            };
+            });
 
             return content;
         }

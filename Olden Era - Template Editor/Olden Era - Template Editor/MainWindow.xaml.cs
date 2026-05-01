@@ -22,8 +22,8 @@ namespace Olden_Era___Template_Editor
             InitializeComponent();
             CmbGameMode.ItemsSource = KnownValues.GameModes;
             CmbGameMode.SelectedIndex = 0;
-            CmbMapSize.ItemsSource = KnownValues.MapSizes;
-            CmbMapSize.SelectedItem = 160;
+            CmbMapSize.ItemsSource = KnownValues.MapSizes.Select(s => $"{s}x{s}").ToList();
+            CmbMapSize.SelectedItem = "160x160";
             CmbVictory.ItemsSource = KnownValues.VictoryConditionLabels;
             CmbVictory.SelectedIndex = 2; // Hold City (win_condition_5)
         }
@@ -72,16 +72,27 @@ namespace Olden_Era___Template_Editor
                 return false;
             }
 
-            if (players + neutral > 4 && CmbMapSize.SelectedItem is int selectedSize && selectedSize < 160)
-                TxtValidation.Text = "⚠️ Using a small map with many zones may freeze the game while loading the map. Consider using a larger map size.";
-            else
-                TxtValidation.Text = string.Empty;
+            var warnings = new System.Collections.Generic.List<string>();
+
+            if (players + neutral > 4 && CmbMapSize.SelectedItem is string selStr && int.TryParse(selStr.Split('x')[0], out int selectedSize) && selectedSize < 160)
+                warnings.Add("⚠️ Using a small map with many zones may freeze the game while loading the map. Consider using a larger map size.");
+
+            if (ChkNoDirectPlayerConn.IsChecked == true && neutral < players && players > 1)
+                warnings.Add($"⚠️ \"No player zones connected\" requires at least {players} neutral zones to separate each player. The generator will automatically create them.");
+
+            TxtValidation.Text = string.Join("\n\n", warnings);
 
             BtnGenerate.IsEnabled = true;
             return true;
         }
 
         private void CmbMapSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            Validate();
+        }
+
+        private void ChkOption_Changed(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
             Validate();
@@ -100,10 +111,13 @@ namespace Olden_Era___Template_Editor
                 HeroCountMax = (int)SldHeroMax.Value,
                 HeroCountIncrement = (int)SldHeroIncrement.Value,
                 NeutralZoneCount = (int)SldNeutral.Value,
-                MapSize = CmbMapSize.SelectedItem is int size ? size : 160,
+                MapSize = CmbMapSize.SelectedItem is string sizeStr && int.TryParse(sizeStr.Split('x')[0], out int parsedSize) ? parsedSize : 160,
                 VictoryCondition = KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex],
                 PlayerZoneCastles = (int)SldPlayerCastles.Value,
-                NeutralZoneCastles = (int)SldNeutralCastles.Value
+                NeutralZoneCastles = (int)SldNeutralCastles.Value,
+                NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
+                RandomPortals = ChkRandomPortals.IsChecked == true,
+                SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true
             };
 
             var template = TemplateGenerator.Generate(settings);
