@@ -3,7 +3,10 @@ using Olden_Era___Template_Editor.Models;
 using Olden_Era___Template_Editor.Services;
 using OldenEraTemplateEditor.Models;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,6 +14,11 @@ namespace Olden_Era___Template_Editor
 {
     public partial class MainWindow : Window
     {
+        private const string GitHubApiLatestRelease = "https://api.github.com/repos/KhanDevelopsGames/Olden-Era---Template-Generator/releases/latest";
+        private const string GitHubReleasesPage     = "https://github.com/KhanDevelopsGames/Olden-Era---Template-Generator/releases";
+
+        private static readonly HttpClient Http = new();
+
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             WriteIndented = true,
@@ -45,6 +53,54 @@ namespace Olden_Era___Template_Editor
             CmbVictory.SelectedIndex = 0; // Classic (win_condition_1)
             CmbTopology.ItemsSource = TopologyOptions.Select(t => t.Label).ToList();
             CmbTopology.SelectedIndex = 0; // Random is first
+
+            // Fire-and-forget background update check — never blocks the UI.
+            _ = CheckForUpdateAsync(version);
+        }
+
+        private async Task CheckForUpdateAsync(Version? currentVersion)
+        {
+            try
+            {
+                Http.DefaultRequestHeaders.UserAgent.Clear();
+                Http.DefaultRequestHeaders.UserAgent.Add(
+                    new ProductInfoHeaderValue("OldenEraTemplateGenerator", currentVersion?.ToString() ?? "0"));
+
+                using var response = await Http.GetAsync(GitHubApiLatestRelease);
+                if (!response.IsSuccessStatusCode) return;
+
+                using var stream = await response.Content.ReadAsStreamAsync();
+                var release = await JsonSerializer.DeserializeAsync<GitHubRelease>(stream);
+                if (release?.TagName == null) return;
+
+                // Tag expected format: "v1.2" or "1.2" — parse major.minor.
+                string tag = release.TagName.TrimStart('v');
+                if (!Version.TryParse(tag, out Version? latestVersion)) return;
+                if (currentVersion == null || latestVersion <= currentVersion) return;
+
+                // A newer version exists — prompt on the UI thread.
+                Dispatcher.Invoke(() =>
+                {
+                    var result = MessageBox.Show(
+                        $"A new version is available: v{latestVersion.Major}.{latestVersion.Minor}\n" +
+                        $"You are running: v{currentVersion.Major}.{currentVersion.Minor}\n\n" +
+                        "Open the releases page to download the update?",
+                        "Update Available",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Information);
+
+                    if (result == MessageBoxResult.Yes)
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(GitHubReleasesPage) { UseShellExecute = true });
+                });
+            }
+            catch { /* Network unavailable or API error — silently ignore. */ }
+        }
+
+        // Minimal model for GitHub releases API response.
+        private sealed class GitHubRelease
+        {
+            [JsonPropertyName("tag_name")]
+            public string? TagName { get; set; }
         }
 
         // Keep value labels in sync with slider positions.
