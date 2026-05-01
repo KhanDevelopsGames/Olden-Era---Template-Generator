@@ -72,9 +72,19 @@ namespace Olden_Era___Template_Editor
                 return false;
             }
 
-            TxtValidation.Text = string.Empty;
+            if (players + neutral > 4 && CmbMapSize.SelectedItem is int selectedSize && selectedSize < 160)
+                TxtValidation.Text = "⚠️ Using a small map with many zones may freeze the game while loading the map. Consider using a larger map size.";
+            else
+                TxtValidation.Text = string.Empty;
+
             BtnGenerate.IsEnabled = true;
             return true;
+        }
+
+        private void CmbMapSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            Validate();
         }
 
         private void BtnGenerate_Click(object sender, RoutedEventArgs e)

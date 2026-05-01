@@ -158,7 +158,8 @@
         <!-- Map size -->
         <Label Grid.Row="11" Grid.Column="0" Content="Map Size" Margin="0,6,0,0"/>
         <ComboBox Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2"
-                  x:Name="CmbMapSize" Margin="0,6,0,0"/>
+                  x:Name="CmbMapSize" Margin="0,6,0,0"
+                  SelectionChanged="CmbMapSize_SelectionChanged"/>
 
         <!-- Victory condition (hidden – Standard only) -->
         <Label Grid.Row="12" Grid.Column="0" Content="Victory Condition" Margin="0,6,0,0" Visibility="Collapsed"/>
@@ -166,13 +167,14 @@
                   x:Name="CmbVictory" Margin="0,6,0,0" Visibility="Collapsed"/>
 
         <!-- Validation message -->
-        <TextBlock Grid.Row="14" Grid.ColumnSpan="3"
+        <TextBlock Grid.Row="15" Grid.ColumnSpan="3"
                    x:Name="TxtValidation"
                    Foreground="Red" FontSize="12" TextWrapping="Wrap"
-                   HorizontalAlignment="Center"/>
+                   HorizontalAlignment="Stretch" TextAlignment="Center"
+                   Margin="0,4,0,0"/>
 
         <!-- Generate button -->
-        <Button Grid.Row="16" Grid.ColumnSpan="3"
+        <Button Grid.Row="17" Grid.ColumnSpan="3"
                 x:Name="BtnGenerate" Content="Generate &amp; Save…"
                 Height="34" FontSize="14" FontWeight="SemiBold"
                 Click="BtnGenerate_Click"/>
