@@ -17,6 +17,15 @@ namespace Olden_Era___Template_Editor
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
+        private static readonly (MapTopology Topology, string Label, string Description)[] TopologyOptions =
+        [
+            (MapTopology.Random,      "Random",        "Zones are placed at random positions. Each zone connects to all zones that border it — no fixed structure."),
+            (MapTopology.Default,     "Ring",          "All zones are arranged in a circle. Each zone connects to the two zones next to it."),
+            (MapTopology.HubAndSpoke, "Hub & Spoke",   "All zones connect to a shared central hub. Players never border each other directly."),
+            (MapTopology.Chain,       "Chain",         "Zones are connected in a straight line from one end to the other, with no wrap-around."),
+            (MapTopology.SharedWeb,   "Shared Web",    "Player zones connect to shared neutral zones. Neutrals form a ring between all players."),
+        ];
+
         public MainWindow()
         {
             InitializeComponent();
@@ -26,6 +35,8 @@ namespace Olden_Era___Template_Editor
             CmbMapSize.SelectedItem = "160x160";
             CmbVictory.ItemsSource = KnownValues.VictoryConditionLabels;
             CmbVictory.SelectedIndex = 2; // Hold City (win_condition_5)
+            CmbTopology.ItemsSource = TopologyOptions.Select(t => t.Label).ToList();
+            CmbTopology.SelectedIndex = 0; // Random is first
         }
 
         // Keep value labels in sync with slider positions.
@@ -77,13 +88,35 @@ namespace Olden_Era___Template_Editor
             if (players + neutral > 4 && CmbMapSize.SelectedItem is string selStr && int.TryParse(selStr.Split('x')[0], out int selectedSize) && selectedSize < 160)
                 warnings.Add("⚠️ Using a small map with many zones may freeze the game while loading the map. Consider using a larger map size.");
 
-            if (ChkNoDirectPlayerConn.IsChecked == true && neutral < players && players > 1)
-                warnings.Add($"⚠️ \"No player zones connected\" requires at least {players} neutral zones to separate each player. The generator will automatically create them.");
+            // Hard error: with isolation on, a ring/chain needs at least (players-1) neutrals
+            // to guarantee no player zone ends up with only player neighbours (fully disconnected).
+            bool isolate = ChkNoDirectPlayerConn.IsChecked == true;
+            bool ringOrChain = CmbTopology.SelectedIndex >= 0 &&
+                TopologyOptions[CmbTopology.SelectedIndex].Topology is
+                    MapTopology.Default or MapTopology.Chain or MapTopology.Random;
+            if (isolate && ringOrChain && players > 2 && neutral < players - 1)
+            {
+                TxtValidation.Text = $"❌ With {players} players and \"Isolate player zones\" enabled, at least {players - 1} neutral zones are needed — otherwise some player zones will have no connections at all.";
+                BtnGenerate.IsEnabled = false;
+                return false;
+            }
+
+            if (isolate && ringOrChain && neutral == 0 && players > 1)
+                warnings.Add("⚠️ \"Isolate player zones\" is enabled but there are no neutral zones. Players at the ends of the ring will still be adjacent.");
 
             TxtValidation.Text = string.Join("\n\n", warnings);
 
             BtnGenerate.IsEnabled = true;
             return true;
+        }
+
+        private void CmbTopology_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            int idx = CmbTopology.SelectedIndex;
+            if (idx >= 0 && idx < TopologyOptions.Length)
+                TxtTopologyDesc.Text = TopologyOptions[idx].Description;
+            Validate();
         }
 
         private void CmbMapSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -117,7 +150,8 @@ namespace Olden_Era___Template_Editor
                 NeutralZoneCastles = (int)SldNeutralCastles.Value,
                 NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
                 RandomPortals = ChkRandomPortals.IsChecked == true,
-                SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true
+                SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
+                Topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default
             };
 
             var template = TemplateGenerator.Generate(settings);

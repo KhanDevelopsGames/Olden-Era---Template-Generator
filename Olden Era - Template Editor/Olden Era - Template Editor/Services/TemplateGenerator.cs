@@ -22,12 +22,10 @@ namespace Olden_Era___Template_Editor.Services
         {
             var playerLetters = ZoneLetters.Take(settings.PlayerCount).ToList();
 
-            // When no direct player connections are requested, ensure there are enough
-            // neutral zones to separate every adjacent player pair in the ring.
-            // A ring of P players needs at least P neutral buffers (one between each pair).
+            // Hub & Spoke handles isolation via hub; for all other topologies the
+            // isolation is done by skipping player–player connections, so no extra
+            // neutral zones need to be auto-created.
             int neutralCount = settings.NeutralZoneCount;
-            if (settings.NoDirectPlayerConnections && settings.PlayerCount > 1)
-                neutralCount = Math.Max(neutralCount, settings.PlayerCount);
 
             var neutralLetters = ZoneLetters.Skip(settings.PlayerCount).Take(neutralCount).ToList();
 
@@ -92,87 +90,525 @@ namespace Olden_Era___Template_Editor.Services
 
         private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters)
         {
-            // When NoDirectPlayerConnections is on, interleave players and neutrals in the
-            // ring so that every player zone is flanked only by neutral zones.
-            // Layout: P0, N0, P1, N1, … with any extra neutrals appended at the end.
-            List<string> orderedLetters;
-            if (settings.NoDirectPlayerConnections && playerLetters.Count > 1 && neutralLetters.Count >= playerLetters.Count)
+            return settings.Topology switch
             {
-                orderedLetters = [];
-                for (int i = 0; i < playerLetters.Count; i++)
-                {
-                    orderedLetters.Add(playerLetters[i]);
-                    orderedLetters.Add(neutralLetters[i]);
-                }
-                // Append any remaining neutral zones after the interleaved pairs.
-                orderedLetters.AddRange(neutralLetters.Skip(playerLetters.Count));
-            }
-            else
+                MapTopology.HubAndSpoke => BuildVariantHubAndSpoke(settings, playerLetters, neutralLetters),
+                MapTopology.Chain       => BuildVariantChain(settings, playerLetters, neutralLetters),
+                MapTopology.SharedWeb   => BuildVariantSharedWeb(settings, playerLetters, neutralLetters),
+                MapTopology.Random      => BuildVariantRandom(settings, playerLetters, neutralLetters),
+                _                       => BuildVariantDefault(settings, playerLetters, neutralLetters),
+            };
+        }
+
+        // ── Topology: Default (Ring) ──────────────────────────────────────────────
+
+        private static Variant BuildVariantDefault(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters)
+        {
+            var orderedLetters = playerLetters.Concat(neutralLetters).ToList();
+            int outerCount = orderedLetters.Count;
+            bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
+
+            // Pre-compute ring connection names, but only for pairs that are actually connected.
+            // A pair is skipped when isolation is on and both zones are player zones.
+            var ringConnRight = new string[outerCount]; // name of the connection from i to i+1
+            var ringConnLeft  = new string[outerCount]; // name of the connection from i-1 to i
+            for (int i = 0; i < outerCount; i++)
             {
-                orderedLetters = playerLetters.Concat(neutralLetters).ToList();
+                int next = (i + 1) % outerCount;
+                bool bothPlayers = playerLetters.Contains(orderedLetters[i])
+                                && playerLetters.Contains(orderedLetters[next]);
+                if (isolate && bothPlayers) continue; // leave entries as null — no connection here
+                string name = $"Ring-{orderedLetters[i]}-{orderedLetters[next]}";
+                ringConnRight[i]    = name;
+                ringConnLeft[next]  = name;
             }
 
-            int totalZones = orderedLetters.Count;
+            var zones = new List<Zone>();
+            for (int i = 0; i < outerCount; i++)
+            {
+                string letter = orderedLetters[i];
+                // Only include non-null connection names for this zone's roads.
+                var myConns = new[] { ringConnLeft[i], ringConnRight[i] }
+                    .Where(c => c != null).Distinct().ToArray();
+
+                int playerIdx = playerLetters.IndexOf(letter);
+                if (playerIdx >= 0)
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds));
+                else
+                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds));
+            }
+
+            var connections = new List<Connection>();
+            connections.AddRange(BuildRingConnections(playerLetters, orderedLetters, isolate));
+            if (settings.RandomPortals)
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters));
+
+            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+            return MakeVariant(playerLetters, orderedLetters[0], outerCount, zones, connections);
+        }
+
+        // ── Topology: Random Proximity ────────────────────────────────────────────
+
+        private static Variant BuildVariantRandom(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters)
+        {
+            var rng = new Random();
+            // Shuffle zones so player/neutral order is random.
+            var allLetters = playerLetters.Concat(neutralLetters).OrderBy(_ => rng.Next()).ToList();
+            int count = allLetters.Count;
+            bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
+
+            // Assign random 2D positions in a unit square to simulate zone placement.
+            var pos = allLetters.Select(_ => (X: rng.NextDouble(), Y: rng.NextDouble())).ToList();
+
+            // Connect any pair of zones closer than the proximity threshold.
+            // Threshold scales with zone count so denser maps still get reasonable connectivity.
+            double threshold = 1.5 / Math.Sqrt(count);
+            var pairs = new List<(int A, int B)>();
+            for (int i = 0; i < count; i++)
+                for (int j = i + 1; j < count; j++)
+                {
+                    double dx = pos[i].X - pos[j].X;
+                    double dy = pos[i].Y - pos[j].Y;
+                    if (Math.Sqrt(dx * dx + dy * dy) < threshold)
+                        pairs.Add((i, j));
+                }
+
+            // Guarantee every zone has at least one connection — connect isolated zones to nearest.
+            for (int i = 0; i < count; i++)
+            {
+                if (pairs.Any(p => p.A == i || p.B == i)) continue;
+                int nearest = Enumerable.Range(0, count)
+                    .Where(j => j != i)
+                    .OrderBy(j => { double dx = pos[i].X - pos[j].X, dy = pos[i].Y - pos[j].Y; return dx * dx + dy * dy; })
+                    .First();
+                int a = Math.Min(i, nearest), b = Math.Max(i, nearest);
+                if (!pairs.Contains((a, b))) pairs.Add((a, b));
+            }
+
+            // Build connection name lookup per zone index.
+            var connsByZone = Enumerable.Range(0, count).ToDictionary(i => i, _ => new List<string>());
+            var connections = new List<Connection>();
+
+            foreach (var (a, b) in pairs)
+            {
+                string fromLetter = allLetters[a];
+                string toLetter   = allLetters[b];
+                if (isolate && playerLetters.Contains(fromLetter) && playerLetters.Contains(toLetter))
+                    continue;
+
+                string connName = $"Rnd-{fromLetter}-{toLetter}";
+                connsByZone[a].Add(connName);
+                connsByZone[b].Add(connName);
+
+                string fromZone = playerLetters.Contains(fromLetter) ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
+                string toZone   = playerLetters.Contains(toLetter)   ? $"Spawn-{toLetter}"   : $"Neutral-{toLetter}";
+                connections.Add(new Connection
+                {
+                    Name = connName,
+                    From = fromZone,
+                    To = toZone,
+                    ConnectionType = "Direct",
+                    GuardZone = fromZone,
+                    GuardEscape = false,
+                    SimTurnSquad = true,
+                    GuardValue = 30000,
+                    GuardWeeklyIncrement = 0.15,
+                    GuardMatchGroup = $"rnd_guard_{fromLetter}_{toLetter}"
+                });
+            }
+
+            var zones = new List<Zone>();
+            for (int i = 0; i < count; i++)
+            {
+                string letter = allLetters[i];
+                var myConns = connsByZone[i].ToArray();
+                int playerIdx = playerLetters.IndexOf(letter);
+                if (playerIdx >= 0)
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds));
+                else
+                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds));
+            }
+
+            if (settings.RandomPortals)
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters));
+
+            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+            return MakeVariant(playerLetters, allLetters[0], count, zones, connections);
+        }
+
+        // ── Topology: Hub & Spoke ─────────────────────────────────────────────────
+
+        private static Variant BuildVariantHubAndSpoke(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters)
+        {
+            // A central "Hub" zone connects to every outer zone.
+            // Outer zones are players + neutrals arranged around the hub.
+            var outerLetters = playerLetters.Concat(neutralLetters).ToList();
+            var zones = new List<Zone>();
+            var connections = new List<Connection>();
+
+            // Hub zone (neutral, no castle, high loot).
+            var hubConns = outerLetters.Select(l => $"Hub-{l}").ToArray();
+            zones.Add(BuildHubZone(hubConns));
+
+            // Outer zones each connect only to the hub.
+            for (int i = 0; i < outerLetters.Count; i++)
+            {
+                string letter = outerLetters[i];
+                var spokeConns = new[] { $"Hub-{letter}" };
+                int playerIdx = playerLetters.IndexOf(letter);
+                if (playerIdx >= 0)
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", spokeConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds));
+                else
+                    zones.Add(BuildNeutralZone(letter, spokeConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds));
+            }
+
+            // Hub → each outer zone: Direct guarded connections (multiple per zone like JCC).
+            foreach (var letter in outerLetters)
+            {
+                string outerZone = playerLetters.Contains(letter) ? $"Spawn-{letter}" : $"Neutral-{letter}";
+                // Main named connection.
+                connections.Add(new Connection
+                {
+                    Name = $"Hub-{letter}",
+                    From = "Hub",
+                    To = outerZone,
+                    ConnectionType = "Direct",
+                    GuardZone = "Hub",
+                    GuardEscape = false,
+                    SimTurnSquad = true,
+                    GuardValue = 30000,
+                    GuardWeeklyIncrement = 0.15,
+                    GuardMatchGroup = $"hub_guard_{letter}"
+                });
+                // Extra unnamed connections (same as JCC pattern of 5 per zone).
+                for (int e = 1; e < ConnectionsPerZone; e++)
+                    connections.Add(new Connection { From = "Hub", To = outerZone, ConnectionType = "Direct" });
+            }
+
+            // Proximity between players that are adjacent in the outer ring (visual only).
+            if (!settings.NoDirectPlayerConnections)
+            {
+                for (int i = 0; i < playerLetters.Count; i++)
+                {
+                    int next = (i + 1) % playerLetters.Count;
+                    connections.Add(new Connection
+                    {
+                        Name = $"Pseudo-{playerLetters[i]}-{playerLetters[next]}",
+                        From = $"Spawn-{playerLetters[i]}",
+                        To = $"Spawn-{playerLetters[next]}",
+                        ConnectionType = "Proximity"
+                    });
+                }
+            }
+
+            if (settings.RandomPortals)
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, outerLetters));
+
+            return MakeVariant(playerLetters, outerLetters[0], outerLetters.Count + 1, zones, connections);
+        }
+
+        // ── Topology: Chain ───────────────────────────────────────────────────────
+
+        private static Variant BuildVariantChain(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters)
+        {
+            var orderedLetters = playerLetters.Concat(neutralLetters).ToList();
+            int count = orderedLetters.Count;
+            bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
+
+            // Pre-compute connection names for each adjacent pair, skipping player–player
+            // pairs when isolation is enabled. null means no connection at that position.
+            var connNames = new string[count - 1];
+            for (int i = 0; i < count - 1; i++)
+            {
+                bool bothPlayers = playerLetters.Contains(orderedLetters[i])
+                                && playerLetters.Contains(orderedLetters[i + 1]);
+                if (isolate && bothPlayers) continue;
+                connNames[i] = $"Chain-{orderedLetters[i]}-{orderedLetters[i + 1]}";
+            }
+
+            var zones = new List<Zone>();
+            for (int i = 0; i < count; i++)
+            {
+                string letter = orderedLetters[i];
+                var myConns = new List<string>();
+                if (i > 0         && connNames[i - 1] != null) myConns.Add(connNames[i - 1]);
+                if (i < count - 1 && connNames[i]     != null) myConns.Add(connNames[i]);
+
+                int playerIdx = playerLetters.IndexOf(letter);
+                if (playerIdx >= 0)
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds));
+                else
+                    zones.Add(BuildNeutralZone(letter, myConns.ToArray(), settings.NeutralZoneCastles, settings.SpawnRemoteFootholds));
+            }
+
+            var connections = new List<Connection>();
+            for (int i = 0; i < count - 1; i++)
+            {
+                if (connNames[i] == null) continue;
+                string fromLetter = orderedLetters[i];
+                string toLetter   = orderedLetters[i + 1];
+                string fromZone = playerLetters.Contains(fromLetter) ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
+                string toZone   = playerLetters.Contains(toLetter)   ? $"Spawn-{toLetter}"   : $"Neutral-{toLetter}";
+                connections.Add(new Connection
+                {
+                    Name = connNames[i],
+                    From = fromZone,
+                    To = toZone,
+                    ConnectionType = "Direct",
+                    GuardZone = fromZone,
+                    GuardEscape = false,
+                    SimTurnSquad = true,
+                    GuardValue = 30000,
+                    GuardWeeklyIncrement = 0.15,
+                    GuardMatchGroup = $"chain_guard_{fromLetter}_{toLetter}"
+                });
+            }
+
+            if (settings.RandomPortals)
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters));
+
+            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+            return MakeVariant(playerLetters, orderedLetters[0], count, zones, connections);
+        }
+
+        // ── Topology: Shared Web ──────────────────────────────────────────────────
+
+        private static Variant BuildVariantSharedWeb(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters)
+        {
+            // Each player connects to two neutral zones.
+            // Neutral zones are arranged in a ring connecting all players.
+            // If there are fewer neutrals than needed, we wrap around (multiple players share a neutral).
+            // Requires at least 1 neutral zone.
+            var neutrals = neutralLetters.Count > 0
+                ? neutralLetters
+                : ZoneLetters.Skip(settings.PlayerCount).Take(1).ToList();
+
+            int p = playerLetters.Count;
+            int n = neutrals.Count;
+
+            // Pre-compute neutral ring connection names.
+            var neutralRingConns = new string[n];
+            for (int i = 0; i < n; i++)
+            {
+                int next = (i + 1) % n;
+                neutralRingConns[i] = $"NRing-{neutrals[i]}-{neutrals[next]}";
+            }
 
             var zones = new List<Zone>();
             var connections = new List<Connection>();
 
-            // Pre-compute ring connection names between adjacent zones in the ordered ring.
-            int outerCount = orderedLetters.Count;
-            var ringConnRight = new string[outerCount];
-            var ringConnLeft  = new string[outerCount];
-            for (int i = 0; i < outerCount; i++)
+            // Build neutral zones — each connects to its two ring neighbours.
+            for (int i = 0; i < n; i++)
             {
-                int next = (i + 1) % outerCount;
-                ringConnRight[i] = $"Ring-{orderedLetters[i]}-{orderedLetters[next]}";
-                ringConnLeft[next] = ringConnRight[i];
-            }
-
-            // Build zones in ring order.
-            for (int i = 0; i < outerCount; i++)
-            {
-                string letter = orderedLetters[i];
-                var ringConns = outerCount > 1
-                    ? new[] { ringConnLeft[i], ringConnRight[i] }.Distinct().ToArray()
+                int prev = (i - 1 + n) % n;
+                string[] nConns = n > 1
+                    ? new[] { neutralRingConns[prev], neutralRingConns[i] }.Distinct().ToArray()
                     : [];
-
-                int playerIdx = playerLetters.IndexOf(letter);
-                if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", ringConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds));
-                else
-                    zones.Add(BuildNeutralZone(letter, ringConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds));
+                zones.Add(BuildNeutralZone(neutrals[i], nConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds));
             }
 
-            // Direct ring connections between adjacent zones.
-            connections.AddRange(BuildRingConnections(playerLetters, neutralLetters, orderedLetters));
-
-            // Random portal connections (non-adjacent pairings).
-            if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters));
-
-            return new Variant
+            // Build player zones — each connects to two neutrals (evenly distributed).
+            for (int i = 0; i < p; i++)
             {
-                Orientation = new Orientation
+                // Spread players across neutral ring evenly.
+                int n1 = (i * n / p) % n;
+                int n2 = ((i * n / p) + 1) % n;
+
+                var spokeConns = new List<string> { $"Web-{playerLetters[i]}-{neutrals[n1]}" };
+                if (n1 != n2)
+                    spokeConns.Add($"Web-{playerLetters[i]}-{neutrals[n2]}");
+
+                zones.Add(BuildSpawnZone(playerLetters[i], $"Player{i + 1}", spokeConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds));
+
+                // Player → neutral Direct connections.
+                foreach (var connName in spokeConns)
                 {
-                    ZeroAngleZone = playerLetters.Count > 0 ? $"Spawn-{orderedLetters[0]}" : $"Neutral-{orderedLetters[0]}",
-                    BaseAngleMin = 45,
-                    BaseAngleMax = 45,
-                    RandomAngleAmplitude = 360,
-                    RandomAngleStep = 360.0 / totalZones
-                },
-                Border = new Border
+                    string neutralLetter = connName.Split('-')[2]; // "Web-A-I" → index 2 = "I"
+                    string neutralZone = $"Neutral-{neutralLetter}";
+                    connections.Add(new Connection
+                    {
+                        Name = connName,
+                        From = $"Spawn-{playerLetters[i]}",
+                        To = neutralZone,
+                        ConnectionType = "Direct",
+                        GuardZone = neutralZone,
+                        GuardEscape = false,
+                        SimTurnSquad = true,
+                        GuardValue = 30000,
+                        GuardWeeklyIncrement = 0.15,
+                        GuardMatchGroup = $"web_guard_{playerLetters[i]}_{neutralLetter}"
+                    });
+                }
+            }
+
+            // Neutral ring connections.
+            if (n > 1)
+            {
+                for (int i = 0; i < n; i++)
                 {
-                    CornerRadius = 0.0,
-                    ObstaclesWidth = 3,
-                    ObstaclesNoise = [new NoiseEntry { Amp = 1, Freq = 12 }],
-                    WaterWidth = 0,
-                    WaterNoise = [new NoiseEntry { Amp = 1, Freq = 12 }],
-                    WaterType = "water grass"
-                },
-                Zones = zones,
-                Connections = connections
-            };
+                    int next = (i + 1) % n;
+                    connections.Add(new Connection
+                    {
+                        Name = neutralRingConns[i],
+                        From = $"Neutral-{neutrals[i]}",
+                        To = $"Neutral-{neutrals[next]}",
+                        ConnectionType = "Direct",
+                        GuardZone = $"Neutral-{neutrals[i]}",
+                        GuardEscape = false,
+                        SimTurnSquad = true,
+                        GuardValue = 20000,
+                        GuardWeeklyIncrement = 0.15,
+                        GuardMatchGroup = $"nring_guard_{neutrals[i]}_{neutrals[next]}"
+                    });
+                }
+            }
+
+            if (settings.RandomPortals)
+            {
+                var allLetters = playerLetters.Concat(neutrals).ToList();
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters));
+            }
+
+            bool isolateWeb = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
+            if (isolateWeb) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+
+            var allZoneLettersOrdered = neutrals.Concat(playerLetters).ToList();
+            return MakeVariant(playerLetters, playerLetters[0], zones.Count, zones, connections);
         }
+
+        // ── Hub zone (only used by Hub & Spoke topology) ─────────────────────────
+
+        private static Zone BuildHubZone(string[] spokeConns) => new()
+        {
+            Name = "Hub",
+            Size = 1.0,
+            Layout = "zone_layout_spawns",
+            GuardCutoffValue = 2000,
+            GuardRandomization = 0.05,
+            GuardMultiplier = 1.5,
+            GuardWeeklyIncrement = 0.20,
+            GuardReactionDistribution = [0, 10, 10, 20, 10, 0],
+            DiplomacyModifier = -0.5,
+            GuardedContentPool = ["template_pool_jebus_cross_guarded_side_zone"],
+            UnguardedContentPool = ["template_pool_jebus_cross_unguarded_side_zone"],
+            ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
+            MandatoryContent = [],
+            ContentCountLimits = BuildSideContentLimits(),
+            GuardedContentValue = 300000,
+            GuardedContentValuePerArea = 0,
+            UnguardedContentValue = 50000,
+            UnguardedContentValuePerArea = 0,
+            ResourcesValue = 80000,
+            ResourcesValuePerArea = 0,
+            MainObjects = [],
+            ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
+            ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
+            MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
+            CrossroadsPosition = 0,
+            Roads = spokeConns.Select(c => PlainRoad(ConnectionEndpoint(c), ConnectionEndpoint(c))).ToList()
+        };
+
+        // ── Isolation failsafe ───────────────────────────────────────────────────
+
+        /// <summary>
+        /// When "isolate player zones" is active, player zones that ended up with no connections
+        /// (because all their neighbours were also player zones) must still be reachable.
+        /// This method adds a minimal direct player–player fallback connection for each such zone.
+        /// </summary>
+        private static void EnsurePlayerZonesConnected(
+            List<string> playerLetters, List<Zone> zones, List<Connection> connections)
+        {
+            if (playerLetters.Count < 2) return;
+
+            // Collect the set of connection names already present in the connection list.
+            var connNames = connections.Select(c => c.Name).Where(n => n != null).ToHashSet();
+
+            foreach (var letter in playerLetters)
+            {
+                string zoneName = $"Spawn-{letter}";
+                var zone = zones.FirstOrDefault(z => z.Name == zoneName);
+                if (zone == null) continue;
+
+                // Check whether this zone has any named road pointing to an existing connection.
+                bool hasConnection = zone.Roads != null && zone.Roads
+                    .Any(r => r.To?.Type == "Connection" && connNames.Contains(r.To.Args?[0]));
+
+                if (hasConnection) continue;
+
+                // Find another player zone that is also disconnected, or any other player zone.
+                string? partnerLetter = playerLetters
+                    .Where(pl => pl != letter)
+                    .OrderBy(pl =>
+                    {
+                        var pZone = zones.FirstOrDefault(z => z.Name == $"Spawn-{pl}");
+                        bool partnerHasConn = pZone?.Roads != null && pZone.Roads
+                            .Any(r => r.To?.Type == "Connection" && connNames.Contains(r.To.Args?[0]));
+                        return partnerHasConn ? 1 : 0; // prefer pairing two isolated players together
+                    })
+                    .FirstOrDefault();
+
+                if (partnerLetter == null) continue;
+
+                // Only add if we don't already have a fallback connection between these two.
+                string pair = (string.Compare(letter, partnerLetter, StringComparison.Ordinal) < 0)
+                    ? letter + "-" + partnerLetter
+                    : partnerLetter + "-" + letter;
+                string fallbackName = $"Fallback-{pair}";
+                if (connNames.Contains(fallbackName)) continue;
+
+                // Register the connection.
+                connections.Add(new Connection
+                {
+                    Name = fallbackName,
+                    From = $"Spawn-{letter}",
+                    To = $"Spawn-{partnerLetter}",
+                    ConnectionType = "Direct",
+                    GuardZone = $"Spawn-{letter}",
+                    GuardEscape = false,
+                    SimTurnSquad = true,
+                    GuardValue = 30000,
+                    GuardWeeklyIncrement = 0.15,
+                    GuardMatchGroup = $"fallback_guard_{fallbackName}"
+                });
+                connNames.Add(fallbackName);
+
+                // Add road endpoints to both zones.
+                foreach (var pLetter in new[] { letter, partnerLetter })
+                {
+                    var pZone = zones.FirstOrDefault(z => z.Name == $"Spawn-{pLetter}");
+                    if (pZone != null)
+                    {
+                        pZone.Roads ??= [];
+                        pZone.Roads.Add(PlainRoad(MainObjectEndpoint("0"), ConnectionEndpoint(fallbackName)));
+                    }
+                }
+            }
+        }
+
+        // ── Variant factory helper ────────────────────────────────────────────────
+
+        private static Variant MakeVariant(List<string> playerLetters, string firstLetter, int totalZones, List<Zone> zones, List<Connection> connections) => new()
+        {
+            Orientation = new Orientation
+            {
+                ZeroAngleZone = playerLetters.Count > 0 ? $"Spawn-{firstLetter}" : $"Neutral-{firstLetter}",
+                BaseAngleMin = 45,
+                BaseAngleMax = 45,
+                RandomAngleAmplitude = 360,
+                RandomAngleStep = 360.0 / totalZones
+            },
+            Border = new Border
+            {
+                CornerRadius = 0.0,
+                ObstaclesWidth = 3,
+                ObstaclesNoise = [new NoiseEntry { Amp = 1, Freq = 12 }],
+                WaterWidth = 0,
+                WaterNoise = [new NoiseEntry { Amp = 1, Freq = 12 }],
+                WaterType = "water grass"
+            },
+            Zones = zones,
+            Connections = connections
+        };
 
         // ── Spawn zone ───────────────────────────────────────────────────────────
 
@@ -313,10 +749,10 @@ namespace Olden_Era___Template_Editor.Services
         /// <summary>
         /// Creates guarded Direct connections between every adjacent pair of outer zones
         /// arranged in a ring (zone[i] ↔ zone[i+1], wrapping around).
-        /// Each pair gets one named connection plus road references.
+        /// When <paramref name="isolatePlayers"/> is true, player–player adjacent pairs are skipped.
         /// </summary>
         private static IEnumerable<Connection> BuildRingConnections(
-            List<string> playerLetters, List<string> neutralLetters, List<string> orderedLetters)
+            List<string> playerLetters, List<string> orderedLetters, bool isolatePlayers = false)
         {
             int count = orderedLetters.Count;
             if (count < 2) yield break;
@@ -325,14 +761,14 @@ namespace Olden_Era___Template_Editor.Services
             {
                 int next = (i + 1) % count;
                 string fromLetter = orderedLetters[i];
-                string toLetter = orderedLetters[next];
+                string toLetter   = orderedLetters[next];
 
-                string fromZone = playerLetters.Contains(fromLetter)
-                    ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
-                string toZone = playerLetters.Contains(toLetter)
-                    ? $"Spawn-{toLetter}" : $"Neutral-{toLetter}";
+                if (isolatePlayers && playerLetters.Contains(fromLetter) && playerLetters.Contains(toLetter))
+                    continue;
 
-                // Keep the normal Direct road connection.
+                string fromZone = playerLetters.Contains(fromLetter) ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
+                string toZone   = playerLetters.Contains(toLetter)   ? $"Spawn-{toLetter}"   : $"Neutral-{toLetter}";
+
                 yield return new Connection
                 {
                     Name = $"Ring-{fromLetter}-{toLetter}",

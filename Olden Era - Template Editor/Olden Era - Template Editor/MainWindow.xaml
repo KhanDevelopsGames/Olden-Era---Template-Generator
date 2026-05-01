@@ -49,6 +49,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -92,7 +94,7 @@
                    FontSize="13" Margin="0,6,0,0"/>
 
         <!-- Neutral zones -->
-        <Label Grid.Row="6" Grid.Column="0" Content="Neutral Zones" Margin="0,6,0,0"/>
+        <Label Grid.Row="6" Grid.Column="0" Content="Additional Neutral Zones" Margin="0,6,0,0"/>
         <Slider Grid.Row="6" Grid.Column="1"
                 x:Name="SldNeutral" Margin="0,6,0,0"
                 Minimum="0" Maximum="8" Value="0"
@@ -152,53 +154,67 @@
                   IsChecked="True"
                   Margin="0,6,0,0" FontSize="13" VerticalAlignment="Center"/>
 
+        <!-- Map Topology -->
+        <Label Grid.Row="13" Grid.Column="0" Content="Map Topology" Margin="0,10,0,0"/>
+        <ComboBox Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2"
+                  x:Name="CmbTopology" Margin="0,10,0,0"
+                  SelectionChanged="CmbTopology_SelectionChanged"/>
+
+        <!-- Topology description -->
+        <TextBlock Grid.Row="14" Grid.ColumnSpan="3"
+                   x:Name="TxtTopologyDesc"
+                   FontSize="11" Foreground="Gray" TextWrapping="Wrap"
+                   HorizontalAlignment="Stretch"
+                   Margin="0,2,0,0"/>
+
         <!-- Min heroes -->
-        <Label Grid.Row="13" Grid.Column="0" Content="Min Heroes" Margin="0,10,0,0"/>
-        <Slider Grid.Row="13" Grid.Column="1"
+        <Label Grid.Row="15" Grid.Column="0" Content="Min Heroes" Margin="0,10,0,0"/>
+        <Slider Grid.Row="15" Grid.Column="1"
                 x:Name="SldHeroMin" Margin="0,10,0,0"
                 Minimum="1" Maximum="10" Value="10"
                 TickFrequency="1" IsSnapToTickEnabled="True"
                 ValueChanged="Slider_ValueChanged"/>
-        <TextBlock Grid.Row="13" Grid.Column="2"
+        <TextBlock Grid.Row="15" Grid.Column="2"
                    x:Name="TxtHeroMin" Text="10"
                    VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="13" Margin="0,10,0,0"/>
 
         <!-- Max heroes -->
-        <Label Grid.Row="14" Grid.Column="0" Content="Max Heroes" Margin="0,6,0,0"/>
-        <Slider Grid.Row="14" Grid.Column="1"
+        <Label Grid.Row="16" Grid.Column="0" Content="Max Heroes" Margin="0,6,0,0"/>
+        <Slider Grid.Row="16" Grid.Column="1"
                 x:Name="SldHeroMax" Margin="0,6,0,0"
                 Minimum="1" Maximum="50" Value="10"
                 TickFrequency="1" IsSnapToTickEnabled="True"
                 ValueChanged="Slider_ValueChanged"/>
-        <TextBlock Grid.Row="14" Grid.Column="2"
+        <TextBlock Grid.Row="16" Grid.Column="2"
                    x:Name="TxtHeroMax" Text="10"
                    VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="13" Margin="0,6,0,0"/>
 
         <!-- Hero count increment -->
-        <Label Grid.Row="15" Grid.Column="0" Content="Increase heroes / castle" Margin="0,6,0,0"/>
-        <Slider Grid.Row="15" Grid.Column="1"
+        <Label Grid.Row="17" Grid.Column="0" Content="Increase heroes / castle" Margin="0,6,0,0"/>
+        <Slider Grid.Row="17" Grid.Column="1"
                 x:Name="SldHeroIncrement" Margin="0,6,0,0"
                 Minimum="0" Maximum="10" Value="1"
                 TickFrequency="1" IsSnapToTickEnabled="True"
                 ValueChanged="Slider_ValueChanged"/>
-        <TextBlock Grid.Row="15" Grid.Column="2"
+        <TextBlock Grid.Row="17" Grid.Column="2"
                    x:Name="TxtHeroIncrement" Text="1"
                    VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="13" Margin="0,6,0,0"/>
 
         <!-- Validation message -->
-        <TextBlock Grid.Row="16" Grid.ColumnSpan="3"
+        <TextBlock Grid.Row="18" Grid.ColumnSpan="3"
                    x:Name="TxtValidation"
                    Foreground="Red" FontSize="12" TextWrapping="Wrap"
                    HorizontalAlignment="Stretch" TextAlignment="Center"
                    Margin="0,4,0,0"/>
 
         <!-- Generate button -->
-        <Button Grid.Row="18" Grid.ColumnSpan="3"
+        <Button Grid.Row="19" Grid.ColumnSpan="3"
                 x:Name="BtnGenerate" Content="Generate &amp; Save…"
                 Height="34" FontSize="14" FontWeight="SemiBold"
+                Margin="0,6,0,0"
                 Click="BtnGenerate_Click"/>
     </Grid>
 </Window>
