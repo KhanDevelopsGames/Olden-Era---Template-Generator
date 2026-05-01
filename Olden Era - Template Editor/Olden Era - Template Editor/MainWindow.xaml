@@ -137,7 +137,7 @@
         <!-- No direct player connections -->
         <CheckBox Grid.Row="10" Grid.ColumnSpan="3"
                   x:Name="ChkNoDirectPlayerConn"
-                  Content="Isolate player zones (connect via neutrals only)"
+                  Content="Isolate player zones (connect via neutrals only) [EXPERIMENTAL]"
                   Margin="0,8,0,0" FontSize="13" VerticalAlignment="Center"
                   Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
 

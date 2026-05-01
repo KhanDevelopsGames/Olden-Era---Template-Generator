@@ -157,33 +157,15 @@ namespace Olden_Era___Template_Editor.Services
             int count = allLetters.Count;
             bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
 
-            // Assign random 2D positions in a unit square to simulate zone placement.
-            var pos = allLetters.Select(_ => (X: rng.NextDouble(), Y: rng.NextDouble())).ToList();
-
-            // Connect any pair of zones closer than the proximity threshold.
-            // Threshold scales with zone count so denser maps still get reasonable connectivity.
-            double threshold = 1.5 / Math.Sqrt(count);
-            var pairs = new List<(int A, int B)>();
+            // Assign random 2D positions in the unit square.
+            // Jitter positions slightly apart to avoid degenerate collinear/cocircular cases.
+            var pos = new List<(double X, double Y)>();
             for (int i = 0; i < count; i++)
-                for (int j = i + 1; j < count; j++)
-                {
-                    double dx = pos[i].X - pos[j].X;
-                    double dy = pos[i].Y - pos[j].Y;
-                    if (Math.Sqrt(dx * dx + dy * dy) < threshold)
-                        pairs.Add((i, j));
-                }
+                pos.Add((rng.NextDouble() * 0.9 + 0.05, rng.NextDouble() * 0.9 + 0.05));
 
-            // Guarantee every zone has at least one connection — connect isolated zones to nearest.
-            for (int i = 0; i < count; i++)
-            {
-                if (pairs.Any(p => p.A == i || p.B == i)) continue;
-                int nearest = Enumerable.Range(0, count)
-                    .Where(j => j != i)
-                    .OrderBy(j => { double dx = pos[i].X - pos[j].X, dy = pos[i].Y - pos[j].Y; return dx * dx + dy * dy; })
-                    .First();
-                int a = Math.Min(i, nearest), b = Math.Max(i, nearest);
-                if (!pairs.Contains((a, b))) pairs.Add((a, b));
-            }
+            // Compute Delaunay triangulation — every edge is a true zone-to-zone border.
+            // With only ≤16 points this is fast enough to do with Bowyer-Watson.
+            var pairs = DelaunayEdges(pos);
 
             // Build connection name lookup per zone index.
             var connsByZone = Enumerable.Range(0, count).ToDictionary(i => i, _ => new List<string>());
@@ -234,6 +216,86 @@ namespace Olden_Era___Template_Editor.Services
 
             if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections);
             return MakeVariant(playerLetters, allLetters[0], count, zones, connections);
+        }
+
+        // ── Delaunay triangulation (Bowyer-Watson) ────────────────────────────────
+
+        /// <summary>
+        /// Returns the unique undirected edges of the Delaunay triangulation of the given points.
+        /// Each edge (A, B) has A &lt; B.
+        /// </summary>
+        private static List<(int A, int B)> DelaunayEdges(List<(double X, double Y)> pts)
+        {
+            int n = pts.Count;
+            if (n == 1) return [];
+            if (n == 2) return [(0, 1)];
+
+            // Super-triangle large enough to contain all points.
+            double minX = pts.Min(p => p.X), minY = pts.Min(p => p.Y);
+            double maxX = pts.Max(p => p.X), maxY = pts.Max(p => p.Y);
+            double dx = maxX - minX, dy = maxY - minY;
+            double delta = Math.Max(dx, dy) * 10;
+            var superPts = new List<(double X, double Y)>(pts)
+            {
+                (minX - delta,     minY - delta * 3),
+                (minX + delta * 3, minY - delta),
+                (minX,             minY + delta * 3)
+            };
+            int s0 = n, s1 = n + 1, s2 = n + 2;
+
+            // Each triangle is (i0, i1, i2) into superPts.
+            var triangles = new List<(int I0, int I1, int I2)> { (s0, s1, s2) };
+
+            for (int p = 0; p < n; p++)
+            {
+                double px = superPts[p].X, py = superPts[p].Y;
+
+                // Find all triangles whose circumcircle contains this point.
+                var bad = triangles.Where(t => InCircumcircle(superPts, t, px, py)).ToList();
+
+                // Collect the boundary polygon of the bad triangles (edges not shared by two bad triangles).
+                var boundary = new List<(int A, int B)>();
+                foreach (var t in bad)
+                {
+                    (int A, int B)[] edges = [(t.I0, t.I1), (t.I1, t.I2), (t.I2, t.I0)];
+                    foreach (var e in edges)
+                    {
+                        bool shared = bad.Any(other => other != t &&
+                            ((other.I0 == e.A && other.I1 == e.B) || (other.I1 == e.A && other.I0 == e.B) ||
+                             (other.I1 == e.A && other.I2 == e.B) || (other.I2 == e.A && other.I1 == e.B) ||
+                             (other.I2 == e.A && other.I0 == e.B) || (other.I0 == e.A && other.I2 == e.B)));
+                        if (!shared) boundary.Add(e);
+                    }
+                }
+
+                foreach (var t in bad) triangles.Remove(t);
+                foreach (var (a, b) in boundary)
+                    triangles.Add((a, b, p));
+            }
+
+            // Remove triangles that share a vertex with the super-triangle.
+            triangles.RemoveAll(t => t.I0 >= n || t.I1 >= n || t.I2 >= n);
+
+            // Extract unique edges from real points only.
+            var edgeSet = new HashSet<(int, int)>();
+            foreach (var t in triangles)
+            {
+                edgeSet.Add((Math.Min(t.I0, t.I1), Math.Max(t.I0, t.I1)));
+                edgeSet.Add((Math.Min(t.I1, t.I2), Math.Max(t.I1, t.I2)));
+                edgeSet.Add((Math.Min(t.I2, t.I0), Math.Max(t.I2, t.I0)));
+            }
+            return [.. edgeSet];
+        }
+
+        private static bool InCircumcircle(List<(double X, double Y)> pts, (int I0, int I1, int I2) t, double px, double py)
+        {
+            double ax = pts[t.I0].X - px, ay = pts[t.I0].Y - py;
+            double bx = pts[t.I1].X - px, by = pts[t.I1].Y - py;
+            double cx = pts[t.I2].X - px, cy = pts[t.I2].Y - py;
+            double det = ax * (by * (cx * cx + cy * cy) - cy * (bx * bx + by * by))
+                       - ay * (bx * (cx * cx + cy * cy) - cx * (bx * bx + by * by))
+                       + (ax * ax + ay * ay) * (bx * cy - by * cx);
+            return det > 0;
         }
 
         // ── Topology: Hub & Spoke ─────────────────────────────────────────────────

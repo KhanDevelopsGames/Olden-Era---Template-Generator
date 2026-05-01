@@ -85,7 +85,7 @@ namespace Olden_Era___Template_Editor
 
             var warnings = new System.Collections.Generic.List<string>();
 
-            if (players + neutral > 4 && CmbMapSize.SelectedItem is string selStr && int.TryParse(selStr.Split('x')[0], out int selectedSize) && selectedSize < 160)
+            if (players + neutral > 4 && CmbMapSize.SelectedItem is string selStr && int.TryParse(selStr.Split('x')[0], out int selectedSize) && selectedSize < 128)
                 warnings.Add("⚠️ Using a small map with many zones may freeze the game while loading the map. Consider using a larger map size.");
 
             // Hard error: with isolation on, a ring/chain needs at least (players-1) neutrals
