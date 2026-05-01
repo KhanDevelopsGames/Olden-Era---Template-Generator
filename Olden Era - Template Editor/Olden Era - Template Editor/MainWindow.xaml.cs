@@ -29,6 +29,14 @@ namespace Olden_Era___Template_Editor
         public MainWindow()
         {
             InitializeComponent();
+
+            // Stamp version from assembly metadata into all visible locations.
+            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            string versionLabel = version != null ? $"v{version.Major}.{version.Minor}" : "v?";
+            Title = $"Olden Era - Simple Template Generator {versionLabel}";
+            TxtAppTitle.Text = $"Olden Era - Simple Template Generator  {versionLabel}";
+            TxtWipWarning.Text = $"⚠️ Work in progress ({versionLabel}) — Some generated templates may contain game-breaking bugs or issues.";
+
             CmbGameMode.ItemsSource = KnownValues.GameModes;
             CmbGameMode.SelectedIndex = 0;
             CmbMapSize.ItemsSource = KnownValues.MapSizes.Select(s => $"{s}x{s}").ToList();
