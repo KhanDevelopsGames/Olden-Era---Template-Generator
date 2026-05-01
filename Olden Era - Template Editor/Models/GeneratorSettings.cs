@@ -10,7 +10,7 @@ namespace Olden_Era___Template_Editor.Models
         public int HeroCountIncrement { get; set; } = 1;
         public int NeutralZoneCount { get; set; } = 0;
         public int MapSize { get; set; } = 160;
-        public string VictoryCondition { get; set; } = "win_condition_5";
+        public string VictoryCondition { get; set; } = "win_condition_1";
         public int PlayerZoneCastles { get; set; } = 1;
         public int NeutralZoneCastles { get; set; } = 1;
         public bool NoDirectPlayerConnections { get; set; } = false;

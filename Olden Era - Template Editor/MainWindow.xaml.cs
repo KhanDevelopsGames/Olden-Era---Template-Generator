@@ -42,7 +42,7 @@ namespace Olden_Era___Template_Editor
             CmbMapSize.ItemsSource = KnownValues.MapSizes.Select(s => $"{s}x{s}").ToList();
             CmbMapSize.SelectedItem = "160x160";
             CmbVictory.ItemsSource = KnownValues.VictoryConditionLabels;
-            CmbVictory.SelectedIndex = 2; // Hold City (win_condition_5)
+            CmbVictory.SelectedIndex = 0; // Classic (win_condition_1)
             CmbTopology.ItemsSource = TopologyOptions.Select(t => t.Label).ToList();
             CmbTopology.SelectedIndex = 0; // Random is first
         }
@@ -181,9 +181,9 @@ namespace Olden_Era___Template_Editor
             string json = JsonSerializer.Serialize(template, JsonOptions);
             File.WriteAllText(dlg.FileName, json);
 
-            string savedMsg = $"Template saved to:\n{dlg.FileName}";
+            string savedMsg = $"Template successfully saved to:\n\n{dlg.FileName}";
             if (gameTemplatesPath == null)
-                savedMsg += "\n\n💡 Tip: Templates must be placed in:\n<Olden Era install folder>\\HeroesOldenEra_Data\\StreamingAssets\\map_templates";
+                savedMsg += "\n\n\n💡 Tip: Templates must be placed in:\n<Olden Era install folder>\\HeroesOldenEra_Data\\StreamingAssets\\map_templates";
 
             MessageBox.Show(savedMsg, "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
