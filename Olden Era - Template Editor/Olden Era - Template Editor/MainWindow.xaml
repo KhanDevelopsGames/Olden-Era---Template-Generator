@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Olden_Era___Template_Editor"
         mc:Ignorable="d"
-        Title="Olden Era – Template Generator" Height="700" Width="460"
+        Title="Olden Era - Simple Template Generator" Height="700" Width="460"
         ResizeMode="CanMinimize">
 
     <Window.Resources>
@@ -60,7 +60,7 @@
 
         <!-- Title -->
         <TextBlock Grid.Row="0" Grid.ColumnSpan="3"
-                   Text="Random Map Generator" FontSize="18" FontWeight="Bold"
+                   Text="Olden Era - Simple Template Generator" FontSize="18" FontWeight="Bold"
                    HorizontalAlignment="Center"/>
 
         <!-- Template name -->
