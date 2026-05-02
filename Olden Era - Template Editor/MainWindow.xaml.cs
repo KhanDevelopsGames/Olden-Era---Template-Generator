@@ -34,9 +34,9 @@ namespace Olden_Era___Template_Editor
         [
             (MapTopology.Random,      "Random",        "Zones are placed at random positions. Each zone connects to all zones that border it — no fixed structure."),
             (MapTopology.Default,     "Ring",          "All zones are arranged in a circle. Each zone connects to the two zones next to it."),
-            (MapTopology.HubAndSpoke, "Hub & Spoke [EXPERIMENTAL]",   "All zones connect to a shared central hub. Players never border each other directly."),
+            (MapTopology.HubAndSpoke, "Hub",   "All zones connect to a shared central hub. Players never border each other directly."),
             (MapTopology.Chain,       "Chain",         "Zones are connected in a straight line from one end to the other, with no wrap-around."),
-            (MapTopology.SharedWeb,   "Shared Web [EXPERIMENTAL]",    "Player zones connect to shared neutral zones. Neutrals form a ring between all players."),
+            (MapTopology.SharedWeb,   "Shared Web [NOT FUNCTIONAL]",    "Player zones connect to shared neutral zones. Neutrals form a ring between all players."),
         ];
 
         public MainWindow()
@@ -205,6 +205,14 @@ namespace Olden_Era___Template_Editor
             int idx = CmbTopology.SelectedIndex;
             if (idx >= 0 && idx < TopologyOptions.Length)
                 TxtTopologyDesc.Text = TopologyOptions[idx].Description;
+
+            // Isolate option is only meaningful for Random and Chain topologies.
+            var topo = idx >= 0 && idx < TopologyOptions.Length ? TopologyOptions[idx].Topology : MapTopology.Default;
+            bool isolateApplicable = topo is MapTopology.Random or MapTopology.Chain;
+            ChkNoDirectPlayerConn.Visibility = isolateApplicable ? Visibility.Visible : Visibility.Collapsed;
+            if (!isolateApplicable) ChkNoDirectPlayerConn.IsChecked = false;
+            UpdateIsolateDescVisibility();
+
             MarkDirty();
             Validate();
         }
@@ -219,8 +227,17 @@ namespace Olden_Era___Template_Editor
         private void ChkOption_Changed(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
+            UpdateIsolateDescVisibility();
             MarkDirty();
             Validate();
+        }
+
+        private void UpdateIsolateDescVisibility()
+        {
+            if (TxtIsolateDesc == null || ChkNoDirectPlayerConn == null) return;
+            TxtIsolateDesc.Visibility = ChkNoDirectPlayerConn.IsChecked == true && ChkNoDirectPlayerConn.Visibility == Visibility.Visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         // ── Settings persistence ───────────────────────────────────────────────

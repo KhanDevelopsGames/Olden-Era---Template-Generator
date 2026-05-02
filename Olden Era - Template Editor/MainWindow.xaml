@@ -156,13 +156,13 @@
                 <!-- TOPOLOGY -->
                 <Border Grid.Row="2" Style="{StaticResource SectionBorder}">
                     <StackPanel>
-                        <TextBlock Text="◆  TOPOLOGY" Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Text="◆  LAYOUT" Style="{StaticResource SectionHeader}"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="155"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Content="Map Topology"/>
+                            <Label Grid.Column="0" Content="Map Layout"/>
                             <ComboBox Grid.Column="1" x:Name="CmbTopology"
                                       SelectionChanged="CmbTopology_SelectionChanged"/>
                         </Grid>
@@ -299,9 +299,16 @@
                         <CheckBox x:Name="ChkSpawnFootholds" Content="Spawn remote footholds" IsChecked="True" Margin="0,15,0,0"/>
                         <CheckBox x:Name="ChkRandomPortals"  Content="Spawn portals"          Margin="0,6,0,0"/>                        
                         <CheckBox x:Name="ChkNoDirectPlayerConn"
-                                  Content="Isolate player zones (connect via neutrals only) [EXPERIMENTAL]"
+                                  Content="Connect via neutral zones only [EXPERIMENTAL]"
                                   Margin="0,6,0,0"
+                                  Visibility="Collapsed"
                                   Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
+                        <TextBlock x:Name="TxtIsolateDesc"
+                                   Visibility="Collapsed"
+                                   Foreground="{StaticResource BrushTextDim}"
+                                   FontSize="11" TextWrapping="Wrap"
+                                   Margin="25,3,0,0"
+                                   Text="The game tries to only connect player zones to neutral zones. If no neutral zone borders a player zone, it will fall back to connecting directly to another player zone."/>
                     </StackPanel>
                 </Border>
             </Grid>

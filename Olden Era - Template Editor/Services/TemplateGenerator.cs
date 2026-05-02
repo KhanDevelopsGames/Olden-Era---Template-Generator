@@ -108,6 +108,10 @@ namespace Olden_Era___Template_Editor.Services
 
         private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
         {
+            // Shuffle player letters so Player 1 is not always at the same geometric position.
+            var rng = new Random();
+            playerLetters = [.. playerLetters.OrderBy(_ => rng.Next())];
+
             return settings.Topology switch
             {
                 MapTopology.HubAndSpoke => BuildVariantHubAndSpoke(settings, playerLetters, neutralLetters, contentScale, densityMult),
@@ -360,9 +364,10 @@ namespace Olden_Era___Template_Editor.Services
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"hub_guard_{letter}"
                 });
-                // Extra unnamed connections (same as JCC pattern of 5 per zone).
+                // Extra proximity hints (same as JCC pattern of 5 per zone).
+                // These are layout/visual hints only — NOT traversable — so they must be Proximity, not Direct.
                 for (int e = 1; e < ConnectionsPerZone; e++)
-                    connections.Add(new Connection { From = "Hub", To = outerZone, ConnectionType = "Direct" });
+                    connections.Add(new Connection { From = "Hub", To = outerZone, ConnectionType = "Proximity" });
             }
 
             // Proximity between players that are adjacent in the outer ring (visual only).
