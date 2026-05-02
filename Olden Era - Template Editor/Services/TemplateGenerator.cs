@@ -722,7 +722,7 @@ namespace Olden_Era___Template_Editor.Services
                 mainObjects.Add(new MainObject
                 {
                     Type = "City",
-                    Faction = new TypedSelector { Type = "Random", Args = [] },
+                    Faction = new TypedSelector { Type = "Match", Args = ["0"] },
                     GuardChance = 0.5,
                     GuardValue = 2500,
                     GuardWeeklyIncrement = 0.10,
@@ -1054,79 +1054,253 @@ namespace Olden_Era___Template_Editor.Services
         private static List<MandatoryContentGroup> BuildAllMandatoryContent(
             List<string> playerLetters, List<string> neutralLetters, GeneratorSettings settings)
         {
+            bool hasNeutrals = neutralLetters.Count > 0;
             var groups = new List<MandatoryContentGroup>();
 
             foreach (var letter in playerLetters)
-                groups.Add(BuildSpawnMandatoryContent(letter, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds));
+                groups.Add(new MandatoryContentGroup
+                {
+                    Name = $"mandatory_content_side_{letter}",
+                    Content = BuildPlayerZoneContent(settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, includeRareMines: !hasNeutrals)
+                });
 
             foreach (var letter in neutralLetters)
-                groups.Add(BuildNeutralMandatoryContent(letter, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds));
+                groups.Add(new MandatoryContentGroup
+                {
+                    Name = $"mandatory_content_neutral_{letter}",
+                    Content = BuildNeutralZoneContent(settings.NeutralZoneCastles, settings.SpawnRemoteFootholds)
+                });
 
             return groups;
         }
 
-        private static MandatoryContentGroup BuildSpawnMandatoryContent(string letter, int castleCount, bool spawnFootholds)
+        // ── Shared content pools (derived from example template analysis) ─────────
+
+        private static readonly string[] RareMines =
+            ["mine_gold", "mine_crystals", "mine_mercury", "mine_gemstones", "alchemy_lab"];
+
+        private static readonly string[] UtilityBuildings =
+        [
+            "fountain", "fountain_2", "watchtower", "mana_well", "stables", "tavern",
+            "university", "mystical_tower", "college_of_wonder", "orb_observatory",
+            "wind_rose", "point_of_balance", "tree_of_abundance", "celestial_sphere",
+            "research_laboratory", "chimerologist", "eternal_dragon",
+        ];
+
+        private static readonly string[][] HeroStatLists =
+        [
+            ["basic_content_list_building_hero_stats_and_skills_tier_2"],
+            ["basic_content_list_building_hero_stats_and_skills_tier_3"],
+            ["content_list_building_uncommon_hero_stats"],
+        ];
+
+        private static readonly (string? Sid, string[]? List)[] HireOptions =
+        [
+            ("random_hire_5",  null),
+            ("random_hire_6",  null),
+            ("random_hire_7",  null),
+            (null, ["basic_content_list_building_random_hires"]),
+            (null, ["content_list_building_random_hires_low_tier"]),
+            (null, ["content_list_building_random_hires_high_tier"]),
+        ];
+
+        private static readonly string[][] BankLists =
+        [
+            ["template_pool_jebus_cross_guarded_resource_banks_tier_3_base"],
+            ["template_pool_jebus_cross_guarded_resource_banks_tier_3_pro"],
+            ["basic_content_list_building_guarded_resource_banks_tier_1"],
+            ["basic_content_list_building_guarded_resource_banks_tier_2"],
+            ["basic_content_list_building_guarded_resource_banks_tier_3"],
+        ];
+
+        private static readonly (string? Sid, string[]? List)[] LootOptions =
+        [
+            ("random_item_rare",      null),
+            ("random_item_epic",      null),
+            ("random_item_legendary", null),
+            ("mythic_scroll_box",     null),
+            (null, ["basic_content_list_pickup_random_items"]),
+            (null, ["basic_content_list_pickup_mythic_scroll_box"]),
+        ];
+
+        private static readonly List<ContentPlacementRule> CrossroadsAndRoadRules =
+        [
+            new() { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 },
+            new() { Type = "Road",       Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 },
+        ];
+
+        // ── Player zone content ──────────────────────────────────────────────────
+
+        private static List<ContentItem> BuildPlayerZoneContent(int castleCount, bool spawnFootholds, bool includeRareMines)
         {
-            return new MandatoryContentGroup
+            var rng = Random.Shared;
+            var content = new List<ContentItem>();
+            var usedKeys = new HashSet<string>();
+
+            if (spawnFootholds)
+                content.Add(BuildFoothold(castleCount));
+
+            // Wood + ore mines are always guaranteed in player zones.
+            usedKeys.Add("mine_wood");
+            content.Add(new ContentItem
             {
-                Name = $"mandatory_content_side_{letter}",
-                Content = BuildOuterZoneMandatoryContent(isNeutral: false, castleCount, spawnFootholds)
-            };
+                Sid = "mine_wood", IsMine = true, IsGuarded = false,
+                Rules =
+                [
+                    new() { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.25, Weight = 2 },
+                    new() { Type = "Road",       Args = [],    TargetMin = 0.1, TargetMax = 0.4,  Weight = 1 },
+                ]
+            });
+            usedKeys.Add("mine_ore");
+            content.Add(new ContentItem
+            {
+                Sid = "mine_ore", IsMine = true, IsGuarded = false,
+                Rules =
+                [
+                    new() { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.25, Weight = 2 },
+                    new() { Type = "Road",       Args = [],    TargetMin = 0.1, TargetMax = 0.4,  Weight = 1 },
+                ]
+            });
+
+            // Rare mines only if no neutral zones exist to host them.
+            if (includeRareMines)
+                content.AddRange(PickRareMines(rng, rng.Next(1, 3), usedKeys));
+
+            usedKeys.Add("market"); content.Add(new ContentItem { Sid = "market" });
+            usedKeys.Add("forge");  content.Add(new ContentItem { Sid = "forge" });
+
+            content.AddRange(PickUtilityBuildings(rng, rng.Next(2, 4), usedKeys));
+            content.Add(PickFromHeroStats(rng, usedKeys));
+            content.AddRange(PickHireBuildings(rng, rng.Next(1, 3), usedKeys));
+            content.Add(PickResourceBank(rng, usedKeys));
+
+            const string unitBankKey = "basic_content_list_building_guarded_units_banks_no_biome_restriction";
+            if (usedKeys.Add(unitBankKey))
+                content.Add(new ContentItem { IncludeLists = [unitBankKey], IsGuarded = false });
+
+            if (usedKeys.Add("prison"))
+                content.Add(new ContentItem { Sid = "prison", Variant = 0, IsGuarded = false });
+
+            if (usedKeys.Add("pandora_box"))
+                content.Add(new ContentItem { Sid = "pandora_box", Variant = 0, SoloEncounter = true });
+
+            if (rng.Next(2) == 0)
+                content.Add(PickLoot(rng, usedKeys));
+
+            return content;
         }
 
-        private static MandatoryContentGroup BuildNeutralMandatoryContent(string letter, int castleCount, bool spawnFootholds)
+        // ── Neutral zone content ─────────────────────────────────────────────────
+
+        private static List<ContentItem> BuildNeutralZoneContent(int castleCount, bool spawnFootholds)
         {
-            return new MandatoryContentGroup
-            {
-                Name = $"mandatory_content_neutral_{letter}",
-                Content = BuildOuterZoneMandatoryContent(isNeutral: true, castleCount, spawnFootholds)
-            };
+            var rng = Random.Shared;
+            var content = new List<ContentItem>();
+            var usedKeys = new HashSet<string>();
+
+            if (spawnFootholds && castleCount > 0)
+                content.Add(BuildFoothold(castleCount));
+
+            // Neutral zones host all rare mines (wood/ore stay in player zones only).
+            content.AddRange(PickRareMines(rng, rng.Next(1, 4), usedKeys));
+
+            usedKeys.Add("market"); content.Add(new ContentItem { Sid = "market" });
+            usedKeys.Add("forge");  content.Add(new ContentItem { Sid = "forge" });
+
+            content.AddRange(PickUtilityBuildings(rng, rng.Next(2, 5), usedKeys));
+            content.Add(PickFromHeroStats(rng, usedKeys));
+            content.AddRange(PickHireBuildings(rng, rng.Next(1, 3), usedKeys));
+            content.Add(PickResourceBank(rng, usedKeys));
+
+            const string unitBankKey = "basic_content_list_building_guarded_units_banks_no_biome_restriction";
+            if (usedKeys.Add(unitBankKey))
+                content.Add(new ContentItem { IncludeLists = [unitBankKey] });
+
+            if (usedKeys.Add("prison"))
+                content.Add(new ContentItem { Sid = "prison", Variant = 0, IsGuarded = false });
+
+            if (usedKeys.Add("pandora_box"))
+                content.Add(new ContentItem { Sid = "pandora_box", Variant = 0, SoloEncounter = true });
+
+            content.Add(PickLoot(rng, usedKeys));
+
+            return content;
         }
 
-        private static List<ContentItem> BuildOuterZoneMandatoryContent(bool isNeutral, int castleCount, bool spawnFootholds)
+        // ── Content helper methods ───────────────────────────────────────────────
+
+        private static ContentItem BuildFoothold(int castleCount)
         {
-            var footholdRules = new List<ContentPlacementRule>
+            var rules = new List<ContentPlacementRule>
             {
                 new() { Type = "Crossroads", Args = [], TargetMin = 0.2, TargetMax = 0.3, Weight = 0 },
                 new() { Type = "MainObject", Args = ["0"], TargetMin = 0.2, TargetMax = 0.4, Weight = 0 },
             };
             if (castleCount > 1)
-                footholdRules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["1"], TargetMin = 0.5, TargetMax = 0.5, Weight = 2 });
+                rules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["1"], TargetMin = 0.5, TargetMax = 0.5, Weight = 2 });
+            return new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = rules };
+        }
 
-            var content = new List<ContentItem>();
+        private static IEnumerable<ContentItem> PickRareMines(Random rng, int count, HashSet<string> usedKeys) =>
+            RareMines
+                .Where(usedKeys.Add)
+                .OrderBy(_ => rng.Next())
+                .Take(count)
+                .Select(sid => new ContentItem { Sid = sid, IsMine = true });
 
-            if (spawnFootholds)
-                content.Add(new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules });
+        private static IEnumerable<ContentItem> PickUtilityBuildings(Random rng, int count, HashSet<string> usedKeys) =>
+            UtilityBuildings
+                .Where(usedKeys.Add)
+                .OrderBy(_ => rng.Next())
+                .Take(count)
+                .Select(sid =>
+                {
+                    List<ContentPlacementRule>? rules = sid is "watchtower" or "mana_well"
+                        ? [new() { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 },
+                           new() { Type = "Road",       Args = [],    TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }]
+                        : sid is "tavern" or "stables"
+                        ? [new() { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 }]
+                        : null;
+                    return new ContentItem { Sid = sid, IsGuarded = false, Rules = rules };
+                });
 
-            content.AddRange(new List<ContentItem>
-            {
-                new() { IncludeLists = ["template_pool_jebus_cross_guarded_resource_banks_tier_3_base"], Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 }] },
-                new() { IncludeLists = ["template_pool_jebus_cross_guarded_resource_banks_tier_3_pro"], Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 }] },
-                new() { Sid = "fountain", IsGuarded = false },
-                new() { Sid = "watchtower", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                new() { Sid = "mana_well", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                new() { Sid = "market" },
-                new() { Sid = "forge" },
-                new() { Sid = "tavern", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.4, Weight = 1 }] },
-                new() { Sid = "stables", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                new() { Sid = "university" },
-                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
-                new() { Sid = "mystical_tower" },
-                new() { Sid = "prison", Variant = 0, IsGuarded = false },
-                new() { Sid = "random_hire_5" },
-                new() { IncludeLists = ["basic_content_list_building_random_hires"] },
-                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"], IsGuarded = isNeutral ? null : false },
-                new() { Sid = "pandora_box", Variant = 0, SoloEncounter = true },
-                new() { Sid = "mine_wood", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.0, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
-                new() { Sid = "mine_ore", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.0, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
-                new() { Sid = "mine_gold", IsMine = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 1 }] },
-                new() { Sid = "mine_crystals", IsMine = true },
-                new() { Sid = "mine_mercury", IsMine = true },
-                new() { Sid = "mine_gemstones", IsMine = true },
-                new() { Sid = "alchemy_lab", IsMine = true },
-            });
+        private static ContentItem PickFromHeroStats(Random rng, HashSet<string> usedKeys)
+        {
+            var chosen = HeroStatLists
+                .Where(l => usedKeys.Add(l[0]))
+                .OrderBy(_ => rng.Next())
+                .FirstOrDefault() ?? HeroStatLists[rng.Next(HeroStatLists.Length)];
+            return new ContentItem { IncludeLists = [.. chosen] };
+        }
 
-            return content;
+        private static IEnumerable<ContentItem> PickHireBuildings(Random rng, int count, HashSet<string> usedKeys) =>
+            HireOptions
+                .Where(opt => usedKeys.Add(opt.Sid ?? opt.List![0]))
+                .OrderBy(_ => rng.Next())
+                .Take(count)
+                .Select(opt => opt.Sid != null
+                    ? new ContentItem { Sid = opt.Sid }
+                    : new ContentItem { IncludeLists = [.. opt.List!] });
+
+        private static ContentItem PickResourceBank(Random rng, HashSet<string> usedKeys)
+        {
+            var chosen = BankLists
+                .Where(l => usedKeys.Add(l[0]))
+                .OrderBy(_ => rng.Next())
+                .FirstOrDefault() ?? BankLists[rng.Next(BankLists.Length)];
+            return new ContentItem { IncludeLists = [.. chosen], Rules = [.. CrossroadsAndRoadRules] };
+        }
+
+        private static ContentItem PickLoot(Random rng, HashSet<string> usedKeys)
+        {
+            var opt = LootOptions
+                .Where(o => usedKeys.Add(o.Sid ?? o.List![0]))
+                .OrderBy(_ => rng.Next())
+                .FirstOrDefault();
+            if (opt == default) return new ContentItem { Sid = "random_item_rare" };
+            return opt.Sid != null
+                ? new ContentItem { Sid = opt.Sid }
+                : new ContentItem { IncludeLists = [.. opt.List!] };
         }
 
         // ── Content count limits ─────────────────────────────────────────────────
@@ -1145,27 +1319,27 @@ namespace Olden_Era___Template_Editor.Services
                 new() { Sid = "huntsmans_camp", MaxCount = 1 },
                 new() { Sid = "market", MaxCount = 1 },
                 new() { Sid = "forge", MaxCount = 2 },
-                new() { Sid = "celestial_sphere", MaxCount = 2 },
+                new() { Sid = "celestial_sphere", MaxCount = 1 },
                 new() { Sid = "arena", MaxCount = 1 },
                 new() { Sid = "sacrificial_shrine", MaxCount = 1 },
                 new() { Sid = "chimerologist", MaxCount = 1 },
-                new() { Sid = "wise_owl", MaxCount = 3 },
-                new() { Sid = "circus", MaxCount = 2 },
-                new() { Sid = "infernal_cirque", MaxCount = 2 },
-                new() { Sid = "university", MaxCount = 2 },
+                new() { Sid = "wise_owl", MaxCount = 1 },
+                new() { Sid = "circus", MaxCount = 1 },
+                new() { Sid = "infernal_cirque", MaxCount = 1 },
+                new() { Sid = "university", MaxCount = 1 },
                 new() { Sid = "tree_of_abundance", MaxCount = 1 },
                 new() { Sid = "fickle_shrine", MaxCount = 1 },
-                new() { Sid = "insaras_eye", MaxCount = 2 },
+                new() { Sid = "insaras_eye", MaxCount = 1 },
                 new() { Sid = "watchtower", MaxCount = 1 },
-                new() { Sid = "flattering_mirror", MaxCount = 2 },
+                new() { Sid = "flattering_mirror", MaxCount = 1 },
                 new() { Sid = "wind_rose", MaxCount = 1 },
-                new() { Sid = "jousting_range", MaxCount = 0 },
-                new() { Sid = "unforgotten_grave", MaxCount = 0 },
-                new() { Sid = "petrified_memorial", MaxCount = 0 },
-                new() { Sid = "the_gorge", MaxCount = 0 },
-                new() { Sid = "ritual_pyre", MaxCount = 99 },
-                new() { Sid = "boreal_call", MaxCount = 99 },
-                new() { Sid = "point_of_balance", MaxCount = 3 },
+                new() { Sid = "jousting_range", MaxCount = 1 },
+                new() { Sid = "unforgotten_grave", MaxCount = 1 },
+                new() { Sid = "petrified_memorial", MaxCount = 1 },
+                new() { Sid = "the_gorge", MaxCount = 1 },
+                new() { Sid = "ritual_pyre", MaxCount = 1 },
+                new() { Sid = "boreal_call", MaxCount = 1 },
+                new() { Sid = "point_of_balance", MaxCount = 1 },
             };
 
             var limits = new List<ContentCountLimit>();
