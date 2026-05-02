@@ -5,11 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Olden Era - Simple Template Generator"
-        Height="560" Width="960"
-        MinHeight="500" MinWidth="800"
+        Height="610" Width="960"
+        MinHeight="550" MinWidth="800"
         ResizeMode="CanMinimize"
         Background="#1A1510"
         FontFamily="Segoe UI, Arial, sans-serif">
+
+    <Window.InputBindings>
+        <KeyBinding Key="N" Modifiers="Ctrl"       Command="{x:Static ApplicationCommands.New}"/>
+        <KeyBinding Key="O" Modifiers="Ctrl"       Command="{x:Static ApplicationCommands.Open}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl"       Command="{x:Static ApplicationCommands.Save}"/>
+        <KeyBinding Key="S" Modifiers="Ctrl+Shift" Command="{x:Static ApplicationCommands.SaveAs}"/>
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static ApplicationCommands.New}"    Executed="BtnNew_Click"/>
+        <CommandBinding Command="{x:Static ApplicationCommands.Open}"   Executed="BtnOpen_Click"/>
+        <CommandBinding Command="{x:Static ApplicationCommands.Save}"   Executed="BtnSave_Click"/>
+        <CommandBinding Command="{x:Static ApplicationCommands.SaveAs}" Executed="BtnSaveAs_Click"/>
+    </Window.CommandBindings>
 
     <!-- Hidden combo boxes required by code-behind -->
     <Window.Resources>
@@ -20,6 +33,8 @@
 
     <Grid Margin="14,8,14,12">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- toolbar -->
+            <RowDefinition Height="6"/>
             <RowDefinition Height="Auto"/>  <!-- thin divider -->
             <RowDefinition Height="6"/>
             <RowDefinition Height="*"/>     <!-- main content -->
@@ -31,11 +46,19 @@
             <RowDefinition Height="Auto"/>  <!-- generate button -->
         </Grid.RowDefinitions>
 
+        <!-- ════════ TOOLBAR ══════════════════════════════════════════ -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button Content="📄  New"     Width="80"  Margin="0,0,6,0" Click="BtnNew_Click"    Style="{StaticResource ToolbarButton}" ToolTip="New (Ctrl+N)"/>
+            <Button Content="📂  Open"    Width="80"  Margin="0,0,6,0" Click="BtnOpen_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Open (Ctrl+O)"/>
+            <Button Content="💾  Save"    Width="80"  Margin="0,0,6,0" Click="BtnSave_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Save (Ctrl+S)"/>
+            <Button Content="💾  Save As" Width="96"  Margin="0,0,0,0" Click="BtnSaveAs_Click" Style="{StaticResource ToolbarButton}" ToolTip="Save As (Ctrl+Shift+S)"/>
+        </StackPanel>
+
         <!-- ════════ HEADER ════════════════════════════════════════════ -->
-        <Rectangle Grid.Row="0" Height="1" Fill="{StaticResource BrushBorder}" VerticalAlignment="Bottom"/>
+        <Rectangle Grid.Row="2" Height="1" Fill="{StaticResource BrushBorder}" VerticalAlignment="Bottom"/>
 
         <!-- ════════ MAIN CONTENT — two columns ════════════════════════ -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="10"/>
@@ -242,19 +265,19 @@
         </Grid>
 
         <!-- Hidden combos required by code-behind -->
-        <ComboBox Grid.Row="0" x:Name="CmbGameMode" Visibility="Collapsed"/>
-        <ComboBox Grid.Row="0" x:Name="CmbVictory"  Visibility="Collapsed"/>
-        <TextBlock Grid.Row="0" x:Name="TxtAppTitle" Visibility="Collapsed"/>
+        <ComboBox Grid.Row="2" x:Name="CmbGameMode" Visibility="Collapsed"/>
+        <ComboBox Grid.Row="2" x:Name="CmbVictory"  Visibility="Collapsed"/>
+        <TextBlock Grid.Row="2" x:Name="TxtAppTitle" Visibility="Collapsed"/>
 
         <!-- ════════ VALIDATION ════════════════════════════════════════ -->
-        <TextBlock Grid.Row="4"
+        <TextBlock Grid.Row="6"
                    x:Name="TxtValidation"
                    Foreground="{StaticResource BrushError}"
                    FontSize="12" TextWrapping="Wrap"
                    HorizontalAlignment="Stretch" TextAlignment="Center"/>
 
         <!-- ════════ WIP WARNING ═══════════════════════════════════════ -->
-        <Border Grid.Row="6"
+        <Border Grid.Row="8"
                 Background="{StaticResource BrushWarnBg}"
                 BorderBrush="{StaticResource BrushWarnBorder}"
                 BorderThickness="1" CornerRadius="3"
@@ -265,7 +288,7 @@
         </Border>
 
         <!-- ════════ GENERATE BUTTON ═══════════════════════════════════ -->
-        <Button Grid.Row="8"
+        <Button Grid.Row="10"
                 x:Name="BtnGenerate"
                 Content="⚔  Generate &amp; Save…"
                 Style="{StaticResource GenerateButton}"

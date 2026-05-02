@@ -25,6 +25,11 @@ namespace Olden_Era___Template_Editor
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
+        // Currently open settings file path (null = unsaved / untitled)
+        private string? _currentSettingsPath = null;
+        private bool _isDirty = false;
+        private string _baseTitle = string.Empty;
+
         private static readonly (MapTopology Topology, string Label, string Description)[] TopologyOptions =
         [
             (MapTopology.Random,      "Random",        "Zones are placed at random positions. Each zone connects to all zones that border it — no fixed structure."),
@@ -41,7 +46,7 @@ namespace Olden_Era___Template_Editor
             // Stamp version from assembly metadata into all visible locations.
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             string versionLabel = version != null ? $"v{version.Major}.{version.Minor}" : "v?";
-            Title = $"Olden Era - Simple Template Generator {versionLabel}";
+            _baseTitle = $"Olden Era - Simple Template Generator {versionLabel}";
             TxtAppTitle.Text = $"Olden Era - Simple Template Generator  {versionLabel}";
             TxtWipWarning.Text = $"⚠️ Work in progress — Some generated templates may contain game-breaking bugs or issues.";
 
@@ -56,6 +61,9 @@ namespace Olden_Era___Template_Editor
 
             // Fire-and-forget background update check — never blocks the UI.
             _ = CheckForUpdateAsync(version);
+
+            TxtTemplateName.TextChanged += (_, _) => MarkDirty();
+            UpdateTitle();
         }
 
         private async Task CheckForUpdateAsync(Version? currentVersion)
@@ -103,6 +111,23 @@ namespace Olden_Era___Template_Editor
             public string? TagName { get; set; }
         }
 
+        private void MarkDirty()
+        {
+            if (!IsInitialized) return;
+            _isDirty = true;
+            UpdateTitle();
+        }
+
+        private void UpdateTitle()
+        {
+            string file = _currentSettingsPath is not null
+                ? System.IO.Path.GetFileName(_currentSettingsPath)
+                : "Untitled";
+            Title = _isDirty
+                ? $"{_baseTitle}  —  {file}*"
+                : $"{_baseTitle}  —  {file}";
+        }
+
         // Keep value labels in sync with slider positions.
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -117,6 +142,7 @@ namespace Olden_Era___Template_Editor
             TxtNeutralCastles.Text = ((int)SldNeutralCastles.Value).ToString();
             TxtContentDensity.Text = $"{(int)SldContentDensity.Value}%";
 
+            MarkDirty();
             Validate();
         }
 
@@ -165,20 +191,141 @@ namespace Olden_Era___Template_Editor
             int idx = CmbTopology.SelectedIndex;
             if (idx >= 0 && idx < TopologyOptions.Length)
                 TxtTopologyDesc.Text = TopologyOptions[idx].Description;
+            MarkDirty();
             Validate();
         }
 
         private void CmbMapSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsInitialized) return;
+            MarkDirty();
             Validate();
         }
 
         private void ChkOption_Changed(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
+            MarkDirty();
             Validate();
         }
+
+        // ── Settings persistence ───────────────────────────────────────────────
+
+        private SettingsFile GatherSettings() => new()
+        {
+            TemplateName          = TxtTemplateName.Text.Trim(),
+            MapSize               = CmbMapSize.SelectedItem is string sizeStr && int.TryParse(sizeStr.Split('x')[0], out int ps) ? ps : 160,
+            PlayerCount           = (int)SldPlayers.Value,
+            NeutralZoneCount      = (int)SldNeutral.Value,
+            PlayerZoneCastles     = (int)SldPlayerCastles.Value,
+            NeutralZoneCastles    = (int)SldNeutralCastles.Value,
+            HeroCountMin          = (int)SldHeroMin.Value,
+            HeroCountMax          = (int)SldHeroMax.Value,
+            HeroCountIncrement    = (int)SldHeroIncrement.Value,
+            Topology              = TopologyOptions[CmbTopology.SelectedIndex].Topology,
+            RandomPortals         = ChkRandomPortals.IsChecked == true,
+            SpawnRemoteFootholds  = ChkSpawnFootholds.IsChecked == true,
+            NoDirectPlayerConn    = ChkNoDirectPlayerConn.IsChecked == true,
+            ContentDensityPercent = (int)SldContentDensity.Value,
+        };
+
+        private void ApplySettings(SettingsFile s)
+        {
+            TxtTemplateName.Text    = s.TemplateName;
+            int sizeIdx = Array.IndexOf(KnownValues.MapSizes, s.MapSize);
+            if (sizeIdx >= 0) CmbMapSize.SelectedIndex = sizeIdx;
+            SldPlayers.Value        = s.PlayerCount;
+            SldNeutral.Value        = s.NeutralZoneCount;
+            SldPlayerCastles.Value  = s.PlayerZoneCastles;
+            SldNeutralCastles.Value = s.NeutralZoneCastles;
+            SldHeroMin.Value        = s.HeroCountMin;
+            SldHeroMax.Value        = s.HeroCountMax;
+            SldHeroIncrement.Value  = s.HeroCountIncrement;
+            int topoIdx = Array.FindIndex(TopologyOptions, t => t.Topology == s.Topology);
+            if (topoIdx >= 0) CmbTopology.SelectedIndex = topoIdx;
+            ChkRandomPortals.IsChecked        = s.RandomPortals;
+            ChkSpawnFootholds.IsChecked       = s.SpawnRemoteFootholds;
+            ChkNoDirectPlayerConn.IsChecked   = s.NoDirectPlayerConn;
+            SldContentDensity.Value           = s.ContentDensityPercent;
+        }
+
+        private bool SaveToPath(string path)
+        {
+            try
+            {
+                var json = JsonSerializer.Serialize(GatherSettings(), JsonOptions);
+                File.WriteAllText(path, json);
+                _currentSettingsPath = path;
+                _isDirty = false;
+                UpdateTitle();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save settings:\n{ex.Message}", "Save Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+        }
+
+        private void BtnNew_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Reset all settings to defaults?", "New Settings",
+                                         MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result != MessageBoxResult.Yes) return;
+            ApplySettings(new SettingsFile());
+            _currentSettingsPath = null;
+            _isDirty = false;
+            UpdateTitle();
+        }
+
+        private void BtnOpen_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new OpenFileDialog
+            {
+                Title  = "Open Settings File",
+                Filter = "Template Settings (*.oetgs)|*.oetgs|All files (*.*)|*.*",
+            };
+            if (dlg.ShowDialog() != true) return;
+            try
+            {
+                var json = File.ReadAllText(dlg.FileName);
+                var s = JsonSerializer.Deserialize<SettingsFile>(json, JsonOptions);
+                if (s is null) throw new InvalidDataException("File is empty or invalid.");
+                ApplySettings(s);
+                _currentSettingsPath = dlg.FileName;
+                _isDirty = false;
+                UpdateTitle();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to open settings:\n{ex.Message}", "Open Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void BtnSave_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentSettingsPath is not null)
+                SaveToPath(_currentSettingsPath);
+            else
+                BtnSaveAs_Click(sender, e);
+        }
+
+        private void BtnSaveAs_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new SaveFileDialog
+            {
+                Title      = "Save Settings As",
+                Filter     = "Template Settings (*.oetgs)|*.oetgs|All files (*.*)|*.*",
+                FileName   = TxtTemplateName.Text.Trim().Length > 0 ? TxtTemplateName.Text.Trim() : "My Settings",
+                DefaultExt = ".oetgs",
+            };
+            if (dlg.ShowDialog() == true)
+                SaveToPath(dlg.FileName);
+        }
+
+        // ── Generate ──────────────────────────────────────────────────────────
 
         private void BtnGenerate_Click(object sender, RoutedEventArgs e)
         {

@@ -290,10 +290,38 @@
     <!-- ══════════════════════════════════════════════════════════════════
          GENERATE BUTTON
     ══════════════════════════════════════════════════════════════════════ -->
+    <!-- Toolbar button (New / Open / Save / Save As) -->
+    <Style x:Key="ToolbarButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource BrushText}"/>
+        <Setter Property="FontSize"   Value="12"/>
+        <Setter Property="Height"     Value="28"/>
+        <Setter Property="Cursor"     Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd"
+                            Background="#2A2A2A"
+                            BorderBrush="{StaticResource BrushBorder}"
+                            BorderThickness="1" CornerRadius="3">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="6,0"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background"  Value="#3A3A3A"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource BrushGold}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#1A1A1A"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="GenerateButton" TargetType="Button">
         <Setter Property="Foreground" Value="#F0E0A0"/>
         <Setter Property="FontSize"   Value="14"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Height"     Value="42"/>
         <Setter Property="Cursor"     Value="Hand"/>
         <Setter Property="Template">
