@@ -288,6 +288,55 @@
     </Style>
 
     <!-- ══════════════════════════════════════════════════════════════════
+         TITLE BAR BUTTONS
+    ══════════════════════════════════════════════════════════════════════ -->
+    <Style x:Key="TitleBarButton" TargetType="Button">
+        <Setter Property="Foreground"         Value="{StaticResource BrushText}"/>
+        <Setter Property="FontSize"           Value="13"/>
+        <Setter Property="Width"              Value="42"/>
+        <Setter Property="Height"             Value="32"/>
+        <Setter Property="Cursor"             Value="Hand"/>
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="Transparent">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#33C9A84C"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#55C9A84C"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TitleBarCloseButton" TargetType="Button" BasedOn="{StaticResource TitleBarButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="Transparent">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#BB8B0000"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#CC5A0000"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ══════════════════════════════════════════════════════════════════
          GENERATE BUTTON
     ══════════════════════════════════════════════════════════════════════ -->
     <!-- Toolbar button (New / Open / Save / Save As) -->

@@ -64,6 +64,7 @@ namespace Olden_Era___Template_Editor
 
             TxtTemplateName.TextChanged += (_, _) => MarkDirty();
             UpdateTitle();
+            TxtWindowTitle.Text = Title;
         }
 
         private async Task CheckForUpdateAsync(Version? currentVersion)
@@ -123,10 +124,23 @@ namespace Olden_Era___Template_Editor
             string file = _currentSettingsPath is not null
                 ? System.IO.Path.GetFileName(_currentSettingsPath)
                 : "Untitled";
-            Title = _isDirty
+            string full = _isDirty
                 ? $"{_baseTitle}  —  {file}*"
                 : $"{_baseTitle}  —  {file}";
+            Title = full;
+            if (IsInitialized) TxtWindowTitle.Text = full;
         }
+
+        private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 1) DragMove();
+        }
+
+        private void BtnMinimize_Click(object sender, RoutedEventArgs e) =>
+            WindowState = WindowState.Minimized;
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e) =>
+            Close();
 
         // Keep value labels in sync with slider positions.
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

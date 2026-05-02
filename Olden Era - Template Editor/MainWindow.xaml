@@ -7,9 +7,17 @@
         Title="Olden Era - Simple Template Generator"
         Height="610" Width="960"
         MinHeight="550" MinWidth="800"
-        ResizeMode="CanMinimize"
+        WindowStyle="None"
+        ResizeMode="NoResize"
         Background="#1A1510"
         FontFamily="Segoe UI, Arial, sans-serif">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32"
+                      ResizeBorderThickness="0"
+                      GlassFrameThickness="0,0,0,1"
+                      UseAeroCaptionButtons="False"/>
+    </WindowChrome.WindowChrome>
 
     <Window.InputBindings>
         <KeyBinding Key="N" Modifiers="Ctrl"       Command="{x:Static ApplicationCommands.New}"/>
@@ -31,20 +39,55 @@
         </Style>
     </Window.Resources>
 
-    <Grid Margin="14,8,14,12">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>  <!-- toolbar -->
-            <RowDefinition Height="6"/>
-            <RowDefinition Height="Auto"/>  <!-- thin divider -->
-            <RowDefinition Height="6"/>
-            <RowDefinition Height="*"/>     <!-- main content -->
-            <RowDefinition Height="8"/>
-            <RowDefinition Height="Auto"/>  <!-- validation -->
-            <RowDefinition Height="6"/>
-            <RowDefinition Height="Auto"/>  <!-- WIP warning -->
-            <RowDefinition Height="8"/>
-            <RowDefinition Height="Auto"/>  <!-- generate button -->
-        </Grid.RowDefinitions>
+    <!-- Outer border gives the window its themed frame -->
+    <Border BorderBrush="{StaticResource BrushBorder}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32"/>    <!-- custom title bar -->
+                <RowDefinition Height="1"/>     <!-- gold divider -->
+                <RowDefinition Height="*"/>     <!-- page content -->
+            </Grid.RowDefinitions>
+
+            <!-- ════════ CUSTOM TITLE BAR ══════════════════════════════ -->
+            <Grid Grid.Row="0" Background="#0F0D09">
+                <!-- Icon + title (drag region) -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0"
+                            MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                    <Image Source="pack://application:,,,/favicon.ico" Width="18" Height="18"
+                           VerticalAlignment="Center" Margin="0,0,8,0"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                    <TextBlock x:Name="TxtWindowTitle"
+                               FontSize="12" FontWeight="SemiBold"
+                               Foreground="{StaticResource BrushText}"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+                <!-- Caption buttons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+                    <Button Content="🗕" Style="{StaticResource TitleBarButton}"
+                            ToolTip="Minimize" Click="BtnMinimize_Click"/>
+                    <Button Content="✕" Style="{StaticResource TitleBarCloseButton}"
+                            ToolTip="Close" Click="BtnClose_Click"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Gold divider line under title bar -->
+            <Rectangle Grid.Row="1" Fill="{StaticResource BrushBorder}"/>
+
+            <!-- ════════ PAGE CONTENT ═══════════════════════════════════ -->
+            <Grid Grid.Row="2" Margin="14,8,14,12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>  <!-- toolbar -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>  <!-- thin divider -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="*"/>     <!-- main content -->
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="Auto"/>  <!-- validation -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>  <!-- WIP warning -->
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="Auto"/>  <!-- generate button -->
+                </Grid.RowDefinitions>
 
         <!-- ════════ TOOLBAR ══════════════════════════════════════════ -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
@@ -290,9 +333,11 @@
         <!-- ════════ GENERATE BUTTON ═══════════════════════════════════ -->
         <Button Grid.Row="10"
                 x:Name="BtnGenerate"
-                Content="⚔  Generate &amp; Save…"
+                Content="⚔  Generate Template"
                 Style="{StaticResource GenerateButton}"
                 Click="BtnGenerate_Click"/>
 
-    </Grid>
+            </Grid>  <!-- end page content grid -->
+        </Grid>      <!-- end outer row grid -->
+    </Border>        <!-- end window frame border -->
 </Window>
