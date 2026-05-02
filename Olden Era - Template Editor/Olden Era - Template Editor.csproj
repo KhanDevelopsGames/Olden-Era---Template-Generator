@@ -20,6 +20,11 @@
     <!-- Suppress .pdb generation -->
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="favicon.ico" />
+  </ItemGroup>
 
 </Project>
