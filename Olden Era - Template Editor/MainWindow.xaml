@@ -148,12 +148,12 @@
 
                             <DockPanel Grid.Row="4" Grid.Column="0">
                                 <Label Content="Increase heroes / castle" Padding="5,2" DockPanel.Dock="Left"/>
-                                <TextBlock x:Name="TxtHeroIncrement" Text="1" DockPanel.Dock="Right"
+                                <TextBlock x:Name="TxtHeroIncrement" Text="0" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
                             <Slider Grid.Row="4" Grid.Column="1" x:Name="SldHeroIncrement"
-                                    Minimum="0" Maximum="10" Value="1"
+                                    Minimum="0" Maximum="10" Value="0"
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
                         </Grid>

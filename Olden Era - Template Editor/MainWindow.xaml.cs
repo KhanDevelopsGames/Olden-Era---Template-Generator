@@ -153,22 +153,6 @@ namespace Olden_Era___Template_Editor
             if (players + neutral > 4 && CmbMapSize.SelectedItem is string selStr && int.TryParse(selStr.Split('x')[0], out int selectedSize) && selectedSize < 128)
                 warnings.Add("⚠️ Using a small map with many zones may freeze the game while loading the map. Consider using a larger map size.");
 
-            // Hard error: with isolation on, a ring/chain needs at least (players-1) neutrals
-            // to guarantee no player zone ends up with only player neighbours (fully disconnected).
-            bool isolate = ChkNoDirectPlayerConn.IsChecked == true;
-            bool ringOrChain = CmbTopology.SelectedIndex >= 0 &&
-                TopologyOptions[CmbTopology.SelectedIndex].Topology is
-                    MapTopology.Default or MapTopology.Chain or MapTopology.Random;
-            if (isolate && ringOrChain && players > 2 && neutral < players - 1)
-            {
-                TxtValidation.Text = $"❌ With {players} players and \"Isolate player zones\" enabled, at least {players - 1} neutral zones are needed — otherwise some player zones will have no connections at all.";
-                BtnGenerate.IsEnabled = false;
-                return false;
-            }
-
-            if (isolate && ringOrChain && neutral == 0 && players > 1)
-                warnings.Add("⚠️ \"Isolate player zones\" is enabled but there are no neutral zones. Players at the ends of the ring will still be adjacent.");
-
             TxtValidation.Text = string.Join("\n\n", warnings);
 
             BtnGenerate.IsEnabled = true;
