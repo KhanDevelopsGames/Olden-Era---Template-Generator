@@ -156,6 +156,7 @@ namespace Olden_Era___Template_Editor
             TxtNeutralCastles.Text = ((int)SldNeutralCastles.Value).ToString();
             TxtContentDensity.Text = $"{(int)SldContentDensity.Value}%";
 
+            UpdateRoadsHintVisibility();
             MarkDirty();
             Validate();
         }
@@ -208,7 +209,7 @@ namespace Olden_Era___Template_Editor
 
             // Isolate option is only meaningful for Random and Chain topologies.
             var topo = idx >= 0 && idx < TopologyOptions.Length ? TopologyOptions[idx].Topology : MapTopology.Default;
-            bool isolateApplicable = topo is MapTopology.Random or MapTopology.Chain;
+            bool isolateApplicable = topo is MapTopology.Random;
             ChkNoDirectPlayerConn.Visibility = isolateApplicable ? Visibility.Visible : Visibility.Collapsed;
             if (!isolateApplicable) ChkNoDirectPlayerConn.IsChecked = false;
             UpdateIsolateDescVisibility();
@@ -228,6 +229,7 @@ namespace Olden_Era___Template_Editor
         {
             if (!IsInitialized) return;
             UpdateIsolateDescVisibility();
+            UpdateRoadsHintVisibility();
             MarkDirty();
             Validate();
         }
@@ -236,6 +238,14 @@ namespace Olden_Era___Template_Editor
         {
             if (TxtIsolateDesc == null || ChkNoDirectPlayerConn == null) return;
             TxtIsolateDesc.Visibility = ChkNoDirectPlayerConn.IsChecked == true && ChkNoDirectPlayerConn.Visibility == Visibility.Visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        private void UpdateRoadsHintVisibility()
+        {
+            if (TxtRoadsHint == null || ChkGenerateRoads == null || SldNeutralCastles == null) return;
+            TxtRoadsHint.Visibility = ChkGenerateRoads.IsChecked == true && (int)SldNeutralCastles.Value == 0
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
@@ -256,6 +266,7 @@ namespace Olden_Era___Template_Editor
             Topology              = TopologyOptions[CmbTopology.SelectedIndex].Topology,
             RandomPortals         = ChkRandomPortals.IsChecked == true,
             SpawnRemoteFootholds  = ChkSpawnFootholds.IsChecked == true,
+            GenerateRoads         = ChkGenerateRoads.IsChecked == true,
             NoDirectPlayerConn    = ChkNoDirectPlayerConn.IsChecked == true,
             ContentDensityPercent = (int)SldContentDensity.Value,
         };
@@ -276,6 +287,7 @@ namespace Olden_Era___Template_Editor
             if (topoIdx >= 0) CmbTopology.SelectedIndex = topoIdx;
             ChkRandomPortals.IsChecked        = s.RandomPortals;
             ChkSpawnFootholds.IsChecked       = s.SpawnRemoteFootholds;
+            ChkGenerateRoads.IsChecked        = s.GenerateRoads;
             ChkNoDirectPlayerConn.IsChecked   = s.NoDirectPlayerConn;
             SldContentDensity.Value           = s.ContentDensityPercent;
         }
@@ -378,6 +390,7 @@ namespace Olden_Era___Template_Editor
                 NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
                 RandomPortals = ChkRandomPortals.IsChecked == true,
                 SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
+                GenerateRoads = ChkGenerateRoads.IsChecked == true,
                 Topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default,
                 ContentDensityPercent = (int)SldContentDensity.Value
             };

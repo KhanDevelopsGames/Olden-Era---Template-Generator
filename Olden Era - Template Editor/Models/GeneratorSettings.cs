@@ -16,6 +16,7 @@ namespace Olden_Era___Template_Editor.Models
         public bool NoDirectPlayerConnections { get; set; } = false;
         public bool RandomPortals { get; set; } = false;
         public bool SpawnRemoteFootholds { get; set; } = true;
+        public bool GenerateRoads { get; set; } = true;
         public MapTopology Topology { get; set; } = MapTopology.Random;
         public int ContentDensityPercent { get; set; } = 100;
     }

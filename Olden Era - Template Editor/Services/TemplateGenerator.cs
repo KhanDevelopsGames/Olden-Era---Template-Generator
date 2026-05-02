@@ -110,6 +110,7 @@ namespace Olden_Era___Template_Editor.Services
         {
             // Shuffle player letters so Player 1 is not always at the same geometric position.
             var rng = new Random();
+           
             playerLetters = [.. playerLetters.OrderBy(_ => rng.Next())];
 
             return settings.Topology switch
@@ -155,9 +156,9 @@ namespace Olden_Era___Template_Editor.Services
 
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
                 else
-                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
             }
 
             var connections = new List<Connection>();
@@ -228,9 +229,9 @@ namespace Olden_Era___Template_Editor.Services
                 var myConns = connsByZone[i].ToArray();
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
                 else
-                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
             }
 
             if (settings.RandomPortals)
@@ -341,9 +342,9 @@ namespace Olden_Era___Template_Editor.Services
                 var spokeConns = new[] { $"Hub-{letter}" };
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", spokeConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", spokeConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
                 else
-                    zones.Add(BuildNeutralZone(letter, spokeConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(letter, spokeConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
             }
 
             // Hub → each outer zone: Direct guarded connections (multiple per zone like JCC).
@@ -421,9 +422,9 @@ namespace Olden_Era___Template_Editor.Services
 
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
                 else
-                    zones.Add(BuildNeutralZone(letter, myConns.ToArray(), settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(letter, myConns.ToArray(), settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
             }
 
             var connections = new List<Connection>();
@@ -489,7 +490,7 @@ namespace Olden_Era___Template_Editor.Services
                 string[] nConns = n > 1
                     ? new[] { neutralRingConns[prev], neutralRingConns[i] }.Distinct().ToArray()
                     : [];
-                zones.Add(BuildNeutralZone(neutrals[i], nConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, contentScale, densityMult));
+                zones.Add(BuildNeutralZone(neutrals[i], nConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
             }
 
             // Build player zones — each connects to two neutrals (evenly distributed).
@@ -503,7 +504,7 @@ namespace Olden_Era___Template_Editor.Services
                 if (n1 != n2)
                     spokeConns.Add($"Web-{playerLetters[i]}-{neutrals[n2]}");
 
-                zones.Add(BuildSpawnZone(playerLetters[i], $"Player{i + 1}", spokeConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, contentScale, densityMult));
+                zones.Add(BuildSpawnZone(playerLetters[i], $"Player{i + 1}", spokeConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
 
                 // Player → neutral Direct connections.
                 foreach (var connName in spokeConns)
@@ -697,7 +698,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Spawn zone ───────────────────────────────────────────────────────────
 
-        private static Zone BuildSpawnZone(string letter, string player, string[] ringConns, int castleCount, bool spawnFootholds, double contentScale, double densityMult)
+        private static Zone BuildSpawnZone(string letter, string player, string[] ringConns, int castleCount, bool spawnFootholds, bool generateRoads, double contentScale, double densityMult)
         {
             // Index 0 = Spawn (player town), indices 1..castleCount = extra same-faction cities.
             var mainObjects = new List<MainObject>
@@ -758,19 +759,19 @@ namespace Olden_Era___Template_Editor.Services
                 ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 CrossroadsPosition = 0,
-                Roads = BuildOuterZoneRoads(ringConns, castleCount, spawnFootholds)
+                Roads = BuildOuterZoneRoads(ringConns, castleCount, spawnFootholds, generateRoads)
             };
         }
 
         // ── Neutral zone ─────────────────────────────────────────────────────────
 
-        private static Zone BuildNeutralZone(string letter, string[] ringConns, int castleCount, bool spawnFootholds, double contentScale, double densityMult)
+        private static Zone BuildNeutralZone(string letter, string[] ringConns, int castleCount, bool spawnFootholds, bool generateRoads, double contentScale, double densityMult)
         {
             // Index 0 = primary neutral city; indices 1..castleCount-1 = extra neutral cities.
             // All cities use FromList [] (neutral faction, not biome-matched).
-            var mainObjects = new List<MainObject>
-            {
-                new()
+            var mainObjects = new List<MainObject>();
+            if (castleCount > 0)
+                mainObjects.Add(new MainObject
                 {
                     Type = "City",
                     GuardChance = 0.5,
@@ -780,8 +781,7 @@ namespace Olden_Era___Template_Editor.Services
                     Faction = new TypedSelector { Type = "FromList", Args = [] },
                     Placement = "Uniform",
                     PlacementArgs = ["true", "0.8", "2"]
-                }
-            };
+                });
 
             for (int i = 1; i < castleCount; i++)
             {
@@ -821,11 +821,17 @@ namespace Olden_Era___Template_Editor.Services
                 ResourcesValue = (int)(60000 * contentScale * densityMult),
                 ResourcesValuePerArea = (int)(480 * Math.Sqrt(contentScale) * densityMult),
                 MainObjects = mainObjects,
-                ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
-                ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
-                MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
+                ZoneBiome = castleCount > 0
+                    ? new BiomeSelector { Type = "MatchMainObject", Args = ["0"] }
+                    : new BiomeSelector { Type = "MatchZone", Args = [] },
+                ContentBiome = castleCount > 0
+                    ? new BiomeSelector { Type = "MatchMainObject", Args = ["0"] }
+                    : new BiomeSelector { Type = "MatchZone", Args = [] },
+                MetaObjectsBiome = castleCount > 0
+                    ? new BiomeSelector { Type = "MatchMainObject", Args = ["0"] }
+                    : new BiomeSelector { Type = "MatchZone", Args = [] },
                 CrossroadsPosition = 0,
-                Roads = BuildOuterZoneRoads(ringConns, castleCount, spawnFootholds)
+                Roads = BuildOuterZoneRoads(ringConns, castleCount, spawnFootholds, generateRoads)
             };
         }
 
@@ -982,9 +988,11 @@ namespace Olden_Era___Template_Editor.Services
         /// roads to each adjacent ring connection, to the secondary city (index 1),
         /// and to the remote foothold.
         /// </summary>
-        private static List<Road> BuildOuterZoneRoads(string[] ringConns, int castleCount, bool includeFoothold)
+        private static List<Road> BuildOuterZoneRoads(string[] ringConns, int castleCount, bool includeFoothold, bool generateRoads)
         {
             var roads = new List<Road>();
+            if (!generateRoads || castleCount == 0) return roads;
+
             for (int i = 1; i < castleCount; i++)
                 roads.Add(PlainRoad(MainObjectEndpoint("0"), MainObjectEndpoint(i.ToString())));
 

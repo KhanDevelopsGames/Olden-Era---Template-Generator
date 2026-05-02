@@ -20,6 +20,7 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("topology")]          public MapTopology Topology           { get; set; } = MapTopology.Random;
         [JsonPropertyName("randomPortals")]     public bool    RandomPortals          { get; set; } = false;
         [JsonPropertyName("spawnFootholds")]    public bool    SpawnRemoteFootholds   { get; set; } = true;
+        [JsonPropertyName("generateRoads")]     public bool    GenerateRoads          { get; set; } = true;
         [JsonPropertyName("isolateplayers")]    public bool    NoDirectPlayerConn     { get; set; } = false;
         [JsonPropertyName("contentDensity")]    public int     ContentDensityPercent  { get; set; } = 100;
     }
