@@ -115,6 +115,7 @@ namespace Olden_Era___Template_Editor
             TxtNeutral.Text = ((int)SldNeutral.Value).ToString();
             TxtPlayerCastles.Text = ((int)SldPlayerCastles.Value).ToString();
             TxtNeutralCastles.Text = ((int)SldNeutralCastles.Value).ToString();
+            TxtContentDensity.Text = $"{(int)SldContentDensity.Value}%";
 
             Validate();
         }
@@ -215,7 +216,8 @@ namespace Olden_Era___Template_Editor
                 NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
                 RandomPortals = ChkRandomPortals.IsChecked == true,
                 SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
-                Topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default
+                Topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default,
+                ContentDensityPercent = (int)SldContentDensity.Value
             };
 
             var template = TemplateGenerator.Generate(settings);

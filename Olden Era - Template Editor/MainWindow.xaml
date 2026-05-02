@@ -47,7 +47,9 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>  <!-- template -->
                     <RowDefinition Height="8"/>
-                    <RowDefinition Height="*"/>     <!-- zone config -->
+                    <RowDefinition Height="Auto"/>  <!-- topology -->
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="*"/>  <!-- heroes -->
                 </Grid.RowDefinitions>
 
                 <!-- TEMPLATE -->
@@ -63,91 +65,25 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="8"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Label Grid.Row="0" Grid.Column="0" Content="Template Name"/>
                             <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtTemplateName" Text="Custom Template"/>
                             <Label Grid.Row="2" Grid.Column="0" Content="Map Size"/>
                             <ComboBox Grid.Row="2" Grid.Column="1" x:Name="CmbMapSize"
                                       SelectionChanged="CmbMapSize_SelectionChanged"/>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- ZONE CONFIGURATION -->
-                <Border Grid.Row="2" Style="{StaticResource SectionBorder}">
-                    <StackPanel>
-                        <TextBlock Text="◆  ZONE CONFIGURATION" Style="{StaticResource SectionHeader}"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="155"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="32"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="8"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="8"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="8"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <Label Grid.Row="0" Grid.Column="0" Content="Players"/>
-                            <Slider Grid.Row="0" Grid.Column="1" x:Name="SldPlayers"
+                            <DockPanel Grid.Row="4" Grid.Column="0">
+                                <Label Content="Players" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtPlayers" Text="2" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Row="4" Grid.Column="1" x:Name="SldPlayers"
                                     Minimum="2" Maximum="8" Value="2"
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
-                            <TextBlock Grid.Row="0" Grid.Column="2" x:Name="TxtPlayers" Text="2"
-                                       Style="{StaticResource ValueText}"/>
-
-                            <Label Grid.Row="2" Grid.Column="0" Content="Additional Neutral Zones"/>
-                            <Slider Grid.Row="2" Grid.Column="1" x:Name="SldNeutral"
-                                    Minimum="0" Maximum="8" Value="0"
-                                    TickFrequency="1" IsSnapToTickEnabled="True"
-                                    ValueChanged="Slider_ValueChanged"/>
-                            <TextBlock Grid.Row="2" Grid.Column="2" x:Name="TxtNeutral" Text="0"
-                                       Style="{StaticResource ValueText}"/>
-
-                            <Label Grid.Row="4" Grid.Column="0" Content="Castles / Player Zone"/>
-                            <Slider Grid.Row="4" Grid.Column="1" x:Name="SldPlayerCastles"
-                                    Minimum="1" Maximum="4" Value="1"
-                                    TickFrequency="1" IsSnapToTickEnabled="True"
-                                    ValueChanged="Slider_ValueChanged"/>
-                            <TextBlock Grid.Row="4" Grid.Column="2" x:Name="TxtPlayerCastles" Text="1"
-                                       Style="{StaticResource ValueText}"/>
-
-                            <Label Grid.Row="6" Grid.Column="0" Content="Castles / Neutral Zone"/>
-                            <Slider Grid.Row="6" Grid.Column="1" x:Name="SldNeutralCastles"
-                                    Minimum="1" Maximum="4" Value="1"
-                                    TickFrequency="1" IsSnapToTickEnabled="True"
-                                    ValueChanged="Slider_ValueChanged"/>
-                            <TextBlock Grid.Row="6" Grid.Column="2" x:Name="TxtNeutralCastles" Text="1"
-                                       Style="{StaticResource ValueText}"/>
                         </Grid>
-                    </StackPanel>
-                </Border>
-            </Grid>
-
-            <!-- ─── RIGHT COLUMN ─────────────────────────────────────── -->
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>  <!-- options -->
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>  <!-- topology -->
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="*"/>     <!-- heroes -->
-                </Grid.RowDefinitions>
-
-                <!-- OPTIONS -->
-                <Border Grid.Row="0" Style="{StaticResource SectionBorder}">
-                    <StackPanel>
-                        <TextBlock Text="◆  OPTIONS" Style="{StaticResource SectionHeader}"/>
-                        <CheckBox x:Name="ChkNoDirectPlayerConn"
-                                  Content="Isolate player zones (connect via neutrals only)"
-                                  Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
-                        <CheckBox x:Name="ChkRandomPortals"  Content="Spawn portals"         Margin="0,6,0,0"/>
-                        <CheckBox x:Name="ChkSpawnFootholds" Content="Spawn remote footholds" IsChecked="True" Margin="0,6,0,0"/>
                     </StackPanel>
                 </Border>
 
@@ -157,7 +93,7 @@
                         <TextBlock Text="◆  TOPOLOGY" Style="{StaticResource SectionHeader}"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="155"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0" Content="Map Topology"/>
@@ -177,9 +113,68 @@
                         <TextBlock Text="◆  HEROES" Style="{StaticResource SectionHeader}"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="155"/>
+                                <ColumnDefinition Width="185"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="32"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="4"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="4"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <DockPanel Grid.Row="0" Grid.Column="0">
+                                <Label Content="Min Heroes" Padding="5,2" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtHeroMin" Text="10" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Row="0" Grid.Column="1" x:Name="SldHeroMin"
+                                    Minimum="1" Maximum="10" Value="10"
+                                    TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+
+                            <DockPanel Grid.Row="2" Grid.Column="0">
+                                <Label Content="Max Heroes" Padding="5,2" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtHeroMax" Text="10" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Row="2" Grid.Column="1" x:Name="SldHeroMax"
+                                    Minimum="1" Maximum="50" Value="10"
+                                    TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+
+                            <DockPanel Grid.Row="4" Grid.Column="0">
+                                <Label Content="Increase heroes / castle" Padding="5,2" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtHeroIncrement" Text="1" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Row="4" Grid.Column="1" x:Name="SldHeroIncrement"
+                                    Minimum="0" Maximum="10" Value="1"
+                                    TickFrequency="1" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- ─── RIGHT COLUMN ─────────────────────────────────────── -->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>     <!-- zone config -->
+                </Grid.RowDefinitions>
+
+                <!-- ZONE CONFIGURATION -->
+                <Border Grid.Row="0" Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <TextBlock Text="◆  ZONE CONFIGURATION" Style="{StaticResource SectionHeader}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="230"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -187,32 +182,60 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="8"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <Label Grid.Row="0" Grid.Column="0" Content="Min Heroes"/>
-                            <Slider Grid.Row="0" Grid.Column="1" x:Name="SldHeroMin"
-                                    Minimum="1" Maximum="10" Value="10"
+                            <DockPanel Grid.Row="0" Grid.Column="0">
+                                <Label Content="Additional Neutral Zones" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtNeutral" Text="0" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Row="0" Grid.Column="1" x:Name="SldNeutral"
+                                    Minimum="0" Maximum="8" Value="0"
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
-                            <TextBlock Grid.Row="0" Grid.Column="2" x:Name="TxtHeroMin" Text="10"
-                                       Style="{StaticResource ValueText}"/>
 
-                            <Label Grid.Row="2" Grid.Column="0" Content="Max Heroes"/>
-                            <Slider Grid.Row="2" Grid.Column="1" x:Name="SldHeroMax"
-                                    Minimum="1" Maximum="50" Value="10"
+                            <DockPanel Grid.Row="2" Grid.Column="0">
+                                <Label Content="Castles / Player Zone" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtPlayerCastles" Text="1" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Row="2" Grid.Column="1" x:Name="SldPlayerCastles"
+                                    Minimum="1" Maximum="4" Value="1"
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
-                            <TextBlock Grid.Row="2" Grid.Column="2" x:Name="TxtHeroMax" Text="10"
-                                       Style="{StaticResource ValueText}"/>
 
-                            <Label Grid.Row="4" Grid.Column="0" Content="Increase heroes / castle"/>
-                            <Slider Grid.Row="4" Grid.Column="1" x:Name="SldHeroIncrement"
-                                    Minimum="0" Maximum="10" Value="1"
+                            <DockPanel Grid.Row="4" Grid.Column="0">
+                                <Label Content="Castles / Neutral Zone" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtNeutralCastles" Text="1" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Row="4" Grid.Column="1" x:Name="SldNeutralCastles"
+                                    Minimum="1" Maximum="4" Value="1"
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
-                            <TextBlock Grid.Row="4" Grid.Column="2" x:Name="TxtHeroIncrement" Text="1"
-                                       Style="{StaticResource ValueText}"/>
+
+                            <DockPanel Grid.Row="6" Grid.Column="0">
+                                <Label Content="Resource/Structure spawn rate" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtContentDensity" Text="100%" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,10,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Row="6" Grid.Column="1" x:Name="SldContentDensity"
+                                    Minimum="20" Maximum="200" Value="100"
+                                    TickFrequency="10" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
                         </Grid>
+                        <CheckBox x:Name="ChkSpawnFootholds" Content="Spawn remote footholds" IsChecked="True" Margin="0,15,0,0"/>
+                        <CheckBox x:Name="ChkRandomPortals"  Content="Spawn portals"          Margin="0,6,0,0"/>                        
+                        <CheckBox x:Name="ChkNoDirectPlayerConn"
+                                  Content="Isolate player zones (connect via neutrals only) [EXPERIMENTAL]"
+                                  Margin="0,6,0,0"
+                                  Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
                     </StackPanel>
                 </Border>
             </Grid>
