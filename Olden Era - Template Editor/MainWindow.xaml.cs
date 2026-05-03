@@ -61,7 +61,7 @@ namespace Olden_Era___Template_Editor
             CmbTopology.ItemsSource = TopologyOptions.Select(t => t.Label).ToList();
             CmbTopology.SelectedIndex = 0; // Random is first
             UpdateValueLabels();
-            UpdateAdvancedModeVisibility();
+            UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
             UpdateRoadsHintVisibility();
             UpdateBalancedZonePlacementDescVisibility();
@@ -156,7 +156,7 @@ namespace Olden_Era___Template_Editor
 
             UpdateValueLabels();
             UpdatePlayerCastleFactionVisibility();
-            UpdateAdvancedModeVisibility();
+            UpdateAdvancedZoneSettingsVisibility();
             UpdateRoadsHintVisibility();
             MarkDirty();
             Validate();
@@ -212,7 +212,7 @@ namespace Olden_Era___Template_Editor
                 return false;
             }
 
-            int maxZones = ChkAdvancedMode.IsChecked == true ? AdvancedModeMaxZones : SimpleModeMaxZones;
+            int maxZones = _advancedZoneSettings ? AdvancedModeMaxZones : SimpleModeMaxZones;
             if (players + neutral > maxZones)
             {
                 TxtValidation.Text = $"Total zones (players + neutral) cannot exceed {maxZones}.";
@@ -237,7 +237,7 @@ namespace Olden_Era___Template_Editor
                 warnings.Add("Experimental map sizes above 240x240 are not confirmed by official templates; generated maps may fail, freeze, or behave unpredictably in game.");
 
             int minNeutralBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value;
-            if (ChkAdvancedMode.IsChecked == true && minNeutralBetweenPlayers > 0)
+            if (_advancedZoneSettings && minNeutralBetweenPlayers > 0)
             {
                 var topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default;
                 var separationSettings = new GeneratorSettings
@@ -260,7 +260,7 @@ namespace Olden_Era___Template_Editor
 
         private int TotalNeutralZonesFromUi()
         {
-            if (ChkAdvancedMode.IsChecked != true)
+            if (!_advancedZoneSettings)
                 return (int)SldNeutral.Value;
 
             return (int)SldNeutralLowNoCastle.Value
@@ -292,7 +292,7 @@ namespace Olden_Era___Template_Editor
             if (CmbMapSize == null) return;
 
             int selectedSize = requestedSize ?? SelectedMapSize();
-            bool includeExperimental = ChkAdvancedMode?.IsChecked == true && ChkExperimentalMapSizes?.IsChecked == true;
+            bool includeExperimental = ChkExperimentalMapSizes?.IsChecked == true;
             int[] sizes = includeExperimental ? KnownValues.AllMapSizes : KnownValues.MapSizes;
 
             if (!includeExperimental && KnownValues.IsExperimentalMapSize(selectedSize))
@@ -329,7 +329,7 @@ namespace Olden_Era___Template_Editor
             ChkNoDirectPlayerConn.Visibility = isolateApplicable ? Visibility.Visible : Visibility.Collapsed;
             if (!isolateApplicable) ChkNoDirectPlayerConn.IsChecked = false;
             UpdateIsolateDescVisibility();
-            UpdateAdvancedModeVisibility();
+            UpdateAdvancedZoneSettingsVisibility();
 
             MarkDirty();
             Validate();
@@ -363,10 +363,13 @@ namespace Olden_Era___Template_Editor
             Validate();
         }
 
-        private void ChkAdvancedMode_Changed(object sender, RoutedEventArgs e)
+        private bool _advancedZoneSettings = false;
+
+        private void BtnAdvancedZoneSettings_Click(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
-            if (ChkAdvancedMode.IsChecked == true && TotalAdvancedNeutralZonesFromSliders() == 0 && (int)SldNeutral.Value > 0)
+            _advancedZoneSettings = ChkAdvancedZoneSettings.IsChecked == true;
+            if (_advancedZoneSettings && TotalAdvancedNeutralZonesFromSliders() == 0 && (int)SldNeutral.Value > 0)
             {
                 if ((int)SldNeutralCastles.Value > 0)
                     SldNeutralMediumCastle.Value = SldNeutral.Value;
@@ -374,10 +377,9 @@ namespace Olden_Era___Template_Editor
                     SldNeutralMediumNoCastle.Value = SldNeutral.Value;
             }
 
-            UpdateAdvancedModeVisibility();
+            UpdateAdvancedZoneSettingsVisibility();
             UpdateValueLabels();
             UpdateRoadsHintVisibility();
-            UpdateWinConditionDetailVisibility();
             MarkDirty();
             Validate();
         }
@@ -398,21 +400,17 @@ namespace Olden_Era___Template_Editor
             + (int)SldNeutralHighNoCastle.Value
             + (int)SldNeutralHighCastle.Value;
 
-        private void UpdateAdvancedModeVisibility()
+        private void UpdateAdvancedZoneSettingsVisibility()
         {
             if (PnlAdvancedNeutralZones == null) return;
-            bool advanced = ChkAdvancedMode.IsChecked == true;
+            bool advanced = _advancedZoneSettings;
             PnlAdvancedNeutralZones.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
             PnlAdvancedZoneSizes.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
             PnlAdvancedSeparation.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
-            PnlAdvancedGameRules.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
             PnlSimpleNeutralCountLabel.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
             SldNeutral.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
-            ChkExperimentalMapSizes.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
-            if (!advanced)
-                ChkExperimentalMapSizes.IsChecked = false;
-            RefreshMapSizeOptions();
-            UpdateWinConditionDetailVisibility();
+            if (ChkAdvancedZoneSettings != null)
+                ChkAdvancedZoneSettings.IsChecked = advanced;
         }
 
         private void CmbVictory_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -505,7 +503,7 @@ namespace Olden_Era___Template_Editor
         private void UpdateExperimentalMapSizeWarningVisibility()
         {
             if (TxtExperimentalMapSizeWarning == null) return;
-            bool includeExperimental = ChkAdvancedMode?.IsChecked == true && ChkExperimentalMapSizes?.IsChecked == true;
+            bool includeExperimental = ChkExperimentalMapSizes?.IsChecked == true;
             TxtExperimentalMapSizeWarning.Visibility = includeExperimental ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -542,7 +540,7 @@ namespace Olden_Era___Template_Editor
                 : Visibility.Collapsed;
         }
 
-        // ── Settings persistence ───────────────────────────────────────────────
+        // -- Settings persistence -----------------------------------------------
 
         private SettingsFile GatherSettings() => new()
         {
@@ -552,7 +550,7 @@ namespace Olden_Era___Template_Editor
             NeutralZoneCount      = (int)SldNeutral.Value,
             PlayerZoneCastles     = (int)SldPlayerCastles.Value,
             NeutralZoneCastles    = (int)SldNeutralCastles.Value,
-            AdvancedMode          = ChkAdvancedMode.IsChecked == true,
+            AdvancedMode          = _advancedZoneSettings,
             NeutralLowNoCastleCount = (int)SldNeutralLowNoCastle.Value,
             NeutralLowCastleCount = (int)SldNeutralLowCastle.Value,
             NeutralMediumNoCastleCount = (int)SldNeutralMediumNoCastle.Value,
@@ -563,8 +561,8 @@ namespace Olden_Era___Template_Editor
             MinNeutralZonesBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value,
             ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
             ExperimentalMapSizes  = ChkExperimentalMapSizes.IsChecked == true,
-            PlayerZoneSize        = ChkAdvancedMode.IsChecked == true ? SldPlayerZoneSize.Value : 1.0,
-            NeutralZoneSize       = ChkAdvancedMode.IsChecked == true ? SldNeutralZoneSize.Value : 1.0,
+            PlayerZoneSize        = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
+            NeutralZoneSize       = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
             GuardRandomization    = SldGuardRandomization.Value / 100.0,
             HeroCountMin          = (int)SldHeroMin.Value,
             HeroCountMax          = (int)SldHeroMax.Value,
@@ -582,16 +580,16 @@ namespace Olden_Era___Template_Editor
                 ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
                 : "win_condition_1",
             FactionLawsExpPercent = (int)SldFactionLawsExp.Value,
-            AstrologyExpPercent = (int)SldAstrologyExp.Value,
-            LostStartCity = ChkLostStartCity.IsChecked == true,
+            AstrologyExpPercent   = (int)SldAstrologyExp.Value,
+            LostStartCity         = ChkLostStartCity.IsChecked == true,
             LostStartCityDay = (int)SldLostStartCityDay.Value,
-            LostStartHero = ChkLostStartHero.IsChecked == true,
-            CityHold = ChkCityHold.IsChecked == true,
+            LostStartHero         = ChkLostStartHero.IsChecked == true,
+            CityHold              = ChkCityHold.IsChecked == true,
             CityHoldDays = (int)SldCityHoldDays.Value,
-            GladiatorArena = ChkGladiatorArena.IsChecked == true,
+            GladiatorArena               = ChkGladiatorArena.IsChecked == true,
             GladiatorArenaDaysDelayStart = (int)SldGladiatorDelay.Value,
-            GladiatorArenaCountDay = (int)SldGladiatorCountDay.Value,
-            Tournament = ChkTournament.IsChecked == true,
+            GladiatorArenaCountDay       = (int)SldGladiatorCountDay.Value,
+            Tournament                   = ChkTournament.IsChecked == true,
             TournamentRoundCount = (int)SldTournamentRoundCount.Value,
             TournamentRoundDuration = (int)SldTournamentRoundDuration.Value,
             TournamentFirstAnnounceDay = (int)SldTournamentFirstAnnounceDay.Value,
@@ -604,7 +602,7 @@ namespace Olden_Era___Template_Editor
             TxtTemplateName.Text    = s.TemplateName;
             bool hasCustomZoneSizes = Math.Abs(s.PlayerZoneSize - 1.0) > 0.0001 || Math.Abs(s.NeutralZoneSize - 1.0) > 0.0001;
             bool needsExperimentalMapSizes = s.ExperimentalMapSizes || KnownValues.IsExperimentalMapSize(s.MapSize);
-            ChkAdvancedMode.IsChecked = s.AdvancedMode || needsExperimentalMapSizes || hasCustomZoneSizes;
+            _advancedZoneSettings = s.AdvancedMode || needsExperimentalMapSizes || hasCustomZoneSizes;
             ChkExperimentalMapSizes.IsChecked = needsExperimentalMapSizes;
             RefreshMapSizeOptions(s.MapSize);
             SldPlayers.Value        = s.PlayerCount;
@@ -655,7 +653,7 @@ namespace Olden_Era___Template_Editor
             SldTournamentRoundInterval.Value = Math.Clamp(s.TournamentRoundInterval, 1, 30);
             SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 5);
             UpdateValueLabels();
-            UpdateAdvancedModeVisibility();
+            UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
             UpdateRoadsHintVisibility();
             UpdateBalancedZonePlacementDescVisibility();
@@ -738,7 +736,7 @@ namespace Olden_Era___Template_Editor
                 SaveToPath(dlg.FileName);
         }
 
-        // ── Generate ──────────────────────────────────────────────────────────
+        // -- Generate ----------------------------------------------------------
 
         private void BtnGenerate_Click(object sender, RoutedEventArgs e)
         {
@@ -759,7 +757,7 @@ namespace Olden_Era___Template_Editor
                     : "win_condition_1",
                 PlayerZoneCastles = (int)SldPlayerCastles.Value,
                 NeutralZoneCastles = (int)SldNeutralCastles.Value,
-                AdvancedMode = ChkAdvancedMode.IsChecked == true,
+                AdvancedMode = _advancedZoneSettings,
                 NeutralLowNoCastleCount = (int)SldNeutralLowNoCastle.Value,
                 NeutralLowCastleCount = (int)SldNeutralLowCastle.Value,
                 NeutralMediumNoCastleCount = (int)SldNeutralMediumNoCastle.Value,
@@ -767,11 +765,11 @@ namespace Olden_Era___Template_Editor
                 NeutralHighNoCastleCount = (int)SldNeutralHighNoCastle.Value,
                 NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
                 MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
-                MinNeutralZonesBetweenPlayers = ChkAdvancedMode.IsChecked == true ? (int)SldMinNeutralBetweenPlayers.Value : 0,
+                MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)SldMinNeutralBetweenPlayers.Value : 0,
                 ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
-                PlayerZoneSize = ChkAdvancedMode.IsChecked == true ? SldPlayerZoneSize.Value : 1.0,
-                NeutralZoneSize = ChkAdvancedMode.IsChecked == true ? SldNeutralZoneSize.Value : 1.0,
-                GuardRandomization = ChkAdvancedMode.IsChecked == true ? SldGuardRandomization.Value / 100.0 : 0.05,
+                PlayerZoneSize = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
+                NeutralZoneSize = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
+                GuardRandomization = _advancedZoneSettings ? SldGuardRandomization.Value / 100.0 : 0.05,
                 NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
                 RandomPortals = ChkRandomPortals.IsChecked == true,
                 SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
@@ -781,17 +779,17 @@ namespace Olden_Era___Template_Editor
                 StructureDensityPercent = (int)SldStructureDensity.Value,
                 NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
                 BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
-                FactionLawsExpPercent = ChkAdvancedMode.IsChecked == true ? (int)SldFactionLawsExp.Value : 100,
-                AstrologyExpPercent = ChkAdvancedMode.IsChecked == true ? (int)SldAstrologyExp.Value : 100,
-                LostStartCity = ChkAdvancedMode.IsChecked == true && ChkLostStartCity.IsChecked == true,
+                FactionLawsExpPercent = (int)SldFactionLawsExp.Value,
+                AstrologyExpPercent = (int)SldAstrologyExp.Value,
+                LostStartCity = ChkLostStartCity.IsChecked == true,
                 LostStartCityDay = (int)SldLostStartCityDay.Value,
-                LostStartHero = ChkAdvancedMode.IsChecked == true && ChkLostStartHero.IsChecked == true,
-                CityHold = ChkAdvancedMode.IsChecked == true && ChkCityHold.IsChecked == true,
+                LostStartHero = ChkLostStartHero.IsChecked == true,
+                CityHold = ChkCityHold.IsChecked == true,
                 CityHoldDays = (int)SldCityHoldDays.Value,
-                GladiatorArena = ChkAdvancedMode.IsChecked == true && ChkGladiatorArena.IsChecked == true,
+                GladiatorArena = ChkGladiatorArena.IsChecked == true,
                 GladiatorArenaDaysDelayStart = (int)SldGladiatorDelay.Value,
                 GladiatorArenaCountDay = (int)SldGladiatorCountDay.Value,
-                Tournament = ChkAdvancedMode.IsChecked == true && ChkTournament.IsChecked == true,
+                Tournament = ChkTournament.IsChecked == true,
                 TournamentRoundCount = (int)SldTournamentRoundCount.Value,
                 TournamentRoundDuration = (int)SldTournamentRoundDuration.Value,
                 TournamentFirstAnnounceDay = (int)SldTournamentFirstAnnounceDay.Value,

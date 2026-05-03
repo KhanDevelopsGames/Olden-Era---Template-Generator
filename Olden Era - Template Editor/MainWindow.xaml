@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Olden Era - Simple Template Generator"
-        Height="700" Width="960"
+        Height="850" Width="1000"
         MinHeight="650" MinWidth="800"
         WindowStyle="None"
         ResizeMode="NoResize"
@@ -95,11 +95,6 @@
             <Button Content="📂  Open"    Width="80"  Margin="0,0,6,0" Click="BtnOpen_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Open (Ctrl+O)"/>
             <Button Content="💾  Save"    Width="80"  Margin="0,0,6,0" Click="BtnSave_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Save (Ctrl+S)"/>
             <Button Content="💾  Save As" Width="96"  Margin="0,0,0,0" Click="BtnSaveAs_Click" Style="{StaticResource ToolbarButton}" ToolTip="Save As (Ctrl+Shift+S)"/>
-            <CheckBox x:Name="ChkAdvancedMode"
-                      Content="Advanced mode"
-                      Margin="18,4,0,0"
-                      Checked="ChkAdvancedMode_Changed"
-                      Unchecked="ChkAdvancedMode_Changed"/>
         </StackPanel>
 
         <!-- ════════ HEADER ════════════════════════════════════════════ -->
@@ -148,7 +143,7 @@
                                 <CheckBox x:Name="ChkExperimentalMapSizes"
                                           Content="Experimental large map sizes"
                                           Margin="0,6,0,0"
-                                          Visibility="Collapsed"
+                                          Visibility="Visible"
                                           Checked="ChkExperimentalMapSizes_Changed"
                                           Unchecked="ChkExperimentalMapSizes_Changed"/>
                                 <TextBlock x:Name="TxtExperimentalMapSizeWarning"
@@ -265,13 +260,24 @@
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>     <!-- zone config -->
+                    <RowDefinition Height="10"/>    <!-- gutter -->
+                    <RowDefinition Height="Auto"/>  <!-- advanced game rules -->
                 </Grid.RowDefinitions>
 
                 <!-- ZONE CONFIGURATION -->
                 <Border Grid.Row="0" Style="{StaticResource SectionBorder}">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
-                        <TextBlock Text="◆  ZONE CONFIGURATION" Style="{StaticResource SectionHeader}"/>
+                        <DockPanel LastChildFill="False">
+                            <TextBlock Text="◆  ZONE CONFIGURATION" Style="{StaticResource SectionHeader}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <CheckBox x:Name="ChkAdvancedZoneSettings" Content="Advanced settings"
+                                      DockPanel.Dock="Right"
+                                      Margin="15,0,0,8"
+                                      VerticalAlignment="Center"
+                                      FontSize="11"
+                                      Checked="BtnAdvancedZoneSettings_Click"
+                                      Unchecked="BtnAdvancedZoneSettings_Click"/>
+                        </DockPanel>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="230"/>
@@ -558,213 +564,7 @@
                                        Margin="0,4,0,0"
                                        Text="Honored only when the selected layout, neutral zone total, and portal settings can support it; otherwise generation uses the normal connection layout."/>
                         </StackPanel>
-                        <StackPanel x:Name="PnlAdvancedGameRules"
-                                    Visibility="Collapsed"
-                                    Margin="0,12,0,0">
-                            <TextBlock Text="Advanced game rules"
-                                       Style="{StaticResource SectionHeader}"
-                                       Margin="0,0,0,4"/>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="230"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="6"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="4"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <Label Grid.Row="0" Grid.Column="0" Content="Win condition"/>
-                                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="CmbVictory"
-                                          SelectionChanged="CmbVictory_SelectionChanged"/>
-
-                                <DockPanel Grid.Row="2" Grid.Column="0">
-                                    <Label Content="Faction laws XP" DockPanel.Dock="Left"/>
-                                    <TextBlock x:Name="TxtFactionLawsExp" Text="100%" DockPanel.Dock="Right"
-                                               HorizontalAlignment="Right" VerticalAlignment="Center"
-                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                </DockPanel>
-                                <Slider Grid.Row="2" Grid.Column="1" x:Name="SldFactionLawsExp"
-                                        Minimum="25" Maximum="200" Value="100"
-                                        TickFrequency="25" IsSnapToTickEnabled="True"
-                                        ValueChanged="Slider_ValueChanged"/>
-
-                                <DockPanel Grid.Row="4" Grid.Column="0">
-                                    <Label Content="Astrology XP" DockPanel.Dock="Left"/>
-                                    <TextBlock x:Name="TxtAstrologyExp" Text="100%" DockPanel.Dock="Right"
-                                               HorizontalAlignment="Right" VerticalAlignment="Center"
-                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                </DockPanel>
-                                <Slider Grid.Row="4" Grid.Column="1" x:Name="SldAstrologyExp"
-                                        Minimum="25" Maximum="200" Value="100"
-                                        TickFrequency="25" IsSnapToTickEnabled="True"
-                                        ValueChanged="Slider_ValueChanged"/>
-                            </Grid>
-
-                            <StackPanel Margin="0,8,0,0">
-                                <CheckBox x:Name="ChkLostStartCity"
-                                          Content="Lose when starting city is lost"
-                                          Checked="WinConditionOption_Changed"
-                                          Unchecked="WinConditionOption_Changed"/>
-                                <Grid x:Name="PnlLostStartCityDetails" Margin="18,3,0,6">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="212"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <DockPanel Grid.Column="0">
-                                        <Label Content="Lost city day" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtLostStartCityDay" Text="3" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Column="1" x:Name="SldLostStartCityDay"
-                                            Minimum="1" Maximum="30" Value="3"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                </Grid>
-
-                                <CheckBox x:Name="ChkLostStartHero"
-                                          Content="Lose when starting hero is lost"
-                                          Checked="WinConditionOption_Changed"
-                                          Unchecked="WinConditionOption_Changed"/>
-
-                                <CheckBox x:Name="ChkCityHold"
-                                          Content="Win by holding a city"
-                                          Margin="0,6,0,0"
-                                          Checked="WinConditionOption_Changed"
-                                          Unchecked="WinConditionOption_Changed"/>
-                                <Grid x:Name="PnlCityHoldDetails" Margin="18,3,0,6">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="212"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <DockPanel Grid.Column="0">
-                                        <Label Content="Hold days" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtCityHoldDays" Text="6" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Column="1" x:Name="SldCityHoldDays"
-                                            Minimum="1" Maximum="30" Value="6"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                </Grid>
-
-                                <CheckBox x:Name="ChkGladiatorArena"
-                                          Content="Use gladiator arena rules"
-                                          Margin="0,6,0,0"
-                                          Checked="WinConditionOption_Changed"
-                                          Unchecked="WinConditionOption_Changed"/>
-                                <Grid x:Name="PnlGladiatorDetails" Margin="18,3,0,6">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="212"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="4"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <DockPanel Grid.Row="0" Grid.Column="0">
-                                        <Label Content="Arena delay" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtGladiatorDelay" Text="30" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Row="0" Grid.Column="1" x:Name="SldGladiatorDelay"
-                                            Minimum="1" Maximum="60" Value="30"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                    <DockPanel Grid.Row="2" Grid.Column="0">
-                                        <Label Content="Arena count day" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtGladiatorCountDay" Text="3" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Row="2" Grid.Column="1" x:Name="SldGladiatorCountDay"
-                                            Minimum="1" Maximum="30" Value="3"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                </Grid>
-
-                                <CheckBox x:Name="ChkTournament"
-                                          Content="Use tournament rules"
-                                          Margin="0,6,0,0"
-                                          Checked="WinConditionOption_Changed"
-                                          Unchecked="WinConditionOption_Changed"/>
-                                <Grid x:Name="PnlTournamentDetails" Margin="18,3,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="212"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="4"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="4"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="4"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="4"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <DockPanel Grid.Row="0" Grid.Column="0">
-                                        <Label Content="Tournament rounds" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtTournamentRoundCount" Text="3" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Row="0" Grid.Column="1" x:Name="SldTournamentRoundCount"
-                                            Minimum="1" Maximum="5" Value="3"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                    <DockPanel Grid.Row="2" Grid.Column="0">
-                                        <Label Content="Round duration" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtTournamentRoundDuration" Text="3" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Row="2" Grid.Column="1" x:Name="SldTournamentRoundDuration"
-                                            Minimum="1" Maximum="14" Value="3"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                    <DockPanel Grid.Row="4" Grid.Column="0">
-                                        <Label Content="First announce day" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtTournamentFirstAnnounceDay" Text="7" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Row="4" Grid.Column="1" x:Name="SldTournamentFirstAnnounceDay"
-                                            Minimum="1" Maximum="60" Value="7"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                    <DockPanel Grid.Row="6" Grid.Column="0">
-                                        <Label Content="Round interval" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtTournamentRoundInterval" Text="7" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Row="6" Grid.Column="1" x:Name="SldTournamentRoundInterval"
-                                            Minimum="1" Maximum="30" Value="7"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                    <DockPanel Grid.Row="8" Grid.Column="0">
-                                        <Label Content="Points to win" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtTournamentPointsToWin" Text="2" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Row="8" Grid.Column="1" x:Name="SldTournamentPointsToWin"
-                                            Minimum="1" Maximum="5" Value="2"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                </Grid>
-                            </StackPanel>
-                        </StackPanel>
-                                <CheckBox x:Name="ChkGenerateRoads"  Content="Generate roads"         IsChecked="True" Margin="0,15,0,0"
+                                <CheckBox x:Name="ChkGenerateRoads" Content="Generate roads"
           Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
                                 <TextBlock x:Name="TxtRoadsHint"
             Visibility="Collapsed"
@@ -795,13 +595,221 @@
                                    FontSize="13" TextWrapping="Wrap"
                                    Margin="25,3,0,0"
                                    Text="The game tries to connect player zones to neutral zones only. If no neutral zone borders a player zone, it will fall back to connecting directly to another player zone."/>
-                    </StackPanel>
-                    </ScrollViewer>
-                </Border>
-            </Grid>
-        </Grid>
+                                 </StackPanel>
+                                 </ScrollViewer>
+                            </Border>
 
-        <!-- Hidden combos required by code-behind -->
+                            <!-- ADVANCED GAME RULES -->
+                            <Border Grid.Row="2" x:Name="PnlAdvancedGameRules" Style="{StaticResource SectionBorder}">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <StackPanel>
+                                        <TextBlock Text="◆  ADVANCED GAME RULES [EXPERIMENTAL]" Style="{StaticResource SectionHeader}"/>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="230"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="6"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="4"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <Label Grid.Row="0" Grid.Column="0" Content="Win condition"/>
+                                            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="CmbVictory"
+                                                      SelectionChanged="CmbVictory_SelectionChanged"/>
+
+                                            <DockPanel Grid.Row="2" Grid.Column="0">
+                                                <Label Content="Faction laws XP" DockPanel.Dock="Left"/>
+                                                <TextBlock x:Name="TxtFactionLawsExp" Text="100%" DockPanel.Dock="Right"
+                                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                            </DockPanel>
+                                            <Slider Grid.Row="2" Grid.Column="1" x:Name="SldFactionLawsExp"
+                                                    Minimum="25" Maximum="200" Value="100"
+                                                    TickFrequency="25" IsSnapToTickEnabled="True"
+                                                    ValueChanged="Slider_ValueChanged"/>
+
+                                            <DockPanel Grid.Row="4" Grid.Column="0">
+                                                <Label Content="Astrology XP" DockPanel.Dock="Left"/>
+                                                <TextBlock x:Name="TxtAstrologyExp" Text="100%" DockPanel.Dock="Right"
+                                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                            </DockPanel>
+                                            <Slider Grid.Row="4" Grid.Column="1" x:Name="SldAstrologyExp"
+                                                    Minimum="25" Maximum="200" Value="100"
+                                                    TickFrequency="25" IsSnapToTickEnabled="True"
+                                                    ValueChanged="Slider_ValueChanged"/>
+                                        </Grid>
+
+                                        <StackPanel Margin="0,8,0,0">
+                                            <CheckBox x:Name="ChkLostStartCity"
+                                                      Content="Lose when starting city is lost"
+                                                      Checked="WinConditionOption_Changed"
+                                                      Unchecked="WinConditionOption_Changed"/>
+                                            <Grid x:Name="PnlLostStartCityDetails" Margin="18,3,0,6">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="212"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <DockPanel Grid.Column="0">
+                                                    <Label Content="Lost city day" Padding="5,2" DockPanel.Dock="Left"/>
+                                                    <TextBlock x:Name="TxtLostStartCityDay" Text="3" DockPanel.Dock="Right"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                </DockPanel>
+                                                <Slider Grid.Column="1" x:Name="SldLostStartCityDay"
+                                                        Minimum="1" Maximum="30" Value="3"
+                                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                                        ValueChanged="Slider_ValueChanged"/>
+                                            </Grid>
+
+                                            <CheckBox x:Name="ChkLostStartHero"
+                                                      Content="Lose when starting hero is lost"
+                                                      Checked="WinConditionOption_Changed"
+                                                      Unchecked="WinConditionOption_Changed"/>
+
+                                            <CheckBox x:Name="ChkCityHold"
+                                                      Content="Win by holding a city"
+                                                      Margin="0,6,0,0"
+                                                      Checked="WinConditionOption_Changed"
+                                                      Unchecked="WinConditionOption_Changed"/>
+                                            <Grid x:Name="PnlCityHoldDetails" Margin="18,3,0,6">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="212"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <DockPanel Grid.Column="0">
+                                                    <Label Content="Hold days" Padding="5,2" DockPanel.Dock="Left"/>
+                                                    <TextBlock x:Name="TxtCityHoldDays" Text="6" DockPanel.Dock="Right"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                </DockPanel>
+                                                <Slider Grid.Column="1" x:Name="SldCityHoldDays"
+                                                        Minimum="1" Maximum="30" Value="6"
+                                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                                        ValueChanged="Slider_ValueChanged"/>
+                                            </Grid>
+
+                                            <CheckBox x:Name="ChkGladiatorArena"
+                                                      Content="Use gladiator arena rules"
+                                                      Margin="0,6,0,0"
+                                                      Checked="WinConditionOption_Changed"
+                                                      Unchecked="WinConditionOption_Changed"/>
+                                            <Grid x:Name="PnlGladiatorDetails" Margin="18,3,0,6">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="212"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="4"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <DockPanel Grid.Row="0" Grid.Column="0">
+                                                    <Label Content="Arena delay" Padding="5,2" DockPanel.Dock="Left"/>
+                                                    <TextBlock x:Name="TxtGladiatorDelay" Text="30" DockPanel.Dock="Right"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                </DockPanel>
+                                                <Slider Grid.Row="0" Grid.Column="1" x:Name="SldGladiatorDelay"
+                                                        Minimum="1" Maximum="60" Value="30"
+                                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                                        ValueChanged="Slider_ValueChanged"/>
+                                                <DockPanel Grid.Row="2" Grid.Column="0">
+                                                    <Label Content="Arena count day" Padding="5,2" DockPanel.Dock="Left"/>
+                                                    <TextBlock x:Name="TxtGladiatorCountDay" Text="3" DockPanel.Dock="Right"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                </DockPanel>
+                                                <Slider Grid.Row="2" Grid.Column="1" x:Name="SldGladiatorCountDay"
+                                                        Minimum="1" Maximum="30" Value="3"
+                                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                                        ValueChanged="Slider_ValueChanged"/>
+                                            </Grid>
+
+                                            <CheckBox x:Name="ChkTournament"
+                                                      Content="Use tournament rules"
+                                                      Margin="0,6,0,0"
+                                                      Checked="WinConditionOption_Changed"
+                                                      Unchecked="WinConditionOption_Changed"/>
+                                            <Grid x:Name="PnlTournamentDetails" Margin="18,3,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="212"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="4"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="4"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="4"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="4"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <DockPanel Grid.Row="0" Grid.Column="0">
+                                                    <Label Content="Tournament rounds" Padding="5,2" DockPanel.Dock="Left"/>
+                                                    <TextBlock x:Name="TxtTournamentRoundCount" Text="3" DockPanel.Dock="Right"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                </DockPanel>
+                                                <Slider Grid.Row="0" Grid.Column="1" x:Name="SldTournamentRoundCount"
+                                                        Minimum="1" Maximum="5" Value="3"
+                                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                                        ValueChanged="Slider_ValueChanged"/>
+                                                <DockPanel Grid.Row="2" Grid.Column="0">
+                                                    <Label Content="Round duration" Padding="5,2" DockPanel.Dock="Left"/>
+                                                    <TextBlock x:Name="TxtTournamentRoundDuration" Text="3" DockPanel.Dock="Right"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                </DockPanel>
+                                                <Slider Grid.Row="2" Grid.Column="1" x:Name="SldTournamentRoundDuration"
+                                                        Minimum="1" Maximum="14" Value="3"
+                                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                                        ValueChanged="Slider_ValueChanged"/>
+                                                <DockPanel Grid.Row="4" Grid.Column="0">
+                                                    <Label Content="First announce day" Padding="5,2" DockPanel.Dock="Left"/>
+                                                    <TextBlock x:Name="TxtTournamentFirstAnnounceDay" Text="7" DockPanel.Dock="Right"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                </DockPanel>
+                                                <Slider Grid.Row="4" Grid.Column="1" x:Name="SldTournamentFirstAnnounceDay"
+                                                        Minimum="1" Maximum="60" Value="7"
+                                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                                        ValueChanged="Slider_ValueChanged"/>
+                                                <DockPanel Grid.Row="6" Grid.Column="0">
+                                                    <Label Content="Round interval" Padding="5,2" DockPanel.Dock="Left"/>
+                                                    <TextBlock x:Name="TxtTournamentRoundInterval" Text="7" DockPanel.Dock="Right"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                </DockPanel>
+                                                <Slider Grid.Row="6" Grid.Column="1" x:Name="SldTournamentRoundInterval"
+                                                        Minimum="1" Maximum="30" Value="7"
+                                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                                        ValueChanged="Slider_ValueChanged"/>
+                                                <DockPanel Grid.Row="8" Grid.Column="0">
+                                                    <Label Content="Points to win" Padding="5,2" DockPanel.Dock="Left"/>
+                                                    <TextBlock x:Name="TxtTournamentPointsToWin" Text="2" DockPanel.Dock="Right"
+                                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                </DockPanel>
+                                                <Slider Grid.Row="8" Grid.Column="1" x:Name="SldTournamentPointsToWin"
+                                                        Minimum="1" Maximum="5" Value="2"
+                                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                                        ValueChanged="Slider_ValueChanged"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </Grid>
+                    </Grid>
+
+                    <!-- Hidden combos required by code-behind -->
         <ComboBox Grid.Row="2" x:Name="CmbGameMode" Visibility="Collapsed"/>
         <TextBlock Grid.Row="2" x:Name="TxtAppTitle" Visibility="Collapsed"/>
 
