@@ -22,6 +22,7 @@ namespace Olden_Era___Template_Editor.Models
         public int NeutralHighCastleCount { get; set; } = 0;
         public bool MatchPlayerCastleFactions { get; set; } = false;
         public int MinNeutralZonesBetweenPlayers { get; set; } = 0;
+        public bool ExperimentalBalancedZonePlacement { get; set; } = false;
         public double PlayerZoneSize { get; set; } = 1.0;
         public double NeutralZoneSize { get; set; } = 1.0;
         public double GuardRandomization { get; set; } = 0.05;

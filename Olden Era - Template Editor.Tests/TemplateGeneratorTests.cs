@@ -2,6 +2,9 @@ using System.Text.Json;
 using Olden_Era___Template_Editor.Models;
 using Olden_Era___Template_Editor.Services;
 using OldenEraTemplateEditor.Models;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Olden_Era___Template_Editor.Tests;
 
@@ -30,13 +33,36 @@ public class TemplateGeneratorTests
         Assert.Equal(settings.MapSize, template.SizeX);
         Assert.Equal(settings.MapSize, template.SizeZ);
         Assert.Equal(settings.VictoryCondition, template.DisplayWinCondition);
-        Assert.Equal("custom_generated_template", template.Description);
+        Assert.Equal("Generated with Olden Era Template Generator: Classic mode, 2 players, 200x200 map, Ring layout, no neutral zones, 1 castle per player zone.", template.Description);
         Assert.NotNull(template.GameRules);
         Assert.Equal(settings.HeroCountMin, template.GameRules.HeroCountMin);
         Assert.Equal(settings.HeroCountMax, template.GameRules.HeroCountMax);
         Assert.Equal(settings.HeroCountIncrement, template.GameRules.HeroCountIncrement);
         Assert.NotEmpty(template.ZoneLayouts ?? []);
         Assert.NotEmpty(template.ContentCountLimits ?? []);
+    }
+
+    [Fact]
+    public void Generate_WritesBasicTemplateDescription()
+    {
+        var settings = new GeneratorSettings
+        {
+            GameMode = "SingleHero",
+            PlayerCount = 4,
+            NeutralZoneCount = 2,
+            MapSize = 192,
+            PlayerZoneCastles = 2,
+            NeutralZoneCastles = 0,
+            Topology = MapTopology.Chain,
+            NoDirectPlayerConnections = true,
+            RandomPortals = true,
+            SpawnRemoteFootholds = false,
+            GenerateRoads = false
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.Equal("Generated with Olden Era Template Generator: SingleHero mode, 4 players, 192x192 map, Chain layout, 2 neutral zones, 2 castles per player zone, no castles per neutral zone, options: isolated player starts, random portals, no remote footholds, roads disabled.", template.Description);
     }
 
     [Fact]
@@ -69,6 +95,65 @@ public class TemplateGeneratorTests
             zone => Assert.Equal(2, zone.MainObjects?.Count));
         Assert.All(zones.Where(zone => zone.Name.StartsWith("Neutral-", StringComparison.Ordinal)),
             zone => Assert.Single(zone.MainObjects ?? []));
+    }
+
+    [Fact]
+    public void Generate_SharedWebReferencesSpokeConnectionsFromBothEndpointZones()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 4,
+            NeutralZoneCount = 3,
+            NeutralZoneCastles = 1,
+            Topology = MapTopology.SharedWeb,
+            RandomPortals = false
+        };
+
+        Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
+        var zones = RequiredZones(variant).ToDictionary(zone => zone.Name, StringComparer.Ordinal);
+        var webConnections = RequiredConnections(variant)
+            .Where(connection => connection.Name?.StartsWith("Web-", StringComparison.Ordinal) == true)
+            .ToList();
+
+        Assert.NotEmpty(webConnections);
+        Assert.All(webConnections, connection =>
+        {
+            Assert.False(string.IsNullOrWhiteSpace(connection.Name));
+            string name = connection.Name!;
+            Assert.Contains(name, RoadConnectionNames(zones[connection.From]));
+            Assert.Contains(name, RoadConnectionNames(zones[connection.To]));
+        });
+    }
+
+    [Fact]
+    public void Generate_SharedWebCastlelessNeutralZonesUseConnectionRoads()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            NeutralZoneCount = 0,
+            NeutralZoneCastles = 0,
+            Topology = MapTopology.SharedWeb,
+            RandomPortals = false
+        };
+
+        Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
+        Zone neutralZone = Assert.Single(RequiredZones(variant),
+            zone => zone.Name.StartsWith("Neutral-", StringComparison.Ordinal));
+        var webConnectionNames = RequiredConnections(variant)
+            .Where(connection => connection.Name?.StartsWith("Web-", StringComparison.Ordinal) == true)
+            .Select(connection => connection.Name!)
+            .ToList();
+
+        Assert.Empty(neutralZone.MainObjects ?? []);
+        Assert.NotEmpty(neutralZone.Roads ?? []);
+        Assert.All(neutralZone.Roads ?? [], road =>
+        {
+            Assert.Equal("Connection", road.From?.Type);
+            Assert.Equal("Connection", road.To?.Type);
+        });
+        Assert.Equal(2, webConnectionNames.Count);
+        Assert.All(webConnectionNames, name => Assert.Contains(name, RoadConnectionNames(neutralZone)));
     }
 
     [Fact]
@@ -309,6 +394,72 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
+    public void Generate_BalancedRingEvenlySpacesPlayersAndNeutralQuality()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 4,
+            AdvancedMode = true,
+            NeutralZoneCastles = 1,
+            NeutralLowNoCastleCount = 4,
+            NeutralHighCastleCount = 4,
+            Topology = MapTopology.Default,
+            ExperimentalBalancedZonePlacement = true
+        };
+
+        Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
+        var zones = RequiredZones(variant);
+        var sequence = zones.Select(zone => zone.Name).ToList();
+        var zonesByName = zones.ToDictionary(zone => zone.Name, StringComparer.Ordinal);
+        var gaps = RingNeutralGapsBetweenPlayers(sequence);
+
+        Assert.Equal(4, gaps.Count);
+        Assert.All(gaps, gap =>
+        {
+            Assert.Equal(2, gap.Count);
+            Assert.Single(gap, zoneName => zonesByName[zoneName].Layout == "zone_layout_center");
+            Assert.Single(gap, zoneName => zonesByName[zoneName].Layout == "zone_layout_sides");
+        });
+
+        var playerDistanceTotals = RingPlayerDistanceTotals(sequence);
+        Assert.Single(playerDistanceTotals.Values.Distinct());
+    }
+
+    [Fact]
+    public void Generate_BalancedSharedWebGivesEachPlayerMixedNeutralQuality()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 4,
+            AdvancedMode = true,
+            NeutralZoneCastles = 1,
+            NeutralLowNoCastleCount = 4,
+            NeutralHighCastleCount = 4,
+            Topology = MapTopology.SharedWeb,
+            ExperimentalBalancedZonePlacement = true
+        };
+
+        Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
+        var zonesByName = RequiredZones(variant).ToDictionary(zone => zone.Name, StringComparer.Ordinal);
+        var webConnectionsByPlayer = RequiredConnections(variant)
+            .Where(connection => connection.Name?.StartsWith("Web-", StringComparison.Ordinal) == true)
+            .GroupBy(connection => connection.From, StringComparer.Ordinal)
+            .ToList();
+
+        Assert.Equal(4, webConnectionsByPlayer.Count);
+        Assert.All(webConnectionsByPlayer, group =>
+        {
+            var connectedLayouts = group
+                .Select(connection => zonesByName[connection.To].Layout)
+                .ToList();
+
+            Assert.Equal(2, connectedLayouts.Count);
+            Assert.Contains("zone_layout_center", connectedLayouts);
+            Assert.Contains("zone_layout_sides", connectedLayouts);
+        });
+    }
+
+    [Fact]
     public void Generate_AdvancedModeCanCreateThirtyTwoTotalZones()
     {
         var settings = new GeneratorSettings
@@ -520,6 +671,50 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
+    public void TemplatePreviewPngWriter_Save_EncodesNeutralQualityAndCastleCounts()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), $"olden-preview-test-{Guid.NewGuid():N}");
+        string previewPath = Path.Combine(directory, "Preview.png");
+        var template = new RmgTemplate
+        {
+            Name = "Preview Test",
+            Variants =
+            [
+                new Variant
+                {
+                    Zones =
+                    [
+                        new Zone { Name = "Neutral-A", Layout = "zone_layout_sides", MainObjects = [] },
+                        new Zone { Name = "Neutral-B", Layout = "zone_layout_treasure_zone", MainObjects = Cities(3) },
+                        new Zone { Name = "Neutral-C", Layout = "zone_layout_center", MainObjects = Cities(2) }
+                    ],
+                    Connections = []
+                }
+            ]
+        };
+
+        try
+        {
+            Directory.CreateDirectory(directory);
+            RunOnStaThread(() => TemplatePreviewPngWriter.Save(template, previewPath));
+            BitmapSource bitmap = LoadBitmap(previewPath);
+
+            AssertColorNear(Color.FromRgb(28, 22, 16), PixelAt(bitmap, 256, 72));
+            AssertColorNear(Color.FromRgb(173, 176, 176), PixelAt(bitmap, 412, 342));
+            AssertColorNear(Color.FromRgb(214, 166, 61), PixelAt(bitmap, 100, 342));
+
+            int lowLabelPixels = CountBrightPixels(bitmap, new Int32Rect(244, 78, 24, 20));
+            int castleLabelPixels = CountBrightPixels(bitmap, new Int32Rect(400, 348, 24, 20));
+            Assert.True(castleLabelPixels > lowLabelPixels + 10);
+        }
+        finally
+        {
+            if (Directory.Exists(directory))
+                Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Fact]
     public void SettingsFile_LegacyContentDensitySeedsSplitDensitySettings()
     {
         const string json = """
@@ -579,6 +774,79 @@ public class TemplateGeneratorTests
         });
     }
 
+    private static List<MainObject> Cities(int count) =>
+        Enumerable.Range(0, count).Select(_ => new MainObject { Type = "City" }).ToList();
+
+    private static void RunOnStaThread(Action action)
+    {
+        Exception? thrown = null;
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                thrown = ex;
+            }
+        });
+
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+
+        if (thrown is not null)
+            throw new InvalidOperationException("The STA action failed.", thrown);
+    }
+
+    private static BitmapSource LoadBitmap(string path)
+    {
+        using var stream = File.OpenRead(path);
+        BitmapSource source = BitmapDecoder
+            .Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad)
+            .Frames[0];
+
+        var converted = new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
+        converted.Freeze();
+        return converted;
+    }
+
+    private static Color PixelAt(BitmapSource bitmap, int x, int y)
+    {
+        byte[] pixels = new byte[4];
+        bitmap.CopyPixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
+        return Color.FromRgb(pixels[2], pixels[1], pixels[0]);
+    }
+
+    private static int CountBrightPixels(BitmapSource bitmap, Int32Rect rect)
+    {
+        int stride = rect.Width * 4;
+        byte[] pixels = new byte[stride * rect.Height];
+        bitmap.CopyPixels(rect, pixels, stride, 0);
+
+        int count = 0;
+        for (int i = 0; i < pixels.Length; i += 4)
+        {
+            byte blue = pixels[i];
+            byte green = pixels[i + 1];
+            byte red = pixels[i + 2];
+            if (red >= 210 && green >= 210 && blue >= 210)
+                count++;
+        }
+
+        return count;
+    }
+
+    private static void AssertColorNear(Color expected, Color actual, int tolerance = 8)
+    {
+        Assert.True(
+            Math.Abs(expected.R - actual.R) <= tolerance &&
+            Math.Abs(expected.G - actual.G) <= tolerance &&
+            Math.Abs(expected.B - actual.B) <= tolerance,
+            $"Expected color near RGB({expected.R}, {expected.G}, {expected.B}), got RGB({actual.R}, {actual.G}, {actual.B}).");
+    }
+
     private static Variant SingleVariant(RmgTemplate template) =>
         Assert.Single(template.Variants ?? []);
 
@@ -592,6 +860,66 @@ public class TemplateGeneratorTests
     {
         Assert.NotNull(variant.Connections);
         return variant.Connections;
+    }
+
+    private static List<string> RoadConnectionNames(Zone zone)
+    {
+        var names = new List<string>();
+        foreach (Road road in zone.Roads ?? [])
+        {
+            AddConnectionName(road.From);
+            AddConnectionName(road.To);
+        }
+
+        return names;
+
+        void AddConnectionName(RoadEndpoint? endpoint)
+        {
+            if (endpoint?.Type == "Connection" && endpoint.Args is { Count: > 0 })
+                names.Add(endpoint.Args[0]);
+        }
+    }
+
+    private static List<List<string>> RingNeutralGapsBetweenPlayers(List<string> sequence)
+    {
+        var playerPositions = sequence
+            .Select((zoneName, index) => (zoneName, index))
+            .Where(item => item.zoneName.StartsWith("Spawn-", StringComparison.Ordinal))
+            .ToList();
+
+        var gaps = new List<List<string>>();
+        for (int i = 0; i < playerPositions.Count; i++)
+        {
+            int start = playerPositions[i].index;
+            int end = playerPositions[(i + 1) % playerPositions.Count].index;
+            var gap = new List<string>();
+
+            for (int cursor = (start + 1) % sequence.Count; cursor != end; cursor = (cursor + 1) % sequence.Count)
+                gap.Add(sequence[cursor]);
+
+            gaps.Add(gap);
+        }
+
+        return gaps;
+    }
+
+    private static Dictionary<string, int> RingPlayerDistanceTotals(List<string> sequence)
+    {
+        var playerPositions = sequence
+            .Select((zoneName, index) => (zoneName, index))
+            .Where(item => item.zoneName.StartsWith("Spawn-", StringComparison.Ordinal))
+            .ToList();
+
+        return playerPositions.ToDictionary(
+            player => player.zoneName,
+            player => playerPositions
+                .Where(other => other.zoneName != player.zoneName)
+                .Sum(other =>
+                {
+                    int clockwise = Math.Abs(player.index - other.index);
+                    return Math.Min(clockwise, sequence.Count - clockwise);
+                }),
+            StringComparer.Ordinal);
     }
 
     private static int ShortestNeutralIntermediates(Variant variant, string from, string to)

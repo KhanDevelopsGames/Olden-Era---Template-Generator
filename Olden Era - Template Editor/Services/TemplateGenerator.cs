@@ -56,7 +56,7 @@ namespace Olden_Era___Template_Editor.Services
             {
                 Name = settings.TemplateName,
                 GameMode = settings.GameMode,
-                Description = "custom_generated_template",
+                Description = BuildTemplateDescription(settings, neutralCount),
                 DisplayWinCondition = effectiveVictoryCondition,
                 SizeX = settings.MapSize,
                 SizeZ = settings.MapSize,
@@ -71,6 +71,57 @@ namespace Olden_Era___Template_Editor.Services
 
             return template;
         }
+
+        private static string BuildTemplateDescription(GeneratorSettings settings, int neutralZoneCount)
+        {
+            var parts = new List<string>
+            {
+                $"{settings.GameMode} mode",
+                CountPhrase(settings.PlayerCount, "player", "players"),
+                $"{settings.MapSize}x{settings.MapSize} map",
+                $"{TopologyLabel(settings.Topology)} layout",
+                CountPhrase(neutralZoneCount, "neutral zone", "neutral zones"),
+                $"{CountPhrase(settings.PlayerZoneCastles, "castle", "castles")} per player zone"
+            };
+
+            if (neutralZoneCount > 0)
+            {
+                string neutralCastlePhrase = settings.AdvancedMode
+                    ? "mixed neutral zone tiers"
+                    : $"{CountPhrase(settings.NeutralZoneCastles, "castle", "castles")} per neutral zone";
+                parts.Add(neutralCastlePhrase);
+            }
+
+            var options = new List<string>();
+            if (settings.NoDirectPlayerConnections)
+                options.Add("isolated player starts");
+            if (settings.ExperimentalBalancedZonePlacement)
+                options.Add("experimental balanced zone placement");
+            if (settings.RandomPortals)
+                options.Add("random portals");
+            if (!settings.SpawnRemoteFootholds)
+                options.Add("no remote footholds");
+            if (!settings.GenerateRoads)
+                options.Add("roads disabled");
+
+            if (options.Count > 0)
+                parts.Add($"options: {string.Join(", ", options)}");
+
+            return $"Generated with Olden Era Template Generator: {string.Join(", ", parts)}.";
+        }
+
+        private static string CountPhrase(int count, string singular, string plural) =>
+            count == 0 ? $"no {plural}" : $"{count} {(count == 1 ? singular : plural)}";
+
+        private static string TopologyLabel(MapTopology topology) => topology switch
+        {
+            MapTopology.Default => "Ring",
+            MapTopology.HubAndSpoke => "Hub",
+            MapTopology.Chain => "Chain",
+            MapTopology.SharedWeb => "Shared Web",
+            MapTopology.Random => "Random",
+            _ => topology.ToString()
+        };
 
         private sealed record NeutralZonePlan(string Letter, NeutralZoneQuality Quality, int CastleCount);
 
@@ -309,8 +360,22 @@ namespace Olden_Era___Template_Editor.Services
             };
         }
 
-        private static List<string> BuildOrderedLetters(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, bool isRing)
+        private static List<string> BuildOrderedLetters(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, bool isRing)
         {
+            var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
+
+            if (settings.ExperimentalBalancedZonePlacement)
+            {
+                int honoredSeparation = settings.MinNeutralZonesBetweenPlayers > 0
+                    && CanHonorNeutralSeparation(settings, neutralLetters.Count)
+                        ? settings.MinNeutralZonesBetweenPlayers
+                        : 0;
+
+                return isRing
+                    ? BuildBalancedRingLetters(playerLetters, neutralZones, honoredSeparation)
+                    : BuildBalancedChainLetters(playerLetters, neutralZones, honoredSeparation);
+            }
+
             int min = settings.MinNeutralZonesBetweenPlayers;
             if (min <= 0 || settings.RandomPortals || !CanHonorNeutralSeparation(settings, neutralLetters.Count))
                 return playerLetters.Concat(neutralLetters).ToList();
@@ -334,14 +399,214 @@ namespace Olden_Era___Template_Editor.Services
             return ordered.Count > 0 ? ordered : playerLetters.Concat(neutralLetters).ToList();
         }
 
+        private static List<string> BuildBalancedRingLetters(
+            List<string> playerLetters,
+            List<NeutralZonePlan> neutralZones,
+            int minNeutralZonesBetweenPlayers)
+        {
+            if (playerLetters.Count == 0)
+                return BuildBalancedNeutralRing(neutralZones, 1);
+
+            if (neutralZones.Count == 0)
+                return [.. playerLetters];
+
+            int[] gapCapacities = BuildEvenGapCapacities(
+                playerLetters.Count,
+                neutralZones.Count,
+                minNeutralZonesBetweenPlayers);
+            var gaps = AssignNeutralZonesToGaps(neutralZones, gapCapacities, preferInteriorGaps: false);
+
+            var ordered = new List<string>(playerLetters.Count + neutralZones.Count);
+            for (int i = 0; i < playerLetters.Count; i++)
+            {
+                ordered.Add(playerLetters[i]);
+                ordered.AddRange(OrderNeutralsWithinGap(gaps[i]).Select(zone => zone.Letter));
+            }
+
+            return ordered;
+        }
+
+        private static List<string> BuildBalancedChainLetters(
+            List<string> playerLetters,
+            List<NeutralZonePlan> neutralZones,
+            int minNeutralZonesBetweenPlayers)
+        {
+            if (playerLetters.Count == 0)
+                return neutralZones.Select(zone => zone.Letter).ToList();
+
+            int gapCount = playerLetters.Count + 1;
+            var capacities = new int[gapCount];
+            int remaining = neutralZones.Count;
+
+            int requiredInterior = Math.Max(0, playerLetters.Count - 1) * minNeutralZonesBetweenPlayers;
+            if (minNeutralZonesBetweenPlayers > 0 && neutralZones.Count >= requiredInterior)
+            {
+                for (int i = 1; i < gapCount - 1; i++)
+                    capacities[i] = minNeutralZonesBetweenPlayers;
+                remaining -= requiredInterior;
+            }
+
+            int[] extras = BuildEvenGapCapacities(gapCount, remaining, minimumPerGap: 0);
+            for (int i = 0; i < gapCount; i++)
+                capacities[i] += extras[i];
+
+            var gaps = AssignNeutralZonesToGaps(neutralZones, capacities, preferInteriorGaps: true);
+            var ordered = new List<string>(playerLetters.Count + neutralZones.Count);
+
+            ordered.AddRange(OrderEdgeGap(gaps[0], highQualityNearPlayer: true).Select(zone => zone.Letter));
+            for (int i = 0; i < playerLetters.Count; i++)
+            {
+                ordered.Add(playerLetters[i]);
+                var gap = gaps[i + 1];
+                bool trailingEdge = i == playerLetters.Count - 1;
+                ordered.AddRange((trailingEdge
+                    ? OrderEdgeGap(gap, highQualityNearPlayer: false)
+                    : OrderNeutralsWithinGap(gap)).Select(zone => zone.Letter));
+            }
+
+            return ordered.Count > 0 ? ordered : playerLetters.Concat(neutralZones.Select(zone => zone.Letter)).ToList();
+        }
+
+        private static List<string> BuildBalancedNeutralRing(List<NeutralZonePlan> neutralZones, int playerCount)
+        {
+            if (neutralZones.Count <= 1)
+                return neutralZones.Select(zone => zone.Letter).ToList();
+
+            int gapCount = Math.Max(1, playerCount);
+            int[] gapCapacities = BuildEvenGapCapacities(gapCount, neutralZones.Count, minimumPerGap: 0);
+            var gaps = AssignNeutralZonesToGaps(neutralZones, gapCapacities, preferInteriorGaps: false);
+            return gaps
+                .SelectMany(gap => OrderNeutralsWithinGap(gap))
+                .Select(zone => zone.Letter)
+                .ToList();
+        }
+
+        private static int[] BuildEvenGapCapacities(int gapCount, int itemCount, int minimumPerGap)
+        {
+            var capacities = new int[Math.Max(0, gapCount)];
+            if (gapCount <= 0 || itemCount <= 0)
+                return capacities;
+
+            int minimum = Math.Max(0, minimumPerGap);
+            int reserved = minimum * gapCount;
+            int remaining = itemCount;
+            if (minimum > 0 && itemCount >= reserved)
+            {
+                for (int i = 0; i < gapCount; i++)
+                    capacities[i] = minimum;
+                remaining -= reserved;
+            }
+
+            for (int i = 0; i < remaining; i++)
+            {
+                int gap = (int)Math.Floor((i + 0.5) * gapCount / remaining);
+                capacities[Math.Clamp(gap, 0, gapCount - 1)]++;
+            }
+
+            return capacities;
+        }
+
+        private static List<List<NeutralZonePlan>> AssignNeutralZonesToGaps(
+            List<NeutralZonePlan> neutralZones,
+            int[] gapCapacities,
+            bool preferInteriorGaps)
+        {
+            var gaps = gapCapacities.Select(_ => new List<NeutralZonePlan>()).ToList();
+            var loads = new double[gapCapacities.Length];
+            var orderedNeutrals = neutralZones
+                .OrderByDescending(NeutralZoneBalanceScore)
+                .ThenBy(zone => zone.Letter, StringComparer.Ordinal)
+                .ToList();
+
+            foreach (var neutralZone in orderedNeutrals)
+            {
+                var candidates = Enumerable.Range(0, gapCapacities.Length)
+                    .Where(i => gaps[i].Count < gapCapacities[i])
+                    .ToList();
+
+                if (candidates.Count == 0)
+                    break;
+
+                if (preferInteriorGaps)
+                {
+                    var interiorCandidates = candidates
+                        .Where(i => i > 0 && i < gapCapacities.Length - 1)
+                        .ToList();
+                    if (interiorCandidates.Count > 0)
+                        candidates = interiorCandidates;
+                }
+
+                int selectedGap = candidates
+                    .OrderBy(i => loads[i])
+                    .ThenBy(i => gaps[i].Count)
+                    .ThenBy(i => i)
+                    .First();
+
+                gaps[selectedGap].Add(neutralZone);
+                loads[selectedGap] += NeutralZoneBalanceScore(neutralZone);
+            }
+
+            return gaps;
+        }
+
+        private static List<NeutralZonePlan> OrderNeutralsWithinGap(List<NeutralZonePlan> neutralZones)
+        {
+            int count = neutralZones.Count;
+            if (count <= 1)
+                return [.. neutralZones];
+
+            var sorted = neutralZones
+                .OrderByDescending(NeutralZoneBalanceScore)
+                .ThenBy(zone => zone.Letter, StringComparer.Ordinal)
+                .ToList();
+            var slots = new NeutralZonePlan[count];
+            var positions = Enumerable.Range(0, count)
+                .OrderBy(position => Math.Abs(position - (count - 1) / 2.0))
+                .ThenBy(position => position)
+                .ToList();
+
+            for (int i = 0; i < sorted.Count; i++)
+                slots[positions[i]] = sorted[i];
+
+            return slots.ToList();
+        }
+
+        private static List<NeutralZonePlan> OrderEdgeGap(List<NeutralZonePlan> neutralZones, bool highQualityNearPlayer)
+        {
+            var ordered = neutralZones
+                .OrderBy(zone => NeutralZoneBalanceScore(zone))
+                .ThenBy(zone => zone.Letter, StringComparer.Ordinal)
+                .ToList();
+
+            if (highQualityNearPlayer)
+                return ordered;
+
+            ordered.Reverse();
+            return ordered;
+        }
+
+        private static double NeutralZoneBalanceScore(NeutralZonePlan zone)
+        {
+            double quality = zone.Quality switch
+            {
+                NeutralZoneQuality.High => 3.0,
+                NeutralZoneQuality.Medium => 2.0,
+                _ => 1.0
+            };
+
+            return quality + Math.Min(zone.CastleCount, 4) * 0.15;
+        }
+
         // ── Variant ──────────────────────────────────────────────────────────────
 
         private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
         {
             // Shuffle player letters so Player 1 is not always at the same geometric position.
-            var rng = new Random();
-           
-            playerLetters = [.. playerLetters.OrderBy(_ => rng.Next())];
+            if (!settings.ExperimentalBalancedZonePlacement)
+            {
+                var rng = new Random();
+                playerLetters = [.. playerLetters.OrderBy(_ => rng.Next())];
+            }
 
             return settings.Topology switch
             {
@@ -358,8 +623,7 @@ namespace Olden_Era___Template_Editor.Services
         private static Variant BuildVariantDefault(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
         {
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
-            var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
-            var orderedLetters = BuildOrderedLetters(settings, playerLetters, neutralLetters, isRing: true);
+            var orderedLetters = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: true);
             int outerCount = orderedLetters.Count;
             bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
 
@@ -410,15 +674,22 @@ namespace Olden_Era___Template_Editor.Services
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
             var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
             // Shuffle zones so player/neutral order is random.
-            var allLetters = playerLetters.Concat(neutralLetters).OrderBy(_ => rng.Next()).ToList();
+            var allLetters = settings.ExperimentalBalancedZonePlacement
+                ? BuildBalancedRingLetters(playerLetters, neutralZones, minNeutralZonesBetweenPlayers: 0)
+                : playerLetters.Concat(neutralLetters).OrderBy(_ => rng.Next()).ToList();
             int count = allLetters.Count;
             bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
 
             // Assign random 2D positions in the unit square.
             // Jitter positions slightly apart to avoid degenerate collinear/cocircular cases.
-            var pos = new List<(double X, double Y)>();
-            for (int i = 0; i < count; i++)
-                pos.Add((rng.NextDouble() * 0.9 + 0.05, rng.NextDouble() * 0.9 + 0.05));
+            var pos = settings.ExperimentalBalancedZonePlacement
+                ? BuildBalancedRandomPositions(allLetters, playerLetters, neutralByLetter)
+                : new List<(double X, double Y)>();
+            if (!settings.ExperimentalBalancedZonePlacement)
+            {
+                for (int i = 0; i < count; i++)
+                    pos.Add((rng.NextDouble() * 0.9 + 0.05, rng.NextDouble() * 0.9 + 0.05));
+            }
 
             // Compute Delaunay triangulation — every edge is a true zone-to-zone border.
             // With only up to 32 points this is fast enough to do with Bowyer-Watson.
@@ -473,6 +744,35 @@ namespace Olden_Era___Template_Editor.Services
 
             if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, allLetters[0], count, zones, connections);
+        }
+
+        private static List<(double X, double Y)> BuildBalancedRandomPositions(
+            List<string> orderedLetters,
+            List<string> playerLetters,
+            Dictionary<string, NeutralZonePlan> neutralByLetter)
+        {
+            int count = orderedLetters.Count;
+            if (count == 0) return [];
+
+            var playerSet = playerLetters.ToHashSet(StringComparer.Ordinal);
+            var positions = new List<(double X, double Y)>(count);
+            for (int i = 0; i < count; i++)
+            {
+                string letter = orderedLetters[i];
+                bool isPlayer = playerSet.Contains(letter);
+                double angle = 2.0 * Math.PI * i / count;
+                double jitter = isPlayer ? 0.0 : ((i % 3) - 1) * 0.018;
+
+                double radius = 0.43;
+                if (!isPlayer && neutralByLetter.TryGetValue(letter, out var neutralZone))
+                    radius = 0.30 + NeutralZoneBalanceScore(neutralZone) * 0.035 + (i % 2) * 0.012;
+
+                positions.Add((
+                    Math.Clamp(0.5 + Math.Cos(angle + jitter) * radius, 0.05, 0.95),
+                    Math.Clamp(0.5 + Math.Sin(angle + jitter) * radius, 0.05, 0.95)));
+            }
+
+            return positions;
         }
 
         // ── Delaunay triangulation (Bowyer-Watson) ────────────────────────────────
@@ -563,7 +863,9 @@ namespace Olden_Era___Template_Editor.Services
             // Outer zones are players + neutrals arranged around the hub.
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
             var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
-            var outerLetters = playerLetters.Concat(neutralLetters).ToList();
+            var outerLetters = settings.ExperimentalBalancedZonePlacement
+                ? BuildBalancedRingLetters(playerLetters, neutralZones, minNeutralZonesBetweenPlayers: 0)
+                : playerLetters.Concat(neutralLetters).ToList();
             var zones = new List<Zone>();
             var connections = new List<Connection>();
 
@@ -634,8 +936,7 @@ namespace Olden_Era___Template_Editor.Services
         private static Variant BuildVariantChain(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
         {
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
-            var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
-            var orderedLetters = BuildOrderedLetters(settings, playerLetters, neutralLetters, isRing: false);
+            var orderedLetters = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: false);
             int count = orderedLetters.Count;
             bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
 
@@ -704,7 +1005,9 @@ namespace Olden_Era___Template_Editor.Services
             // If there are fewer neutrals than needed, we wrap around (multiple players share a neutral).
             // Requires at least 1 neutral zone.
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
-            var neutrals = neutralZones.Select(zone => zone.Letter).ToList();
+            var neutrals = settings.ExperimentalBalancedZonePlacement
+                ? BuildBalancedNeutralRing(neutralZones, playerLetters.Count)
+                : neutralZones.Select(zone => zone.Letter).ToList();
 
             int p = playerLetters.Count;
             int n = neutrals.Count;
@@ -717,29 +1020,45 @@ namespace Olden_Era___Template_Editor.Services
                 neutralRingConns[i] = $"NRing-{neutrals[i]}-{neutrals[next]}";
             }
 
-            var zones = new List<Zone>();
-            var connections = new List<Connection>();
-
-            // Build neutral zones — each connects to its two ring neighbours.
-            for (int i = 0; i < n; i++)
-            {
-                int prev = (i - 1 + n) % n;
-                string[] nConns = n > 1
-                    ? new[] { neutralRingConns[prev], neutralRingConns[i] }.Distinct().ToArray()
-                    : [];
-                zones.Add(BuildNeutralZone(neutralByLetter[neutrals[i]], nConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
-            }
-
-            // Build player zones — each connects to two neutrals (evenly distributed).
+            var spokeConnsByPlayer = playerLetters.ToDictionary(letter => letter, _ => new List<string>());
+            var spokeConnsByNeutral = neutrals.ToDictionary(letter => letter, _ => new List<string>());
             for (int i = 0; i < p; i++)
             {
                 // Spread players across neutral ring evenly.
                 int n1 = (i * n / p) % n;
                 int n2 = ((i * n / p) + 1) % n;
 
-                var spokeConns = new List<string> { $"Web-{playerLetters[i]}-{neutrals[n1]}" };
+                AddSpoke(playerLetters[i], neutrals[n1]);
                 if (n1 != n2)
-                    spokeConns.Add($"Web-{playerLetters[i]}-{neutrals[n2]}");
+                    AddSpoke(playerLetters[i], neutrals[n2]);
+            }
+
+            var zones = new List<Zone>();
+            var connections = new List<Connection>();
+
+            // Build neutral zones. Each neutral receives its ring and player-spoke endpoints.
+            for (int i = 0; i < n; i++)
+            {
+                int prev = (i - 1 + n) % n;
+                var neutralConns = new List<string>();
+                if (n > 1)
+                {
+                    neutralConns.Add(neutralRingConns[prev]);
+                    neutralConns.Add(neutralRingConns[i]);
+                }
+
+                neutralConns.AddRange(spokeConnsByNeutral[neutrals[i]]);
+                string[] nConns = neutralConns.Distinct().ToArray();
+                Zone neutralZone = BuildNeutralZone(neutralByLetter[neutrals[i]], nConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
+                if (neutralByLetter[neutrals[i]].CastleCount == 0)
+                    neutralZone.Roads = BuildConnectorZoneRoads(nConns, settings.GenerateRoads);
+                zones.Add(neutralZone);
+            }
+
+            // Build player zones — each connects to two neutrals (evenly distributed).
+            for (int i = 0; i < p; i++)
+            {
+                var spokeConns = spokeConnsByPlayer[playerLetters[i]];
 
                 zones.Add(BuildSpawnZone(playerLetters[i], $"Player{i + 1}", spokeConns.ToArray(), settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
 
@@ -795,8 +1114,14 @@ namespace Olden_Era___Template_Editor.Services
             bool isolateWeb = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
             if (isolateWeb) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
 
-            var allZoneLettersOrdered = neutrals.Concat(playerLetters).ToList();
             return MakeVariant(playerLetters, playerLetters[0], zones.Count, zones, connections);
+
+            void AddSpoke(string playerLetter, string neutralLetter)
+            {
+                string connName = $"Web-{playerLetter}-{neutralLetter}";
+                spokeConnsByPlayer[playerLetter].Add(connName);
+                spokeConnsByNeutral[neutralLetter].Add(connName);
+            }
         }
 
         // ── Hub zone (only used by Hub & Spoke topology) ─────────────────────────
@@ -914,7 +1239,7 @@ namespace Olden_Era___Template_Editor.Services
         {
             Orientation = new Orientation
             {
-                ZeroAngleZone = playerLetters.Count > 0 ? $"Spawn-{firstLetter}" : $"Neutral-{firstLetter}",
+                ZeroAngleZone = playerLetters.Contains(firstLetter) ? $"Spawn-{firstLetter}" : $"Neutral-{firstLetter}",
                 BaseAngleMin = 45,
                 BaseAngleMax = 45,
                 RandomAngleAmplitude = 360,
@@ -1293,6 +1618,31 @@ namespace Olden_Era___Template_Editor.Services
                 roads.Add(PlainRoad(MainObjectEndpoint("0"), MandatoryContentEndpoint("name_remote_foothold_1")));
             foreach (var rc in ringConns)
                 roads.Add(PlainRoad(MainObjectEndpoint("0"), ConnectionEndpoint(rc)));
+            return roads;
+        }
+
+        private static List<Road> BuildConnectorZoneRoads(string[] connectionNames, bool generateRoads)
+        {
+            var roads = new List<Road>();
+            if (!generateRoads) return roads;
+
+            var distinctConnections = connectionNames
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .Distinct()
+                .ToList();
+
+            if (distinctConnections.Count == 1)
+            {
+                string connectionName = distinctConnections[0];
+                roads.Add(PlainRoad(ConnectionEndpoint(connectionName), ConnectionEndpoint(connectionName)));
+                return roads;
+            }
+
+            string? anchor = distinctConnections.FirstOrDefault();
+            if (anchor == null) return roads;
+
+            foreach (string connectionName in distinctConnections.Skip(1))
+                roads.Add(PlainRoad(ConnectionEndpoint(anchor), ConnectionEndpoint(connectionName)));
             return roads;
         }
 

@@ -64,6 +64,7 @@ namespace Olden_Era___Template_Editor
             UpdateAdvancedModeVisibility();
             UpdatePlayerCastleFactionVisibility();
             UpdateRoadsHintVisibility();
+            UpdateBalancedZonePlacementDescVisibility();
 
             // Fire-and-forget background update check — never blocks the UI.
             _ = CheckForUpdateAsync(version);
@@ -347,6 +348,7 @@ namespace Olden_Era___Template_Editor
             if (!IsInitialized) return;
             UpdateIsolateDescVisibility();
             UpdateRoadsHintVisibility();
+            UpdateBalancedZonePlacementDescVisibility();
             UpdatePlayerCastleFactionVisibility();
             UpdateWinConditionDetailVisibility();
             MarkDirty();
@@ -532,6 +534,14 @@ namespace Olden_Era___Template_Editor
                 : Visibility.Collapsed;
         }
 
+        private void UpdateBalancedZonePlacementDescVisibility()
+        {
+            if (TxtBalancedZonePlacementDesc == null || ChkBalancedZonePlacement == null) return;
+            TxtBalancedZonePlacementDesc.Visibility = ChkBalancedZonePlacement.IsChecked == true
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
         // ── Settings persistence ───────────────────────────────────────────────
 
         private SettingsFile GatherSettings() => new()
@@ -551,6 +561,7 @@ namespace Olden_Era___Template_Editor
             NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
             MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
             MinNeutralZonesBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value,
+            ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
             ExperimentalMapSizes  = ChkExperimentalMapSizes.IsChecked == true,
             PlayerZoneSize        = ChkAdvancedMode.IsChecked == true ? SldPlayerZoneSize.Value : 1.0,
             NeutralZoneSize       = ChkAdvancedMode.IsChecked == true ? SldNeutralZoneSize.Value : 1.0,
@@ -608,6 +619,7 @@ namespace Olden_Era___Template_Editor
             SldNeutralHighCastle.Value = s.NeutralHighCastleCount;
             ChkMatchPlayerCastleFactions.IsChecked = s.MatchPlayerCastleFactions;
             SldMinNeutralBetweenPlayers.Value = s.MinNeutralZonesBetweenPlayers;
+            ChkBalancedZonePlacement.IsChecked = s.ExperimentalBalancedZonePlacement;
             SldPlayerZoneSize.Value = Math.Clamp(s.PlayerZoneSize, 0.1, 2.0);
             SldNeutralZoneSize.Value = Math.Clamp(s.NeutralZoneSize, 0.1, 2.0);
             SldGuardRandomization.Value = GuardRandomizationPercent(s.GuardRandomization);
@@ -646,6 +658,7 @@ namespace Olden_Era___Template_Editor
             UpdateAdvancedModeVisibility();
             UpdatePlayerCastleFactionVisibility();
             UpdateRoadsHintVisibility();
+            UpdateBalancedZonePlacementDescVisibility();
             UpdateWinConditionDetailVisibility();
         }
 
@@ -755,6 +768,7 @@ namespace Olden_Era___Template_Editor
                 NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
                 MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
                 MinNeutralZonesBetweenPlayers = ChkAdvancedMode.IsChecked == true ? (int)SldMinNeutralBetweenPlayers.Value : 0,
+                ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
                 PlayerZoneSize = ChkAdvancedMode.IsChecked == true ? SldPlayerZoneSize.Value : 1.0,
                 NeutralZoneSize = ChkAdvancedMode.IsChecked == true ? SldNeutralZoneSize.Value : 1.0,
                 GuardRandomization = ChkAdvancedMode.IsChecked == true ? SldGuardRandomization.Value / 100.0 : 0.05,

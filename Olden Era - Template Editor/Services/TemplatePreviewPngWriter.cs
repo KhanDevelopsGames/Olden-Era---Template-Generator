@@ -11,6 +11,10 @@ namespace Olden_Era___Template_Editor.Services
     {
         private const int Width = 512;
         private const int Height = 512;
+        private const string SideLayoutName = "zone_layout_sides";
+        private const string TreasureLayoutName = "zone_layout_treasure_zone";
+        private const string CenterLayoutName = "zone_layout_center";
+        private static readonly Color BackgroundColor = Color.FromRgb(28, 22, 16);
 
         public static string GetSidecarPath(string rmgJsonPath) =>
             rmgJsonPath.EndsWith(".rmg.json", StringComparison.OrdinalIgnoreCase)
@@ -44,7 +48,7 @@ namespace Olden_Era___Template_Editor.Services
 
         private static void DrawPreview(DrawingContext dc, RmgTemplate template)
         {
-            var background = new SolidColorBrush(Color.FromRgb(28, 22, 16));
+            var background = new SolidColorBrush(BackgroundColor);
             var border = new Pen(new SolidColorBrush(Color.FromRgb(143, 115, 63)), 3);
             dc.DrawRectangle(background, null, new Rect(0, 0, Width, Height));
             dc.DrawRoundedRectangle(null, border, new Rect(8, 8, Width - 16, Height - 16), 8, 8);
@@ -123,19 +127,63 @@ namespace Olden_Era___Template_Editor.Services
         {
             bool isSpawn = zone.Name.StartsWith("Spawn-", StringComparison.Ordinal);
             bool isHub = string.Equals(zone.Name, "Hub", StringComparison.Ordinal);
-            bool hasCity = zone.MainObjects?.Any(mainObject => mainObject.Type == "City") == true;
+            bool isNeutral = zone.Name.StartsWith("Neutral-", StringComparison.Ordinal);
+            int castleCount = CastleCount(zone);
 
-            Brush fill = isHub
-                ? new SolidColorBrush(Color.FromRgb(83, 113, 125))
-                : isSpawn
-                    ? new SolidColorBrush(Color.FromRgb(184, 142, 58))
-                    : hasCity
-                        ? new SolidColorBrush(Color.FromRgb(112, 143, 84))
+            Brush fill;
+            Pen outline;
+            if (isNeutral)
+            {
+                (fill, outline) = NeutralZoneStyle(zone);
+            }
+            else
+            {
+                fill = isHub
+                    ? new SolidColorBrush(Color.FromRgb(83, 113, 125))
+                    : isSpawn
+                        ? new SolidColorBrush(Color.FromRgb(184, 142, 58))
                         : new SolidColorBrush(Color.FromRgb(86, 101, 76));
+                outline = new Pen(new SolidColorBrush(Color.FromRgb(245, 225, 179)), 2);
+            }
 
-            var outline = new Pen(new SolidColorBrush(Color.FromRgb(245, 225, 179)), 2);
             dc.DrawEllipse(fill, outline, point, 24, 24);
-            DrawText(dc, ShortZoneLabel(zone.Name), point, 13, Brushes.White, centered: true);
+
+            string label = castleCount > 0 ? castleCount.ToString(CultureInfo.InvariantCulture) : ShortZoneLabel(zone.Name);
+            double labelSize = castleCount > 0 ? 18 : 13;
+            FontWeight labelWeight = castleCount > 0 ? FontWeights.Bold : FontWeights.Normal;
+            DrawText(dc, label, point, labelSize, Brushes.White, centered: true, labelWeight);
+        }
+
+        private static (Brush Fill, Pen Outline) NeutralZoneStyle(Zone zone)
+        {
+            Brush outlineBrush = new SolidColorBrush(Color.FromRgb(245, 225, 179));
+            return zone.Layout switch
+            {
+                SideLayoutName => (
+                    new SolidColorBrush(BackgroundColor),
+                    new Pen(outlineBrush, 3)),
+                CenterLayoutName => (
+                    new SolidColorBrush(Color.FromRgb(214, 166, 61)),
+                    new Pen(new SolidColorBrush(Color.FromRgb(255, 232, 156)), 2)),
+                TreasureLayoutName => (
+                    new SolidColorBrush(Color.FromRgb(173, 176, 176)),
+                    new Pen(new SolidColorBrush(Color.FromRgb(236, 238, 235)), 2)),
+                _ => (
+                    new SolidColorBrush(Color.FromRgb(112, 143, 84)),
+                    new Pen(outlineBrush, 2))
+            };
+        }
+
+        private static int CastleCount(Zone zone)
+        {
+            int count = 0;
+            foreach (MainObject mainObject in zone.MainObjects ?? [])
+            {
+                if (mainObject.Type is "City" or "Spawn")
+                    count++;
+            }
+
+            return count;
         }
 
         private static string ShortZoneLabel(string zoneName)
@@ -145,13 +193,13 @@ namespace Olden_Era___Template_Editor.Services
             return dash >= 0 && dash < zoneName.Length - 1 ? zoneName[(dash + 1)..] : zoneName;
         }
 
-        private static void DrawText(DrawingContext dc, string text, Point point, double size, Brush brush, bool centered)
+        private static void DrawText(DrawingContext dc, string text, Point point, double size, Brush brush, bool centered, FontWeight? weight = null)
         {
             var formatted = new FormattedText(
                 text,
                 CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight,
-                new Typeface("Segoe UI"),
+                new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, weight ?? FontWeights.Normal, FontStretches.Normal),
                 size,
                 brush,
                 1.0);

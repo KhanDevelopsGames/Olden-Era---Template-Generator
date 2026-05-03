@@ -774,6 +774,16 @@
             Text="Note: Roads are only generated within zones that have at least one castle. Neutral zones with 0 castles will not have roads, even if this option is enabled."/>
                                 <CheckBox x:Name="ChkSpawnFootholds" Content="Spawn remote footholds" IsChecked="True" Margin="0,6,0,0"/>
                         <CheckBox x:Name="ChkRandomPortals"  Content="Always spawn portals"          Margin="0,6,0,0"/>                      
+                        <CheckBox x:Name="ChkBalancedZonePlacement"
+                                  Content="Balance zone placement [EXPERIMENTAL]"
+                                  Margin="0,6,0,0"
+                                  Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
+                        <TextBlock x:Name="TxtBalancedZonePlacementDesc"
+                                   Visibility="Collapsed"
+                                   Foreground="{StaticResource BrushTextDim}"
+                                   FontSize="13" TextWrapping="Wrap"
+                                   Margin="25,3,0,0"
+                                   Text="Spreads players and neutral zone tiers more evenly across structured layouts. Random layout uses balanced seed positions before building borders."/>
                         <CheckBox x:Name="ChkNoDirectPlayerConn"
                                   Content="Connect via neutral zones only [EXPERIMENTAL]"
                                   Margin="0,6,0,0"

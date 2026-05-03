@@ -131,3 +131,4 @@ At minimum, verify that the configured options can create a `.rmg.json` file. Ge
 - Treat the bundled example templates as fixtures and references; do not overwrite them during ad hoc testing.
 - When saving generated files during testing, use a temporary location unless the user explicitly wants files written into their game install.
 - Be careful with paths containing spaces, especially the solution name, project directory, Steam install path, and template filenames.
+- Assume other individuals or agents may be working elsewhere in the repository at the same time. Ignore and preserve changes you did not specifically make; do not revert, overwrite, or include them in your work unless the user explicitly asks.
