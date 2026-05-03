@@ -140,11 +140,39 @@ namespace Olden_Era___Template_Editor
 
         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 1) DragMove();
+            if (e.ClickCount == 2)
+                ToggleMaximize();
+            else if (e.ClickCount == 1)
+                DragMove();
         }
 
         private void BtnMinimize_Click(object sender, RoutedEventArgs e) =>
             WindowState = WindowState.Minimized;
+
+        private void BtnMaximize_Click(object sender, RoutedEventArgs e) =>
+            ToggleMaximize();
+
+        private void ToggleMaximize()
+        {
+            WindowState = WindowState == WindowState.Maximized
+                ? WindowState.Normal
+                : WindowState.Maximized;
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (BtnMaximize == null) return;
+            if (WindowState == WindowState.Maximized)
+            {
+                BtnMaximize.Content = "🗗";
+                BtnMaximize.ToolTip = "Restore";
+            }
+            else
+            {
+                BtnMaximize.Content = "🗖";
+                BtnMaximize.ToolTip = "Maximize";
+            }
+        }
 
         private void BtnClose_Click(object sender, RoutedEventArgs e) =>
             Close();

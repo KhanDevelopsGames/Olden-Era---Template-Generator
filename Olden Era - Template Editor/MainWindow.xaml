@@ -6,15 +6,16 @@
         mc:Ignorable="d"
         Title="Olden Era - Simple Template Generator"
         Height="950" Width="1000"
-        MinHeight="650" MinWidth="800"
+        MinHeight="700" MinWidth="900"
         WindowStyle="None"
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
+        StateChanged="Window_StateChanged"
         Background="#1A1510"
         FontFamily="Segoe UI, Arial, sans-serif">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="32"
-                      ResizeBorderThickness="0"
+                      ResizeBorderThickness="5"
                       GlassFrameThickness="0,0,0,1"
                       UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
@@ -65,6 +66,8 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
                     <Button Content="🗕" Style="{StaticResource TitleBarButton}"
                             ToolTip="Minimize" Click="BtnMinimize_Click"/>
+                    <Button x:Name="BtnMaximize" Content="🗖" Style="{StaticResource TitleBarButton}"
+                            ToolTip="Maximize" Click="BtnMaximize_Click"/>
                     <Button Content="✕" Style="{StaticResource TitleBarCloseButton}"
                             ToolTip="Close" Click="BtnClose_Click"/>
                 </StackPanel>
@@ -803,11 +806,11 @@
                                    FontSize="13" TextWrapping="Wrap"
                                    Margin="25,3,0,0"
                                    Text="The game tries to connect player zones to neutral zones only. If no neutral zone borders a player zone, it will fall back to connecting directly to another player zone."/>
-                                                 </StackPanel>
-                                                 </ScrollViewer>
-                                             </Border>
-                                         </Grid>
-                                     </Grid>
+                                                             </StackPanel>
+                                                             </ScrollViewer>
+                                                         </Border>
+                                                     </Grid>
+                                                 </Grid>
 
                     <!-- Hidden combos required by code-behind -->
         <ComboBox Grid.Row="2" x:Name="CmbGameMode" Visibility="Collapsed"/>
