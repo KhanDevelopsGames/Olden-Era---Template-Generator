@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Olden Era - Simple Template Generator"
-        Height="850" Width="1000"
+        Height="950" Width="1000"
         MinHeight="650" MinWidth="800"
         WindowStyle="None"
         ResizeMode="NoResize"
@@ -275,28 +275,28 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <Label Grid.Row="0" Grid.Column="0" Content="Win condition"/>
-                                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="CmbVictory"
+                                <Label Grid.Row="4" Grid.Column="0" Content="Win condition"/>
+                                <ComboBox Grid.Row="4" Grid.Column="1" x:Name="CmbVictory"
                                           SelectionChanged="CmbVictory_SelectionChanged"/>
 
-                                <DockPanel Grid.Row="2" Grid.Column="0">
+                                <DockPanel Grid.Row="0" Grid.Column="0">
                                     <Label Content="Faction laws XP" DockPanel.Dock="Left"/>
                                     <TextBlock x:Name="TxtFactionLawsExp" Text="100%" DockPanel.Dock="Right"
                                                HorizontalAlignment="Right" VerticalAlignment="Center"
                                                Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
-                                <Slider Grid.Row="2" Grid.Column="1" x:Name="SldFactionLawsExp"
+                                <Slider Grid.Row="0" Grid.Column="1" x:Name="SldFactionLawsExp"
                                         Minimum="25" Maximum="200" Value="100"
                                         TickFrequency="25" IsSnapToTickEnabled="True"
                                         ValueChanged="Slider_ValueChanged"/>
 
-                                <DockPanel Grid.Row="4" Grid.Column="0">
+                                <DockPanel Grid.Row="2" Grid.Column="0">
                                     <Label Content="Astrology XP" DockPanel.Dock="Left"/>
                                     <TextBlock x:Name="TxtAstrologyExp" Text="100%" DockPanel.Dock="Right"
                                                HorizontalAlignment="Right" VerticalAlignment="Center"
                                                Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
-                                <Slider Grid.Row="4" Grid.Column="1" x:Name="SldAstrologyExp"
+                                <Slider Grid.Row="2" Grid.Column="1" x:Name="SldAstrologyExp"
                                         Minimum="25" Maximum="200" Value="100"
                                         TickFrequency="25" IsSnapToTickEnabled="True"
                                         ValueChanged="Slider_ValueChanged"/>
@@ -772,7 +772,7 @@
                                        Margin="0,4,0,0"
                                        Text="Honored only when the selected layout, neutral zone total, and portal settings can support it; otherwise generation uses the normal connection layout."/>
                         </StackPanel>
-                                <CheckBox x:Name="ChkGenerateRoads" Content="Generate roads"
+                                <CheckBox x:Name="ChkGenerateRoads" Content="Generate roads" IsChecked="True"
           Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
                                 <TextBlock x:Name="TxtRoadsHint"
             Visibility="Collapsed"
