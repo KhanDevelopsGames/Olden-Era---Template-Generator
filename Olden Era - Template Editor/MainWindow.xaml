@@ -805,7 +805,7 @@
                                    Foreground="{StaticResource BrushTextDim}"
                                    FontSize="13" TextWrapping="Wrap"
                                    Margin="25,3,0,0"
-                                   Text="Spreads players and neutral zone tiers more evenly across structured layouts. Random layout uses balanced seed positions before building borders. Disable for a truly random, but less balanced experience."/>
+                                   Text="Spreads players and neutral zone tiers more evenly across structured layouts. Random layout uses balanced seed positions before building borders. We recommend to keep this setting enabled."/>
                         <CheckBox x:Name="ChkNoDirectPlayerConn"
                                   Content="Connect via neutral zones only [EXPERIMENTAL]"
                                   Margin="0,6,0,0"
