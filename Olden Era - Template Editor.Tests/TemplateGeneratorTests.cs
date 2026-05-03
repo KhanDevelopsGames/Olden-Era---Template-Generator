@@ -218,6 +218,145 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
+    public void Generate_AdvancedNeutralCountsCreateTieredCastleAndNoCastleZones()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            AdvancedMode = true,
+            NeutralZoneCastles = 2,
+            NeutralLowNoCastleCount = 1,
+            NeutralLowCastleCount = 1,
+            NeutralMediumNoCastleCount = 1,
+            NeutralMediumCastleCount = 1,
+            NeutralHighNoCastleCount = 1,
+            NeutralHighCastleCount = 1,
+            Topology = MapTopology.Default
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+        Variant variant = SingleVariant(template);
+        var zones = RequiredZones(variant).ToDictionary(zone => zone.Name, StringComparer.Ordinal);
+
+        Assert.Equal(8, zones.Count);
+        Assert.Empty(zones["Neutral-C"].MainObjects ?? []);
+        Assert.Equal(2, zones["Neutral-D"].MainObjects?.Count);
+        Assert.Empty(zones["Neutral-E"].MainObjects ?? []);
+        Assert.Equal(2, zones["Neutral-F"].MainObjects?.Count);
+        Assert.Empty(zones["Neutral-G"].MainObjects ?? []);
+        Assert.Equal(2, zones["Neutral-H"].MainObjects?.Count);
+        Assert.Equal("MatchZone", zones["Neutral-C"].ZoneBiome?.Type);
+        Assert.Equal("MatchMainObject", zones["Neutral-D"].ZoneBiome?.Type);
+        Assert.True(zones["Neutral-C"].GuardedContentValue < zones["Neutral-E"].GuardedContentValue);
+        Assert.True(zones["Neutral-E"].GuardedContentValue < zones["Neutral-G"].GuardedContentValue);
+
+        string json = JsonSerializer.Serialize(template, new JsonSerializerOptions { WriteIndented = true });
+        Assert.DoesNotContain("\"tier\"", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("\"quality\"", json, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Generate_AdvancedModeCanCreateThirtyTwoTotalZones()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 8,
+            AdvancedMode = true,
+            NeutralLowNoCastleCount = 8,
+            NeutralLowCastleCount = 8,
+            NeutralMediumNoCastleCount = 8,
+            Topology = MapTopology.Default,
+            RandomPortals = true
+        };
+
+        Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
+        var zones = RequiredZones(variant);
+        var zoneNames = zones.Select(zone => zone.Name).ToHashSet(StringComparer.Ordinal);
+
+        Assert.Equal(32, zones.Count);
+        Assert.Contains("Neutral-AF", zoneNames);
+        Assert.All(RequiredConnections(variant), connection =>
+        {
+            Assert.Contains(connection.From, zoneNames);
+            Assert.Contains(connection.To, zoneNames);
+        });
+    }
+
+    [Fact]
+    public void Generate_WhenPlayerCastleFactionMatchingIsEnabled_ExtraCitiesMatchSpawnFaction()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            PlayerZoneCastles = 3,
+            MatchPlayerCastleFactions = true,
+            Topology = MapTopology.Default
+        };
+
+        var spawnZones = RequiredZones(SingleVariant(TemplateGenerator.Generate(settings)))
+            .Where(zone => zone.Name.StartsWith("Spawn-", StringComparison.Ordinal))
+            .ToList();
+
+        Assert.All(spawnZones, zone =>
+        {
+            var mainObjects = zone.MainObjects ?? [];
+            Assert.Equal(3, mainObjects.Count);
+            Assert.All(mainObjects.Skip(1), mainObject =>
+            {
+                Assert.Equal("City", mainObject.Type);
+                Assert.Equal("Match", mainObject.Faction?.Type);
+                Assert.Equal(["0"], mainObject.Faction?.Args);
+            });
+        });
+    }
+
+    [Fact]
+    public void Generate_RingHonorsMinimumNeutralSeparation_WhenEnoughNeutrals()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 3,
+            NeutralZoneCount = 6,
+            MinNeutralZonesBetweenPlayers = 2,
+            Topology = MapTopology.Default
+        };
+
+        Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
+        var spawnNames = RequiredZones(variant)
+            .Where(zone => zone.Name.StartsWith("Spawn-", StringComparison.Ordinal))
+            .Select(zone => zone.Name)
+            .ToList();
+
+        for (int i = 0; i < spawnNames.Count; i++)
+        {
+            for (int j = i + 1; j < spawnNames.Count; j++)
+                Assert.True(ShortestNeutralIntermediates(variant, spawnNames[i], spawnNames[j]) >= 2);
+        }
+    }
+
+    [Fact]
+    public void CanHonorNeutralSeparation_ReturnsFalseWhenPortalsCouldShortenPaths()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 3,
+            NeutralZoneCount = 6,
+            MinNeutralZonesBetweenPlayers = 2,
+            RandomPortals = true,
+            Topology = MapTopology.Default
+        };
+
+        Assert.False(TemplateGenerator.CanHonorNeutralSeparation(settings, settings.NeutralZoneCount));
+    }
+
+    [Fact]
+    public void TemplatePreviewPngWriter_UsesOfficialSidecarNaming()
+    {
+        Assert.Equal(@"C:\maps\My Template.png", TemplatePreviewPngWriter.GetSidecarPath(@"C:\maps\My Template.rmg.json"));
+        Assert.Equal(@"C:\maps\Other.png", TemplatePreviewPngWriter.GetSidecarPath(@"C:\maps\Other.json"));
+    }
+
+    [Fact]
     public void SettingsFile_LegacyContentDensitySeedsSplitDensitySettings()
     {
         const string json = """
@@ -290,5 +429,43 @@ public class TemplateGeneratorTests
     {
         Assert.NotNull(variant.Connections);
         return variant.Connections;
+    }
+
+    private static int ShortestNeutralIntermediates(Variant variant, string from, string to)
+    {
+        var graph = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+        foreach (Connection connection in RequiredConnections(variant)
+            .Where(connection => connection.ConnectionType is "Direct" or "Portal"))
+        {
+            if (!graph.TryGetValue(connection.From, out var fromEdges))
+                graph[connection.From] = fromEdges = [];
+            if (!graph.TryGetValue(connection.To, out var toEdges))
+                graph[connection.To] = toEdges = [];
+
+            fromEdges.Add(connection.To);
+            toEdges.Add(connection.From);
+        }
+
+        var queue = new Queue<(string Zone, int Neutrals)>();
+        var best = new Dictionary<string, int>(StringComparer.Ordinal) { [from] = 0 };
+        queue.Enqueue((from, 0));
+
+        while (queue.Count > 0)
+        {
+            var (zone, neutrals) = queue.Dequeue();
+            if (!graph.TryGetValue(zone, out var neighbors)) continue;
+
+            foreach (string neighbor in neighbors)
+            {
+                int nextNeutrals = neutrals + (neighbor != to && !neighbor.StartsWith("Spawn-", StringComparison.Ordinal) ? 1 : 0);
+                if (best.TryGetValue(neighbor, out int existing) && existing <= nextNeutrals)
+                    continue;
+
+                best[neighbor] = nextNeutrals;
+                queue.Enqueue((neighbor, nextNeutrals));
+            }
+        }
+
+        return best.TryGetValue(to, out int shortest) ? shortest : int.MaxValue;
     }
 }

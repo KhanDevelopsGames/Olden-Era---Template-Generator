@@ -95,6 +95,11 @@
             <Button Content="📂  Open"    Width="80"  Margin="0,0,6,0" Click="BtnOpen_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Open (Ctrl+O)"/>
             <Button Content="💾  Save"    Width="80"  Margin="0,0,6,0" Click="BtnSave_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Save (Ctrl+S)"/>
             <Button Content="💾  Save As" Width="96"  Margin="0,0,0,0" Click="BtnSaveAs_Click" Style="{StaticResource ToolbarButton}" ToolTip="Save As (Ctrl+Shift+S)"/>
+            <CheckBox x:Name="ChkAdvancedMode"
+                      Content="Advanced mode"
+                      Margin="18,4,0,0"
+                      Checked="ChkAdvancedMode_Changed"
+                      Unchecked="ChkAdvancedMode_Changed"/>
         </StackPanel>
 
         <!-- ════════ HEADER ════════════════════════════════════════════ -->
@@ -223,6 +228,20 @@
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
                         </Grid>
+                        <StackPanel Margin="0,8,0,0">
+                            <TextBlock Foreground="{StaticResource BrushTextDim}"
+                                       FontSize="12"
+                                       TextWrapping="Wrap"
+                                       Text="Min Heroes: Initial Max Number of Heroes (with 1 castle)."/>
+                            <TextBlock Foreground="{StaticResource BrushTextDim}"
+                                       FontSize="12"
+                                       TextWrapping="Wrap"
+                                       Text="Max Heroes: Max Number of Heroes (with all castles)."/>
+                            <TextBlock Foreground="{StaticResource BrushTextDim}"
+                                       FontSize="12"
+                                       TextWrapping="Wrap"
+                                       Text="Increase heroes / castle: How Much The Hero Cap Increases Per Castle."/>
+                        </StackPanel>
                     </StackPanel>
                 </Border>
             </Grid>
@@ -235,6 +254,7 @@
 
                 <!-- ZONE CONFIGURATION -->
                 <Border Grid.Row="0" Style="{StaticResource SectionBorder}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
                         <TextBlock Text="◆  ZONE CONFIGURATION" Style="{StaticResource SectionHeader}"/>
                         <Grid>
@@ -258,7 +278,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <DockPanel Grid.Row="0" Grid.Column="0">
+                            <DockPanel Grid.Row="0" Grid.Column="0" x:Name="PnlSimpleNeutralCountLabel">
                                 <Label Content="Additional Neutral Zones" DockPanel.Dock="Left"/>
                                 <TextBlock x:Name="TxtNeutral" Text="0" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -335,6 +355,136 @@
                                     TickFrequency="5" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
                         </Grid>
+                        <StackPanel x:Name="PnlPlayerCastleFactionOption"
+                                    Visibility="Collapsed"
+                                    Margin="0,10,0,0">
+                            <CheckBox x:Name="ChkMatchPlayerCastleFactions"
+                                      Content="Use one faction for all castles in each player zone"
+                                      Checked="ChkOption_Changed"
+                                      Unchecked="ChkOption_Changed"/>
+                        </StackPanel>
+                        <StackPanel x:Name="PnlAdvancedNeutralZones"
+                                    Visibility="Collapsed"
+                                    Margin="0,12,0,0">
+                            <TextBlock Text="Advanced neutral zones"
+                                       Style="{StaticResource SectionHeader}"
+                                       Margin="0,0,0,4"/>
+                            <TextBlock Foreground="{StaticResource BrushTextDim}"
+                                       FontSize="12"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,6"
+                                       Text="With-castle neutral zones use the Castles / Neutral Zone value. Each advanced slider is capped at 8; total zones are capped at 32 in advanced mode."/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="230"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="4"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="4"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="4"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="4"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="4"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <DockPanel Grid.Row="0" Grid.Column="0">
+                                    <Label Content="Low neutral, no castle" DockPanel.Dock="Left"/>
+                                    <TextBlock x:Name="TxtNeutralLowNoCastle" Text="0" DockPanel.Dock="Right"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                </DockPanel>
+                                <Slider Grid.Row="0" Grid.Column="1" x:Name="SldNeutralLowNoCastle"
+                                        Minimum="0" Maximum="8" Value="0"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        ValueChanged="Slider_ValueChanged"/>
+
+                                <DockPanel Grid.Row="2" Grid.Column="0">
+                                    <Label Content="Low neutral, castle" DockPanel.Dock="Left"/>
+                                    <TextBlock x:Name="TxtNeutralLowCastle" Text="0" DockPanel.Dock="Right"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                </DockPanel>
+                                <Slider Grid.Row="2" Grid.Column="1" x:Name="SldNeutralLowCastle"
+                                        Minimum="0" Maximum="8" Value="0"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        ValueChanged="Slider_ValueChanged"/>
+
+                                <DockPanel Grid.Row="4" Grid.Column="0">
+                                    <Label Content="Medium neutral, no castle" DockPanel.Dock="Left"/>
+                                    <TextBlock x:Name="TxtNeutralMediumNoCastle" Text="0" DockPanel.Dock="Right"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                </DockPanel>
+                                <Slider Grid.Row="4" Grid.Column="1" x:Name="SldNeutralMediumNoCastle"
+                                        Minimum="0" Maximum="8" Value="0"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        ValueChanged="Slider_ValueChanged"/>
+
+                                <DockPanel Grid.Row="6" Grid.Column="0">
+                                    <Label Content="Medium neutral, castle" DockPanel.Dock="Left"/>
+                                    <TextBlock x:Name="TxtNeutralMediumCastle" Text="0" DockPanel.Dock="Right"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                </DockPanel>
+                                <Slider Grid.Row="6" Grid.Column="1" x:Name="SldNeutralMediumCastle"
+                                        Minimum="0" Maximum="8" Value="0"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        ValueChanged="Slider_ValueChanged"/>
+
+                                <DockPanel Grid.Row="8" Grid.Column="0">
+                                    <Label Content="High neutral, no castle" DockPanel.Dock="Left"/>
+                                    <TextBlock x:Name="TxtNeutralHighNoCastle" Text="0" DockPanel.Dock="Right"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                </DockPanel>
+                                <Slider Grid.Row="8" Grid.Column="1" x:Name="SldNeutralHighNoCastle"
+                                        Minimum="0" Maximum="8" Value="0"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        ValueChanged="Slider_ValueChanged"/>
+
+                                <DockPanel Grid.Row="10" Grid.Column="0">
+                                    <Label Content="High neutral, castle" DockPanel.Dock="Left"/>
+                                    <TextBlock x:Name="TxtNeutralHighCastle" Text="0" DockPanel.Dock="Right"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                </DockPanel>
+                                <Slider Grid.Row="10" Grid.Column="1" x:Name="SldNeutralHighCastle"
+                                        Minimum="0" Maximum="8" Value="0"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        ValueChanged="Slider_ValueChanged"/>
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel x:Name="PnlAdvancedSeparation"
+                                    Visibility="Collapsed"
+                                    Margin="0,12,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="230"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <DockPanel Grid.Column="0">
+                                    <Label Content="Min neutrals between players" DockPanel.Dock="Left"/>
+                                    <TextBlock x:Name="TxtMinNeutralBetweenPlayers" Text="0" DockPanel.Dock="Right"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                </DockPanel>
+                                <Slider Grid.Column="1" x:Name="SldMinNeutralBetweenPlayers"
+                                        Minimum="0" Maximum="8" Value="0"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        ValueChanged="Slider_ValueChanged"/>
+                            </Grid>
+                            <TextBlock Foreground="{StaticResource BrushTextDim}"
+                                       FontSize="12"
+                                       TextWrapping="Wrap"
+                                       Margin="0,4,0,0"
+                                       Text="Honored only when the selected layout, neutral zone total, and portal settings can support it; otherwise generation uses the normal connection layout."/>
+                        </StackPanel>
                                 <CheckBox x:Name="ChkGenerateRoads"  Content="Generate roads"         IsChecked="True" Margin="0,15,0,0"
           Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
                                 <TextBlock x:Name="TxtRoadsHint"
@@ -357,6 +507,7 @@
                                    Margin="25,3,0,0"
                                    Text="The game tries to connect player zones to neutral zones only. If no neutral zone borders a player zone, it will fall back to connecting directly to another player zone."/>
                     </StackPanel>
+                    </ScrollViewer>
                 </Border>
             </Grid>
         </Grid>

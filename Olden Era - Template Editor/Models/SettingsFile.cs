@@ -14,6 +14,15 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("neutralZoneCount")]  public int     NeutralZoneCount       { get; set; } = 0;
         [JsonPropertyName("playerCastles")]     public int     PlayerZoneCastles      { get; set; } = 1;
         [JsonPropertyName("neutralCastles")]    public int     NeutralZoneCastles     { get; set; } = 1;
+        [JsonPropertyName("advancedMode")]      public bool    AdvancedMode           { get; set; } = false;
+        [JsonPropertyName("neutralLowNoCastle")]    public int NeutralLowNoCastleCount    { get; set; } = 0;
+        [JsonPropertyName("neutralLowCastle")]      public int NeutralLowCastleCount      { get; set; } = 0;
+        [JsonPropertyName("neutralMediumNoCastle")] public int NeutralMediumNoCastleCount { get; set; } = 0;
+        [JsonPropertyName("neutralMediumCastle")]   public int NeutralMediumCastleCount   { get; set; } = 0;
+        [JsonPropertyName("neutralHighNoCastle")]   public int NeutralHighNoCastleCount   { get; set; } = 0;
+        [JsonPropertyName("neutralHighCastle")]     public int NeutralHighCastleCount     { get; set; } = 0;
+        [JsonPropertyName("matchPlayerCastleFactions")] public bool MatchPlayerCastleFactions { get; set; } = false;
+        [JsonPropertyName("minNeutralZonesBetweenPlayers")] public int MinNeutralZonesBetweenPlayers { get; set; } = 0;
         [JsonPropertyName("heroMin")]           public int     HeroCountMin           { get; set; } = 10;
         [JsonPropertyName("heroMax")]           public int     HeroCountMax           { get; set; } = 10;
         [JsonPropertyName("heroIncrement")]     public int     HeroCountIncrement     { get; set; } = 0;

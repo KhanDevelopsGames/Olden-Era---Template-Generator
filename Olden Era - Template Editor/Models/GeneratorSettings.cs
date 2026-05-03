@@ -13,6 +13,15 @@ namespace Olden_Era___Template_Editor.Models
         public string VictoryCondition { get; set; } = "win_condition_1";
         public int PlayerZoneCastles { get; set; } = 1;
         public int NeutralZoneCastles { get; set; } = 1;
+        public bool AdvancedMode { get; set; } = false;
+        public int NeutralLowNoCastleCount { get; set; } = 0;
+        public int NeutralLowCastleCount { get; set; } = 0;
+        public int NeutralMediumNoCastleCount { get; set; } = 0;
+        public int NeutralMediumCastleCount { get; set; } = 0;
+        public int NeutralHighNoCastleCount { get; set; } = 0;
+        public int NeutralHighCastleCount { get; set; } = 0;
+        public bool MatchPlayerCastleFactions { get; set; } = false;
+        public int MinNeutralZonesBetweenPlayers { get; set; } = 0;
         public bool NoDirectPlayerConnections { get; set; } = false;
         public bool RandomPortals { get; set; } = false;
         public bool SpawnRemoteFootholds { get; set; } = true;
@@ -22,5 +31,12 @@ namespace Olden_Era___Template_Editor.Models
         public int StructureDensityPercent { get; set; } = 100;
         public int NeutralStackStrengthPercent { get; set; } = 100;
         public int BorderGuardStrengthPercent { get; set; } = 100;
+    }
+
+    public enum NeutralZoneQuality
+    {
+        Low,
+        Medium,
+        High
     }
 }
