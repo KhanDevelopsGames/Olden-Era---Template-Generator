@@ -14,11 +14,25 @@ namespace OldenEraTemplateEditor.Models
             "SingleHero",
         ];
 
-        /// <summary>Map sizes (sizeX = sizeZ) found across all example templates.</summary>
+        /// <summary>Official/example-backed map sizes (sizeX = sizeZ).</summary>
         public static readonly int[] MapSizes =
         [
             64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 240
         ];
+
+        /// <summary>Experimental map sizes above the largest official/example-backed size.</summary>
+        public static readonly int[] ExperimentalMapSizes =
+        [
+            256, 272, 288, 304, 320, 336, 352, 368, 384,
+            400, 416, 432, 448, 464, 480, 496, 512
+        ];
+
+        public static readonly int[] AllMapSizes = [.. MapSizes, .. ExperimentalMapSizes];
+
+        public static int MaxOfficialMapSize => MapSizes[^1];
+
+        public static bool IsExperimentalMapSize(int size) =>
+            Array.IndexOf(ExperimentalMapSizes, size) >= 0;
 
         /// <summary>
         /// Human-readable labels for each displayWinCondition ID.
@@ -27,9 +41,10 @@ namespace OldenEraTemplateEditor.Models
         public static readonly string[] VictoryConditionLabels =
         [
             "Standard (Classic Kill)",
-            "Lost City / Lost Hero",
-            "Hold City for N Days",
+            "Lost Starting City",
             "Gladiator Arena",
+            "Hold City for N Days",
+            "Tournament",
         ];
 
         /// <summary>
@@ -39,6 +54,7 @@ namespace OldenEraTemplateEditor.Models
         [
             "win_condition_1",
             "win_condition_3",
+            "win_condition_4",
             "win_condition_5",
             "win_condition_6",
         ];

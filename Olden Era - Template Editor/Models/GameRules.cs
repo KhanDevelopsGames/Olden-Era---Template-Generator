@@ -103,5 +103,20 @@ namespace OldenEraTemplateEditor.Models
 
         [JsonPropertyName("championSelectRule")]
         public string? ChampionSelectRule { get; set; }
+
+        [JsonPropertyName("tournament")]
+        public bool? Tournament { get; set; }
+
+        [JsonPropertyName("tournamentDays")]
+        public List<int>? TournamentDays { get; set; }
+
+        [JsonPropertyName("tournamentAnnounceDays")]
+        public List<int>? TournamentAnnounceDays { get; set; }
+
+        [JsonPropertyName("tournamentPointsToWin")]
+        public int? TournamentPointsToWin { get; set; }
+
+        [JsonPropertyName("tournamentSaveArmy")]
+        public bool? TournamentSaveArmy { get; set; }
     }
 }

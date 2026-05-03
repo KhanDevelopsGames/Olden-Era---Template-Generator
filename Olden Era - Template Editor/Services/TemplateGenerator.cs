@@ -13,38 +13,57 @@ namespace Olden_Era___Template_Editor.Services
     {
         // Each player zone gets 5 guard connections to the center (same as JCC).
         private const int ConnectionsPerZone = 5;
+        private const double DefaultGuardRandomization = 0.05;
+        private const string SpawnLayoutName = "zone_layout_spawns";
+        private const string SideLayoutName = "zone_layout_sides";
+        private const string TreasureLayoutName = "zone_layout_treasure_zone";
+        private const string CenterLayoutName = "zone_layout_center";
 
-        // Letters used to name zones: A, B, C … up to 8 players + 8 neutral zones = 16 max.
+        // Labels used to name zones, up to the advanced-mode maximum of 32 total zones.
         private static readonly string[] ZoneLetters =
-            ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P"];
+        [
+            "A", "B", "C", "D", "E", "F", "G", "H",
+            "I", "J", "K", "L", "M", "N", "O", "P",
+            "Q", "R", "S", "T", "U", "V", "W", "X",
+            "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF"
+        ];
 
         public static RmgTemplate Generate(GeneratorSettings settings)
         {
             var playerLetters = ZoneLetters.Take(settings.PlayerCount).ToList();
+            var neutralZones = BuildNeutralZonePlan(settings);
 
             // Hub & Spoke handles isolation via hub; for all other topologies the
             // isolation is done by skipping player–player connections, so no extra
             // neutral zones need to be auto-created.
-            int neutralCount = settings.NeutralZoneCount;
-
-            var neutralLetters = ZoneLetters.Skip(settings.PlayerCount).Take(neutralCount).ToList();
+            int neutralCount = neutralZones.Count;
+            var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
 
             int totalZones = settings.PlayerCount + neutralCount;
-            double contentScale = ComputeContentScale(settings.MapSize, totalZones);
-            double densityMult  = settings.ContentDensityPercent / 100.0;
+            var tuning = new GenerationTuning(
+                ComputeContentScale(settings.MapSize, totalZones),
+                settings.ResourceDensityPercent / 100.0,
+                settings.StructureDensityPercent / 100.0,
+                settings.NeutralStackStrengthPercent / 100.0,
+                settings.BorderGuardStrengthPercent / 100.0,
+                EffectiveGuardRandomization(settings));
+
+            string effectiveVictoryCondition = settings.AdvancedMode
+                ? settings.VictoryCondition
+                : "win_condition_1";
 
             var template = new RmgTemplate
             {
                 Name = settings.TemplateName,
                 GameMode = settings.GameMode,
-                Description = "custom_generated_template",
-                DisplayWinCondition = settings.VictoryCondition,
+                Description = BuildTemplateDescription(settings, neutralCount),
+                DisplayWinCondition = effectiveVictoryCondition,
                 SizeX = settings.MapSize,
                 SizeZ = settings.MapSize,
-                GameRules = BuildGameRules(settings),
-                Variants = [BuildVariant(settings, playerLetters, neutralLetters, contentScale, densityMult)],
+                GameRules = BuildGameRules(settings, effectiveVictoryCondition),
+                Variants = [BuildVariant(settings, playerLetters, neutralZones, tuning)],
                 ZoneLayouts = BuildZoneLayouts(),
-                MandatoryContent = BuildAllMandatoryContent(playerLetters, neutralLetters, settings),
+                MandatoryContent = BuildAllMandatoryContent(playerLetters, neutralZones, settings),
                 ContentCountLimits = BuildAllContentCountLimits(),
                 ContentPools = [],
                 ContentLists = []
@@ -53,17 +72,128 @@ namespace Olden_Era___Template_Editor.Services
             return template;
         }
 
+        private static string BuildTemplateDescription(GeneratorSettings settings, int neutralZoneCount)
+        {
+            var parts = new List<string>
+            {
+                $"{settings.GameMode} mode",
+                CountPhrase(settings.PlayerCount, "player", "players"),
+                $"{settings.MapSize}x{settings.MapSize} map",
+                $"{TopologyLabel(settings.Topology)} layout",
+                CountPhrase(neutralZoneCount, "neutral zone", "neutral zones"),
+                $"{CountPhrase(settings.PlayerZoneCastles, "castle", "castles")} per player zone"
+            };
+
+            if (neutralZoneCount > 0)
+            {
+                string neutralCastlePhrase = settings.AdvancedMode
+                    ? "mixed neutral zone tiers"
+                    : $"{CountPhrase(settings.NeutralZoneCastles, "castle", "castles")} per neutral zone";
+                parts.Add(neutralCastlePhrase);
+            }
+
+            var options = new List<string>();
+            if (settings.NoDirectPlayerConnections)
+                options.Add("isolated player starts");
+            if (settings.ExperimentalBalancedZonePlacement)
+                options.Add("experimental balanced zone placement");
+            if (settings.RandomPortals)
+                options.Add("random portals");
+            if (!settings.SpawnRemoteFootholds)
+                options.Add("no remote footholds");
+            if (!settings.GenerateRoads)
+                options.Add("roads disabled");
+
+            if (options.Count > 0)
+                parts.Add($"options: {string.Join(", ", options)}");
+
+            return $"Generated with Olden Era Template Generator: {string.Join(", ", parts)}.";
+        }
+
+        private static string CountPhrase(int count, string singular, string plural) =>
+            count == 0 ? $"no {plural}" : $"{count} {(count == 1 ? singular : plural)}";
+
+        private static string TopologyLabel(MapTopology topology) => topology switch
+        {
+            MapTopology.Default => "Ring",
+            MapTopology.HubAndSpoke => "Hub",
+            MapTopology.Chain => "Chain",
+            MapTopology.SharedWeb => "Shared Web",
+            MapTopology.Random => "Random",
+            _ => topology.ToString()
+        };
+
+        private sealed record NeutralZonePlan(string Letter, NeutralZoneQuality Quality, int CastleCount);
+
+        private sealed record NeutralZoneProfile(
+            string Layout,
+            double GuardMultiplier,
+            string GuardedContentPool,
+            string UnguardedContentPool,
+            string ResourcesContentPool,
+            int GuardedContentValue,
+            int GuardedContentValuePerArea,
+            int UnguardedContentValue,
+            int UnguardedContentValuePerArea,
+            int ResourcesValue,
+            int ResourcesValuePerArea,
+            int PrimaryCityGuardValue,
+            int ExtraCityGuardValue,
+            string PrimaryBuildingsConstructionSid,
+            string ExtraBuildingsConstructionSid);
+
+        private static List<NeutralZonePlan> BuildNeutralZonePlan(GeneratorSettings settings)
+        {
+            var plans = new List<NeutralZonePlan>();
+            int maxNeutralZones = Math.Max(0, ZoneLetters.Length - settings.PlayerCount);
+            int castleZoneCastleCount = Math.Clamp(settings.NeutralZoneCastles, 1, 4);
+
+            void Add(int requestedCount, NeutralZoneQuality quality, int castleCount)
+            {
+                int count = Math.Clamp(requestedCount, 0, 8);
+                for (int i = 0; i < count && plans.Count < maxNeutralZones; i++)
+                {
+                    string letter = ZoneLetters[settings.PlayerCount + plans.Count];
+                    plans.Add(new NeutralZonePlan(letter, quality, castleCount));
+                }
+            }
+
+            if (settings.AdvancedMode)
+            {
+                Add(settings.NeutralLowNoCastleCount, NeutralZoneQuality.Low, 0);
+                Add(settings.NeutralLowCastleCount, NeutralZoneQuality.Low, castleZoneCastleCount);
+                Add(settings.NeutralMediumNoCastleCount, NeutralZoneQuality.Medium, 0);
+                Add(settings.NeutralMediumCastleCount, NeutralZoneQuality.Medium, castleZoneCastleCount);
+                Add(settings.NeutralHighNoCastleCount, NeutralZoneQuality.High, 0);
+                Add(settings.NeutralHighCastleCount, NeutralZoneQuality.High, castleZoneCastleCount);
+            }
+            else
+            {
+                int castleCount = Math.Clamp(settings.NeutralZoneCastles, 0, 4);
+                Add(settings.NeutralZoneCount, NeutralZoneQuality.Medium, castleCount);
+            }
+
+            if (settings.Topology == MapTopology.SharedWeb && plans.Count == 0 && maxNeutralZones > 0)
+            {
+                string letter = ZoneLetters[settings.PlayerCount];
+                int castleCount = Math.Clamp(settings.NeutralZoneCastles, 0, 4);
+                plans.Add(new NeutralZonePlan(letter, NeutralZoneQuality.Medium, castleCount));
+            }
+
+            return plans;
+        }
+
         // ── Game rules ───────────────────────────────────────────────────────────
 
-        private static GameRules BuildGameRules(GeneratorSettings settings) => new()
+        private static GameRules BuildGameRules(GeneratorSettings settings, string effectiveVictoryCondition) => new()
         {
             HeroCountMin = settings.HeroCountMin,
             HeroCountMax = settings.HeroCountMax,
             HeroCountIncrement = settings.HeroCountIncrement,
             HeroHireBan = false,
             EncounterHoles = false,
-            FactionLawsExpModifier = 1.0,
-            AstrologyExpModifier = 1.0,
+            FactionLawsExpModifier = settings.AdvancedMode ? PercentToModifier(settings.FactionLawsExpPercent) : 1.0,
+            AstrologyExpModifier = settings.AdvancedMode ? PercentToModifier(settings.AstrologyExpPercent) : 1.0,
             Bonuses =
             [
                 new Bonus
@@ -74,21 +204,123 @@ namespace Olden_Era___Template_Editor.Services
                     Parameters = ["movementBonus", "0"]
                 }
             ],
-            WinConditions = new WinConditions
+            WinConditions = settings.AdvancedMode
+                ? BuildAdvancedWinConditions(settings, effectiveVictoryCondition)
+                : BuildDefaultWinConditions()
+        };
+
+        private static double PercentToModifier(int percent) =>
+            Math.Round(Math.Clamp(percent, 25, 200) / 100.0, 2, MidpointRounding.AwayFromZero);
+
+        private static WinConditions BuildDefaultWinConditions() => new()
+        {
+            Classic = true,
+            Desertion = true,
+            DesertionDay = 3,
+            DesertionValue = 3000,
+            HeroLighting = false,
+            HeroLightingDay = 1,
+            LostStartCity = false,
+            LostStartCityDay = 3,
+            LostStartHero = false,
+            CityHold = false,
+            CityHoldDays = 6
+        };
+
+        private static WinConditions BuildAdvancedWinConditions(GeneratorSettings settings, string effectiveVictoryCondition)
+        {
+            bool useLostStartCity = settings.LostStartCity || effectiveVictoryCondition == "win_condition_3";
+            bool useCityHold = settings.CityHold || effectiveVictoryCondition == "win_condition_5";
+            bool useGladiator = settings.GladiatorArena || effectiveVictoryCondition == "win_condition_4";
+            bool useTournament = settings.Tournament || effectiveVictoryCondition == "win_condition_6";
+
+            var winConditions = new WinConditions
             {
                 Classic = true,
                 Desertion = true,
                 DesertionDay = 3,
                 DesertionValue = 3000,
-                HeroLighting = false,
+                HeroLighting = true,
                 HeroLightingDay = 1,
-                LostStartCity = false,
-                LostStartCityDay = 3,
-                LostStartHero = false,
-                CityHold = false,
-                CityHoldDays = 6
+                LostStartCity = useLostStartCity,
+                LostStartCityDay = Math.Clamp(settings.LostStartCityDay, 1, 30),
+                LostStartHero = settings.LostStartHero || useGladiator || useTournament,
+                CityHold = useCityHold,
+                CityHoldDays = Math.Clamp(settings.CityHoldDays, 1, 30)
+            };
+
+            if (useGladiator)
+            {
+                winConditions.GladiatorArena = true;
+                winConditions.GladiatorArenaRegistrationStartWork = false;
+                winConditions.GladiatorArenaRegistrationStartFight = true;
+                winConditions.GladiatorArenaDaysDelayStart = Math.Clamp(settings.GladiatorArenaDaysDelayStart, 1, 60);
+                winConditions.GladiatorArenaCountDay = Math.Clamp(settings.GladiatorArenaCountDay, 1, 30);
+                winConditions.ChampionSelectRule = "StartHero";
             }
-        };
+
+            if (useTournament)
+            {
+                int roundCount = Math.Clamp(settings.TournamentRoundCount, 1, 5);
+                int roundDuration = Math.Clamp(settings.TournamentRoundDuration, 1, 14);
+                int firstAnnounceDay = Math.Clamp(settings.TournamentFirstAnnounceDay, 1, 60);
+                int interval = Math.Clamp(settings.TournamentRoundInterval, 1, 30);
+
+                winConditions.GladiatorArena = false;
+                winConditions.GladiatorArenaRegistrationStartWork = false;
+                winConditions.GladiatorArenaRegistrationStartFight = true;
+                winConditions.GladiatorArenaDaysDelayStart = Math.Clamp(settings.GladiatorArenaDaysDelayStart, 1, 60);
+                winConditions.GladiatorArenaCountDay = Math.Clamp(settings.GladiatorArenaCountDay, 1, 30);
+                winConditions.ChampionSelectRule = "StartHero";
+                winConditions.Tournament = true;
+                winConditions.TournamentDays = Enumerable.Repeat(roundDuration, roundCount).ToList();
+                winConditions.TournamentAnnounceDays = Enumerable.Range(0, roundCount)
+                    .Select(i => firstAnnounceDay + i * interval)
+                    .ToList();
+                winConditions.TournamentPointsToWin = Math.Clamp(settings.TournamentPointsToWin, 1, roundCount);
+                winConditions.TournamentSaveArmy = true;
+            }
+
+            return winConditions;
+        }
+
+        private readonly record struct GenerationTuning(
+            double ContentScale,
+            double ResourceDensityMultiplier,
+            double StructureDensityMultiplier,
+            double NeutralStackStrengthMultiplier,
+            double BorderGuardStrengthMultiplier,
+            double GuardRandomization);
+
+        private static int ScaleValue(double value, double multiplier) =>
+            Math.Max(0, (int)(value * multiplier));
+
+        private static int ScaleStructureValue(double value, GenerationTuning tuning) =>
+            ScaleValue(value, tuning.StructureDensityMultiplier);
+
+        private static int ScaleResourceValue(double value, GenerationTuning tuning) =>
+            ScaleValue(value, tuning.ResourceDensityMultiplier);
+
+        private static int ScaleNeutralGuardValue(int value, GenerationTuning tuning) =>
+            ScaleValue(value, tuning.NeutralStackStrengthMultiplier);
+
+        private static int ScaleBorderGuardValue(int value, GenerationTuning tuning) =>
+            ScaleValue(value, tuning.BorderGuardStrengthMultiplier);
+
+        private static double ScaleGuardMultiplier(double value, GenerationTuning tuning) =>
+            Math.Round(value * tuning.NeutralStackStrengthMultiplier, 3, MidpointRounding.AwayFromZero);
+
+        private static double EffectiveGuardRandomization(GeneratorSettings settings)
+        {
+            if (!settings.AdvancedMode)
+                return DefaultGuardRandomization;
+
+            double value = settings.GuardRandomization;
+            if (double.IsNaN(value) || double.IsInfinity(value))
+                return DefaultGuardRandomization;
+
+            return Math.Round(Math.Clamp(value, 0.0, 0.5), 3, MidpointRounding.AwayFromZero);
+        }
 
         // ── Content scale ────────────────────────────────────────────────────────
 
@@ -104,30 +336,294 @@ namespace Olden_Era___Template_Editor.Services
             return Math.Clamp(Math.Sqrt(zoneArea / referenceArea), 0.5, 2.5);
         }
 
-        // ── Variant ──────────────────────────────────────────────────────────────
-
-        private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static double NormalizeZoneSize(double zoneSize)
         {
-            // Shuffle player letters so Player 1 is not always at the same geometric position.
-            var rng = new Random();
-           
-            playerLetters = [.. playerLetters.OrderBy(_ => rng.Next())];
+            if (double.IsNaN(zoneSize) || double.IsInfinity(zoneSize))
+                return 1.0;
+
+            return Math.Round(Math.Clamp(zoneSize, 0.1, 2.0), 2, MidpointRounding.AwayFromZero);
+        }
+
+        public static bool CanHonorNeutralSeparation(GeneratorSettings settings, int neutralZoneCount)
+        {
+            int min = settings.MinNeutralZonesBetweenPlayers;
+            if (min <= 0) return true;
+            if (settings.RandomPortals) return false;
 
             return settings.Topology switch
             {
-                MapTopology.HubAndSpoke => BuildVariantHubAndSpoke(settings, playerLetters, neutralLetters, contentScale, densityMult),
-                MapTopology.Chain       => BuildVariantChain(settings, playerLetters, neutralLetters, contentScale, densityMult),
-                MapTopology.SharedWeb   => BuildVariantSharedWeb(settings, playerLetters, neutralLetters, contentScale, densityMult),
-                MapTopology.Random      => BuildVariantRandom(settings, playerLetters, neutralLetters, contentScale, densityMult),
-                _                       => BuildVariantDefault(settings, playerLetters, neutralLetters, contentScale, densityMult),
+                MapTopology.Default => neutralZoneCount >= settings.PlayerCount * min,
+                MapTopology.Chain => neutralZoneCount >= (settings.PlayerCount - 1) * min,
+                MapTopology.HubAndSpoke => min <= 1,
+                MapTopology.SharedWeb => min <= 1 && neutralZoneCount >= 1,
+                _ => false,
+            };
+        }
+
+        private static List<string> BuildOrderedLetters(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, bool isRing)
+        {
+            var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
+
+            if (settings.ExperimentalBalancedZonePlacement)
+            {
+                int honoredSeparation = settings.MinNeutralZonesBetweenPlayers > 0
+                    && CanHonorNeutralSeparation(settings, neutralLetters.Count)
+                        ? settings.MinNeutralZonesBetweenPlayers
+                        : 0;
+
+                return isRing
+                    ? BuildBalancedRingLetters(playerLetters, neutralZones, honoredSeparation)
+                    : BuildBalancedChainLetters(playerLetters, neutralZones, honoredSeparation);
+            }
+
+            int min = settings.MinNeutralZonesBetweenPlayers;
+            if (min <= 0 || settings.RandomPortals || !CanHonorNeutralSeparation(settings, neutralLetters.Count))
+                return playerLetters.Concat(neutralLetters).ToList();
+
+            var ordered = new List<string>();
+            var remainingNeutrals = new Queue<string>(neutralLetters);
+
+            for (int i = 0; i < playerLetters.Count; i++)
+            {
+                ordered.Add(playerLetters[i]);
+                bool needsSeparatorAfterPlayer = isRing || i < playerLetters.Count - 1;
+                if (!needsSeparatorAfterPlayer) continue;
+
+                for (int j = 0; j < min && remainingNeutrals.Count > 0; j++)
+                    ordered.Add(remainingNeutrals.Dequeue());
+            }
+
+            while (remainingNeutrals.Count > 0)
+                ordered.Add(remainingNeutrals.Dequeue());
+
+            return ordered.Count > 0 ? ordered : playerLetters.Concat(neutralLetters).ToList();
+        }
+
+        private static List<string> BuildBalancedRingLetters(
+            List<string> playerLetters,
+            List<NeutralZonePlan> neutralZones,
+            int minNeutralZonesBetweenPlayers)
+        {
+            if (playerLetters.Count == 0)
+                return BuildBalancedNeutralRing(neutralZones, 1);
+
+            if (neutralZones.Count == 0)
+                return [.. playerLetters];
+
+            int[] gapCapacities = BuildEvenGapCapacities(
+                playerLetters.Count,
+                neutralZones.Count,
+                minNeutralZonesBetweenPlayers);
+            var gaps = AssignNeutralZonesToGaps(neutralZones, gapCapacities, preferInteriorGaps: false);
+
+            var ordered = new List<string>(playerLetters.Count + neutralZones.Count);
+            for (int i = 0; i < playerLetters.Count; i++)
+            {
+                ordered.Add(playerLetters[i]);
+                ordered.AddRange(OrderNeutralsWithinGap(gaps[i]).Select(zone => zone.Letter));
+            }
+
+            return ordered;
+        }
+
+        private static List<string> BuildBalancedChainLetters(
+            List<string> playerLetters,
+            List<NeutralZonePlan> neutralZones,
+            int minNeutralZonesBetweenPlayers)
+        {
+            if (playerLetters.Count == 0)
+                return neutralZones.Select(zone => zone.Letter).ToList();
+
+            int gapCount = playerLetters.Count + 1;
+            var capacities = new int[gapCount];
+            int remaining = neutralZones.Count;
+
+            int requiredInterior = Math.Max(0, playerLetters.Count - 1) * minNeutralZonesBetweenPlayers;
+            if (minNeutralZonesBetweenPlayers > 0 && neutralZones.Count >= requiredInterior)
+            {
+                for (int i = 1; i < gapCount - 1; i++)
+                    capacities[i] = minNeutralZonesBetweenPlayers;
+                remaining -= requiredInterior;
+            }
+
+            int[] extras = BuildEvenGapCapacities(gapCount, remaining, minimumPerGap: 0);
+            for (int i = 0; i < gapCount; i++)
+                capacities[i] += extras[i];
+
+            var gaps = AssignNeutralZonesToGaps(neutralZones, capacities, preferInteriorGaps: true);
+            var ordered = new List<string>(playerLetters.Count + neutralZones.Count);
+
+            ordered.AddRange(OrderEdgeGap(gaps[0], highQualityNearPlayer: true).Select(zone => zone.Letter));
+            for (int i = 0; i < playerLetters.Count; i++)
+            {
+                ordered.Add(playerLetters[i]);
+                var gap = gaps[i + 1];
+                bool trailingEdge = i == playerLetters.Count - 1;
+                ordered.AddRange((trailingEdge
+                    ? OrderEdgeGap(gap, highQualityNearPlayer: false)
+                    : OrderNeutralsWithinGap(gap)).Select(zone => zone.Letter));
+            }
+
+            return ordered.Count > 0 ? ordered : playerLetters.Concat(neutralZones.Select(zone => zone.Letter)).ToList();
+        }
+
+        private static List<string> BuildBalancedNeutralRing(List<NeutralZonePlan> neutralZones, int playerCount)
+        {
+            if (neutralZones.Count <= 1)
+                return neutralZones.Select(zone => zone.Letter).ToList();
+
+            int gapCount = Math.Max(1, playerCount);
+            int[] gapCapacities = BuildEvenGapCapacities(gapCount, neutralZones.Count, minimumPerGap: 0);
+            var gaps = AssignNeutralZonesToGaps(neutralZones, gapCapacities, preferInteriorGaps: false);
+            return gaps
+                .SelectMany(gap => OrderNeutralsWithinGap(gap))
+                .Select(zone => zone.Letter)
+                .ToList();
+        }
+
+        private static int[] BuildEvenGapCapacities(int gapCount, int itemCount, int minimumPerGap)
+        {
+            var capacities = new int[Math.Max(0, gapCount)];
+            if (gapCount <= 0 || itemCount <= 0)
+                return capacities;
+
+            int minimum = Math.Max(0, minimumPerGap);
+            int reserved = minimum * gapCount;
+            int remaining = itemCount;
+            if (minimum > 0 && itemCount >= reserved)
+            {
+                for (int i = 0; i < gapCount; i++)
+                    capacities[i] = minimum;
+                remaining -= reserved;
+            }
+
+            for (int i = 0; i < remaining; i++)
+            {
+                int gap = (int)Math.Floor((i + 0.5) * gapCount / remaining);
+                capacities[Math.Clamp(gap, 0, gapCount - 1)]++;
+            }
+
+            return capacities;
+        }
+
+        private static List<List<NeutralZonePlan>> AssignNeutralZonesToGaps(
+            List<NeutralZonePlan> neutralZones,
+            int[] gapCapacities,
+            bool preferInteriorGaps)
+        {
+            var gaps = gapCapacities.Select(_ => new List<NeutralZonePlan>()).ToList();
+            var loads = new double[gapCapacities.Length];
+            var orderedNeutrals = neutralZones
+                .OrderByDescending(NeutralZoneBalanceScore)
+                .ThenBy(zone => zone.Letter, StringComparer.Ordinal)
+                .ToList();
+
+            foreach (var neutralZone in orderedNeutrals)
+            {
+                var candidates = Enumerable.Range(0, gapCapacities.Length)
+                    .Where(i => gaps[i].Count < gapCapacities[i])
+                    .ToList();
+
+                if (candidates.Count == 0)
+                    break;
+
+                if (preferInteriorGaps)
+                {
+                    var interiorCandidates = candidates
+                        .Where(i => i > 0 && i < gapCapacities.Length - 1)
+                        .ToList();
+                    if (interiorCandidates.Count > 0)
+                        candidates = interiorCandidates;
+                }
+
+                int selectedGap = candidates
+                    .OrderBy(i => loads[i])
+                    .ThenBy(i => gaps[i].Count)
+                    .ThenBy(i => i)
+                    .First();
+
+                gaps[selectedGap].Add(neutralZone);
+                loads[selectedGap] += NeutralZoneBalanceScore(neutralZone);
+            }
+
+            return gaps;
+        }
+
+        private static List<NeutralZonePlan> OrderNeutralsWithinGap(List<NeutralZonePlan> neutralZones)
+        {
+            int count = neutralZones.Count;
+            if (count <= 1)
+                return [.. neutralZones];
+
+            var sorted = neutralZones
+                .OrderByDescending(NeutralZoneBalanceScore)
+                .ThenBy(zone => zone.Letter, StringComparer.Ordinal)
+                .ToList();
+            var slots = new NeutralZonePlan[count];
+            var positions = Enumerable.Range(0, count)
+                .OrderBy(position => Math.Abs(position - (count - 1) / 2.0))
+                .ThenBy(position => position)
+                .ToList();
+
+            for (int i = 0; i < sorted.Count; i++)
+                slots[positions[i]] = sorted[i];
+
+            return slots.ToList();
+        }
+
+        private static List<NeutralZonePlan> OrderEdgeGap(List<NeutralZonePlan> neutralZones, bool highQualityNearPlayer)
+        {
+            var ordered = neutralZones
+                .OrderBy(zone => NeutralZoneBalanceScore(zone))
+                .ThenBy(zone => zone.Letter, StringComparer.Ordinal)
+                .ToList();
+
+            if (highQualityNearPlayer)
+                return ordered;
+
+            ordered.Reverse();
+            return ordered;
+        }
+
+        private static double NeutralZoneBalanceScore(NeutralZonePlan zone)
+        {
+            double quality = zone.Quality switch
+            {
+                NeutralZoneQuality.High => 3.0,
+                NeutralZoneQuality.Medium => 2.0,
+                _ => 1.0
+            };
+
+            return quality + Math.Min(zone.CastleCount, 4) * 0.15;
+        }
+
+        // ── Variant ──────────────────────────────────────────────────────────────
+
+        private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
+        {
+            // Shuffle player letters so Player 1 is not always at the same geometric position.
+            if (!settings.ExperimentalBalancedZonePlacement)
+            {
+                var rng = new Random();
+                playerLetters = [.. playerLetters.OrderBy(_ => rng.Next())];
+            }
+
+            return settings.Topology switch
+            {
+                MapTopology.HubAndSpoke => BuildVariantHubAndSpoke(settings, playerLetters, neutralZones, tuning),
+                MapTopology.Chain       => BuildVariantChain(settings, playerLetters, neutralZones, tuning),
+                MapTopology.SharedWeb   => BuildVariantSharedWeb(settings, playerLetters, neutralZones, tuning),
+                MapTopology.Random      => BuildVariantRandom(settings, playerLetters, neutralZones, tuning),
+                _                       => BuildVariantDefault(settings, playerLetters, neutralZones, tuning),
             };
         }
 
         // ── Topology: Default (Ring) ──────────────────────────────────────────────
 
-        private static Variant BuildVariantDefault(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static Variant BuildVariantDefault(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
         {
-            var orderedLetters = playerLetters.Concat(neutralLetters).ToList();
+            var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
+            var orderedLetters = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: true);
             int outerCount = orderedLetters.Count;
             bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
 
@@ -156,38 +652,47 @@ namespace Olden_Era___Template_Editor.Services
 
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
-                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
             }
 
             var connections = new List<Connection>();
-            connections.AddRange(BuildRingConnections(playerLetters, orderedLetters, isolate));
+            connections.AddRange(BuildRingConnections(playerLetters, orderedLetters, tuning, isolate));
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning));
 
-            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, orderedLetters[0], outerCount, zones, connections);
         }
 
         // ── Topology: Random Proximity ────────────────────────────────────────────
 
-        private static Variant BuildVariantRandom(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static Variant BuildVariantRandom(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
         {
             var rng = new Random();
+            var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
+            var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
             // Shuffle zones so player/neutral order is random.
-            var allLetters = playerLetters.Concat(neutralLetters).OrderBy(_ => rng.Next()).ToList();
+            var allLetters = settings.ExperimentalBalancedZonePlacement
+                ? BuildBalancedRingLetters(playerLetters, neutralZones, minNeutralZonesBetweenPlayers: 0)
+                : playerLetters.Concat(neutralLetters).OrderBy(_ => rng.Next()).ToList();
             int count = allLetters.Count;
             bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
 
             // Assign random 2D positions in the unit square.
             // Jitter positions slightly apart to avoid degenerate collinear/cocircular cases.
-            var pos = new List<(double X, double Y)>();
-            for (int i = 0; i < count; i++)
-                pos.Add((rng.NextDouble() * 0.9 + 0.05, rng.NextDouble() * 0.9 + 0.05));
+            var pos = settings.ExperimentalBalancedZonePlacement
+                ? BuildBalancedRandomPositions(allLetters, playerLetters, neutralByLetter)
+                : new List<(double X, double Y)>();
+            if (!settings.ExperimentalBalancedZonePlacement)
+            {
+                for (int i = 0; i < count; i++)
+                    pos.Add((rng.NextDouble() * 0.9 + 0.05, rng.NextDouble() * 0.9 + 0.05));
+            }
 
             // Compute Delaunay triangulation — every edge is a true zone-to-zone border.
-            // With only ≤16 points this is fast enough to do with Bowyer-Watson.
+            // With only up to 32 points this is fast enough to do with Bowyer-Watson.
             var pairs = DelaunayEdges(pos);
 
             // Build connection name lookup per zone index.
@@ -216,7 +721,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = 30000,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"rnd_guard_{fromLetter}_{toLetter}"
                 });
@@ -229,16 +734,45 @@ namespace Olden_Era___Template_Editor.Services
                 var myConns = connsByZone[i].ToArray();
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
-                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning));
 
-            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, allLetters[0], count, zones, connections);
+        }
+
+        private static List<(double X, double Y)> BuildBalancedRandomPositions(
+            List<string> orderedLetters,
+            List<string> playerLetters,
+            Dictionary<string, NeutralZonePlan> neutralByLetter)
+        {
+            int count = orderedLetters.Count;
+            if (count == 0) return [];
+
+            var playerSet = playerLetters.ToHashSet(StringComparer.Ordinal);
+            var positions = new List<(double X, double Y)>(count);
+            for (int i = 0; i < count; i++)
+            {
+                string letter = orderedLetters[i];
+                bool isPlayer = playerSet.Contains(letter);
+                double angle = 2.0 * Math.PI * i / count;
+                double jitter = isPlayer ? 0.0 : ((i % 3) - 1) * 0.018;
+
+                double radius = 0.43;
+                if (!isPlayer && neutralByLetter.TryGetValue(letter, out var neutralZone))
+                    radius = 0.30 + NeutralZoneBalanceScore(neutralZone) * 0.035 + (i % 2) * 0.012;
+
+                positions.Add((
+                    Math.Clamp(0.5 + Math.Cos(angle + jitter) * radius, 0.05, 0.95),
+                    Math.Clamp(0.5 + Math.Sin(angle + jitter) * radius, 0.05, 0.95)));
+            }
+
+            return positions;
         }
 
         // ── Delaunay triangulation (Bowyer-Watson) ────────────────────────────────
@@ -323,17 +857,21 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Topology: Hub & Spoke ─────────────────────────────────────────────────
 
-        private static Variant BuildVariantHubAndSpoke(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static Variant BuildVariantHubAndSpoke(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
         {
             // A central "Hub" zone connects to every outer zone.
             // Outer zones are players + neutrals arranged around the hub.
-            var outerLetters = playerLetters.Concat(neutralLetters).ToList();
+            var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
+            var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
+            var outerLetters = settings.ExperimentalBalancedZonePlacement
+                ? BuildBalancedRingLetters(playerLetters, neutralZones, minNeutralZonesBetweenPlayers: 0)
+                : playerLetters.Concat(neutralLetters).ToList();
             var zones = new List<Zone>();
             var connections = new List<Connection>();
 
             // Hub zone (neutral, no castle, high loot).
             var hubConns = outerLetters.Select(l => $"Hub-{l}").ToArray();
-            zones.Add(BuildHubZone(hubConns, contentScale, densityMult));
+            zones.Add(BuildHubZone(hubConns, tuning));
 
             // Outer zones each connect only to the hub.
             for (int i = 0; i < outerLetters.Count; i++)
@@ -342,9 +880,9 @@ namespace Olden_Era___Template_Editor.Services
                 var spokeConns = new[] { $"Hub-{letter}" };
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", spokeConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", spokeConns, settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
-                    zones.Add(BuildNeutralZone(letter, spokeConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(neutralByLetter[letter], spokeConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
             }
 
             // Hub → each outer zone: Direct guarded connections (multiple per zone like JCC).
@@ -361,7 +899,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = "Hub",
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = 30000,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"hub_guard_{letter}"
                 });
@@ -388,16 +926,17 @@ namespace Olden_Era___Template_Editor.Services
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, outerLetters));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, outerLetters, tuning));
 
             return MakeVariant(playerLetters, outerLetters[0], outerLetters.Count + 1, zones, connections);
         }
 
         // ── Topology: Chain ───────────────────────────────────────────────────────
 
-        private static Variant BuildVariantChain(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static Variant BuildVariantChain(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
         {
-            var orderedLetters = playerLetters.Concat(neutralLetters).ToList();
+            var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
+            var orderedLetters = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: false);
             int count = orderedLetters.Count;
             bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
 
@@ -422,9 +961,9 @@ namespace Olden_Era___Template_Editor.Services
 
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns.ToArray(), settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
-                    zones.Add(BuildNeutralZone(letter, myConns.ToArray(), settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns.ToArray(), settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
             }
 
             var connections = new List<Connection>();
@@ -444,30 +983,31 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = 30000,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"chain_guard_{fromLetter}_{toLetter}"
                 });
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning));
 
-            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, orderedLetters[0], count, zones, connections);
         }
 
         // ── Topology: Shared Web ──────────────────────────────────────────────────
 
-        private static Variant BuildVariantSharedWeb(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static Variant BuildVariantSharedWeb(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
         {
             // Each player connects to two neutral zones.
             // Neutral zones are arranged in a ring connecting all players.
             // If there are fewer neutrals than needed, we wrap around (multiple players share a neutral).
             // Requires at least 1 neutral zone.
-            var neutrals = neutralLetters.Count > 0
-                ? neutralLetters
-                : ZoneLetters.Skip(settings.PlayerCount).Take(1).ToList();
+            var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
+            var neutrals = settings.ExperimentalBalancedZonePlacement
+                ? BuildBalancedNeutralRing(neutralZones, playerLetters.Count)
+                : neutralZones.Select(zone => zone.Letter).ToList();
 
             int p = playerLetters.Count;
             int n = neutrals.Count;
@@ -480,31 +1020,47 @@ namespace Olden_Era___Template_Editor.Services
                 neutralRingConns[i] = $"NRing-{neutrals[i]}-{neutrals[next]}";
             }
 
-            var zones = new List<Zone>();
-            var connections = new List<Connection>();
-
-            // Build neutral zones — each connects to its two ring neighbours.
-            for (int i = 0; i < n; i++)
-            {
-                int prev = (i - 1 + n) % n;
-                string[] nConns = n > 1
-                    ? new[] { neutralRingConns[prev], neutralRingConns[i] }.Distinct().ToArray()
-                    : [];
-                zones.Add(BuildNeutralZone(neutrals[i], nConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
-            }
-
-            // Build player zones — each connects to two neutrals (evenly distributed).
+            var spokeConnsByPlayer = playerLetters.ToDictionary(letter => letter, _ => new List<string>());
+            var spokeConnsByNeutral = neutrals.ToDictionary(letter => letter, _ => new List<string>());
             for (int i = 0; i < p; i++)
             {
                 // Spread players across neutral ring evenly.
                 int n1 = (i * n / p) % n;
                 int n2 = ((i * n / p) + 1) % n;
 
-                var spokeConns = new List<string> { $"Web-{playerLetters[i]}-{neutrals[n1]}" };
+                AddSpoke(playerLetters[i], neutrals[n1]);
                 if (n1 != n2)
-                    spokeConns.Add($"Web-{playerLetters[i]}-{neutrals[n2]}");
+                    AddSpoke(playerLetters[i], neutrals[n2]);
+            }
 
-                zones.Add(BuildSpawnZone(playerLetters[i], $"Player{i + 1}", spokeConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+            var zones = new List<Zone>();
+            var connections = new List<Connection>();
+
+            // Build neutral zones. Each neutral receives its ring and player-spoke endpoints.
+            for (int i = 0; i < n; i++)
+            {
+                int prev = (i - 1 + n) % n;
+                var neutralConns = new List<string>();
+                if (n > 1)
+                {
+                    neutralConns.Add(neutralRingConns[prev]);
+                    neutralConns.Add(neutralRingConns[i]);
+                }
+
+                neutralConns.AddRange(spokeConnsByNeutral[neutrals[i]]);
+                string[] nConns = neutralConns.Distinct().ToArray();
+                Zone neutralZone = BuildNeutralZone(neutralByLetter[neutrals[i]], nConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
+                if (neutralByLetter[neutrals[i]].CastleCount == 0)
+                    neutralZone.Roads = BuildConnectorZoneRoads(nConns, settings.GenerateRoads);
+                zones.Add(neutralZone);
+            }
+
+            // Build player zones — each connects to two neutrals (evenly distributed).
+            for (int i = 0; i < p; i++)
+            {
+                var spokeConns = spokeConnsByPlayer[playerLetters[i]];
+
+                zones.Add(BuildSpawnZone(playerLetters[i], $"Player{i + 1}", spokeConns.ToArray(), settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
 
                 // Player → neutral Direct connections.
                 foreach (var connName in spokeConns)
@@ -520,7 +1076,7 @@ namespace Olden_Era___Template_Editor.Services
                         GuardZone = neutralZone,
                         GuardEscape = false,
                         SimTurnSquad = true,
-                        GuardValue = 30000,
+                        GuardValue = ScaleBorderGuardValue(30000, tuning),
                         GuardWeeklyIncrement = 0.15,
                         GuardMatchGroup = $"web_guard_{playerLetters[i]}_{neutralLetter}"
                     });
@@ -542,7 +1098,7 @@ namespace Olden_Era___Template_Editor.Services
                         GuardZone = $"Neutral-{neutrals[i]}",
                         GuardEscape = false,
                         SimTurnSquad = true,
-                        GuardValue = 20000,
+                        GuardValue = ScaleBorderGuardValue(20000, tuning),
                         GuardWeeklyIncrement = 0.15,
                         GuardMatchGroup = $"nring_guard_{neutrals[i]}_{neutrals[next]}"
                     });
@@ -552,26 +1108,32 @@ namespace Olden_Era___Template_Editor.Services
             if (settings.RandomPortals)
             {
                 var allLetters = playerLetters.Concat(neutrals).ToList();
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning));
             }
 
             bool isolateWeb = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
-            if (isolateWeb) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+            if (isolateWeb) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
 
-            var allZoneLettersOrdered = neutrals.Concat(playerLetters).ToList();
             return MakeVariant(playerLetters, playerLetters[0], zones.Count, zones, connections);
+
+            void AddSpoke(string playerLetter, string neutralLetter)
+            {
+                string connName = $"Web-{playerLetter}-{neutralLetter}";
+                spokeConnsByPlayer[playerLetter].Add(connName);
+                spokeConnsByNeutral[neutralLetter].Add(connName);
+            }
         }
 
         // ── Hub zone (only used by Hub & Spoke topology) ─────────────────────────
 
-        private static Zone BuildHubZone(string[] spokeConns, double contentScale, double densityMult) => new()
+        private static Zone BuildHubZone(string[] spokeConns, GenerationTuning tuning) => new()
         {
             Name = "Hub",
             Size = 1.0,
-            Layout = "zone_layout_spawns",
+            Layout = CenterLayoutName,
             GuardCutoffValue = 2000,
             GuardRandomization = 0.05,
-            GuardMultiplier = 1.5,
+            GuardMultiplier = ScaleGuardMultiplier(1.5, tuning),
             GuardWeeklyIncrement = 0.20,
             GuardReactionDistribution = [0, 10, 10, 20, 10, 0],
             DiplomacyModifier = -0.5,
@@ -580,12 +1142,12 @@ namespace Olden_Era___Template_Editor.Services
             ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
             MandatoryContent = [],
             ContentCountLimits = BuildSideContentLimits(),
-            GuardedContentValue = (int)(300000 * contentScale * densityMult),
-            GuardedContentValuePerArea = (int)(2400 * Math.Sqrt(contentScale) * densityMult),
-            UnguardedContentValue = (int)(50000 * contentScale * densityMult),
-            UnguardedContentValuePerArea = (int)(600 * Math.Sqrt(contentScale) * densityMult),
-            ResourcesValue = (int)(80000 * contentScale * densityMult),
-            ResourcesValuePerArea = (int)(600 * Math.Sqrt(contentScale) * densityMult),
+            GuardedContentValue = ScaleStructureValue(300000 * tuning.ContentScale, tuning),
+            GuardedContentValuePerArea = ScaleStructureValue(2400 * Math.Sqrt(tuning.ContentScale), tuning),
+            UnguardedContentValue = ScaleStructureValue(50000 * tuning.ContentScale, tuning),
+            UnguardedContentValuePerArea = ScaleStructureValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
+            ResourcesValue = ScaleResourceValue(80000 * tuning.ContentScale, tuning),
+            ResourcesValuePerArea = ScaleResourceValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
             MainObjects = [],
             ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
             ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
@@ -602,7 +1164,7 @@ namespace Olden_Era___Template_Editor.Services
         /// This method adds a minimal direct player–player fallback connection for each such zone.
         /// </summary>
         private static void EnsurePlayerZonesConnected(
-            List<string> playerLetters, List<Zone> zones, List<Connection> connections)
+            List<string> playerLetters, List<Zone> zones, List<Connection> connections, GenerationTuning tuning)
         {
             if (playerLetters.Count < 2) return;
 
@@ -652,7 +1214,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = $"Spawn-{letter}",
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = 30000,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"fallback_guard_{fallbackName}"
                 });
@@ -677,7 +1239,7 @@ namespace Olden_Era___Template_Editor.Services
         {
             Orientation = new Orientation
             {
-                ZeroAngleZone = playerLetters.Count > 0 ? $"Spawn-{firstLetter}" : $"Neutral-{firstLetter}",
+                ZeroAngleZone = playerLetters.Contains(firstLetter) ? $"Spawn-{firstLetter}" : $"Neutral-{firstLetter}",
                 BaseAngleMin = 45,
                 BaseAngleMax = 45,
                 RandomAngleAmplitude = 360,
@@ -698,9 +1260,9 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Spawn zone ───────────────────────────────────────────────────────────
 
-        private static Zone BuildSpawnZone(string letter, string player, string[] ringConns, int castleCount, bool spawnFootholds, bool generateRoads, double contentScale, double densityMult)
+        private static Zone BuildSpawnZone(string letter, string player, string[] ringConns, int castleCount, bool matchCastleFactions, double zoneSize, bool spawnFootholds, bool generateRoads, GenerationTuning tuning)
         {
-            // Index 0 = Spawn (player town), indices 1..castleCount = extra same-faction cities.
+            // Index 0 = Spawn (player town), indices 1..castleCount-1 = extra cities.
             var mainObjects = new List<MainObject>
             {
                 new()
@@ -709,7 +1271,7 @@ namespace Olden_Era___Template_Editor.Services
                     Spawn = player,
                     RemoveGuardIfHasOwner = true,
                     GuardChance = 0.5,
-                    GuardValue = 5000,
+                    GuardValue = ScaleNeutralGuardValue(5000, tuning),
                     GuardWeeklyIncrement = 0.10,
                     BuildingsConstructionSid = "default_buildings_construction",
                     Placement = "Uniform",
@@ -722,9 +1284,11 @@ namespace Olden_Era___Template_Editor.Services
                 mainObjects.Add(new MainObject
                 {
                     Type = "City",
-                    Faction = new TypedSelector { Type = "Random", Args = [] },
+                    Faction = matchCastleFactions
+                        ? new TypedSelector { Type = "Match", Args = ["0"] }
+                        : new TypedSelector { Type = "Random", Args = [] },
                     GuardChance = 0.5,
-                    GuardValue = 2500,
+                    GuardValue = ScaleNeutralGuardValue(2500, tuning),
                     GuardWeeklyIncrement = 0.10,
                     BuildingsConstructionSid = "poor_buildings_construction",
                     Placement = "Uniform",
@@ -735,11 +1299,11 @@ namespace Olden_Era___Template_Editor.Services
             return new Zone
             {
                 Name = $"Spawn-{letter}",
-                Size = 1.0,
-                Layout = "zone_layout_spawns",
+                Size = NormalizeZoneSize(zoneSize),
+                Layout = SpawnLayoutName,
                 GuardCutoffValue = 2000,
-                GuardRandomization = 0.05,
-                GuardMultiplier = 1.0,
+                GuardRandomization = tuning.GuardRandomization,
+                GuardMultiplier = ScaleGuardMultiplier(1.0, tuning),
                 GuardWeeklyIncrement = 0.20,
                 GuardReactionDistribution = [60, 20, 10, 10, 2, 0],
                 DiplomacyModifier = -0.5,
@@ -748,12 +1312,12 @@ namespace Olden_Era___Template_Editor.Services
                 ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
                 MandatoryContent = [$"mandatory_content_side_{letter}"],
                 ContentCountLimits = BuildSideContentLimits(),
-                GuardedContentValue = (int)(200000 * contentScale * densityMult),
-                GuardedContentValuePerArea = (int)(2000 * Math.Sqrt(contentScale) * densityMult),
-                UnguardedContentValue = (int)(50000 * contentScale * densityMult),
-                UnguardedContentValuePerArea = (int)(400 * Math.Sqrt(contentScale) * densityMult),
-                ResourcesValue = (int)(80000 * contentScale * densityMult),
-                ResourcesValuePerArea = (int)(600 * Math.Sqrt(contentScale) * densityMult),
+                GuardedContentValue = ScaleStructureValue(200000 * tuning.ContentScale, tuning),
+                GuardedContentValuePerArea = ScaleStructureValue(2000 * Math.Sqrt(tuning.ContentScale), tuning),
+                UnguardedContentValue = ScaleStructureValue(50000 * tuning.ContentScale, tuning),
+                UnguardedContentValuePerArea = ScaleStructureValue(400 * Math.Sqrt(tuning.ContentScale), tuning),
+                ResourcesValue = ScaleResourceValue(80000 * tuning.ContentScale, tuning),
+                ResourcesValuePerArea = ScaleResourceValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
                 MainObjects = mainObjects,
                 ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
@@ -765,19 +1329,21 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Neutral zone ─────────────────────────────────────────────────────────
 
-        private static Zone BuildNeutralZone(string letter, string[] ringConns, int castleCount, bool spawnFootholds, bool generateRoads, double contentScale, double densityMult)
+        private static Zone BuildNeutralZone(NeutralZonePlan plan, string[] ringConns, double zoneSize, bool spawnFootholds, bool generateRoads, GenerationTuning tuning)
         {
-            // Index 0 = primary neutral city; indices 1..castleCount-1 = extra neutral cities.
-            // All cities use FromList [] (neutral faction, not biome-matched).
+            string letter = plan.Letter;
+            int castleCount = plan.CastleCount;
+            var profile = GetNeutralZoneProfile(plan.Quality);
+
             var mainObjects = new List<MainObject>();
             if (castleCount > 0)
                 mainObjects.Add(new MainObject
                 {
                     Type = "City",
                     GuardChance = 0.5,
-                    GuardValue = 10000,
+                    GuardValue = ScaleNeutralGuardValue(profile.PrimaryCityGuardValue, tuning),
                     GuardWeeklyIncrement = 0.10,
-                    BuildingsConstructionSid = "rich_buildings_construction",
+                    BuildingsConstructionSid = profile.PrimaryBuildingsConstructionSid,
                     Faction = new TypedSelector { Type = "FromList", Args = [] },
                     Placement = "Uniform",
                     PlacementArgs = ["true", "0.8", "2"]
@@ -789,9 +1355,9 @@ namespace Olden_Era___Template_Editor.Services
                 {
                     Type = "City",
                     GuardChance = 0.5,
-                    GuardValue = 5000,
+                    GuardValue = ScaleNeutralGuardValue(profile.ExtraCityGuardValue, tuning),
                     GuardWeeklyIncrement = 0.10,
-                    BuildingsConstructionSid = "poor_buildings_construction",
+                    BuildingsConstructionSid = profile.ExtraBuildingsConstructionSid,
                     Faction = new TypedSelector { Type = "FromList", Args = [] },
                     Placement = "Uniform",
                     PlacementArgs = ["false", "-0.8", "3"]
@@ -801,25 +1367,25 @@ namespace Olden_Era___Template_Editor.Services
             return new Zone
             {
                 Name = $"Neutral-{letter}",
-                Size = 1.0,
-                Layout = "zone_layout_spawns",
+                Size = NormalizeZoneSize(zoneSize),
+                Layout = profile.Layout,
                 GuardCutoffValue = 2000,
-                GuardRandomization = 0.05,
-                GuardMultiplier = 1.3,
+                GuardRandomization = tuning.GuardRandomization,
+                GuardMultiplier = ScaleGuardMultiplier(profile.GuardMultiplier, tuning),
                 GuardWeeklyIncrement = 0.20,
-                GuardReactionDistribution = [0, 10, 10, 10, 10, 0],
+                GuardReactionDistribution = plan.Quality == NeutralZoneQuality.High ? [0, 10, 10, 20, 10, 0] : [0, 10, 10, 10, 10, 0],
                 DiplomacyModifier = -0.5,
-                GuardedContentPool = ["template_pool_jebus_cross_guarded_side_zone"],
-                UnguardedContentPool = ["template_pool_jebus_cross_unguarded_side_zone"],
-                ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
+                GuardedContentPool = [profile.GuardedContentPool],
+                UnguardedContentPool = [profile.UnguardedContentPool],
+                ResourcesContentPool = [profile.ResourcesContentPool],
                 MandatoryContent = [$"mandatory_content_neutral_{letter}"],
                 ContentCountLimits = BuildSideContentLimits(),
-                GuardedContentValue = (int)(260000 * contentScale * densityMult),
-                GuardedContentValuePerArea = (int)(2400 * Math.Sqrt(contentScale) * densityMult),
-                UnguardedContentValue = (int)(40000 * contentScale * densityMult),
-                UnguardedContentValuePerArea = (int)(320 * Math.Sqrt(contentScale) * densityMult),
-                ResourcesValue = (int)(60000 * contentScale * densityMult),
-                ResourcesValuePerArea = (int)(480 * Math.Sqrt(contentScale) * densityMult),
+                GuardedContentValue = ScaleStructureValue(profile.GuardedContentValue * tuning.ContentScale, tuning),
+                GuardedContentValuePerArea = ScaleStructureValue(profile.GuardedContentValuePerArea * Math.Sqrt(tuning.ContentScale), tuning),
+                UnguardedContentValue = ScaleStructureValue(profile.UnguardedContentValue * tuning.ContentScale, tuning),
+                UnguardedContentValuePerArea = ScaleStructureValue(profile.UnguardedContentValuePerArea * Math.Sqrt(tuning.ContentScale), tuning),
+                ResourcesValue = ScaleResourceValue(profile.ResourcesValue * tuning.ContentScale, tuning),
+                ResourcesValuePerArea = ScaleResourceValue(profile.ResourcesValuePerArea * Math.Sqrt(tuning.ContentScale), tuning),
                 MainObjects = mainObjects,
                 ZoneBiome = castleCount > 0
                     ? new BiomeSelector { Type = "MatchMainObject", Args = ["0"] }
@@ -835,6 +1401,58 @@ namespace Olden_Era___Template_Editor.Services
             };
         }
 
+        private static NeutralZoneProfile GetNeutralZoneProfile(NeutralZoneQuality quality) => quality switch
+        {
+            NeutralZoneQuality.Low => new NeutralZoneProfile(
+                SideLayoutName,
+                1.0,
+                "template_pool_jebus_cross_guarded_start_zone",
+                "template_pool_jebus_cross_unguarded_start_zone",
+                "content_pool_general_resources_start_zone_rich",
+                140000,
+                1200,
+                30000,
+                240,
+                40000,
+                320,
+                5000,
+                2500,
+                "poor_buildings_construction",
+                "poor_buildings_construction"),
+            NeutralZoneQuality.High => new NeutralZoneProfile(
+                CenterLayoutName,
+                1.6,
+                "template_pool_jebus_cross_guarded_center_zone",
+                "template_pool_jebus_cross_unguarded_center_zone",
+                "content_pool_general_resources_treasure_zone_rich_no_scrolls",
+                520000,
+                3200,
+                90000,
+                700,
+                100000,
+                650,
+                18000,
+                9000,
+                "rich_buildings_construction",
+                "rich_buildings_construction"),
+            _ => new NeutralZoneProfile(
+                TreasureLayoutName,
+                1.3,
+                "template_pool_jebus_cross_guarded_side_zone",
+                "template_pool_jebus_cross_unguarded_side_zone",
+                "content_pool_general_resources_start_zone_rich",
+                260000,
+                2400,
+                40000,
+                320,
+                60000,
+                480,
+                10000,
+                5000,
+                "rich_buildings_construction",
+                "poor_buildings_construction"),
+        };
+
         // ── Connections
 
         /// <summary>
@@ -843,7 +1461,7 @@ namespace Olden_Era___Template_Editor.Services
         /// When <paramref name="isolatePlayers"/> is true, player–player adjacent pairs are skipped.
         /// </summary>
         private static IEnumerable<Connection> BuildRingConnections(
-            List<string> playerLetters, List<string> orderedLetters, bool isolatePlayers = false)
+            List<string> playerLetters, List<string> orderedLetters, GenerationTuning tuning, bool isolatePlayers = false)
         {
             int count = orderedLetters.Count;
             if (count < 2) yield break;
@@ -869,7 +1487,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = 30000,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"ring_guard_{fromLetter}_{toLetter}"
                 };
@@ -882,7 +1500,7 @@ namespace Olden_Era___Template_Editor.Services
         /// that does NOT lead to its immediate ring neighbours.
         /// </summary>
         private static IEnumerable<Connection> BuildRandomPortalConnections(
-            List<string> playerLetters, List<string> orderedLetters)
+            List<string> playerLetters, List<string> orderedLetters, GenerationTuning tuning)
         {
             int count = orderedLetters.Count;
             if (count < 2) yield break; // Need at least 2 zones for a portal.
@@ -912,7 +1530,7 @@ namespace Olden_Era___Template_Editor.Services
                     PortalPlacementRulesTo   = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 2 }],
                     Road = true,
                     GuardEscape = false,
-                    GuardValue = 25000,
+                    GuardValue = ScaleBorderGuardValue(25000, tuning),
                     GuardWeeklyIncrement = 0.15
                 };
             }
@@ -1003,6 +1621,31 @@ namespace Olden_Era___Template_Editor.Services
             return roads;
         }
 
+        private static List<Road> BuildConnectorZoneRoads(string[] connectionNames, bool generateRoads)
+        {
+            var roads = new List<Road>();
+            if (!generateRoads) return roads;
+
+            var distinctConnections = connectionNames
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .Distinct()
+                .ToList();
+
+            if (distinctConnections.Count == 1)
+            {
+                string connectionName = distinctConnections[0];
+                roads.Add(PlainRoad(ConnectionEndpoint(connectionName), ConnectionEndpoint(connectionName)));
+                return roads;
+            }
+
+            string? anchor = distinctConnections.FirstOrDefault();
+            if (anchor == null) return roads;
+
+            foreach (string connectionName in distinctConnections.Skip(1))
+                roads.Add(PlainRoad(ConnectionEndpoint(anchor), ConnectionEndpoint(connectionName)));
+            return roads;
+        }
+
         private static Road PlainRoad(RoadEndpoint from, RoadEndpoint to) =>
             new() { From = from, To = to };
 
@@ -1019,20 +1662,36 @@ namespace Olden_Era___Template_Editor.Services
 
         private static List<ZoneLayout> BuildZoneLayouts() =>
         [
-            new ZoneLayout
+            BuildZoneLayout(SpawnLayoutName, 0.24, 0.48, 0.30, 16, 0.16, 160, -0.30, 0.4, [20, 2, 1]),
+            BuildZoneLayout(SideLayoutName, 0.36, 0.50, 0.25, 16, 0.128, 128, -0.30, 0.3, [20, 2, 1]),
+            BuildZoneLayout(TreasureLayoutName, 0.50, 0.50, 0.45, 12, 0.12, 96, -0.30, 0.3, [12, 3, 1]),
+            BuildZoneLayout(CenterLayoutName, 0.56, 0.60, 0.30, 10, 0.128, 96, -0.25, 0.3, [12, 4, 1])
+        ];
+
+        private static ZoneLayout BuildZoneLayout(
+            string name,
+            double obstaclesFill,
+            double obstaclesFillVoid,
+            double lakesFill,
+            int minLakeArea,
+            double elevationClusterScale,
+            int roadClusterArea,
+            double roadAttraction,
+            double ambientNoise,
+            int[] groupSizeWeights) => new()
             {
-                Name = "zone_layout_spawns",
-                ObstaclesFill = 0.24,
-                ObstaclesFillVoid = 0.48,
-                LakesFill = 0.3,
-                MinLakeArea = 16,
-                ElevationClusterScale = 0.16,
+                Name = name,
+                ObstaclesFill = obstaclesFill,
+                ObstaclesFillVoid = obstaclesFillVoid,
+                LakesFill = lakesFill,
+                MinLakeArea = minLakeArea,
+                ElevationClusterScale = elevationClusterScale,
                 ElevationModes =
                 [
                     new ElevationMode { Weight = 2, MinElevatedFraction = 0.2, MaxElevatedFraction = 0.4 },
                     new ElevationMode { Weight = 1, MinElevatedFraction = 0.6, MaxElevatedFraction = 0.8 }
                 ],
-                RoadClusterArea = 160,
+                RoadClusterArea = roadClusterArea,
                 GuardedEncounterResourceFractions = new GuardedEncounterResourceFractions
                 {
                     CountBounds = [],
@@ -1041,26 +1700,25 @@ namespace Olden_Era___Template_Editor.Services
                 AmbientPickupDistribution = new AmbientPickupDistribution
                 {
                     Repulsion = 1.0,
-                    Noise = 0.4,
-                    RoadAttraction = -0.30,
+                    Noise = ambientNoise,
+                    RoadAttraction = roadAttraction,
                     ObstacleAttraction = 0.0,
-                    GroupSizeWeights = [20, 2, 1]
+                    GroupSizeWeights = groupSizeWeights.ToList()
                 }
-            }
-        ];
+            };
 
         // ── Mandatory content ────────────────────────────────────────────────────
 
         private static List<MandatoryContentGroup> BuildAllMandatoryContent(
-            List<string> playerLetters, List<string> neutralLetters, GeneratorSettings settings)
+            List<string> playerLetters, List<NeutralZonePlan> neutralZones, GeneratorSettings settings)
         {
             var groups = new List<MandatoryContentGroup>();
 
             foreach (var letter in playerLetters)
                 groups.Add(BuildSpawnMandatoryContent(letter, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds));
 
-            foreach (var letter in neutralLetters)
-                groups.Add(BuildNeutralMandatoryContent(letter, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds));
+            foreach (var neutralZone in neutralZones)
+                groups.Add(BuildNeutralMandatoryContent(neutralZone.Letter, neutralZone.CastleCount, settings.SpawnRemoteFootholds));
 
             return groups;
         }
@@ -1088,8 +1746,9 @@ namespace Olden_Era___Template_Editor.Services
             var footholdRules = new List<ContentPlacementRule>
             {
                 new() { Type = "Crossroads", Args = [], TargetMin = 0.2, TargetMax = 0.3, Weight = 0 },
-                new() { Type = "MainObject", Args = ["0"], TargetMin = 0.2, TargetMax = 0.4, Weight = 0 },
             };
+            if (castleCount > 0)
+                footholdRules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.2, TargetMax = 0.4, Weight = 0 });
             if (castleCount > 1)
                 footholdRules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["1"], TargetMin = 0.5, TargetMax = 0.5, Weight = 2 });
 
