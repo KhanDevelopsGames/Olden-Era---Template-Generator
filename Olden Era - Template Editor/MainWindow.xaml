@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Olden Era - Simple Template Generator"
-        Height="610" Width="960"
-        MinHeight="550" MinWidth="800"
+        Height="700" Width="960"
+        MinHeight="650" MinWidth="800"
         WindowStyle="None"
         ResizeMode="NoResize"
         Background="#1A1510"
@@ -250,6 +250,12 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="8"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <DockPanel Grid.Row="0" Grid.Column="0">
@@ -286,14 +292,47 @@
                                     ValueChanged="Slider_ValueChanged"/>
 
                             <DockPanel Grid.Row="6" Grid.Column="0">
-                                <Label Content="Resource/Structure spawn rate" DockPanel.Dock="Left"/>
-                                <TextBlock x:Name="TxtContentDensity" Text="100%" DockPanel.Dock="Right"
+                                <Label Content="Resource spawn rate" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtResourceDensity" Text="100%" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,10,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
-                            <Slider Grid.Row="6" Grid.Column="1" x:Name="SldContentDensity"
+                            <Slider Grid.Row="6" Grid.Column="1" x:Name="SldResourceDensity"
                                     Minimum="20" Maximum="200" Value="100"
                                     TickFrequency="10" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+
+                            <DockPanel Grid.Row="8" Grid.Column="0">
+                                <Label Content="Structure spawn rate" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtStructureDensity" Text="100%" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,10,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Row="8" Grid.Column="1" x:Name="SldStructureDensity"
+                                    Minimum="20" Maximum="200" Value="100"
+                                    TickFrequency="10" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+
+                            <DockPanel Grid.Row="10" Grid.Column="0">
+                                <Label Content="Zone neutral strength" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtNeutralStackStrength" Text="100%" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,10,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Row="10" Grid.Column="1" x:Name="SldNeutralStackStrength"
+                                    Minimum="25" Maximum="300" Value="100"
+                                    TickFrequency="5" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+
+                            <DockPanel Grid.Row="12" Grid.Column="0">
+                                <Label Content="Border/portal strength" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtBorderGuardStrength" Text="100%" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,10,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Row="12" Grid.Column="1" x:Name="SldBorderGuardStrength"
+                                    Minimum="0" Maximum="300" Value="100"
+                                    TickFrequency="5" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
                         </Grid>
                                 <CheckBox x:Name="ChkGenerateRoads"  Content="Generate roads"         IsChecked="True" Margin="0,15,0,0"

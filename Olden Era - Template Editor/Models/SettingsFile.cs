@@ -22,6 +22,15 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("spawnFootholds")]    public bool    SpawnRemoteFootholds   { get; set; } = true;
         [JsonPropertyName("generateRoads")]     public bool    GenerateRoads          { get; set; } = true;
         [JsonPropertyName("isolateplayers")]    public bool    NoDirectPlayerConn     { get; set; } = false;
-        [JsonPropertyName("contentDensity")]    public int     ContentDensityPercent  { get; set; } = 100;
+        [JsonPropertyName("resourceDensity")]   public int?    ResourceDensityPercent       { get; set; }
+        [JsonPropertyName("structureDensity")]  public int?    StructureDensityPercent      { get; set; }
+        [JsonPropertyName("neutralStackStrength")] public int  NeutralStackStrengthPercent  { get; set; } = 100;
+        [JsonPropertyName("borderGuardStrength")]  public int  BorderGuardStrengthPercent   { get; set; } = 100;
+
+        // Legacy setting from v0.2 and earlier; when present, it seeds both split density sliders.
+        [JsonPropertyName("contentDensity")]    public int?    ContentDensityPercent        { get; set; }
+
+        [JsonIgnore] public int EffectiveResourceDensityPercent  => ResourceDensityPercent  ?? ContentDensityPercent ?? 100;
+        [JsonIgnore] public int EffectiveStructureDensityPercent => StructureDensityPercent ?? ContentDensityPercent ?? 100;
     }
 }

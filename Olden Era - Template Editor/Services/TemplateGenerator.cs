@@ -30,8 +30,12 @@ namespace Olden_Era___Template_Editor.Services
             var neutralLetters = ZoneLetters.Skip(settings.PlayerCount).Take(neutralCount).ToList();
 
             int totalZones = settings.PlayerCount + neutralCount;
-            double contentScale = ComputeContentScale(settings.MapSize, totalZones);
-            double densityMult  = settings.ContentDensityPercent / 100.0;
+            var tuning = new GenerationTuning(
+                ComputeContentScale(settings.MapSize, totalZones),
+                settings.ResourceDensityPercent / 100.0,
+                settings.StructureDensityPercent / 100.0,
+                settings.NeutralStackStrengthPercent / 100.0,
+                settings.BorderGuardStrengthPercent / 100.0);
 
             var template = new RmgTemplate
             {
@@ -42,7 +46,7 @@ namespace Olden_Era___Template_Editor.Services
                 SizeX = settings.MapSize,
                 SizeZ = settings.MapSize,
                 GameRules = BuildGameRules(settings),
-                Variants = [BuildVariant(settings, playerLetters, neutralLetters, contentScale, densityMult)],
+                Variants = [BuildVariant(settings, playerLetters, neutralLetters, tuning)],
                 ZoneLayouts = BuildZoneLayouts(),
                 MandatoryContent = BuildAllMandatoryContent(playerLetters, neutralLetters, settings),
                 ContentCountLimits = BuildAllContentCountLimits(),
@@ -90,6 +94,31 @@ namespace Olden_Era___Template_Editor.Services
             }
         };
 
+        private readonly record struct GenerationTuning(
+            double ContentScale,
+            double ResourceDensityMultiplier,
+            double StructureDensityMultiplier,
+            double NeutralStackStrengthMultiplier,
+            double BorderGuardStrengthMultiplier);
+
+        private static int ScaleValue(double value, double multiplier) =>
+            Math.Max(0, (int)(value * multiplier));
+
+        private static int ScaleStructureValue(double value, GenerationTuning tuning) =>
+            ScaleValue(value, tuning.StructureDensityMultiplier);
+
+        private static int ScaleResourceValue(double value, GenerationTuning tuning) =>
+            ScaleValue(value, tuning.ResourceDensityMultiplier);
+
+        private static int ScaleNeutralGuardValue(int value, GenerationTuning tuning) =>
+            ScaleValue(value, tuning.NeutralStackStrengthMultiplier);
+
+        private static int ScaleBorderGuardValue(int value, GenerationTuning tuning) =>
+            ScaleValue(value, tuning.BorderGuardStrengthMultiplier);
+
+        private static double ScaleGuardMultiplier(double value, GenerationTuning tuning) =>
+            Math.Round(value * tuning.NeutralStackStrengthMultiplier, 3, MidpointRounding.AwayFromZero);
+
         // ── Content scale ────────────────────────────────────────────────────────
 
         /// <summary>
@@ -106,7 +135,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Variant ──────────────────────────────────────────────────────────────
 
-        private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, GenerationTuning tuning)
         {
             // Shuffle player letters so Player 1 is not always at the same geometric position.
             var rng = new Random();
@@ -115,17 +144,17 @@ namespace Olden_Era___Template_Editor.Services
 
             return settings.Topology switch
             {
-                MapTopology.HubAndSpoke => BuildVariantHubAndSpoke(settings, playerLetters, neutralLetters, contentScale, densityMult),
-                MapTopology.Chain       => BuildVariantChain(settings, playerLetters, neutralLetters, contentScale, densityMult),
-                MapTopology.SharedWeb   => BuildVariantSharedWeb(settings, playerLetters, neutralLetters, contentScale, densityMult),
-                MapTopology.Random      => BuildVariantRandom(settings, playerLetters, neutralLetters, contentScale, densityMult),
-                _                       => BuildVariantDefault(settings, playerLetters, neutralLetters, contentScale, densityMult),
+                MapTopology.HubAndSpoke => BuildVariantHubAndSpoke(settings, playerLetters, neutralLetters, tuning),
+                MapTopology.Chain       => BuildVariantChain(settings, playerLetters, neutralLetters, tuning),
+                MapTopology.SharedWeb   => BuildVariantSharedWeb(settings, playerLetters, neutralLetters, tuning),
+                MapTopology.Random      => BuildVariantRandom(settings, playerLetters, neutralLetters, tuning),
+                _                       => BuildVariantDefault(settings, playerLetters, neutralLetters, tuning),
             };
         }
 
         // ── Topology: Default (Ring) ──────────────────────────────────────────────
 
-        private static Variant BuildVariantDefault(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static Variant BuildVariantDefault(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, GenerationTuning tuning)
         {
             var orderedLetters = playerLetters.Concat(neutralLetters).ToList();
             int outerCount = orderedLetters.Count;
@@ -156,23 +185,23 @@ namespace Olden_Era___Template_Editor.Services
 
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
-                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
             }
 
             var connections = new List<Connection>();
-            connections.AddRange(BuildRingConnections(playerLetters, orderedLetters, isolate));
+            connections.AddRange(BuildRingConnections(playerLetters, orderedLetters, tuning, isolate));
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning));
 
-            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, orderedLetters[0], outerCount, zones, connections);
         }
 
         // ── Topology: Random Proximity ────────────────────────────────────────────
 
-        private static Variant BuildVariantRandom(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static Variant BuildVariantRandom(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, GenerationTuning tuning)
         {
             var rng = new Random();
             // Shuffle zones so player/neutral order is random.
@@ -216,7 +245,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = 30000,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"rnd_guard_{fromLetter}_{toLetter}"
                 });
@@ -229,15 +258,15 @@ namespace Olden_Era___Template_Editor.Services
                 var myConns = connsByZone[i].ToArray();
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
-                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(letter, myConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning));
 
-            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, allLetters[0], count, zones, connections);
         }
 
@@ -323,7 +352,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Topology: Hub & Spoke ─────────────────────────────────────────────────
 
-        private static Variant BuildVariantHubAndSpoke(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static Variant BuildVariantHubAndSpoke(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, GenerationTuning tuning)
         {
             // A central "Hub" zone connects to every outer zone.
             // Outer zones are players + neutrals arranged around the hub.
@@ -333,7 +362,7 @@ namespace Olden_Era___Template_Editor.Services
 
             // Hub zone (neutral, no castle, high loot).
             var hubConns = outerLetters.Select(l => $"Hub-{l}").ToArray();
-            zones.Add(BuildHubZone(hubConns, contentScale, densityMult));
+            zones.Add(BuildHubZone(hubConns, tuning));
 
             // Outer zones each connect only to the hub.
             for (int i = 0; i < outerLetters.Count; i++)
@@ -342,9 +371,9 @@ namespace Olden_Era___Template_Editor.Services
                 var spokeConns = new[] { $"Hub-{letter}" };
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", spokeConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", spokeConns, settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
-                    zones.Add(BuildNeutralZone(letter, spokeConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(letter, spokeConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
             }
 
             // Hub → each outer zone: Direct guarded connections (multiple per zone like JCC).
@@ -361,7 +390,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = "Hub",
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = 30000,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"hub_guard_{letter}"
                 });
@@ -388,14 +417,14 @@ namespace Olden_Era___Template_Editor.Services
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, outerLetters));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, outerLetters, tuning));
 
             return MakeVariant(playerLetters, outerLetters[0], outerLetters.Count + 1, zones, connections);
         }
 
         // ── Topology: Chain ───────────────────────────────────────────────────────
 
-        private static Variant BuildVariantChain(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static Variant BuildVariantChain(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, GenerationTuning tuning)
         {
             var orderedLetters = playerLetters.Concat(neutralLetters).ToList();
             int count = orderedLetters.Count;
@@ -422,9 +451,9 @@ namespace Olden_Era___Template_Editor.Services
 
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
-                    zones.Add(BuildNeutralZone(letter, myConns.ToArray(), settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                    zones.Add(BuildNeutralZone(letter, myConns.ToArray(), settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
             }
 
             var connections = new List<Connection>();
@@ -444,22 +473,22 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = 30000,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"chain_guard_{fromLetter}_{toLetter}"
                 });
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning));
 
-            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+            if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, orderedLetters[0], count, zones, connections);
         }
 
         // ── Topology: Shared Web ──────────────────────────────────────────────────
 
-        private static Variant BuildVariantSharedWeb(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, double contentScale, double densityMult)
+        private static Variant BuildVariantSharedWeb(GeneratorSettings settings, List<string> playerLetters, List<string> neutralLetters, GenerationTuning tuning)
         {
             // Each player connects to two neutral zones.
             // Neutral zones are arranged in a ring connecting all players.
@@ -490,7 +519,7 @@ namespace Olden_Era___Template_Editor.Services
                 string[] nConns = n > 1
                     ? new[] { neutralRingConns[prev], neutralRingConns[i] }.Distinct().ToArray()
                     : [];
-                zones.Add(BuildNeutralZone(neutrals[i], nConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                zones.Add(BuildNeutralZone(neutrals[i], nConns, settings.NeutralZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
             }
 
             // Build player zones — each connects to two neutrals (evenly distributed).
@@ -504,7 +533,7 @@ namespace Olden_Era___Template_Editor.Services
                 if (n1 != n2)
                     spokeConns.Add($"Web-{playerLetters[i]}-{neutrals[n2]}");
 
-                zones.Add(BuildSpawnZone(playerLetters[i], $"Player{i + 1}", spokeConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, contentScale, densityMult));
+                zones.Add(BuildSpawnZone(playerLetters[i], $"Player{i + 1}", spokeConns.ToArray(), settings.PlayerZoneCastles, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
 
                 // Player → neutral Direct connections.
                 foreach (var connName in spokeConns)
@@ -520,7 +549,7 @@ namespace Olden_Era___Template_Editor.Services
                         GuardZone = neutralZone,
                         GuardEscape = false,
                         SimTurnSquad = true,
-                        GuardValue = 30000,
+                        GuardValue = ScaleBorderGuardValue(30000, tuning),
                         GuardWeeklyIncrement = 0.15,
                         GuardMatchGroup = $"web_guard_{playerLetters[i]}_{neutralLetter}"
                     });
@@ -542,7 +571,7 @@ namespace Olden_Era___Template_Editor.Services
                         GuardZone = $"Neutral-{neutrals[i]}",
                         GuardEscape = false,
                         SimTurnSquad = true,
-                        GuardValue = 20000,
+                        GuardValue = ScaleBorderGuardValue(20000, tuning),
                         GuardWeeklyIncrement = 0.15,
                         GuardMatchGroup = $"nring_guard_{neutrals[i]}_{neutrals[next]}"
                     });
@@ -552,11 +581,11 @@ namespace Olden_Era___Template_Editor.Services
             if (settings.RandomPortals)
             {
                 var allLetters = playerLetters.Concat(neutrals).ToList();
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning));
             }
 
             bool isolateWeb = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
-            if (isolateWeb) EnsurePlayerZonesConnected(playerLetters, zones, connections);
+            if (isolateWeb) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
 
             var allZoneLettersOrdered = neutrals.Concat(playerLetters).ToList();
             return MakeVariant(playerLetters, playerLetters[0], zones.Count, zones, connections);
@@ -564,14 +593,14 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Hub zone (only used by Hub & Spoke topology) ─────────────────────────
 
-        private static Zone BuildHubZone(string[] spokeConns, double contentScale, double densityMult) => new()
+        private static Zone BuildHubZone(string[] spokeConns, GenerationTuning tuning) => new()
         {
             Name = "Hub",
             Size = 1.0,
             Layout = "zone_layout_spawns",
             GuardCutoffValue = 2000,
             GuardRandomization = 0.05,
-            GuardMultiplier = 1.5,
+            GuardMultiplier = ScaleGuardMultiplier(1.5, tuning),
             GuardWeeklyIncrement = 0.20,
             GuardReactionDistribution = [0, 10, 10, 20, 10, 0],
             DiplomacyModifier = -0.5,
@@ -580,12 +609,12 @@ namespace Olden_Era___Template_Editor.Services
             ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
             MandatoryContent = [],
             ContentCountLimits = BuildSideContentLimits(),
-            GuardedContentValue = (int)(300000 * contentScale * densityMult),
-            GuardedContentValuePerArea = (int)(2400 * Math.Sqrt(contentScale) * densityMult),
-            UnguardedContentValue = (int)(50000 * contentScale * densityMult),
-            UnguardedContentValuePerArea = (int)(600 * Math.Sqrt(contentScale) * densityMult),
-            ResourcesValue = (int)(80000 * contentScale * densityMult),
-            ResourcesValuePerArea = (int)(600 * Math.Sqrt(contentScale) * densityMult),
+            GuardedContentValue = ScaleStructureValue(300000 * tuning.ContentScale, tuning),
+            GuardedContentValuePerArea = ScaleStructureValue(2400 * Math.Sqrt(tuning.ContentScale), tuning),
+            UnguardedContentValue = ScaleStructureValue(50000 * tuning.ContentScale, tuning),
+            UnguardedContentValuePerArea = ScaleStructureValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
+            ResourcesValue = ScaleResourceValue(80000 * tuning.ContentScale, tuning),
+            ResourcesValuePerArea = ScaleResourceValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
             MainObjects = [],
             ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
             ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
@@ -602,7 +631,7 @@ namespace Olden_Era___Template_Editor.Services
         /// This method adds a minimal direct player–player fallback connection for each such zone.
         /// </summary>
         private static void EnsurePlayerZonesConnected(
-            List<string> playerLetters, List<Zone> zones, List<Connection> connections)
+            List<string> playerLetters, List<Zone> zones, List<Connection> connections, GenerationTuning tuning)
         {
             if (playerLetters.Count < 2) return;
 
@@ -652,7 +681,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = $"Spawn-{letter}",
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = 30000,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"fallback_guard_{fallbackName}"
                 });
@@ -698,7 +727,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Spawn zone ───────────────────────────────────────────────────────────
 
-        private static Zone BuildSpawnZone(string letter, string player, string[] ringConns, int castleCount, bool spawnFootholds, bool generateRoads, double contentScale, double densityMult)
+        private static Zone BuildSpawnZone(string letter, string player, string[] ringConns, int castleCount, bool spawnFootholds, bool generateRoads, GenerationTuning tuning)
         {
             // Index 0 = Spawn (player town), indices 1..castleCount = extra same-faction cities.
             var mainObjects = new List<MainObject>
@@ -709,7 +738,7 @@ namespace Olden_Era___Template_Editor.Services
                     Spawn = player,
                     RemoveGuardIfHasOwner = true,
                     GuardChance = 0.5,
-                    GuardValue = 5000,
+                    GuardValue = ScaleNeutralGuardValue(5000, tuning),
                     GuardWeeklyIncrement = 0.10,
                     BuildingsConstructionSid = "default_buildings_construction",
                     Placement = "Uniform",
@@ -724,7 +753,7 @@ namespace Olden_Era___Template_Editor.Services
                     Type = "City",
                     Faction = new TypedSelector { Type = "Random", Args = [] },
                     GuardChance = 0.5,
-                    GuardValue = 2500,
+                    GuardValue = ScaleNeutralGuardValue(2500, tuning),
                     GuardWeeklyIncrement = 0.10,
                     BuildingsConstructionSid = "poor_buildings_construction",
                     Placement = "Uniform",
@@ -739,7 +768,7 @@ namespace Olden_Era___Template_Editor.Services
                 Layout = "zone_layout_spawns",
                 GuardCutoffValue = 2000,
                 GuardRandomization = 0.05,
-                GuardMultiplier = 1.0,
+                GuardMultiplier = ScaleGuardMultiplier(1.0, tuning),
                 GuardWeeklyIncrement = 0.20,
                 GuardReactionDistribution = [60, 20, 10, 10, 2, 0],
                 DiplomacyModifier = -0.5,
@@ -748,12 +777,12 @@ namespace Olden_Era___Template_Editor.Services
                 ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
                 MandatoryContent = [$"mandatory_content_side_{letter}"],
                 ContentCountLimits = BuildSideContentLimits(),
-                GuardedContentValue = (int)(200000 * contentScale * densityMult),
-                GuardedContentValuePerArea = (int)(2000 * Math.Sqrt(contentScale) * densityMult),
-                UnguardedContentValue = (int)(50000 * contentScale * densityMult),
-                UnguardedContentValuePerArea = (int)(400 * Math.Sqrt(contentScale) * densityMult),
-                ResourcesValue = (int)(80000 * contentScale * densityMult),
-                ResourcesValuePerArea = (int)(600 * Math.Sqrt(contentScale) * densityMult),
+                GuardedContentValue = ScaleStructureValue(200000 * tuning.ContentScale, tuning),
+                GuardedContentValuePerArea = ScaleStructureValue(2000 * Math.Sqrt(tuning.ContentScale), tuning),
+                UnguardedContentValue = ScaleStructureValue(50000 * tuning.ContentScale, tuning),
+                UnguardedContentValuePerArea = ScaleStructureValue(400 * Math.Sqrt(tuning.ContentScale), tuning),
+                ResourcesValue = ScaleResourceValue(80000 * tuning.ContentScale, tuning),
+                ResourcesValuePerArea = ScaleResourceValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
                 MainObjects = mainObjects,
                 ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
@@ -765,7 +794,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Neutral zone ─────────────────────────────────────────────────────────
 
-        private static Zone BuildNeutralZone(string letter, string[] ringConns, int castleCount, bool spawnFootholds, bool generateRoads, double contentScale, double densityMult)
+        private static Zone BuildNeutralZone(string letter, string[] ringConns, int castleCount, bool spawnFootholds, bool generateRoads, GenerationTuning tuning)
         {
             // Index 0 = primary neutral city; indices 1..castleCount-1 = extra neutral cities.
             // All cities use FromList [] (neutral faction, not biome-matched).
@@ -775,7 +804,7 @@ namespace Olden_Era___Template_Editor.Services
                 {
                     Type = "City",
                     GuardChance = 0.5,
-                    GuardValue = 10000,
+                    GuardValue = ScaleNeutralGuardValue(10000, tuning),
                     GuardWeeklyIncrement = 0.10,
                     BuildingsConstructionSid = "rich_buildings_construction",
                     Faction = new TypedSelector { Type = "FromList", Args = [] },
@@ -789,7 +818,7 @@ namespace Olden_Era___Template_Editor.Services
                 {
                     Type = "City",
                     GuardChance = 0.5,
-                    GuardValue = 5000,
+                    GuardValue = ScaleNeutralGuardValue(5000, tuning),
                     GuardWeeklyIncrement = 0.10,
                     BuildingsConstructionSid = "poor_buildings_construction",
                     Faction = new TypedSelector { Type = "FromList", Args = [] },
@@ -805,7 +834,7 @@ namespace Olden_Era___Template_Editor.Services
                 Layout = "zone_layout_spawns",
                 GuardCutoffValue = 2000,
                 GuardRandomization = 0.05,
-                GuardMultiplier = 1.3,
+                GuardMultiplier = ScaleGuardMultiplier(1.3, tuning),
                 GuardWeeklyIncrement = 0.20,
                 GuardReactionDistribution = [0, 10, 10, 10, 10, 0],
                 DiplomacyModifier = -0.5,
@@ -814,12 +843,12 @@ namespace Olden_Era___Template_Editor.Services
                 ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
                 MandatoryContent = [$"mandatory_content_neutral_{letter}"],
                 ContentCountLimits = BuildSideContentLimits(),
-                GuardedContentValue = (int)(260000 * contentScale * densityMult),
-                GuardedContentValuePerArea = (int)(2400 * Math.Sqrt(contentScale) * densityMult),
-                UnguardedContentValue = (int)(40000 * contentScale * densityMult),
-                UnguardedContentValuePerArea = (int)(320 * Math.Sqrt(contentScale) * densityMult),
-                ResourcesValue = (int)(60000 * contentScale * densityMult),
-                ResourcesValuePerArea = (int)(480 * Math.Sqrt(contentScale) * densityMult),
+                GuardedContentValue = ScaleStructureValue(260000 * tuning.ContentScale, tuning),
+                GuardedContentValuePerArea = ScaleStructureValue(2400 * Math.Sqrt(tuning.ContentScale), tuning),
+                UnguardedContentValue = ScaleStructureValue(40000 * tuning.ContentScale, tuning),
+                UnguardedContentValuePerArea = ScaleStructureValue(320 * Math.Sqrt(tuning.ContentScale), tuning),
+                ResourcesValue = ScaleResourceValue(60000 * tuning.ContentScale, tuning),
+                ResourcesValuePerArea = ScaleResourceValue(480 * Math.Sqrt(tuning.ContentScale), tuning),
                 MainObjects = mainObjects,
                 ZoneBiome = castleCount > 0
                     ? new BiomeSelector { Type = "MatchMainObject", Args = ["0"] }
@@ -843,7 +872,7 @@ namespace Olden_Era___Template_Editor.Services
         /// When <paramref name="isolatePlayers"/> is true, player–player adjacent pairs are skipped.
         /// </summary>
         private static IEnumerable<Connection> BuildRingConnections(
-            List<string> playerLetters, List<string> orderedLetters, bool isolatePlayers = false)
+            List<string> playerLetters, List<string> orderedLetters, GenerationTuning tuning, bool isolatePlayers = false)
         {
             int count = orderedLetters.Count;
             if (count < 2) yield break;
@@ -869,7 +898,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = 30000,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"ring_guard_{fromLetter}_{toLetter}"
                 };
@@ -882,7 +911,7 @@ namespace Olden_Era___Template_Editor.Services
         /// that does NOT lead to its immediate ring neighbours.
         /// </summary>
         private static IEnumerable<Connection> BuildRandomPortalConnections(
-            List<string> playerLetters, List<string> orderedLetters)
+            List<string> playerLetters, List<string> orderedLetters, GenerationTuning tuning)
         {
             int count = orderedLetters.Count;
             if (count < 2) yield break; // Need at least 2 zones for a portal.
@@ -912,7 +941,7 @@ namespace Olden_Era___Template_Editor.Services
                     PortalPlacementRulesTo   = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 2 }],
                     Road = true,
                     GuardEscape = false,
-                    GuardValue = 25000,
+                    GuardValue = ScaleBorderGuardValue(25000, tuning),
                     GuardWeeklyIncrement = 0.15
                 };
             }
