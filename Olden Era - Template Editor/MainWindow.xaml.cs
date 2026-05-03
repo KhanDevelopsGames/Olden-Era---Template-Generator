@@ -123,7 +123,20 @@ namespace Olden_Era___Template_Editor
         {
             if (!IsInitialized) return;
             _isDirty = true;
+            if (_generatedTemplate is not null)
+                _templateOutdated = true;
+            UpdateOutdatedWarning();
             UpdateTitle();
+        }
+
+        private void UpdateOutdatedWarning()
+        {
+            if (TxtOutdatedWarning == null) return;
+            bool outdated = _templateOutdated && _generatedTemplate is not null;
+            TxtOutdatedWarning.Visibility  = outdated ? Visibility.Visible  : Visibility.Collapsed;
+            if (BtnSaveGenerated != null)   BtnSaveGenerated.IsEnabled  = !outdated;
+            if (ChkSavePreviewImage != null && _generatedTemplate is not null)
+                ChkSavePreviewImage.Visibility = outdated ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void UpdateTitle()
@@ -226,6 +239,12 @@ namespace Olden_Era___Template_Editor
             TxtTournamentPointsToWin.Text = ((int)SldTournamentPointsToWin.Value).ToString();
         }
 
+        private void SetValidationText(string text)
+        {
+            TxtValidation.Text = text;
+            TxtValidation.Visibility = string.IsNullOrEmpty(text) ? Visibility.Collapsed : Visibility.Visible;
+        }
+
         private bool Validate()
         {
             int heroMin = (int)SldHeroMin.Value;
@@ -235,31 +254,32 @@ namespace Olden_Era___Template_Editor
 
             if (heroMin > heroMax)
             {
-                TxtValidation.Text = "Min Heroes cannot be greater than Max Heroes.";
-                BtnGenerate.IsEnabled = false;
+                SetValidationText("Min Heroes cannot be greater than Max Heroes.");
+                BtnPreview.IsEnabled = false;
                 return false;
             }
 
             int maxZones = _advancedZoneSettings ? AdvancedModeMaxZones : SimpleModeMaxZones;
             if (players + neutral > maxZones)
             {
-                TxtValidation.Text = $"Total zones (players + neutral) cannot exceed {maxZones}.";
-                BtnGenerate.IsEnabled = false;
+                SetValidationText($"Total zones (players + neutral) cannot exceed {maxZones}.");
+                BtnPreview.IsEnabled = false;
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(TxtTemplateName.Text))
             {
-                TxtValidation.Text = "Template name cannot be empty.";
-                BtnGenerate.IsEnabled = false;
+                SetValidationText("Template name cannot be empty.");
+                BtnPreview.IsEnabled = false;
                 return false;
             }
 
             var warnings = new System.Collections.Generic.List<string>();
 
             int selectedMapSize = SelectedMapSize();
-            if (players + neutral > 4 && selectedMapSize < 128)
-                warnings.Add("⚠️ Using a small map with many zones may freeze the game while loading the map. Consider using a larger map size.");
+            int totalZones = players + neutral;
+            if (totalZones > 0 && (selectedMapSize * selectedMapSize) / totalZones < 1024)
+                warnings.Add($"⚠️ Estimated zone size is too small. The game may freeze when loading the map. Increase the map size or reduce the number of zones.");
 
             if (selectedMapSize > KnownValues.MaxOfficialMapSize)
                 warnings.Add("Experimental map sizes above 240x240 are not confirmed by official templates; generated maps may fail, freeze, or behave unpredictably in game.");
@@ -280,9 +300,9 @@ namespace Olden_Era___Template_Editor
                     warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
             }
 
-            TxtValidation.Text = string.Join("\n\n", warnings);
+            SetValidationText(string.Join("\n\n", warnings));
 
-            BtnGenerate.IsEnabled = true;
+            BtnPreview.IsEnabled = true;
             return true;
         }
 
@@ -765,66 +785,25 @@ namespace Olden_Era___Template_Editor
 
         // -- Generate ----------------------------------------------------------
 
-        private void BtnGenerate_Click(object sender, RoutedEventArgs e)
+        // The most recently generated template — used by BtnSaveGenerated_Click
+        private RmgTemplate? _generatedTemplate;
+        private bool _templateOutdated = false;
+
+        private void BtnPreview_Click(object sender, RoutedEventArgs e)
         {
             if (!Validate()) return;
+            var settings = BuildSettings();
+            _generatedTemplate = TemplateGenerator.Generate(settings);
+            _templateOutdated = false;
+            ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate);
+            BtnSaveGenerated.Visibility = Visibility.Visible;
+            UpdateOutdatedWarning();
+            Validate(); // refresh warnings now that template is up to date
+        }
 
-            var settings = new GeneratorSettings
-            {
-                TemplateName = TxtTemplateName.Text.Trim(),
-                GameMode = CmbGameMode.SelectedItem as string ?? "Classic",
-                PlayerCount = (int)SldPlayers.Value,
-                HeroCountMin = (int)SldHeroMin.Value,
-                HeroCountMax = (int)SldHeroMax.Value,
-                HeroCountIncrement = (int)SldHeroIncrement.Value,
-                NeutralZoneCount = (int)SldNeutral.Value,
-                MapSize = SelectedMapSize(),
-                VictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
-                    ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
-                    : "win_condition_1",
-                PlayerZoneCastles = (int)SldPlayerCastles.Value,
-                NeutralZoneCastles = (int)SldNeutralCastles.Value,
-                AdvancedMode = _advancedZoneSettings,
-                NeutralLowNoCastleCount = (int)SldNeutralLowNoCastle.Value,
-                NeutralLowCastleCount = (int)SldNeutralLowCastle.Value,
-                NeutralMediumNoCastleCount = (int)SldNeutralMediumNoCastle.Value,
-                NeutralMediumCastleCount = (int)SldNeutralMediumCastle.Value,
-                NeutralHighNoCastleCount = (int)SldNeutralHighNoCastle.Value,
-                NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
-                MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
-                MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)SldMinNeutralBetweenPlayers.Value : 0,
-                ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
-                PlayerZoneSize = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
-                NeutralZoneSize = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
-                GuardRandomization = _advancedZoneSettings ? SldGuardRandomization.Value / 100.0 : 0.05,
-                NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
-                RandomPortals = ChkRandomPortals.IsChecked == true,
-                SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
-                GenerateRoads = ChkGenerateRoads.IsChecked == true,
-                Topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default,
-                ResourceDensityPercent = (int)SldResourceDensity.Value,
-                StructureDensityPercent = (int)SldStructureDensity.Value,
-                NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
-                BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
-                FactionLawsExpPercent = (int)SldFactionLawsExp.Value,
-                AstrologyExpPercent = (int)SldAstrologyExp.Value,
-                LostStartCity = ChkLostStartCity.IsChecked == true,
-                LostStartCityDay = (int)SldLostStartCityDay.Value,
-                LostStartHero = ChkLostStartHero.IsChecked == true,
-                CityHold = ChkCityHold.IsChecked == true,
-                CityHoldDays = (int)SldCityHoldDays.Value,
-                GladiatorArena = ChkGladiatorArena.IsChecked == true,
-                GladiatorArenaDaysDelayStart = (int)SldGladiatorDelay.Value,
-                GladiatorArenaCountDay = (int)SldGladiatorCountDay.Value,
-                Tournament = ChkTournament.IsChecked == true,
-                TournamentRoundCount = (int)SldTournamentRoundCount.Value,
-                TournamentRoundDuration = (int)SldTournamentRoundDuration.Value,
-                TournamentFirstAnnounceDay = (int)SldTournamentFirstAnnounceDay.Value,
-                TournamentRoundInterval = (int)SldTournamentRoundInterval.Value,
-                TournamentPointsToWin = (int)SldTournamentPointsToWin.Value
-            };
-
-            var template = TemplateGenerator.Generate(settings);
+        private void BtnSaveGenerated_Click(object sender, RoutedEventArgs e)
+        {
+            if (_generatedTemplate is null) return;
 
             string? gameTemplatesPath = FindOldenEraTemplatesPath();
 
@@ -832,7 +811,7 @@ namespace Olden_Era___Template_Editor
             {
                 Title = "Save Template",
                 Filter = "RMG Template (*.rmg.json)|*.rmg.json",
-                FileName = $"{settings.TemplateName}.rmg.json"
+                FileName = $"{_generatedTemplate.Name ?? "Custom Template"}.rmg.json"
             };
 
             if (gameTemplatesPath != null)
@@ -840,30 +819,91 @@ namespace Olden_Era___Template_Editor
 
             if (dlg.ShowDialog() != true) return;
 
-            string json = JsonSerializer.Serialize(template, JsonOptions);
+            string json = JsonSerializer.Serialize(_generatedTemplate, JsonOptions);
             File.WriteAllText(dlg.FileName, json);
 
             string previewPath = TemplatePreviewPngWriter.GetSidecarPath(dlg.FileName);
             string? previewError = null;
-            try
+            if (ChkSavePreviewImage.IsChecked == true)
             {
-                TemplatePreviewPngWriter.Save(template, previewPath);
-            }
-            catch (Exception ex)
-            {
-                previewError = ex.Message;
+                try
+                {
+                    TemplatePreviewPngWriter.Save(_generatedTemplate, previewPath);
+                }
+                catch (Exception ex)
+                {
+                    previewError = ex.Message;
+                }
             }
 
             string savedMsg = $"Template successfully saved to:\n\n{dlg.FileName}";
-            if (previewError == null)
-                savedMsg += $"\n\nPreview PNG saved to:\n\n{previewPath}";
-            else
-                savedMsg += $"\n\nTemplate saved, but the preview PNG could not be created:\n{previewError}";
+            if (ChkSavePreviewImage.IsChecked == true)
+            {
+                if (previewError == null)
+                    savedMsg += $"\n\nPreview PNG saved to:\n\n{previewPath}";
+                else
+                    savedMsg += $"\n\nTemplate saved, but the preview PNG could not be written:\n{previewError}";
+            }
             if (gameTemplatesPath == null)
                 savedMsg += "\n\n\n💡 Tip: Templates must be placed in:\n<Olden Era install folder>\\HeroesOldenEra_Data\\StreamingAssets\\map_templates";
 
             MessageBox.Show(savedMsg, "Saved", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+
+        private GeneratorSettings BuildSettings() => new()
+        {
+            TemplateName = TxtTemplateName.Text.Trim(),
+            GameMode = CmbGameMode.SelectedItem as string ?? "Classic",
+            PlayerCount = (int)SldPlayers.Value,
+            HeroCountMin = (int)SldHeroMin.Value,
+            HeroCountMax = (int)SldHeroMax.Value,
+            HeroCountIncrement = (int)SldHeroIncrement.Value,
+            NeutralZoneCount = (int)SldNeutral.Value,
+            MapSize = SelectedMapSize(),
+            VictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
+                ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+                : "win_condition_1",
+            PlayerZoneCastles = (int)SldPlayerCastles.Value,
+            NeutralZoneCastles = (int)SldNeutralCastles.Value,
+            AdvancedMode = _advancedZoneSettings,
+            NeutralLowNoCastleCount = (int)SldNeutralLowNoCastle.Value,
+            NeutralLowCastleCount = (int)SldNeutralLowCastle.Value,
+            NeutralMediumNoCastleCount = (int)SldNeutralMediumNoCastle.Value,
+            NeutralMediumCastleCount = (int)SldNeutralMediumCastle.Value,
+            NeutralHighNoCastleCount = (int)SldNeutralHighNoCastle.Value,
+            NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
+            MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
+            MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)SldMinNeutralBetweenPlayers.Value : 0,
+            ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
+            PlayerZoneSize = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
+            NeutralZoneSize = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
+            GuardRandomization = _advancedZoneSettings ? SldGuardRandomization.Value / 100.0 : 0.05,
+            NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
+            RandomPortals = ChkRandomPortals.IsChecked == true,
+            SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
+            GenerateRoads = ChkGenerateRoads.IsChecked == true,
+            Topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default,
+            ResourceDensityPercent = (int)SldResourceDensity.Value,
+            StructureDensityPercent = (int)SldStructureDensity.Value,
+            NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
+            BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
+            FactionLawsExpPercent = (int)SldFactionLawsExp.Value,
+            AstrologyExpPercent = (int)SldAstrologyExp.Value,
+            LostStartCity = ChkLostStartCity.IsChecked == true,
+            LostStartCityDay = (int)SldLostStartCityDay.Value,
+            LostStartHero = ChkLostStartHero.IsChecked == true,
+            CityHold = ChkCityHold.IsChecked == true,
+            CityHoldDays = (int)SldCityHoldDays.Value,
+            GladiatorArena = ChkGladiatorArena.IsChecked == true,
+            GladiatorArenaDaysDelayStart = (int)SldGladiatorDelay.Value,
+            GladiatorArenaCountDay = (int)SldGladiatorCountDay.Value,
+            Tournament = ChkTournament.IsChecked == true,
+            TournamentRoundCount = (int)SldTournamentRoundCount.Value,
+            TournamentRoundDuration = (int)SldTournamentRoundDuration.Value,
+            TournamentFirstAnnounceDay = (int)SldTournamentFirstAnnounceDay.Value,
+            TournamentRoundInterval = (int)SldTournamentRoundInterval.Value,
+            TournamentPointsToWin = (int)SldTournamentPointsToWin.Value
+        };
 
         /// <summary>
         /// Tries to locate the Olden Era map_templates folder via the Steam registry.

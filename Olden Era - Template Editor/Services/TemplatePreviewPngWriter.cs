@@ -63,12 +63,7 @@ namespace Olden_Era___Template_Editor.Services
             if (!string.IsNullOrEmpty(directory))
                 Directory.CreateDirectory(directory);
 
-            var visual = new DrawingVisual();
-            using (DrawingContext dc = visual.RenderOpen())
-                DrawPreview(dc, template);
-
-            var bitmap = new RenderTargetBitmap(Width, Height, 96, 96, PixelFormats.Pbgra32);
-            bitmap.Render(visual);
+            var bitmap = Render(template);
 
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmap));
@@ -78,6 +73,19 @@ namespace Olden_Era___Template_Editor.Services
                 encoder.Save(stream);
 
             File.Move(tempPath, previewPath, overwrite: true);
+        }
+
+        /// <summary>Renders the preview to a <see cref="BitmapSource"/> without writing any files.</summary>
+        public static BitmapSource Render(RmgTemplate template)
+        {
+            var visual = new DrawingVisual();
+            using (DrawingContext dc = visual.RenderOpen())
+                DrawPreview(dc, template);
+
+            var bitmap = new RenderTargetBitmap(Width, Height, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(visual);
+            bitmap.Freeze();
+            return bitmap;
         }
 
         // ── Main draw ────────────────────────────────────────────────────────────

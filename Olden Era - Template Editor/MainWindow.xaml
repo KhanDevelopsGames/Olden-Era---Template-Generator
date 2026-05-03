@@ -5,10 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Olden Era - Simple Template Generator"
-        Height="950" Width="1000"
-        MinHeight="800" MinWidth="900"
+        Height="950" Width="1050"
+        MinHeight="800" MinWidth="1050"
         WindowStyle="None"
         ResizeMode="CanResize"
+        WindowStartupLocation="CenterScreen"
         StateChanged="Window_StateChanged"
         Background="#1A1510"
         FontFamily="Segoe UI, Arial, sans-serif">
@@ -81,15 +82,11 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>  <!-- toolbar -->
                     <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>  <!-- WIP warning -->
+                    <RowDefinition Height="6"/>
                     <RowDefinition Height="Auto"/>  <!-- thin divider -->
                     <RowDefinition Height="6"/>
                     <RowDefinition Height="*"/>     <!-- main content -->
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>  <!-- validation -->
-                    <RowDefinition Height="6"/>
-                    <RowDefinition Height="Auto"/>  <!-- WIP warning -->
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>  <!-- generate button -->
                 </Grid.RowDefinitions>
 
         <!-- ════════ TOOLBAR ══════════════════════════════════════════ -->
@@ -100,15 +97,28 @@
             <Button Content="💾  Save As" Width="96"  Margin="0,0,0,0" Click="BtnSaveAs_Click" Style="{StaticResource ToolbarButton}" ToolTip="Save As (Ctrl+Shift+S)"/>
         </StackPanel>
 
-        <!-- ════════ HEADER ════════════════════════════════════════════ -->
-        <Rectangle Grid.Row="2" Height="1" Fill="{StaticResource BrushBorder}" VerticalAlignment="Bottom"/>
+        <!-- ════════ WIP WARNING ═══════════════════════════════════════ -->
+        <Border Grid.Row="2"
+                Background="{StaticResource BrushWarnBg}"
+                BorderBrush="{StaticResource BrushWarnBorder}"
+                BorderThickness="1" CornerRadius="3"
+                Padding="10,7">
+            <TextBlock x:Name="TxtWipWarning"
+                       Foreground="{StaticResource BrushWarnText}"
+                       FontSize="11" TextWrapping="Wrap"/>
+        </Border>
 
-        <!-- ════════ MAIN CONTENT — two columns ════════════════════════ -->
-        <Grid Grid.Row="4">
+        <!-- ════════ HEADER ════════════════════════════════════════════ -->
+        <Rectangle Grid.Row="4" Height="1" Fill="{StaticResource BrushBorder}" VerticalAlignment="Bottom"/>
+
+        <!-- ════════ MAIN CONTENT — two columns + preview ═════════════════════ -->
+        <Grid Grid.Row="6">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="260"/>
             </Grid.ColumnDefinitions>
 
             <!-- ─── LEFT COLUMN ─────────────────────────────────────── -->
@@ -598,7 +608,7 @@
                         <StackPanel x:Name="PnlAdvancedZoneSizes"
                                     Visibility="Collapsed"
                                     Margin="0,12,0,0">
-                            <TextBlock Text="Advanced zone tuning"
+                            <TextBlock Text="Advanced zone tuning [EXPERIMENTAL]"
                                        Style="{StaticResource SectionHeader}"
                                        Margin="0,0,0,4"/>
                             <TextBlock Foreground="{StaticResource BrushTextDim}"
@@ -626,7 +636,7 @@
                                                Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="0" Grid.Column="1" x:Name="SldPlayerZoneSize"
-                                        Minimum="0.1" Maximum="2" Value="1"
+                                        Minimum="0.5" Maximum="2" Value="1"
                                         TickFrequency="0.05" IsSnapToTickEnabled="True"
                                         ValueChanged="Slider_ValueChanged"/>
 
@@ -637,12 +647,12 @@
                                                Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="2" Grid.Column="1" x:Name="SldNeutralZoneSize"
-                                        Minimum="0.1" Maximum="2" Value="1"
+                                        Minimum="0.5" Maximum="2" Value="1"
                                         TickFrequency="0.05" IsSnapToTickEnabled="True"
                                         ValueChanged="Slider_ValueChanged"/>
 
                                 <DockPanel Grid.Row="4" Grid.Column="0">
-                                    <Label Content="Guard randomization" DockPanel.Dock="Left"/>
+                                    <Label Content="Guard strength randomization" DockPanel.Dock="Left"/>
                                     <TextBlock x:Name="TxtGuardRandomization" Text="5%" DockPanel.Dock="Right"
                                                HorizontalAlignment="Right" VerticalAlignment="Center"
                                                Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
@@ -786,7 +796,7 @@
                                 <CheckBox x:Name="ChkSpawnFootholds" Content="Spawn remote footholds" IsChecked="True" Margin="0,6,0,0"/>
                         <CheckBox x:Name="ChkRandomPortals"  Content="Always spawn portals"          Margin="0,6,0,0"/>                      
                         <CheckBox x:Name="ChkBalancedZonePlacement"
-                                  Content="Balance zone placement [EXPERIMENTAL]"
+                                  Content="Balance zone placement [RECOMMENDED]"
                                   IsChecked="True"
                                   Margin="0,6,0,0"
                                   Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
@@ -795,7 +805,7 @@
                                    Foreground="{StaticResource BrushTextDim}"
                                    FontSize="13" TextWrapping="Wrap"
                                    Margin="25,3,0,0"
-                                   Text="Spreads players and neutral zone tiers more evenly across structured layouts. Random layout uses balanced seed positions before building borders."/>
+                                   Text="Spreads players and neutral zone tiers more evenly across structured layouts. Random layout uses balanced seed positions before building borders. Disable for a truly random, but less balanced experience."/>
                         <CheckBox x:Name="ChkNoDirectPlayerConn"
                                   Content="Connect via neutral zones only [EXPERIMENTAL]"
                                   Margin="0,6,0,0"
@@ -811,36 +821,79 @@
                                                              </ScrollViewer>
                                                          </Border>
                                                      </Grid>
-                                                 </Grid>
+
+            <!-- ─── PREVIEW COLUMN ───────────────────────────────────── -->
+            <Grid Grid.Column="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>   <!-- generate button -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>   <!-- hints / validation -->
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="*"/>      <!-- image -->
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="Auto"/>   <!-- show preview checkbox -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>   <!-- outdated warning -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>   <!-- save button -->
+                </Grid.RowDefinitions>
+
+                <Button Grid.Row="0"
+                        x:Name="BtnPreview"
+                        Content="⚔  Generate Template"
+                        Style="{StaticResource GenerateButton}"
+                        Click="BtnPreview_Click"/>
+
+                <TextBlock Grid.Row="2"
+                           x:Name="TxtValidation"
+                           Foreground="{StaticResource BrushError}"
+                           FontSize="12" TextWrapping="Wrap"
+                           Visibility="Collapsed"
+                           HorizontalAlignment="Stretch" TextAlignment="Center"/>
+
+                <Border Grid.Row="4"
+                        BorderThickness="2"
+                        CornerRadius="4"
+                        BorderBrush="{StaticResource BrushBorder}"
+                        Background="#1A1410">
+                    <Image x:Name="ImgPreview"
+                           Stretch="Uniform"
+                           RenderOptions.BitmapScalingMode="HighQuality"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"/>
+                </Border>
+
+                <CheckBox Grid.Row="6"
+                          x:Name="ChkSavePreviewImage"
+                          Content="Show preview in-game"
+                          IsChecked="True"
+                          Visibility="Collapsed"
+                          Foreground="{StaticResource BrushText}"
+                          HorizontalAlignment="Left"/>
+
+                <TextBlock Grid.Row="8"
+                           x:Name="TxtOutdatedWarning"
+                           Foreground="{StaticResource BrushError}"
+                           FontSize="12" TextWrapping="Wrap"
+                           Visibility="Collapsed"
+                           HorizontalAlignment="Stretch" TextAlignment="Center"
+                           Text="⚠️ Settings have changed — generate a new template before saving to reflect the latest changes."/>
+
+                <Button Grid.Row="10"
+                        x:Name="BtnSaveGenerated"
+                        Content="💾  Save Template"
+                        Style="{StaticResource GenerateButton}"
+                        Visibility="Collapsed"
+                        Click="BtnSaveGenerated_Click"/>
+            </Grid>
+
+        </Grid>
 
                     <!-- Hidden combos required by code-behind -->
-        <ComboBox Grid.Row="2" x:Name="CmbGameMode" Visibility="Collapsed"/>
-        <TextBlock Grid.Row="2" x:Name="TxtAppTitle" Visibility="Collapsed"/>
+        <ComboBox Grid.Row="4" x:Name="CmbGameMode" Visibility="Collapsed"/>
+        <TextBlock Grid.Row="4" x:Name="TxtAppTitle" Visibility="Collapsed"/>
 
-        <!-- ════════ VALIDATION ════════════════════════════════════════ -->
-        <TextBlock Grid.Row="6"
-                   x:Name="TxtValidation"
-                   Foreground="{StaticResource BrushError}"
-                   FontSize="12" TextWrapping="Wrap"
-                   HorizontalAlignment="Stretch" TextAlignment="Center"/>
 
-        <!-- ════════ WIP WARNING ═══════════════════════════════════════ -->
-        <Border Grid.Row="8"
-                Background="{StaticResource BrushWarnBg}"
-                BorderBrush="{StaticResource BrushWarnBorder}"
-                BorderThickness="1" CornerRadius="3"
-                Padding="10,7">
-            <TextBlock x:Name="TxtWipWarning"
-                       Foreground="{StaticResource BrushWarnText}"
-                       FontSize="11" TextWrapping="Wrap"/>
-        </Border>
-
-        <!-- ════════ GENERATE BUTTON ═══════════════════════════════════ -->
-        <Button Grid.Row="10"
-                x:Name="BtnGenerate"
-                Content="⚔  Generate Template"
-                Style="{StaticResource GenerateButton}"
-                Click="BtnGenerate_Click"/>
 
             </Grid>  <!-- end page content grid -->
         </Grid>      <!-- end outer row grid -->
