@@ -1761,6 +1761,22 @@ namespace Olden_Era___Template_Editor.Services
             {
                 new() { IncludeLists = ["template_pool_jebus_cross_guarded_resource_banks_tier_3_base"], Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 }] },
                 new() { IncludeLists = ["template_pool_jebus_cross_guarded_resource_banks_tier_3_pro"], Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 }] },
+            });
+
+            // One wood mine and one ore mine anchored near the initial castle.
+            // Rules match the consensus pattern across all example templates:
+            // MainObject(0) biases placement toward the castle, Crossroads biases toward road intersections.
+            if (!isNeutral)
+            {
+                content.AddRange(new List<ContentItem>
+                {
+                    new() { Sid = "mine_wood", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 }, new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
+                    new() { Sid = "mine_ore",  IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 }, new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
+                });
+            }
+
+            content.AddRange(new List<ContentItem>
+            {
                 new() { Sid = "fountain", IsGuarded = false },
                 new() { Sid = "watchtower", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
                 new() { Sid = "mana_well", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
@@ -1776,8 +1792,8 @@ namespace Olden_Era___Template_Editor.Services
                 new() { IncludeLists = ["basic_content_list_building_random_hires"] },
                 new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"], IsGuarded = isNeutral ? null : false },
                 new() { Sid = "pandora_box", Variant = 0, SoloEncounter = true },
-                new() { Sid = "mine_wood", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.0, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
-                new() { Sid = "mine_ore", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.0, TargetMax = 0.0, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.1, TargetMax = 0.4, Weight = 2 }] },
+                new() { Sid = "mine_wood", IsMine = true },
+                new() { Sid = "mine_ore", IsMine = true },
                 new() { Sid = "mine_gold", IsMine = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 1 }] },
                 new() { Sid = "mine_crystals", IsMine = true },
                 new() { Sid = "mine_mercury", IsMine = true },
@@ -1791,40 +1807,68 @@ namespace Olden_Era___Template_Editor.Services
         // ── Content count limits ─────────────────────────────────────────────────
 
         /// <summary>
-        /// Replicates the full set of contentCountLimits from Jebus Cross Classic verbatim.
-        /// These are referenced by name from zones and must exist at the root level.
+        /// Builds the full set of contentCountLimits derived from all example templates.
+        /// Counts reflect the typical maximum values observed across templates.
         /// </summary>
         private static List<ContentCountLimit> BuildAllContentCountLimits()
         {
             var sidLimits = new List<ContentSidLimit>
             {
-                new() { Sid = "fountain", MaxCount = 2 },
-                new() { Sid = "fountain_2", MaxCount = 2 },
-                new() { Sid = "mana_well", MaxCount = 2 },
-                new() { Sid = "huntsmans_camp", MaxCount = 1 },
-                new() { Sid = "market", MaxCount = 1 },
-                new() { Sid = "forge", MaxCount = 2 },
-                new() { Sid = "celestial_sphere", MaxCount = 2 },
-                new() { Sid = "arena", MaxCount = 1 },
-                new() { Sid = "sacrificial_shrine", MaxCount = 1 },
-                new() { Sid = "chimerologist", MaxCount = 1 },
-                new() { Sid = "wise_owl", MaxCount = 3 },
-                new() { Sid = "circus", MaxCount = 2 },
-                new() { Sid = "infernal_cirque", MaxCount = 2 },
-                new() { Sid = "university", MaxCount = 2 },
-                new() { Sid = "tree_of_abundance", MaxCount = 1 },
-                new() { Sid = "fickle_shrine", MaxCount = 1 },
-                new() { Sid = "insaras_eye", MaxCount = 2 },
-                new() { Sid = "watchtower", MaxCount = 1 },
-                new() { Sid = "flattering_mirror", MaxCount = 2 },
-                new() { Sid = "wind_rose", MaxCount = 1 },
-                new() { Sid = "jousting_range", MaxCount = 0 },
-                new() { Sid = "unforgotten_grave", MaxCount = 0 },
-                new() { Sid = "petrified_memorial", MaxCount = 0 },
-                new() { Sid = "the_gorge", MaxCount = 0 },
-                new() { Sid = "ritual_pyre", MaxCount = 99 },
-                new() { Sid = "boreal_call", MaxCount = 99 },
-                new() { Sid = "point_of_balance", MaxCount = 3 },
+                // ── Utility / buff buildings ─────────────────────────────────────
+                new() { Sid = "fountain",             MaxCount = 2 },
+                new() { Sid = "fountain_2",           MaxCount = 2 },
+                new() { Sid = "mana_well",            MaxCount = 2 },
+                new() { Sid = "beer_fountain",        MaxCount = 2 },
+                new() { Sid = "market",               MaxCount = 1 },
+                new() { Sid = "forge",                MaxCount = 2 },
+                new() { Sid = "stables",              MaxCount = 1 },
+                new() { Sid = "watchtower",           MaxCount = 2 },
+                new() { Sid = "wind_rose",            MaxCount = 1 },
+                new() { Sid = "quixs_path",           MaxCount = 2 },
+                new() { Sid = "crystal_trail",        MaxCount = 3 },
+                new() { Sid = "mysterious_stone",     MaxCount = 2 },
+
+                // ── Learning / XP buildings ──────────────────────────────────────
+                new() { Sid = "university",           MaxCount = 2 },
+                new() { Sid = "wise_owl",             MaxCount = 4 },
+                new() { Sid = "celestial_sphere",     MaxCount = 2 },
+                new() { Sid = "pile_of_books",        MaxCount = 2 },
+                new() { Sid = "insaras_eye",          MaxCount = 2 },
+                new() { Sid = "tear_of_truth",        MaxCount = 3 },
+                new() { Sid = "tree_of_abundance",    MaxCount = 2 },
+
+                // ── Hire buildings ───────────────────────────────────────────────
+                new() { Sid = "huntsmans_camp",       MaxCount = 2 },
+                new() { Sid = "shady_den",            MaxCount = 2 },
+                new() { Sid = "random_hire_1",        MaxCount = 6 },
+                new() { Sid = "random_hire_2",        MaxCount = 6 },
+                new() { Sid = "random_hire_3",        MaxCount = 6 },
+                new() { Sid = "random_hire_4",        MaxCount = 6 },
+                new() { Sid = "random_hire_5",        MaxCount = 6 },
+                new() { Sid = "random_hire_6",        MaxCount = 6 },
+                new() { Sid = "random_hire_7",        MaxCount = 6 },
+
+                // ── Combat / encounter buildings ─────────────────────────────────
+                new() { Sid = "arena",                MaxCount = 2 },
+                new() { Sid = "sacrificial_shrine",   MaxCount = 2 },
+                new() { Sid = "chimerologist",        MaxCount = 2 },
+                new() { Sid = "circus",               MaxCount = 2 },
+                new() { Sid = "infernal_cirque",      MaxCount = 2 },
+                new() { Sid = "flattering_mirror",    MaxCount = 2 },
+                new() { Sid = "fickle_shrine",        MaxCount = 1 },
+                new() { Sid = "point_of_balance",     MaxCount = 3 },
+
+                // ── Special / loot ───────────────────────────────────────────────
+                new() { Sid = "pandora_box",          MaxCount = 4 },
+
+                // ── Map-feature objects (typically 0 = disabled, 99 = unlimited;
+                //    we cap at a sensible value so they can occasionally appear) ──
+                new() { Sid = "ritual_pyre",          MaxCount = 3 },
+                new() { Sid = "boreal_call",          MaxCount = 3 },
+                new() { Sid = "jousting_range",       MaxCount = 1 },
+                new() { Sid = "unforgotten_grave",    MaxCount = 1 },
+                new() { Sid = "petrified_memorial",   MaxCount = 1 },
+                new() { Sid = "the_gorge",            MaxCount = 1 },
             };
 
             var limits = new List<ContentCountLimit>();

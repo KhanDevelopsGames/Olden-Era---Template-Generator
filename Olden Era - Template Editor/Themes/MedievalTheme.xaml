@@ -401,4 +401,181 @@
         </Setter>
     </Style>
 
+    <!-- ══════════════════════════════════════════════════════════════════
+         SCROLLBAR  — thin medieval style (no arrow buttons, 6 px track)
+    ══════════════════════════════════════════════════════════════════════ -->
+    <Style x:Key="MedievalScrollBarThumb" TargetType="Thumb">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border x:Name="ThumbBd"
+                            Background="#7A5E28"
+                            BorderBrush="#5A4A20"
+                            BorderThickness="1"
+                            CornerRadius="3"
+                            Margin="1"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ThumbBd" Property="Background" Value="#C9A84C"/>
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="ThumbBd" Property="Background" Value="#E0C060"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Invisible repeat button (replaces arrow buttons) -->
+    <Style x:Key="MedievalScrollBarRepeatButton" TargetType="RepeatButton">
+        <Setter Property="Height"     Value="0"/>
+        <Setter Property="Width"      Value="0"/>
+        <Setter Property="Focusable"  Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border Background="Transparent"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ScrollBar">
+        <Setter Property="Background" Value="#1A1510"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <!-- Vertical layout -->
+                    <Grid x:Name="VerticalRoot">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="0"/>   <!-- top arrow (hidden) -->
+                            <RowDefinition Height="*"/>   <!-- track -->
+                            <RowDefinition Height="0"/>   <!-- bottom arrow (hidden) -->
+                        </Grid.RowDefinitions>
+                        <!-- Track background -->
+                        <Border Grid.Row="1"
+                                Background="#221E15"
+                                BorderBrush="#3A3020"
+                                BorderThickness="1"
+                                CornerRadius="3"
+                                Width="6"
+                                HorizontalAlignment="Center"/>
+                        <!-- The actual scrolling track -->
+                        <Track x:Name="PART_Track"
+                               Grid.Row="1"
+                               IsDirectionReversed="True"
+                               Width="6"
+                               HorizontalAlignment="Center">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="ScrollBar.PageUpCommand"
+                                              Style="{StaticResource MedievalScrollBarRepeatButton}"/>
+                            </Track.DecreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Style="{StaticResource MedievalScrollBarThumb}"
+                                       MinHeight="20"/>
+                            </Track.Thumb>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="ScrollBar.PageDownCommand"
+                                              Style="{StaticResource MedievalScrollBarRepeatButton}"/>
+                            </Track.IncreaseRepeatButton>
+                        </Track>
+                    </Grid>
+                    <!-- Horizontal layout (toggled visible via trigger) -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Orientation" Value="Horizontal">
+                            <Setter TargetName="VerticalRoot" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="0"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="1"
+                                        Background="#221E15"
+                                        BorderBrush="#3A3020"
+                                        BorderThickness="1"
+                                        CornerRadius="3"
+                                        Height="6"
+                                        VerticalAlignment="Center"/>
+                                <Track x:Name="PART_Track"
+                                       Grid.Column="1"
+                                       IsDirectionReversed="False"
+                                       Height="6"
+                                       VerticalAlignment="Center">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Command="ScrollBar.PageLeftCommand"
+                                                      Style="{StaticResource MedievalScrollBarRepeatButton}"/>
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Style="{StaticResource MedievalScrollBarThumb}"
+                                               MinWidth="20"/>
+                                    </Track.Thumb>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Command="ScrollBar.PageRightCommand"
+                                                      Style="{StaticResource MedievalScrollBarRepeatButton}"/>
+                                    </Track.IncreaseRepeatButton>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         SCROLLVIEWER  — no default padding, uses themed scrollbar
+    ══════════════════════════════════════════════════════════════════════ -->
+    <Style TargetType="ScrollViewer">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollViewer">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <ScrollContentPresenter Grid.Column="0" Grid.Row="0"
+                                                CanContentScroll="{TemplateBinding CanContentScroll}"
+                                                Content="{TemplateBinding Content}"
+                                                ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                        <ScrollBar x:Name="PART_VerticalScrollBar"
+                                   Grid.Column="1" Grid.Row="0"
+                                   Orientation="Vertical"
+                                   Margin="3,2,0,2"
+                                   Minimum="0"
+                                   Maximum="{TemplateBinding ScrollableHeight}"
+                                   ViewportSize="{TemplateBinding ViewportHeight}"
+                                   Value="{TemplateBinding VerticalOffset}"
+                                   Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                        <ScrollBar x:Name="PART_HorizontalScrollBar"
+                                   Grid.Column="0" Grid.Row="1"
+                                   Orientation="Horizontal"
+                                   Margin="2,3,2,0"
+                                   Minimum="0"
+                                   Maximum="{TemplateBinding ScrollableWidth}"
+                                   ViewportSize="{TemplateBinding ViewportWidth}"
+                                   Value="{TemplateBinding HorizontalOffset}"
+                                   Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>
