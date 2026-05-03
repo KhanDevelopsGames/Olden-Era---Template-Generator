@@ -136,6 +136,106 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
+    public void Generate_AppliesResourceAndStructureDensitySeparately()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            NeutralZoneCount = 2,
+            MapSize = 160,
+            Topology = MapTopology.Default,
+            ResourceDensityPercent = 50,
+            StructureDensityPercent = 150
+        };
+
+        Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
+        Zone spawnZone = RequiredZones(variant)
+            .First(zone => zone.Name.StartsWith("Spawn-", StringComparison.Ordinal));
+
+        Assert.Equal(300000, spawnZone.GuardedContentValue);
+        Assert.Equal(3000, spawnZone.GuardedContentValuePerArea);
+        Assert.Equal(75000, spawnZone.UnguardedContentValue);
+        Assert.Equal(600, spawnZone.UnguardedContentValuePerArea);
+        Assert.Equal(40000, spawnZone.ResourcesValue);
+        Assert.Equal(300, spawnZone.ResourcesValuePerArea);
+    }
+
+    [Fact]
+    public void Generate_AppliesZoneNeutralStrengthToZoneAndMainObjectGuardsOnly()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            NeutralZoneCount = 2,
+            MapSize = 160,
+            PlayerZoneCastles = 2,
+            NeutralZoneCastles = 2,
+            Topology = MapTopology.Default,
+            NeutralStackStrengthPercent = 200,
+            BorderGuardStrengthPercent = 100
+        };
+
+        Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
+        var zones = RequiredZones(variant);
+        Zone spawnZone = zones.First(zone => zone.Name.StartsWith("Spawn-", StringComparison.Ordinal));
+        Zone neutralZone = zones.First(zone => zone.Name.StartsWith("Neutral-", StringComparison.Ordinal));
+
+        Assert.Equal(2.0, spawnZone.GuardMultiplier);
+        Assert.Equal([10000, 5000], spawnZone.MainObjects?.Select(mainObject => mainObject.GuardValue).ToArray());
+        Assert.Equal(2.6, neutralZone.GuardMultiplier);
+        Assert.Equal([20000, 10000], neutralZone.MainObjects?.Select(mainObject => mainObject.GuardValue).ToArray());
+        Assert.All(RequiredConnections(variant), connection => Assert.Equal(30000, connection.GuardValue));
+    }
+
+    [Fact]
+    public void Generate_AppliesBorderGuardStrengthToDirectAndPortalConnectionsOnly()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            NeutralZoneCount = 2,
+            MapSize = 160,
+            RandomPortals = true,
+            Topology = MapTopology.Default,
+            NeutralStackStrengthPercent = 100,
+            BorderGuardStrengthPercent = 50
+        };
+
+        Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
+        Zone spawnZone = RequiredZones(variant)
+            .First(zone => zone.Name.StartsWith("Spawn-", StringComparison.Ordinal));
+        var directConnections = RequiredConnections(variant)
+            .Where(connection => connection.ConnectionType == "Direct")
+            .ToList();
+        var portalConnections = RequiredConnections(variant)
+            .Where(connection => connection.ConnectionType == "Portal")
+            .ToList();
+
+        Assert.Equal(1.0, spawnZone.GuardMultiplier);
+        Assert.Equal(5000, Assert.Single(spawnZone.MainObjects ?? []).GuardValue);
+        Assert.All(directConnections, connection => Assert.Equal(15000, connection.GuardValue));
+        Assert.All(portalConnections, connection => Assert.Equal(12500, connection.GuardValue));
+    }
+
+    [Fact]
+    public void SettingsFile_LegacyContentDensitySeedsSplitDensitySettings()
+    {
+        const string json = """
+            {
+              "contentDensity": 130
+            }
+            """;
+
+        SettingsFile? settings = JsonSerializer.Deserialize<SettingsFile>(json);
+
+        Assert.NotNull(settings);
+        Assert.Equal(130, settings.EffectiveResourceDensityPercent);
+        Assert.Equal(130, settings.EffectiveStructureDensityPercent);
+        Assert.Equal(100, settings.NeutralStackStrengthPercent);
+        Assert.Equal(100, settings.BorderGuardStrengthPercent);
+    }
+
+    [Fact]
     public void Generate_CanSerializeAndDeserializeRmgJson()
     {
         var settings = new GeneratorSettings
