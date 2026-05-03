@@ -434,7 +434,6 @@ namespace Olden_Era___Template_Editor
             bool advanced = _advancedZoneSettings;
             PnlAdvancedNeutralZones.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
             PnlAdvancedZoneSizes.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
-            PnlAdvancedSeparation.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
             PnlSimpleNeutralCountLabel.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
             SldNeutral.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
             if (ChkAdvancedZoneSettings != null)

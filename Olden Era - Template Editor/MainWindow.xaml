@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="Olden Era - Simple Template Generator"
         Height="950" Width="1000"
-        MinHeight="700" MinWidth="900"
+        MinHeight="800" MinWidth="900"
         WindowStyle="None"
         ResizeMode="CanResize"
         StateChanged="Window_StateChanged"
@@ -787,6 +787,7 @@
                         <CheckBox x:Name="ChkRandomPortals"  Content="Always spawn portals"          Margin="0,6,0,0"/>                      
                         <CheckBox x:Name="ChkBalancedZonePlacement"
                                   Content="Balance zone placement [EXPERIMENTAL]"
+                                  IsChecked="True"
                                   Margin="0,6,0,0"
                                   Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
                         <TextBlock x:Name="TxtBalancedZonePlacementDesc"
