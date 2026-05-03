@@ -154,7 +154,10 @@ namespace Olden_Era___Template_Editor
             TxtNeutral.Text = ((int)SldNeutral.Value).ToString();
             TxtPlayerCastles.Text = ((int)SldPlayerCastles.Value).ToString();
             TxtNeutralCastles.Text = ((int)SldNeutralCastles.Value).ToString();
-            TxtContentDensity.Text = $"{(int)SldContentDensity.Value}%";
+            TxtResourceDensity.Text = $"{(int)SldResourceDensity.Value}%";
+            TxtStructureDensity.Text = $"{(int)SldStructureDensity.Value}%";
+            TxtNeutralStackStrength.Text = $"{(int)SldNeutralStackStrength.Value}%";
+            TxtBorderGuardStrength.Text = $"{(int)SldBorderGuardStrength.Value}%";
 
             UpdateRoadsHintVisibility();
             MarkDirty();
@@ -268,7 +271,10 @@ namespace Olden_Era___Template_Editor
             SpawnRemoteFootholds  = ChkSpawnFootholds.IsChecked == true,
             GenerateRoads         = ChkGenerateRoads.IsChecked == true,
             NoDirectPlayerConn    = ChkNoDirectPlayerConn.IsChecked == true,
-            ContentDensityPercent = (int)SldContentDensity.Value,
+            ResourceDensityPercent = (int)SldResourceDensity.Value,
+            StructureDensityPercent = (int)SldStructureDensity.Value,
+            NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
+            BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
         };
 
         private void ApplySettings(SettingsFile s)
@@ -289,7 +295,10 @@ namespace Olden_Era___Template_Editor
             ChkSpawnFootholds.IsChecked       = s.SpawnRemoteFootholds;
             ChkGenerateRoads.IsChecked        = s.GenerateRoads;
             ChkNoDirectPlayerConn.IsChecked   = s.NoDirectPlayerConn;
-            SldContentDensity.Value           = s.ContentDensityPercent;
+            SldResourceDensity.Value          = s.EffectiveResourceDensityPercent;
+            SldStructureDensity.Value         = s.EffectiveStructureDensityPercent;
+            SldNeutralStackStrength.Value     = s.NeutralStackStrengthPercent;
+            SldBorderGuardStrength.Value      = s.BorderGuardStrengthPercent;
         }
 
         private bool SaveToPath(string path)
@@ -392,7 +401,10 @@ namespace Olden_Era___Template_Editor
                 SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
                 GenerateRoads = ChkGenerateRoads.IsChecked == true,
                 Topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default,
-                ContentDensityPercent = (int)SldContentDensity.Value
+                ResourceDensityPercent = (int)SldResourceDensity.Value,
+                StructureDensityPercent = (int)SldStructureDensity.Value,
+                NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
+                BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value
             };
 
             var template = TemplateGenerator.Generate(settings);

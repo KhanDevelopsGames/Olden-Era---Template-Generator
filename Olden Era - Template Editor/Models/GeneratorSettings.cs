@@ -18,6 +18,9 @@ namespace Olden_Era___Template_Editor.Models
         public bool SpawnRemoteFootholds { get; set; } = true;
         public bool GenerateRoads { get; set; } = true;
         public MapTopology Topology { get; set; } = MapTopology.Random;
-        public int ContentDensityPercent { get; set; } = 100;
+        public int ResourceDensityPercent { get; set; } = 100;
+        public int StructureDensityPercent { get; set; } = 100;
+        public int NeutralStackStrengthPercent { get; set; } = 100;
+        public int BorderGuardStrengthPercent { get; set; } = 100;
     }
 }
