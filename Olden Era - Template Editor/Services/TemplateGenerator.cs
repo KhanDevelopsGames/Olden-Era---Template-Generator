@@ -150,7 +150,7 @@ namespace Olden_Era___Template_Editor.Services
 
             void Add(int requestedCount, NeutralZoneQuality quality, int castleCount)
             {
-                int count = Math.Clamp(requestedCount, 0, 8);
+                int count = Math.Clamp(requestedCount, 0, Math.Max(0, maxNeutralZones - plans.Count));
                 for (int i = 0; i < count && plans.Count < maxNeutralZones; i++)
                 {
                     string letter = ZoneLetters[settings.PlayerCount + plans.Count];

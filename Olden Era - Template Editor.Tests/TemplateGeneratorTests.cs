@@ -487,6 +487,32 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
+    public void Generate_AdvancedModeAllowsMoreThanEightNeutralZonesInASingleTier()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 8,
+            AdvancedMode = true,
+            NeutralLowNoCastleCount = 16,
+            Topology = MapTopology.Default,
+            RandomPortals = true
+        };
+
+        Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
+        var zones = RequiredZones(variant);
+        var zoneNames = zones.Select(zone => zone.Name).ToHashSet(StringComparer.Ordinal);
+
+        Assert.Equal(24, zones.Count);
+        Assert.Contains("Neutral-X", zoneNames);
+        Assert.DoesNotContain("Neutral-Y", zoneNames);
+        Assert.All(RequiredConnections(variant), connection =>
+        {
+            Assert.Contains(connection.From, zoneNames);
+            Assert.Contains(connection.To, zoneNames);
+        });
+    }
+
+    [Fact]
     public void Generate_AppliesPlayerAndNeutralZoneSizes()
     {
         var settings = new GeneratorSettings

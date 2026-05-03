@@ -18,6 +18,7 @@ namespace Olden_Era___Template_Editor
         private const string GitHubReleasesPage     = "https://github.com/KhanDevelopsGames/Olden-Era---Template-Generator/releases";
         private const int SimpleModeMaxZones = 16;
         private const int AdvancedModeMaxZones = 32;
+        private const int AdvancedZoneTypeMinimumMax = 8;
 
         private static readonly HttpClient Http = new();
 
@@ -60,6 +61,7 @@ namespace Olden_Era___Template_Editor
             CmbVictory.SelectedIndex = 0; // Classic (win_condition_1)
             CmbTopology.ItemsSource = TopologyOptions.Select(t => t.Label).ToList();
             CmbTopology.SelectedIndex = 0; // Random is first
+            UpdateAdvancedNeutralZoneSliderMaximums();
             UpdateValueLabels();
             UpdateAdvancedModeVisibility();
             UpdatePlayerCastleFactionVisibility();
@@ -154,12 +156,32 @@ namespace Olden_Era___Template_Editor
         {
             if (!IsInitialized) return;
 
+            UpdateAdvancedNeutralZoneSliderMaximums();
             UpdateValueLabels();
             UpdatePlayerCastleFactionVisibility();
             UpdateAdvancedModeVisibility();
             UpdateRoadsHintVisibility();
             MarkDirty();
             Validate();
+        }
+
+        private void UpdateAdvancedNeutralZoneSliderMaximums()
+        {
+            if (SldPlayers == null || SldNeutralLowNoCastle == null) return;
+
+            double sliderMax = Math.Max(AdvancedZoneTypeMinimumMax, (int)SldPlayers.Value * 2);
+            Slider[] sliders =
+            [
+                SldNeutralLowNoCastle,
+                SldNeutralLowCastle,
+                SldNeutralMediumNoCastle,
+                SldNeutralMediumCastle,
+                SldNeutralHighNoCastle,
+                SldNeutralHighCastle
+            ];
+
+            foreach (var slider in sliders)
+                slider.Maximum = sliderMax;
         }
 
         private void UpdateValueLabels()
@@ -608,6 +630,7 @@ namespace Olden_Era___Template_Editor
             ChkExperimentalMapSizes.IsChecked = needsExperimentalMapSizes;
             RefreshMapSizeOptions(s.MapSize);
             SldPlayers.Value        = s.PlayerCount;
+            UpdateAdvancedNeutralZoneSliderMaximums();
             SldNeutral.Value        = s.NeutralZoneCount;
             SldPlayerCastles.Value  = s.PlayerZoneCastles;
             SldNeutralCastles.Value = s.NeutralZoneCastles;
