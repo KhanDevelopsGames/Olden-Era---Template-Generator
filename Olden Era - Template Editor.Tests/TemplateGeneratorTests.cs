@@ -15,7 +15,8 @@ public class TemplateGeneratorTests
             TemplateName = "Baseline Test Template",
             GameMode = "Classic",
             MapSize = 200,
-            VictoryCondition = "win_condition_2",
+            AdvancedMode = true,
+            VictoryCondition = "win_condition_5",
             HeroCountMin = 7,
             HeroCountMax = 15,
             HeroCountIncrement = 3,
@@ -218,6 +219,48 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
+    public void Generate_AdvancedModeAppliesGuardRandomizationToSpawnAndNeutralZones()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            NeutralZoneCount = 2,
+            AdvancedMode = true,
+            GuardRandomization = 0.23,
+            Topology = MapTopology.Default
+        };
+
+        var zones = RequiredZones(SingleVariant(TemplateGenerator.Generate(settings)))
+            .Where(zone => zone.Name.StartsWith("Spawn-", StringComparison.Ordinal)
+                || zone.Name.StartsWith("Neutral-", StringComparison.Ordinal))
+            .ToList();
+
+        Assert.NotEmpty(zones);
+        Assert.All(zones, zone => Assert.Equal(0.23, zone.GuardRandomization));
+    }
+
+    [Fact]
+    public void Generate_SimpleModeIgnoresGuardRandomizationOverride()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            NeutralZoneCount = 2,
+            AdvancedMode = false,
+            GuardRandomization = 0.23,
+            Topology = MapTopology.Default
+        };
+
+        var zones = RequiredZones(SingleVariant(TemplateGenerator.Generate(settings)))
+            .Where(zone => zone.Name.StartsWith("Spawn-", StringComparison.Ordinal)
+                || zone.Name.StartsWith("Neutral-", StringComparison.Ordinal))
+            .ToList();
+
+        Assert.NotEmpty(zones);
+        Assert.All(zones, zone => Assert.Equal(0.05, zone.GuardRandomization));
+    }
+
+    [Fact]
     public void Generate_AdvancedNeutralCountsCreateTieredCastleAndNoCastleZones()
     {
         var settings = new GeneratorSettings
@@ -249,6 +292,16 @@ public class TemplateGeneratorTests
         Assert.Equal("MatchMainObject", zones["Neutral-D"].ZoneBiome?.Type);
         Assert.True(zones["Neutral-C"].GuardedContentValue < zones["Neutral-E"].GuardedContentValue);
         Assert.True(zones["Neutral-E"].GuardedContentValue < zones["Neutral-G"].GuardedContentValue);
+        Assert.Equal("zone_layout_sides", zones["Neutral-C"].Layout);
+        Assert.Equal("zone_layout_sides", zones["Neutral-D"].Layout);
+        Assert.Equal("zone_layout_treasure_zone", zones["Neutral-E"].Layout);
+        Assert.Equal("zone_layout_treasure_zone", zones["Neutral-F"].Layout);
+        Assert.Equal("zone_layout_center", zones["Neutral-G"].Layout);
+        Assert.Equal("zone_layout_center", zones["Neutral-H"].Layout);
+        Assert.Contains(template.ZoneLayouts ?? [], layout => layout.Name == "zone_layout_spawns");
+        Assert.Contains(template.ZoneLayouts ?? [], layout => layout.Name == "zone_layout_sides");
+        Assert.Contains(template.ZoneLayouts ?? [], layout => layout.Name == "zone_layout_treasure_zone");
+        Assert.Contains(template.ZoneLayouts ?? [], layout => layout.Name == "zone_layout_center");
 
         string json = JsonSerializer.Serialize(template, new JsonSerializerOptions { WriteIndented = true });
         Assert.DoesNotContain("\"tier\"", json, StringComparison.OrdinalIgnoreCase);
@@ -280,6 +333,116 @@ public class TemplateGeneratorTests
             Assert.Contains(connection.From, zoneNames);
             Assert.Contains(connection.To, zoneNames);
         });
+    }
+
+    [Fact]
+    public void Generate_AppliesPlayerAndNeutralZoneSizes()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            NeutralZoneCount = 2,
+            PlayerZoneSize = 2.0,
+            NeutralZoneSize = 0.5,
+            Topology = MapTopology.Default
+        };
+
+        var zones = RequiredZones(SingleVariant(TemplateGenerator.Generate(settings)));
+
+        Assert.All(zones.Where(zone => zone.Name.StartsWith("Spawn-", StringComparison.Ordinal)),
+            zone => Assert.Equal(2.0, zone.Size));
+        Assert.All(zones.Where(zone => zone.Name.StartsWith("Neutral-", StringComparison.Ordinal)),
+            zone => Assert.Equal(0.5, zone.Size));
+    }
+
+    [Fact]
+    public void KnownValues_ExperimentalMapSizesContinueOfficialIncrementThrough512()
+    {
+        Assert.Equal(240, KnownValues.MaxOfficialMapSize);
+        Assert.Equal(256, KnownValues.ExperimentalMapSizes[0]);
+        Assert.Equal(512, KnownValues.ExperimentalMapSizes[^1]);
+        Assert.Equal(17, KnownValues.ExperimentalMapSizes.Length);
+        Assert.All(KnownValues.ExperimentalMapSizes, size => Assert.Equal(0, size % 16));
+        Assert.Equal(KnownValues.MapSizes.Length + KnownValues.ExperimentalMapSizes.Length, KnownValues.AllMapSizes.Length);
+    }
+
+    [Fact]
+    public void KnownValues_VictoryConditionsUseOfficialObservedMapping()
+    {
+        Assert.Equal(
+            ["win_condition_1", "win_condition_3", "win_condition_4", "win_condition_5", "win_condition_6"],
+            KnownValues.VictoryConditionIds);
+        Assert.Contains("Gladiator Arena", KnownValues.VictoryConditionLabels);
+        Assert.Contains("Tournament", KnownValues.VictoryConditionLabels);
+    }
+
+    [Fact]
+    public void Generate_AdvancedModeWritesOfficialTournamentWinConditionSettings()
+    {
+        var settings = new GeneratorSettings
+        {
+            AdvancedMode = true,
+            VictoryCondition = "win_condition_6",
+            TournamentRoundCount = 3,
+            TournamentRoundDuration = 5,
+            TournamentFirstAnnounceDay = 7,
+            TournamentRoundInterval = 7,
+            TournamentPointsToWin = 2,
+            Topology = MapTopology.Default
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+        WinConditions? winConditions = template.GameRules?.WinConditions;
+
+        Assert.Equal("win_condition_6", template.DisplayWinCondition);
+        Assert.NotNull(winConditions);
+        Assert.True(winConditions.Tournament);
+        Assert.False(winConditions.GladiatorArena);
+        Assert.Equal([5, 5, 5], winConditions.TournamentDays);
+        Assert.Equal([7, 14, 21], winConditions.TournamentAnnounceDays);
+        Assert.Equal(2, winConditions.TournamentPointsToWin);
+        Assert.True(winConditions.TournamentSaveArmy);
+        Assert.True(winConditions.LostStartHero);
+        Assert.Equal("StartHero", winConditions.ChampionSelectRule);
+    }
+
+    [Fact]
+    public void Generate_AdvancedModeAppliesSeparateExperienceModifiers()
+    {
+        var settings = new GeneratorSettings
+        {
+            AdvancedMode = true,
+            FactionLawsExpPercent = 50,
+            AstrologyExpPercent = 200,
+            Topology = MapTopology.Default
+        };
+
+        GameRules? rules = TemplateGenerator.Generate(settings).GameRules;
+
+        Assert.NotNull(rules);
+        Assert.Equal(0.5, rules.FactionLawsExpModifier);
+        Assert.Equal(2.0, rules.AstrologyExpModifier);
+    }
+
+    [Fact]
+    public void Generate_SimpleModeIgnoresAdvancedWinConditionAndExperienceOverrides()
+    {
+        var settings = new GeneratorSettings
+        {
+            AdvancedMode = false,
+            VictoryCondition = "win_condition_6",
+            FactionLawsExpPercent = 50,
+            AstrologyExpPercent = 200,
+            Tournament = true,
+            Topology = MapTopology.Default
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.Equal("win_condition_1", template.DisplayWinCondition);
+        Assert.Equal(1.0, template.GameRules?.FactionLawsExpModifier);
+        Assert.Equal(1.0, template.GameRules?.AstrologyExpModifier);
+        Assert.Null(template.GameRules?.WinConditions?.Tournament);
     }
 
     [Fact]
