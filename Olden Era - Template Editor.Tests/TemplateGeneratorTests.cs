@@ -700,15 +700,6 @@ public class TemplateGeneratorTests
             RunOnStaThread(() => TemplatePreviewPngWriter.Save(template, previewPath));
             BitmapSource bitmap = LoadBitmap(previewPath);
 
-            // Dump a grid of sample points to find zone centers
-            for (int x = 560; x < 630; x += 2)
-                for (int y = 490; y < 560; y += 2)
-                {
-                    Color c = PixelAt(bitmap, x, y);
-                    if (c.R != 28 || c.G != 22 || c.B != 16) // non-background
-                        Debug.WriteLine($"({x},{y}) => RGB({c.R},{c.G},{c.B})");
-                }
-
             AssertColorNear(Color.FromRgb(28, 22, 16), PixelAt(bitmap, 256, 72));   // background of map
             AssertColorNear(Color.FromRgb(192, 192, 192), PixelAt(bitmap, 598, 534));   // border of circle 3
             AssertColorNear(Color.FromRgb(220, 220, 200), PixelAt(bitmap, 93, 502));    // house icon
