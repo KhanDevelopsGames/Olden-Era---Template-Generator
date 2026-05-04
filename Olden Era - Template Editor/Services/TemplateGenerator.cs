@@ -150,7 +150,7 @@ namespace Olden_Era___Template_Editor.Services
 
             void Add(int requestedCount, NeutralZoneQuality quality, int castleCount)
             {
-                int count = Math.Clamp(requestedCount, 0, 30);
+                int count = Math.Clamp(requestedCount, 0, 8);
                 for (int i = 0; i < count && plans.Count < maxNeutralZones; i++)
                 {
                     string letter = ZoneLetters[settings.PlayerCount + plans.Count];
@@ -204,28 +204,13 @@ namespace Olden_Era___Template_Editor.Services
                     Parameters = ["movementBonus", "0"]
                 }
             ],
-            WinConditions = settings.AdvancedMode
-                ? BuildAdvancedWinConditions(settings, effectiveVictoryCondition)
-                : BuildDefaultWinConditions()
+            WinConditions = BuildAdvancedWinConditions(settings, effectiveVictoryCondition)
         };
 
         private static double PercentToModifier(int percent) =>
             Math.Round(Math.Clamp(percent, 25, 200) / 100.0, 2, MidpointRounding.AwayFromZero);
 
-        private static WinConditions BuildDefaultWinConditions() => new()
-        {
-            Classic = true,
-            Desertion = true,
-            DesertionDay = 3,
-            DesertionValue = 3000,
-            HeroLighting = false,
-            HeroLightingDay = 1,
-            LostStartCity = false,
-            LostStartCityDay = 3,
-            LostStartHero = false,
-            CityHold = false,
-            CityHoldDays = 6
-        };
+
 
         private static WinConditions BuildAdvancedWinConditions(GeneratorSettings settings, string effectiveVictoryCondition)
         {
@@ -266,11 +251,6 @@ namespace Olden_Era___Template_Editor.Services
                 int firstAnnounceDay = Math.Clamp(settings.TournamentFirstAnnounceDay, 1, 60);
                 int interval = Math.Clamp(settings.TournamentRoundInterval, 1, 30);
 
-                winConditions.GladiatorArena = false;
-                winConditions.GladiatorArenaRegistrationStartWork = false;
-                winConditions.GladiatorArenaRegistrationStartFight = true;
-                winConditions.GladiatorArenaDaysDelayStart = Math.Clamp(settings.GladiatorArenaDaysDelayStart, 1, 60);
-                winConditions.GladiatorArenaCountDay = Math.Clamp(settings.GladiatorArenaCountDay, 1, 30);
                 winConditions.ChampionSelectRule = "StartHero";
                 winConditions.Tournament = true;
                 winConditions.TournamentDays = Enumerable.Repeat(roundDuration, roundCount).ToList();
@@ -280,7 +260,6 @@ namespace Olden_Era___Template_Editor.Services
                 winConditions.TournamentPointsToWin = Math.Clamp(settings.TournamentPointsToWin, 1, roundCount);
                 winConditions.TournamentSaveArmy = true;
             }
-
             return winConditions;
         }
 

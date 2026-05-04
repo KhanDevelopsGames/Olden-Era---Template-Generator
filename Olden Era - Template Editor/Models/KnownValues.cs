@@ -40,11 +40,11 @@ namespace OldenEraTemplateEditor.Models
         /// </summary>
         public static readonly string[] VictoryConditionLabels =
         [
-            "Standard (Classic Kill)",
+            "Standard",
             "Lost Starting City",
             //"Gladiator Arena",
-            "Hold City for N Days",
-            "Tournament",
+            "Hold City",
+            "Tournament [EXPERIMENTAL]",
         ];
 
         /// <summary>

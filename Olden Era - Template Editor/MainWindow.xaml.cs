@@ -519,31 +519,43 @@ namespace Olden_Era___Template_Editor
                 ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
                 : "win_condition_1";
 
-            if (selectedVictoryCondition == "win_condition_3")
-                ChkLostStartCity.IsChecked = true;
-            if (selectedVictoryCondition == "win_condition_4")
+            bool isTournament = selectedVictoryCondition == "win_condition_6";
+
+            if (isTournament)
             {
-                ChkLostStartHero.IsChecked = true;
-                ChkGladiatorArena.IsChecked = true;
-            }
-            if (selectedVictoryCondition == "win_condition_5")
-                ChkCityHold.IsChecked = true;
-            if (selectedVictoryCondition == "win_condition_6")
-            {
-                ChkLostStartHero.IsChecked = true;
+                // Tournament is exclusive — force it on and disable all other conditions.
                 ChkTournament.IsChecked = true;
+                ChkLostStartCity.IsChecked = false;
+                ChkLostStartHero.IsChecked = true;
+                ChkCityHold.IsChecked = false;
+                ChkGladiatorArena.IsChecked = false;
+            }
+            else
+            {
+                // Tournament is unavailable outside of the Tournament win condition.
+                ChkTournament.IsChecked = false;
+                if (selectedVictoryCondition == "win_condition_3")
+                    ChkLostStartCity.IsChecked = true;
+                if (selectedVictoryCondition == "win_condition_4")
+                {
+                    ChkLostStartHero.IsChecked = true;
+                    ChkGladiatorArena.IsChecked = true;
+                }
+                if (selectedVictoryCondition == "win_condition_5")
+                    ChkCityHold.IsChecked = true;
             }
 
-            ChkLostStartCity.IsEnabled = selectedVictoryCondition != "win_condition_3";
-            ChkLostStartHero.IsEnabled = selectedVictoryCondition is not "win_condition_4" and not "win_condition_6";
-            ChkCityHold.IsEnabled = selectedVictoryCondition != "win_condition_5";
-            ChkGladiatorArena.IsEnabled = selectedVictoryCondition != "win_condition_4";
-            ChkTournament.IsEnabled = selectedVictoryCondition != "win_condition_6";
+            ChkLostStartCity.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_3";
+            ChkLostStartHero.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
+            ChkCityHold.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_5";
+            ChkGladiatorArena.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
+            ChkTournament.IsChecked = isTournament;
+            ChkTournament.IsEnabled = isTournament;
 
             PnlLostStartCityDetails.Visibility = ChkLostStartCity.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
             PnlCityHoldDetails.Visibility = ChkCityHold.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
             PnlGladiatorDetails.Visibility = ChkGladiatorArena.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            PnlTournamentDetails.Visibility = ChkTournament.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            PnlTournamentDetails.Visibility = isTournament ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateExperimentalMapSizeWarningVisibility()

@@ -281,6 +281,16 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource BrushGoldDim}"/>
                         </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsEnabled" Value="False"/>
+                                <Condition Property="IsChecked" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="CheckBorder" Property="Background"   Value="#1E1E1E"/>
+                            <Setter TargetName="CheckBorder" Property="BorderBrush"  Value="#3A3A3A"/>
+                            <Setter TargetName="CheckMark"   Property="Foreground"   Value="#4A4A4A"/>
+                            <Setter Property="Foreground"                             Value="#555555"/>
+                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

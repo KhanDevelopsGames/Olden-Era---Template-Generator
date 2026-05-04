@@ -274,7 +274,7 @@
                 <Border Grid.Row="6" x:Name="PnlAdvancedGameRules" Style="{StaticResource SectionBorder}">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
-                            <TextBlock Text="◆  ADVANCED GAME RULES [EXPERIMENTAL]" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Text="◆ GAME RULES" Style="{StaticResource SectionHeader}"/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="185"/>
@@ -288,7 +288,7 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <Label Grid.Row="4" Grid.Column="0" Content="Win condition"/>
+                                <Label Grid.Row="4" Grid.Column="0" Content="Primary win condition"/>
                                 <ComboBox Grid.Row="4" Grid.Column="1" x:Name="CmbVictory"
                                           SelectionChanged="CmbVictory_SelectionChanged"/>
 
@@ -343,7 +343,7 @@
                                           Unchecked="WinConditionOption_Changed"/>
 
                                 <CheckBox x:Name="ChkCityHold"
-                                          Content="Win by holding a city"
+                                          Content="Win by holding the city in the center"
                                           Margin="0,6,0,0"
                                           Checked="WinConditionOption_Changed"
                                           Unchecked="WinConditionOption_Changed"/>
