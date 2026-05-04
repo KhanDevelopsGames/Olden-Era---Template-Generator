@@ -282,9 +282,9 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="0"/>
+                                    <RowDefinition Height="10"/>
                                     <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="0"/>
+                                    <RowDefinition Height="10"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
@@ -296,7 +296,7 @@
                                     <Label Content="Faction laws XP" DockPanel.Dock="Left"/>
                                     <TextBlock x:Name="TxtFactionLawsExp" Text="100%" DockPanel.Dock="Right"
                                                HorizontalAlignment="Right" VerticalAlignment="Center"
-                                               Margin="0,0,0,0" Style="{StaticResource ValueText}"/>
+                                               Margin="0,0,10,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="0" Grid.Column="1" x:Name="SldFactionLawsExp"
                                         Minimum="25" Maximum="200" Value="100"
@@ -307,7 +307,7 @@
                                     <Label Content="Astrology XP" DockPanel.Dock="Left"/>
                                     <TextBlock x:Name="TxtAstrologyExp" Text="100%" DockPanel.Dock="Right"
                                                HorizontalAlignment="Right" VerticalAlignment="Center"
-                                               Margin="0,0,0,0" Style="{StaticResource ValueText}"/>
+                                               Margin="0,0,10,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="2" Grid.Column="1" x:Name="SldAstrologyExp"
                                         Minimum="25" Maximum="200" Value="100"
