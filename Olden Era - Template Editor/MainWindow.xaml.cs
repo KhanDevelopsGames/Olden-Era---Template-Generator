@@ -38,9 +38,8 @@ namespace Olden_Era___Template_Editor
             (MapTopology.Random,      "Random",        "Zones are placed at random positions. Each zone connects to all zones that border it — no fixed structure."),
             (MapTopology.Default,     "Ring",          "All zones are arranged in a circle. Each zone connects to the two zones next to it."),
             (MapTopology.HubAndSpoke, "Hub",   "All zones connect to a shared central hub. Players never border each other directly."),
-            (MapTopology.Chain,       "Chain",         "Zones are connected in a straight line from one end to the other, with no wrap-around."),
-            (MapTopology.SharedWeb,   "Shared Web [NOT FUNCTIONAL]",    "Player zones connect to shared neutral zones. Neutrals form a ring between all players."),
-        ];
+            (MapTopology.Chain,       "Chain",         "Zones are connected in a straight line from one end to the other, with no wrap-around.")
+            ];
 
         public MainWindow()
         {

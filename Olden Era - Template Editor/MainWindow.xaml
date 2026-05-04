@@ -282,9 +282,9 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="0"/>
                                     <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="15"/>
+                                    <RowDefinition Height="0"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
@@ -292,30 +292,30 @@
                                 <ComboBox Grid.Row="4" Grid.Column="1" x:Name="CmbVictory"
                                           SelectionChanged="CmbVictory_SelectionChanged"/>
 
-                                <DockPanel Grid.Row="0" Grid.Column="0">
+                                <DockPanel Grid.Row="0" Grid.Column="0" Visibility="Collapsed">
                                     <Label Content="Faction laws XP" DockPanel.Dock="Left"/>
                                     <TextBlock x:Name="TxtFactionLawsExp" Text="100%" DockPanel.Dock="Right"
                                                HorizontalAlignment="Right" VerticalAlignment="Center"
-                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                               Margin="0,0,0,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="0" Grid.Column="1" x:Name="SldFactionLawsExp"
                                         Minimum="25" Maximum="200" Value="100"
                                         TickFrequency="25" IsSnapToTickEnabled="True"
-                                        ValueChanged="Slider_ValueChanged"/>
+                                        ValueChanged="Slider_ValueChanged" Visibility="Collapsed"/>
 
-                                <DockPanel Grid.Row="2" Grid.Column="0">
+                                        <DockPanel Grid.Row="2" Grid.Column="0" Visibility="Collapsed">
                                     <Label Content="Astrology XP" DockPanel.Dock="Left"/>
                                     <TextBlock x:Name="TxtAstrologyExp" Text="100%" DockPanel.Dock="Right"
                                                HorizontalAlignment="Right" VerticalAlignment="Center"
-                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                               Margin="0,0,0,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="2" Grid.Column="1" x:Name="SldAstrologyExp"
                                         Minimum="25" Maximum="200" Value="100"
-                                        TickFrequency="25" IsSnapToTickEnabled="True"
+                                        TickFrequency="25" IsSnapToTickEnabled="True" Visibility="Collapsed"
                                         ValueChanged="Slider_ValueChanged"/>
                             </Grid>
 
-                            <StackPanel Margin="0,8,0,0">
+                            <StackPanel Margin="0,10,0,0">
                                 <CheckBox x:Name="ChkLostStartCity"
                                           Content="Lose when starting city is lost"
                                           Checked="WinConditionOption_Changed"
@@ -329,7 +329,7 @@
                                         <Label Content="Lost city day" Padding="5,2" DockPanel.Dock="Left"/>
                                         <TextBlock x:Name="TxtLostStartCityDay" Text="3" DockPanel.Dock="Right"
                                                    HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                   Margin="0,0,0,0" Style="{StaticResource ValueText}"/>
                                     </DockPanel>
                                     <Slider Grid.Column="1" x:Name="SldLostStartCityDay"
                                             Minimum="1" Maximum="30" Value="3"
@@ -368,7 +368,7 @@
                                           Content="Use gladiator arena rules"
                                           Margin="0,6,0,0"
                                           Checked="WinConditionOption_Changed"
-                                          Unchecked="WinConditionOption_Changed"/>
+                                          Unchecked="WinConditionOption_Changed" Visibility="Collapsed"/>
                                 <Grid x:Name="PnlGladiatorDetails" Margin="18,3,0,6">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="167"/>

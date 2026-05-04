@@ -42,7 +42,7 @@ namespace OldenEraTemplateEditor.Models
         [
             "Standard (Classic Kill)",
             "Lost Starting City",
-            "Gladiator Arena",
+            //"Gladiator Arena",
             "Hold City for N Days",
             "Tournament",
         ];
@@ -54,7 +54,7 @@ namespace OldenEraTemplateEditor.Models
         [
             "win_condition_1",
             "win_condition_3",
-            "win_condition_4",
+            //"win_condition_4",
             "win_condition_5",
             "win_condition_6",
         ];
