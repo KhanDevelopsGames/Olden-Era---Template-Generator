@@ -16,7 +16,7 @@ namespace Olden_Era___Template_Editor
     {
         private const string GitHubApiLatestRelease = "https://api.github.com/repos/KhanDevelopsGames/Olden-Era---Template-Generator/releases/latest";
         private const string GitHubReleasesPage     = "https://github.com/KhanDevelopsGames/Olden-Era---Template-Generator/releases";
-        private const int SimpleModeMaxZones = 16;
+        private const int SimpleModeMaxZones = 32;
         private const int AdvancedModeMaxZones = 32;
 
         private static readonly HttpClient Http = new();

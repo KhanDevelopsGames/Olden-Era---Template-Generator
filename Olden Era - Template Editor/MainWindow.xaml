@@ -527,7 +527,7 @@
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
                             <Slider Grid.Row="0" Grid.Column="1" x:Name="SldNeutral"
-                                    Minimum="0" Maximum="8" Value="0"
+                                    Minimum="0" Maximum="30" Value="0"
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
 
@@ -700,7 +700,7 @@
                                                Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="0" Grid.Column="1" x:Name="SldNeutralLowNoCastle"
-                                        Minimum="0" Maximum="8" Value="0"
+                                        Minimum="0" Maximum="30" Value="0"
                                         TickFrequency="1" IsSnapToTickEnabled="True"
                                         ValueChanged="Slider_ValueChanged"/>
 
@@ -711,7 +711,7 @@
                                                Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="2" Grid.Column="1" x:Name="SldNeutralLowCastle"
-                                        Minimum="0" Maximum="8" Value="0"
+                                        Minimum="0" Maximum="30" Value="0"
                                         TickFrequency="1" IsSnapToTickEnabled="True"
                                         ValueChanged="Slider_ValueChanged"/>
 
@@ -722,7 +722,7 @@
                                                Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="4" Grid.Column="1" x:Name="SldNeutralMediumNoCastle"
-                                        Minimum="0" Maximum="8" Value="0"
+                                        Minimum="0" Maximum="30" Value="0"
                                         TickFrequency="1" IsSnapToTickEnabled="True"
                                         ValueChanged="Slider_ValueChanged"/>
 
@@ -733,7 +733,7 @@
                                                Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="6" Grid.Column="1" x:Name="SldNeutralMediumCastle"
-                                        Minimum="0" Maximum="8" Value="0"
+                                        Minimum="0" Maximum="30" Value="0"
                                         TickFrequency="1" IsSnapToTickEnabled="True"
                                         ValueChanged="Slider_ValueChanged"/>
 
@@ -744,7 +744,7 @@
                                                Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="8" Grid.Column="1" x:Name="SldNeutralHighNoCastle"
-                                        Minimum="0" Maximum="8" Value="0"
+                                        Minimum="0" Maximum="30" Value="0"
                                         TickFrequency="1" IsSnapToTickEnabled="True"
                                         ValueChanged="Slider_ValueChanged"/>
 
@@ -755,7 +755,7 @@
                                                Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                 </DockPanel>
                                 <Slider Grid.Row="10" Grid.Column="1" x:Name="SldNeutralHighCastle"
-                                        Minimum="0" Maximum="8" Value="0"
+                                        Minimum="0" Maximum="30" Value="0"
                                         TickFrequency="1" IsSnapToTickEnabled="True"
                                         ValueChanged="Slider_ValueChanged"/>
                             </Grid>
