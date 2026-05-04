@@ -522,10 +522,10 @@ public class TemplateGeneratorTests
     public void KnownValues_VictoryConditionsUseOfficialObservedMapping()
     {
         Assert.Equal(
-            ["win_condition_1", "win_condition_3", "win_condition_4", "win_condition_5", "win_condition_6"],
+            ["win_condition_1", "win_condition_3", "win_condition_5", "win_condition_6"],
             KnownValues.VictoryConditionIds);
-        Assert.Contains("Gladiator Arena", KnownValues.VictoryConditionLabels);
-        Assert.Contains("Tournament", KnownValues.VictoryConditionLabels);
+        Assert.DoesNotContain("Gladiator Arena", KnownValues.VictoryConditionLabels);
+        Assert.Contains("Tournament [EXPERIMENTAL]", KnownValues.VictoryConditionLabels);
     }
 
     [Fact]
@@ -549,7 +549,7 @@ public class TemplateGeneratorTests
         Assert.Equal("win_condition_6", template.DisplayWinCondition);
         Assert.NotNull(winConditions);
         Assert.True(winConditions.Tournament);
-        Assert.False(winConditions.GladiatorArena);
+        Assert.Null(winConditions.GladiatorArena);
         Assert.Equal([5, 5, 5], winConditions.TournamentDays);
         Assert.Equal([7, 14, 21], winConditions.TournamentAnnounceDays);
         Assert.Equal(2, winConditions.TournamentPointsToWin);
@@ -594,7 +594,7 @@ public class TemplateGeneratorTests
         Assert.Equal("win_condition_1", template.DisplayWinCondition);
         Assert.Equal(1.0, template.GameRules?.FactionLawsExpModifier);
         Assert.Equal(1.0, template.GameRules?.AstrologyExpModifier);
-        Assert.Null(template.GameRules?.WinConditions?.Tournament);
+        Assert.True(template.GameRules?.WinConditions?.Tournament);
     }
 
     [Fact]
