@@ -1,0 +1,29 @@
+name: Olden Era Tests
+
+on:
+  push:          # run on every push
+    branches: [ "**" ]
+  pull_request:  # also run on PRs
+    branches: [ "**" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build "Olden Era - Template Editor.slnx" --configuration Release
+
+    - name: Run tests
+      run: dotnet test --no-build --configuration Release --verbosity normal
