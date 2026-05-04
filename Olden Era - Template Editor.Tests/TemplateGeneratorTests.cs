@@ -577,7 +577,7 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
-    public void Generate_SimpleModeIgnoresAdvancedWinConditionAndExperienceOverrides()
+    public void Generate_SimpleModeAppliesWinConditionAndExperienceOverrides()
     {
         var settings = new GeneratorSettings
         {
@@ -591,9 +591,9 @@ public class TemplateGeneratorTests
 
         RmgTemplate template = TemplateGenerator.Generate(settings);
 
-        Assert.Equal("win_condition_1", template.DisplayWinCondition);
-        Assert.Equal(1.0, template.GameRules?.FactionLawsExpModifier);
-        Assert.Equal(1.0, template.GameRules?.AstrologyExpModifier);
+        Assert.Equal("win_condition_6", template.DisplayWinCondition);
+        Assert.Equal(0.5, template.GameRules?.FactionLawsExpModifier);
+        Assert.Equal(2.0, template.GameRules?.AstrologyExpModifier);
         Assert.True(template.GameRules?.WinConditions?.Tournament);
     }
 
