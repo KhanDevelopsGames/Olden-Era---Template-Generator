@@ -526,7 +526,7 @@ namespace Olden_Era___Template_Editor
                 // Tournament is exclusive — force it on and disable all other conditions.
                 ChkTournament.IsChecked = true;
                 ChkLostStartCity.IsChecked = false;
-                ChkLostStartHero.IsChecked = true;
+                ChkLostStartHero.IsChecked = false;
                 ChkCityHold.IsChecked = false;
                 ChkGladiatorArena.IsChecked = false;
             }

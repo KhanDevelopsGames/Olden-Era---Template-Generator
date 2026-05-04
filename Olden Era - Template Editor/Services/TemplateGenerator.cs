@@ -229,7 +229,7 @@ namespace Olden_Era___Template_Editor.Services
                 HeroLightingDay = 1,
                 LostStartCity = useLostStartCity,
                 LostStartCityDay = Math.Clamp(settings.LostStartCityDay, 1, 30),
-                LostStartHero = settings.LostStartHero || useGladiator || useTournament,
+                LostStartHero = settings.LostStartHero || useGladiator,
                 CityHold = useCityHold,
                 CityHoldDays = Math.Clamp(settings.CityHoldDays, 1, 30)
             };

@@ -554,7 +554,7 @@ public class TemplateGeneratorTests
         Assert.Equal([7, 14, 21], winConditions.TournamentAnnounceDays);
         Assert.Equal(2, winConditions.TournamentPointsToWin);
         Assert.True(winConditions.TournamentSaveArmy);
-        Assert.True(winConditions.LostStartHero);
+        Assert.False(winConditions.LostStartHero);
         Assert.Equal("StartHero", winConditions.ChampionSelectRule);
     }
 
