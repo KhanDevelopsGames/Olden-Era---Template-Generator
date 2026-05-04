@@ -402,6 +402,21 @@ namespace Olden_Era___Template_Editor
             Validate();
         }
 
+        private void ChkRandomPortals_Changed(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            PnlMaxPortals.Visibility = ChkRandomPortals.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            MarkDirty();
+            Validate();
+        }
+
+        private void SldMaxPortals_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (!IsInitialized) return;
+            LblMaxPortals.Text = ((int)SldMaxPortals.Value).ToString();
+            MarkDirty();
+        }
+
         private void WinConditionOption_Changed(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
@@ -627,6 +642,7 @@ namespace Olden_Era___Template_Editor
             HeroCountIncrement    = (int)SldHeroIncrement.Value,
             Topology              = TopologyOptions[CmbTopology.SelectedIndex].Topology,
             RandomPortals         = ChkRandomPortals.IsChecked == true,
+            MaxPortalConnections  = (int)SldMaxPortals.Value,
             SpawnRemoteFootholds  = ChkSpawnFootholds.IsChecked == true,
             GenerateRoads         = ChkGenerateRoads.IsChecked == true,
             NoDirectPlayerConn    = ChkNoDirectPlayerConn.IsChecked == true,
@@ -685,6 +701,8 @@ namespace Olden_Era___Template_Editor
             int topoIdx = Array.FindIndex(TopologyOptions, t => t.Topology == s.Topology);
             if (topoIdx >= 0) CmbTopology.SelectedIndex = topoIdx;
             ChkRandomPortals.IsChecked        = s.RandomPortals;
+            SldMaxPortals.Value               = Math.Clamp(s.MaxPortalConnections, 1, 32);
+            PnlMaxPortals.Visibility          = s.RandomPortals ? Visibility.Visible : Visibility.Collapsed;
             ChkSpawnFootholds.IsChecked       = s.SpawnRemoteFootholds;
             ChkGenerateRoads.IsChecked        = s.GenerateRoads;
             ChkNoDirectPlayerConn.IsChecked   = s.NoDirectPlayerConn;
@@ -891,6 +909,7 @@ namespace Olden_Era___Template_Editor
             GuardRandomization = _advancedZoneSettings ? SldGuardRandomization.Value / 100.0 : 0.05,
             NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
             RandomPortals = ChkRandomPortals.IsChecked == true,
+            MaxPortalConnections = (int)SldMaxPortals.Value,
             SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
             GenerateRoads = ChkGenerateRoads.IsChecked == true,
             Topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default,

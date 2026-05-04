@@ -272,9 +272,10 @@
 
                 <!-- ADVANCED GAME RULES -->
                 <Border Grid.Row="6" x:Name="PnlAdvancedGameRules" Style="{StaticResource SectionBorder}">
+                    <DockPanel>
+                        <TextBlock DockPanel.Dock="Top" Text="◆ GAME RULES" Style="{StaticResource SectionHeader}"/>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
-                            <TextBlock Text="◆ GAME RULES" Style="{StaticResource SectionHeader}"/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="185"/>
@@ -472,11 +473,12 @@
                                             Minimum="1" Maximum="5" Value="2"
                                             TickFrequency="1" IsSnapToTickEnabled="True"
                                             ValueChanged="Slider_ValueChanged"/>
-                                </Grid>
-                            </StackPanel>
-                        </StackPanel>
-                    </ScrollViewer>
-                </Border>
+                                                </Grid>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                   </DockPanel>
+                                </Border>
             </Grid>
 
             <!-- ─── RIGHT COLUMN ─────────────────────────────────────── -->
@@ -487,9 +489,8 @@
 
                 <!-- ZONE CONFIGURATION -->
                 <Border Grid.Row="0" Style="{StaticResource SectionBorder}">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel>
-                        <DockPanel LastChildFill="False">
+                    <DockPanel>
+                        <DockPanel LastChildFill="False" DockPanel.Dock="Top">
                             <TextBlock Text="◆  ZONE CONFIGURATION" Style="{StaticResource SectionHeader}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
                             <CheckBox x:Name="ChkAdvancedZoneSettings" Content="Advanced settings"
                                       DockPanel.Dock="Right"
@@ -499,6 +500,8 @@
                                       Checked="BtnAdvancedZoneSettings_Click"
                                       Unchecked="BtnAdvancedZoneSettings_Click"/>
                         </DockPanel>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="230"/>
@@ -794,7 +797,25 @@
             Margin="18,3,0,0"
             Text="Note: Roads are only generated within zones that have at least one castle. Neutral zones with 0 castles will not have roads, even if this option is enabled."/>
                                 <CheckBox x:Name="ChkSpawnFootholds" Content="Spawn remote footholds" IsChecked="True" Margin="0,6,0,0"/>
-                        <CheckBox x:Name="ChkRandomPortals"  Content="Always spawn portals"          Margin="0,6,0,0"/>                      
+                        <CheckBox x:Name="ChkRandomPortals"  Content="Always spawn portals"          Margin="0,6,0,0"
+                                  Checked="ChkRandomPortals_Changed" Unchecked="ChkRandomPortals_Changed"/>
+                        <StackPanel x:Name="PnlMaxPortals" Visibility="Collapsed" Margin="25,4,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="205"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <DockPanel Grid.Column="0">
+                                    <Label Content="Max portal connections" DockPanel.Dock="Left"/>
+                                    <TextBlock x:Name="LblMaxPortals" Text="32" DockPanel.Dock="Right"
+                                               HorizontalAlignment="Right" VerticalAlignment="Center"
+                                               Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                </DockPanel>
+                                <Slider Grid.Column="1" x:Name="SldMaxPortals" Minimum="1" Maximum="32" Value="32"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        ValueChanged="SldMaxPortals_ValueChanged"/>
+                            </Grid>
+                        </StackPanel>
                         <CheckBox x:Name="ChkBalancedZonePlacement"
                                   Content="Balance zone placement [RECOMMENDED]"
                                   IsChecked="True"
@@ -819,6 +840,7 @@
                                    Text="The game tries to connect player zones to neutral zones only. If no neutral zone borders a player zone, it will fall back to connecting directly to another player zone."/>
                                                              </StackPanel>
                                                              </ScrollViewer>
+                                                    </DockPanel>
                                                          </Border>
                                                      </Grid>
 

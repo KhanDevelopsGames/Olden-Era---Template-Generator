@@ -28,6 +28,7 @@ namespace Olden_Era___Template_Editor.Models
         public double GuardRandomization { get; set; } = 0.05;
         public bool NoDirectPlayerConnections { get; set; } = false;
         public bool RandomPortals { get; set; } = false;
+        public int MaxPortalConnections { get; set; } = 32;
         public bool SpawnRemoteFootholds { get; set; } = true;
         public bool GenerateRoads { get; set; } = true;
         public MapTopology Topology { get; set; } = MapTopology.Random;

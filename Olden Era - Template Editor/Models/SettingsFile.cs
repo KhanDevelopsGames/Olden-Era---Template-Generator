@@ -33,6 +33,7 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("heroIncrement")]     public int     HeroCountIncrement     { get; set; } = 0;
         [JsonPropertyName("topology")]          public MapTopology Topology           { get; set; } = MapTopology.Random;
         [JsonPropertyName("randomPortals")]     public bool    RandomPortals          { get; set; } = false;
+        [JsonPropertyName("maxPortalConns")]    public int     MaxPortalConnections   { get; set; } = 32;
         [JsonPropertyName("spawnFootholds")]    public bool    SpawnRemoteFootholds   { get; set; } = true;
         [JsonPropertyName("generateRoads")]     public bool    GenerateRoads          { get; set; } = true;
         [JsonPropertyName("isolateplayers")]    public bool    NoDirectPlayerConn     { get; set; } = false;

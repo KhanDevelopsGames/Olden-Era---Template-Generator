@@ -633,7 +633,7 @@ namespace Olden_Era___Template_Editor.Services
             var connections = new List<Connection>();
             connections.AddRange(BuildRingConnections(playerLetters, orderedLetters, tuning, isolate));
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning, settings.MaxPortalConnections));
 
             if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, orderedLetters[0], outerCount, zones, connections);
@@ -713,7 +713,7 @@ namespace Olden_Era___Template_Editor.Services
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning, settings.MaxPortalConnections));
 
             if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, allLetters[0], count, zones, connections);
@@ -930,7 +930,7 @@ namespace Olden_Era___Template_Editor.Services
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, outerLetters, tuning));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, outerLetters, tuning, settings.MaxPortalConnections));
 
             return MakeVariant(playerLetters, outerLetters[0], outerLetters.Count + 1, zones, connections);
         }
@@ -994,7 +994,7 @@ namespace Olden_Era___Template_Editor.Services
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning, settings.MaxPortalConnections));
 
             if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, orderedLetters[0], count, zones, connections);
@@ -1112,7 +1112,7 @@ namespace Olden_Era___Template_Editor.Services
             if (settings.RandomPortals)
             {
                 var allLetters = playerLetters.Concat(neutrals).ToList();
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning, settings.MaxPortalConnections));
             }
 
             bool isolateWeb = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
@@ -1504,7 +1504,7 @@ namespace Olden_Era___Template_Editor.Services
         /// that does NOT lead to its immediate ring neighbours.
         /// </summary>
         private static IEnumerable<Connection> BuildRandomPortalConnections(
-            List<string> playerLetters, List<string> orderedLetters, GenerationTuning tuning)
+            List<string> playerLetters, List<string> orderedLetters, GenerationTuning tuning, int maxCount = 32)
         {
             int count = orderedLetters.Count;
             if (count < 2) yield break; // Need at least 2 zones for a portal.
@@ -1514,10 +1514,16 @@ namespace Olden_Era___Template_Editor.Services
             var rng = new Random();
             int[] dest = BuildNonAdjacentDerangement(count, rng);
 
-            for (int i = 0; i < count; i++)
+            // Shuffle which zones get portals so limiting the count picks random zones,
+            // not always the first ones in layout order.
+            int[] indices = Enumerable.Range(0, count).OrderBy(_ => rng.Next()).ToArray();
+
+            int limit = Math.Min(count, maxCount);
+            for (int i = 0; i < limit; i++)
             {
-                string fromLetter = orderedLetters[i];
-                string toLetter   = orderedLetters[dest[i]];
+                int idx = indices[i];
+                string fromLetter = orderedLetters[idx];
+                string toLetter   = orderedLetters[dest[idx]];
 
                 string fromZone = playerLetters.Contains(fromLetter)
                     ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
