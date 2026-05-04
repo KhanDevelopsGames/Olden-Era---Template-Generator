@@ -580,12 +580,8 @@ namespace Olden_Era___Template_Editor.Services
 
         private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
         {
-            // Shuffle player letters so Player 1 is not always at the same geometric position.
-            if (!settings.ExperimentalBalancedZonePlacement)
-            {
-                var rng = new Random();
-                playerLetters = [.. playerLetters.OrderBy(_ => rng.Next())];
-            }
+            // Always shuffle player letters so players are not always at the same geometric positions.
+            playerLetters = [.. playerLetters.OrderBy(_ => Random.Shared.Next())];
 
             return settings.Topology switch
             {
@@ -842,9 +838,19 @@ namespace Olden_Era___Template_Editor.Services
             // Outer zones are players + neutrals arranged around the hub.
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
             var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
-            var outerLetters = settings.ExperimentalBalancedZonePlacement
-                ? BuildBalancedRingLetters(playerLetters, neutralZones, minNeutralZonesBetweenPlayers: 0)
-                : playerLetters.Concat(neutralLetters).ToList();
+            List<string> outerLetters;
+            if (settings.ExperimentalBalancedZonePlacement)
+            {
+                int honoredSeparation = settings.MinNeutralZonesBetweenPlayers > 0
+                    && CanHonorNeutralSeparation(settings, neutralZones.Count)
+                        ? settings.MinNeutralZonesBetweenPlayers
+                        : 0;
+                outerLetters = BuildBalancedRingLetters(playerLetters, neutralZones, honoredSeparation);
+            }
+            else
+            {
+                outerLetters = playerLetters.Concat(neutralLetters).ToList();
+            }
             var zones = new List<Zone>();
             var connections = new List<Connection>();
 
@@ -898,20 +904,31 @@ namespace Olden_Era___Template_Editor.Services
                     });
             }
 
-            // Proximity between players that are adjacent in the outer ring (visual only).
-            if (!settings.NoDirectPlayerConnections)
+            // Proximity connections around the full outer ring to tell the engine which
+            // zones are neighbours. Without these hints the engine ignores the zone ordering
+            // and places zones arbitrarily, causing players to end up next to each other
+            // even when neutrals separate them in the ordered list.
+            for (int i = 0; i < outerLetters.Count; i++)
             {
-                for (int i = 0; i < playerLetters.Count; i++)
+                int next = (i + 1) % outerLetters.Count;
+                string fromLetter = outerLetters[i];
+                string toLetter   = outerLetters[next];
+                bool fromIsPlayer = playerLetters.Contains(fromLetter);
+                bool toIsPlayer   = playerLetters.Contains(toLetter);
+
+                // Skip direct player–player proximity when isolation is requested.
+                if (settings.NoDirectPlayerConnections && fromIsPlayer && toIsPlayer)
+                    continue;
+
+                string fromZone = fromIsPlayer ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
+                string toZone   = toIsPlayer   ? $"Spawn-{toLetter}"   : $"Neutral-{toLetter}";
+                connections.Add(new Connection
                 {
-                    int next = (i + 1) % playerLetters.Count;
-                    connections.Add(new Connection
-                    {
-                        Name = $"Pseudo-{playerLetters[i]}-{playerLetters[next]}",
-                        From = $"Spawn-{playerLetters[i]}",
-                        To = $"Spawn-{playerLetters[next]}",
-                        ConnectionType = "Proximity"
-                    });
-                }
+                    Name = $"Pseudo-{fromLetter}-{toLetter}",
+                    From = fromZone,
+                    To = toZone,
+                    ConnectionType = "Proximity"
+                });
             }
 
             if (settings.RandomPortals)
