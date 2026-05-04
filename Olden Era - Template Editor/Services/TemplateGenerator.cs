@@ -12,7 +12,7 @@ namespace Olden_Era___Template_Editor.Services
     public static class TemplateGenerator
     {
         // Each player zone gets 5 guard connections to the center (same as JCC).
-        private const int ConnectionsPerZone = 5;
+        private const int ConnectionsPerZone = 1;
         private const double DefaultGuardRandomization = 0.05;
         private const string SpawnLayoutName = "zone_layout_spawns";
         private const string SideLayoutName = "zone_layout_sides";
@@ -150,7 +150,7 @@ namespace Olden_Era___Template_Editor.Services
 
             void Add(int requestedCount, NeutralZoneQuality quality, int castleCount)
             {
-                int count = Math.Clamp(requestedCount, 0, 8);
+                int count = Math.Clamp(requestedCount, 0, 30);
                 for (int i = 0; i < count && plans.Count < maxNeutralZones; i++)
                 {
                     string letter = ZoneLetters[settings.PlayerCount + plans.Count];
@@ -882,10 +882,20 @@ namespace Olden_Era___Template_Editor.Services
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"hub_guard_{letter}"
                 });
-                // Extra proximity hints (same as JCC pattern of 5 per zone).
-                // These are layout/visual hints only — NOT traversable — so they must be Proximity, not Direct.
+                // Extra Direct connections with unique guardMatchGroups (matches JCC pattern).
                 for (int e = 1; e < ConnectionsPerZone; e++)
-                    connections.Add(new Connection { From = "Hub", To = outerZone, ConnectionType = "Proximity" });
+                    connections.Add(new Connection
+                    {
+                        From = "Hub",
+                        To = outerZone,
+                        ConnectionType = "Direct",
+                        GuardZone = "Hub",
+                        GuardEscape = false,
+                        SimTurnSquad = true,
+                        GuardValue = ScaleBorderGuardValue(30000, tuning),
+                        GuardWeeklyIncrement = 0.15,
+                        GuardMatchGroup = $"hub_guard_{letter}_{e}"
+                    });
             }
 
             // Proximity between players that are adjacent in the outer ring (visual only).

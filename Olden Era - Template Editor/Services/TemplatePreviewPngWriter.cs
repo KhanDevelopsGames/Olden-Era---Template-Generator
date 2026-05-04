@@ -242,7 +242,7 @@ namespace Olden_Era___Template_Editor.Services
             }
             else if (isHub)
             {
-                DrawText(dc, "Hub", pt, 11, Brushes.White, centered: true);
+                DrawText(dc, "Hub", pt, 32, Brushes.White, centered: true);
             }
         }
 
