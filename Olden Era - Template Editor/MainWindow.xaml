@@ -292,7 +292,7 @@
                                 <ComboBox Grid.Row="4" Grid.Column="1" x:Name="CmbVictory"
                                           SelectionChanged="CmbVictory_SelectionChanged"/>
 
-                                <DockPanel Grid.Row="0" Grid.Column="0" Visibility="Collapsed">
+                                <DockPanel Grid.Row="0" Grid.Column="0">
                                     <Label Content="Faction laws XP" DockPanel.Dock="Left"/>
                                     <TextBlock x:Name="TxtFactionLawsExp" Text="100%" DockPanel.Dock="Right"
                                                HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -301,9 +301,9 @@
                                 <Slider Grid.Row="0" Grid.Column="1" x:Name="SldFactionLawsExp"
                                         Minimum="25" Maximum="200" Value="100"
                                         TickFrequency="25" IsSnapToTickEnabled="True"
-                                        ValueChanged="Slider_ValueChanged" Visibility="Collapsed"/>
+                                        ValueChanged="Slider_ValueChanged"/>
 
-                                        <DockPanel Grid.Row="2" Grid.Column="0" Visibility="Collapsed">
+                                        <DockPanel Grid.Row="2" Grid.Column="0">
                                     <Label Content="Astrology XP" DockPanel.Dock="Left"/>
                                     <TextBlock x:Name="TxtAstrologyExp" Text="100%" DockPanel.Dock="Right"
                                                HorizontalAlignment="Right" VerticalAlignment="Center"
@@ -311,7 +311,7 @@
                                 </DockPanel>
                                 <Slider Grid.Row="2" Grid.Column="1" x:Name="SldAstrologyExp"
                                         Minimum="25" Maximum="200" Value="100"
-                                        TickFrequency="25" IsSnapToTickEnabled="True" Visibility="Collapsed"
+                                        TickFrequency="25" IsSnapToTickEnabled="True"
                                         ValueChanged="Slider_ValueChanged"/>
                             </Grid>
 

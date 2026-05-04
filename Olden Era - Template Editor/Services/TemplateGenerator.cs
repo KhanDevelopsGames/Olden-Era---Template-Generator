@@ -48,9 +48,7 @@ namespace Olden_Era___Template_Editor.Services
                 settings.BorderGuardStrengthPercent / 100.0,
                 EffectiveGuardRandomization(settings));
 
-            string effectiveVictoryCondition = settings.AdvancedMode
-                ? settings.VictoryCondition
-                : "win_condition_1";
+            string effectiveVictoryCondition = settings.VictoryCondition;
 
             var template = new RmgTemplate
             {
@@ -192,8 +190,8 @@ namespace Olden_Era___Template_Editor.Services
             HeroCountIncrement = settings.HeroCountIncrement,
             HeroHireBan = false,
             EncounterHoles = false,
-            FactionLawsExpModifier = settings.AdvancedMode ? PercentToModifier(settings.FactionLawsExpPercent) : 1.0,
-            AstrologyExpModifier = settings.AdvancedMode ? PercentToModifier(settings.AstrologyExpPercent) : 1.0,
+            FactionLawsExpModifier = PercentToModifier(settings.FactionLawsExpPercent),
+            AstrologyExpModifier = PercentToModifier(settings.AstrologyExpPercent),
             Bonuses =
             [
                 new Bonus
