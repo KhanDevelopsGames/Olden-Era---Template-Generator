@@ -74,9 +74,6 @@ namespace Olden_Era___Template_Editor.Services
         {
             var parts = new List<string>
             {
-                $"{settings.GameMode} mode",
-                CountPhrase(settings.PlayerCount, "player", "players"),
-                $"{settings.MapSize}x{settings.MapSize} map",
                 $"{TopologyLabel(settings.Topology)} layout",
                 CountPhrase(neutralZoneCount, "neutral zone", "neutral zones"),
                 $"{CountPhrase(settings.PlayerZoneCastles, "castle", "castles")} per player zone"
@@ -94,7 +91,7 @@ namespace Olden_Era___Template_Editor.Services
             if (settings.NoDirectPlayerConnections)
                 options.Add("isolated player starts");
             if (settings.ExperimentalBalancedZonePlacement)
-                options.Add("experimental balanced zone placement");
+                options.Add("balanced zone placement");
             if (settings.RandomPortals)
                 options.Add("random portals");
             if (!settings.SpawnRemoteFootholds)
@@ -105,7 +102,9 @@ namespace Olden_Era___Template_Editor.Services
             if (options.Count > 0)
                 parts.Add($"options: {string.Join(", ", options)}");
 
-            return $"Generated with Olden Era Template Generator: {string.Join(", ", parts)}.";
+            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            string versionLabel = version != null ? $"v{version.Major}.{version.Minor}" : "v?";
+            return $"Generated with Olden Era Template Generator {versionLabel}: {string.Join(", ", parts)}.";
         }
 
         private static string CountPhrase(int count, string singular, string plural) =>
