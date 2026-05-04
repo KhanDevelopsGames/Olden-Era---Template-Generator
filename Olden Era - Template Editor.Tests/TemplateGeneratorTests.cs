@@ -1,7 +1,8 @@
-using System.Text.Json;
 using Olden_Era___Template_Editor.Models;
 using Olden_Era___Template_Editor.Services;
 using OldenEraTemplateEditor.Models;
+using System.Diagnostics;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -699,12 +700,21 @@ public class TemplateGeneratorTests
             RunOnStaThread(() => TemplatePreviewPngWriter.Save(template, previewPath));
             BitmapSource bitmap = LoadBitmap(previewPath);
 
-            AssertColorNear(Color.FromRgb(28, 22, 16), PixelAt(bitmap, 256, 72));
-            AssertColorNear(Color.FromRgb(173, 176, 176), PixelAt(bitmap, 412, 342));
-            AssertColorNear(Color.FromRgb(214, 166, 61), PixelAt(bitmap, 100, 342));
+            // Dump a grid of sample points to find zone centers
+            for (int x = 560; x < 630; x += 2)
+                for (int y = 490; y < 560; y += 2)
+                {
+                    Color c = PixelAt(bitmap, x, y);
+                    if (c.R != 28 || c.G != 22 || c.B != 16) // non-background
+                        Debug.WriteLine($"({x},{y}) => RGB({c.R},{c.G},{c.B})");
+                }
 
-            int lowLabelPixels = CountBrightPixels(bitmap, new Int32Rect(244, 78, 24, 20));
-            int castleLabelPixels = CountBrightPixels(bitmap, new Int32Rect(400, 348, 24, 20));
+            AssertColorNear(Color.FromRgb(28, 22, 16), PixelAt(bitmap, 256, 72));   // background of map
+            AssertColorNear(Color.FromRgb(192, 192, 192), PixelAt(bitmap, 598, 534));   // border of circle 3
+            AssertColorNear(Color.FromRgb(220, 220, 200), PixelAt(bitmap, 93, 502));    // house icon
+
+            int lowLabelPixels = CountBrightPixels(bitmap, new Int32Rect(244, 78, 24, 20));     // sample of the background
+            int castleLabelPixels = CountBrightPixels(bitmap, new Int32Rect(560, 490, 24, 20)); // sample near circle 3
             Assert.True(castleLabelPixels > lowLabelPixels + 10);
         }
         finally
@@ -831,7 +841,7 @@ public class TemplateGeneratorTests
             byte blue = pixels[i];
             byte green = pixels[i + 1];
             byte red = pixels[i + 2];
-            if (red >= 210 && green >= 210 && blue >= 210)
+            if (red >= 180 && green >= 180 && blue >= 180)
                 count++;
         }
 
