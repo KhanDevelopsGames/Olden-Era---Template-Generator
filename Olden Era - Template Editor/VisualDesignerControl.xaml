@@ -1,0 +1,242 @@
+<UserControl x:Class="Olden_Era___Template_Editor.VisualDesignerControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Focusable="True"
+             KeyDown="UserControl_KeyDown"
+             Loaded="UserControl_Loaded">
+    <Grid Margin="0,8,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="8"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <WrapPanel Grid.Row="0" Orientation="Horizontal">
+            <Button Content="New" Margin="0,0,6,4" Click="BtnVisualNew_Click" Style="{StaticResource ToolbarButton}"/>
+            <Button Content="Open .oetgsv" Margin="0,0,6,4" Click="BtnVisualOpen_Click" Style="{StaticResource ToolbarButton}"/>
+            <Button Content="Save .oetgsv" Margin="0,0,12,4" Click="BtnVisualSave_Click" Style="{StaticResource ToolbarButton}"/>
+            <Button Content="Add Spawn" Margin="0,0,6,4" Click="BtnAddSpawn_Click" Style="{StaticResource ToolbarButton}"/>
+            <Button Content="Add Low" Margin="0,0,6,4" Click="BtnAddLow_Click" Style="{StaticResource ToolbarButton}"/>
+            <Button Content="Add Medium" Margin="0,0,6,4" Click="BtnAddMedium_Click" Style="{StaticResource ToolbarButton}"/>
+            <Button Content="Add High" Margin="0,0,12,4" Click="BtnAddHigh_Click" Style="{StaticResource ToolbarButton}"/>
+            <Button Content="Direct Link" Margin="0,0,6,4" Click="BtnConnectDirect_Click" Style="{StaticResource ToolbarButton}"/>
+            <Button Content="Portal Link" Margin="0,0,12,4" Click="BtnConnectPortal_Click" Style="{StaticResource ToolbarButton}"/>
+            <Button Content="Copy" Margin="0,0,6,4" Click="BtnVisualCopy_Click" Style="{StaticResource ToolbarButton}"/>
+            <Button Content="Paste" Margin="0,0,6,4" Click="BtnVisualPaste_Click" Style="{StaticResource ToolbarButton}"/>
+            <Button Content="Delete" Margin="0,0,12,4" Click="BtnVisualDelete_Click" Style="{StaticResource ToolbarButton}"/>
+            <CheckBox x:Name="ChkVisualSavePreview"
+                      Content="Save preview PNG"
+                      IsChecked="True"
+                      Foreground="{StaticResource BrushText}"
+                      VerticalAlignment="Center"
+                      Margin="0,0,12,4"/>
+            <Button Content="Export .rmg.json" Margin="0,0,6,4" Click="BtnVisualExport_Click" Style="{StaticResource GenerateButton}"/>
+        </WrapPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0"
+                    BorderBrush="{StaticResource BrushBorder}"
+                    BorderThickness="2"
+                    Background="#1C1610"
+                    CornerRadius="4"
+                    Padding="0">
+                <Canvas x:Name="DesignerCanvas"
+                        Width="700"
+                        Height="700"
+                        Background="#1C1610"
+                        ClipToBounds="True"
+                        MouseLeftButtonDown="DesignerCanvas_MouseLeftButtonDown"
+                        MouseMove="DesignerCanvas_MouseMove"
+                        MouseLeftButtonUp="DesignerCanvas_MouseLeftButtonUp"/>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource SectionBorder}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+                        <TextBlock Text="VISUAL TEMPLATE" Style="{StaticResource SectionHeader}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="105"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" Content="Name"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtVisualTemplateName" TextChanged="GlobalControl_Changed"/>
+                            <Label Grid.Row="2" Grid.Column="0" Content="Description"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="TxtVisualDescription" AcceptsReturn="True" Height="54" TextWrapping="Wrap" TextChanged="GlobalControl_Changed"/>
+                            <Label Grid.Row="4" Grid.Column="0" Content="Map size"/>
+                            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="CmbVisualMapSize" SelectionChanged="GlobalControl_Changed"/>
+                            <Label Grid.Row="6" Grid.Column="0" Content="Game mode"/>
+                            <ComboBox Grid.Row="6" Grid.Column="1" x:Name="CmbVisualGameMode" SelectionChanged="GlobalControl_Changed"/>
+                            <Label Grid.Row="8" Grid.Column="0" Content="Win condition"/>
+                            <ComboBox Grid.Row="8" Grid.Column="1" x:Name="CmbVisualVictory" SelectionChanged="GlobalControl_Changed"/>
+                            <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ChkVisualRoads" Content="Generate roads" IsChecked="True" Checked="GlobalControl_Changed" Unchecked="GlobalControl_Changed"/>
+                            <CheckBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ChkVisualFootholds" Content="Spawn remote footholds" IsChecked="True" Checked="GlobalControl_Changed" Unchecked="GlobalControl_Changed"/>
+                        </Grid>
+
+                        <TextBlock Text="GLOBAL RULES" Style="{StaticResource SectionHeader}" Margin="0,12,0,4"/>
+                        <UniformGrid Columns="2">
+                            <Label Content="Hero min"/>
+                            <TextBox x:Name="TxtVisualHeroMin" TextChanged="GlobalControl_Changed"/>
+                            <Label Content="Hero max"/>
+                            <TextBox x:Name="TxtVisualHeroMax" TextChanged="GlobalControl_Changed"/>
+                            <Label Content="Hero increment"/>
+                            <TextBox x:Name="TxtVisualHeroIncrement" TextChanged="GlobalControl_Changed"/>
+                            <Label Content="Faction laws XP %"/>
+                            <TextBox x:Name="TxtVisualFactionXp" TextChanged="GlobalControl_Changed"/>
+                            <Label Content="Astrology XP %"/>
+                            <TextBox x:Name="TxtVisualAstrologyXp" TextChanged="GlobalControl_Changed"/>
+                            <Label Content="Edge guard %"/>
+                            <TextBox x:Name="TxtVisualBorderGuard" TextChanged="GlobalControl_Changed"/>
+                        </UniformGrid>
+
+                        <TextBlock Text="WIN CONDITION DETAILS" Style="{StaticResource SectionHeader}" Margin="0,12,0,4"/>
+                        <UniformGrid Columns="2">
+                            <CheckBox x:Name="ChkVisualLostCity" Content="Lost city" Checked="GlobalControl_Changed" Unchecked="GlobalControl_Changed"/>
+                            <TextBox x:Name="TxtVisualLostCityDay" TextChanged="GlobalControl_Changed"/>
+                            <CheckBox x:Name="ChkVisualLostHero" Content="Lost hero" Checked="GlobalControl_Changed" Unchecked="GlobalControl_Changed"/>
+                            <TextBlock/>
+                            <CheckBox x:Name="ChkVisualCityHold" Content="City hold" Checked="GlobalControl_Changed" Unchecked="GlobalControl_Changed"/>
+                            <TextBox x:Name="TxtVisualCityHoldDays" TextChanged="GlobalControl_Changed"/>
+                            <CheckBox x:Name="ChkVisualTournament" Content="Tournament" Checked="GlobalControl_Changed" Unchecked="GlobalControl_Changed"/>
+                            <TextBox x:Name="TxtVisualTournamentPoints" TextChanged="GlobalControl_Changed"/>
+                        </UniformGrid>
+
+                        <TextBlock Text="SELECTION" Style="{StaticResource SectionHeader}" Margin="0,12,0,4"/>
+                        <TextBlock x:Name="TxtNoVisualSelection"
+                                   Text="Select a zone or connection."
+                                   Foreground="{StaticResource BrushTextDim}"
+                                   TextWrapping="Wrap"/>
+
+                        <StackPanel x:Name="PnlZoneInspector" Visibility="Collapsed">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="105"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Grid.Column="0" Content="Type"/>
+                                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="CmbZoneType" SelectionChanged="ZoneInspector_Changed"/>
+                                <Label Grid.Row="2" Grid.Column="0" Content="Letter"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" x:Name="TxtZoneLetter" TextChanged="ZoneInspector_Changed"/>
+                                <Label Grid.Row="4" Grid.Column="0" Content="Player slot"/>
+                                <TextBox Grid.Row="4" Grid.Column="1" x:Name="TxtZonePlayer" TextChanged="ZoneInspector_Changed"/>
+                                <Label Grid.Row="6" Grid.Column="0" Content="Castles"/>
+                                <ComboBox Grid.Row="6" Grid.Column="1" x:Name="CmbZoneCastles" SelectionChanged="ZoneInspector_Changed"/>
+                                <Label Grid.Row="8" Grid.Column="0" Content="Zone size"/>
+                                <TextBox Grid.Row="8" Grid.Column="1" x:Name="TxtZoneSize" TextChanged="ZoneInspector_Changed"/>
+                                <Label Grid.Row="10" Grid.Column="0" Content="Guard rand %"/>
+                                <TextBox Grid.Row="10" Grid.Column="1" x:Name="TxtZoneGuardRandom" TextChanged="ZoneInspector_Changed"/>
+                                <Label Grid.Row="12" Grid.Column="0" Content="Neutral %"/>
+                                <TextBox Grid.Row="12" Grid.Column="1" x:Name="TxtZoneNeutralStrength" TextChanged="ZoneInspector_Changed"/>
+                                <Label Grid.Row="14" Grid.Column="0" Content="Resource %"/>
+                                <TextBox Grid.Row="14" Grid.Column="1" x:Name="TxtZoneResources" TextChanged="ZoneInspector_Changed"/>
+                                <Label Grid.Row="16" Grid.Column="0" Content="Structure %"/>
+                                <TextBox Grid.Row="16" Grid.Column="1" x:Name="TxtZoneStructures" TextChanged="ZoneInspector_Changed"/>
+                                <CheckBox Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ChkZoneRoads" Content="Roads in zone" Checked="ZoneInspector_Changed" Unchecked="ZoneInspector_Changed"/>
+                            </Grid>
+                            <CheckBox x:Name="ChkZoneFoothold" Content="Remote foothold" Margin="0,6,0,0" Checked="ZoneInspector_Changed" Unchecked="ZoneInspector_Changed"/>
+
+                            <TextBlock Text="Castle faction" Style="{StaticResource SectionHeader}" Margin="0,12,0,4"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="105"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Grid.Column="0" Content="Castle"/>
+                                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="CmbCastleIndex" SelectionChanged="CastleInspector_Changed"/>
+                                <Label Grid.Row="2" Grid.Column="0" Content="Mode"/>
+                                <ComboBox Grid.Row="2" Grid.Column="1" x:Name="CmbFactionMode" SelectionChanged="CastleInspector_Changed"/>
+                                <Label Grid.Row="4" Grid.Column="0" Content="Match player"/>
+                                <TextBox Grid.Row="4" Grid.Column="1" x:Name="TxtFactionMatchPlayer" TextChanged="CastleInspector_Changed"/>
+                            </Grid>
+                            <WrapPanel Margin="0,6,0,0">
+                                <CheckBox x:Name="ChkFactionTemple" Content="Temple" Margin="0,0,8,4" Checked="CastleInspector_Changed" Unchecked="CastleInspector_Changed"/>
+                                <CheckBox x:Name="ChkFactionHive" Content="Hive" Margin="0,0,8,4" Checked="CastleInspector_Changed" Unchecked="CastleInspector_Changed"/>
+                                <CheckBox x:Name="ChkFactionDungeon" Content="Dungeon" Margin="0,0,8,4" Checked="CastleInspector_Changed" Unchecked="CastleInspector_Changed"/>
+                                <CheckBox x:Name="ChkFactionGrove" Content="Grove" Margin="0,0,8,4" Checked="CastleInspector_Changed" Unchecked="CastleInspector_Changed"/>
+                                <CheckBox x:Name="ChkFactionNecropolis" Content="Necropolis" Margin="0,0,8,4" Checked="CastleInspector_Changed" Unchecked="CastleInspector_Changed"/>
+                                <CheckBox x:Name="ChkFactionSchism" Content="Schism" Margin="0,0,8,4" Checked="CastleInspector_Changed" Unchecked="CastleInspector_Changed"/>
+                            </WrapPanel>
+                        </StackPanel>
+
+                        <StackPanel x:Name="PnlConnectionInspector" Visibility="Collapsed">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="105"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="6"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Grid.Column="0" Content="Type"/>
+                                <ComboBox Grid.Row="0" Grid.Column="1" x:Name="CmbConnectionType" SelectionChanged="ConnectionInspector_Changed"/>
+                                <Label Grid.Row="2" Grid.Column="0" Content="Guard %"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" x:Name="TxtConnectionGuard" TextChanged="ConnectionInspector_Changed"/>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+
+        <TextBlock Grid.Row="4"
+                   x:Name="TxtVisualValidation"
+                   Foreground="{StaticResource BrushError}"
+                   FontSize="12"
+                   TextWrapping="Wrap"/>
+    </Grid>
+</UserControl>

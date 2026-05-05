@@ -1,6 +1,7 @@
 ﻿<Window x:Class="Olden_Era___Template_Editor.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:Olden_Era___Template_Editor"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
@@ -121,7 +122,8 @@
 
             <TabControl x:Name="MainTabs"
                         Grid.Column="0"
-                        Grid.ColumnSpan="3">
+                        Grid.ColumnSpan="5"
+                        SelectionChanged="MainTabs_SelectionChanged">
                 <TabItem Header="Rules">
                 <Grid Margin="0,8,0,0">
                 <Grid.ColumnDefinitions>
@@ -829,10 +831,13 @@
                 </Border>
             </Grid>
         </TabItem>
+                <TabItem Header="Visual Designer">
+                    <local:VisualDesignerControl/>
+                </TabItem>
     </TabControl>
 
             <!-- ─── PREVIEW COLUMN ───────────────────────────────────── -->
-            <Grid Grid.Column="4">
+            <Grid Grid.Column="4" x:Name="GenericPreviewColumn">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>   <!-- generate button -->
                     <RowDefinition Height="6"/>
