@@ -7,25 +7,86 @@
 
 ## What is this?
 
-A small Windows desktop tool that generates `.rmg.json` random map templates for **Heroes of Might and Magic: Olden Era**. Instead of editing JSON by hand, you configure your map settings through a simple UI and click **Generate & Save**.
+A small Windows desktop tool that generates `.rmg.json` random map templates for **Heroes of Might and Magic: Olden Era**. Instead of editing JSON by hand, you configure your map settings through a simple UI and click **Generate Template**.
 
 ---
 
 ## Features
 
-- Configure **player count**, **map size**, **neutral zones**, and **castle counts**
-- Multiple **map topologies** to change how zones are connected:
-  - **Random** — zones are placed at random positions and connected to all bordering zones (Delaunay-based)
-  - **Ring** — zones arranged in a circle, each connected to its two neighbours
-  - **Chain** — zones connected in a straight line
-  - **Hub & Spoke** *(Experimental)* — all zones connect to a shared central hub
-  - **Shared Web** *(Experimental)* — players connect through shared neutral zones
-- **Isolate player zones** — players can only reach each other through neutral zones
-- **Spawn portals** — adds portal connections between non-adjacent zones
-- **Spawn remote footholds** — places remote foothold objects in each zone
-- **Hero settings** — configure min/max hero count and the per-castle increment
-- Automatically detects your **Olden Era install path** via Steam registry and opens the Save dialog directly in the correct `map_templates` folder
+### General
+
+- Configure **template name**, **player count** (2–8), and **map size**
+- Experimental map sizes available via an opt-in checkbox
 - **Auto update check** — notifies you on startup if a newer version is available on GitHub
+- Automatically detects your **Olden Era install path** via Steam registry and opens the Save dialog in the correct `map_templates` folder
+- **Preview image** — generate a visual overview of the zone layout before saving; optionally embed it in the template file for in-game display
+
+### Hero Settings
+
+- Configure **minimum hero count**, **maximum hero count**, and the **per-castle increment**  
+  *(defaults: 4 min / 8 max / 1 increment)*
+
+### Map Layout (Topology)
+
+- **Random** — zones placed at random and connected to all neighbouring zones (Delaunay-based)
+- **Ring** — zones arranged in a circle, each connected to its two neighbours
+- **Chain** — zones connected in a straight line
+- **Hub** *(Experimental)* — all zones connect to a shared central hub
+  - Configurable **hub zone size** (0.25× – 3×)
+
+### Zone Configuration
+
+- Set **castles per player zone** and **castles per neutral zone**
+- Configure **resource spawn rate**, **structure density**, **neutral stack strength**, and **border guard strength**
+- **Match player castle factions** — player zones receive a faction-locked castle to match their chosen faction
+
+#### Advanced Settings
+
+Unlock additional controls via the **Advanced settings** checkbox:
+
+- **Player zone size** and **neutral zone size** multipliers (0.5× – 2×)
+- **Guard strength randomization** percentage
+- **Advanced neutral zone breakdown** — independently configure counts of low/medium/high quality neutral zones, with and without castles (up to 32 total zones in advanced mode)
+
+### Portal & Connectivity Options
+
+- **Always spawn portals** — adds portal connections between non-adjacent zones, with a configurable **max portal connections** limit
+- **Generate roads** — adds road objects between connected zones
+- **Spawn remote footholds** — places remote footholds in each castle zone
+- **Isolate player zones** *(Random layout only)* — players can only reach each other through neutral zones
+- **Balanced zone placement** — attempts to distribute zones more evenly across the map
+
+### Game Rules
+
+- **Victory condition** — choose between standard and alternative win conditions
+- **Faction Laws experience** and **Astrology experience** multipliers
+
+### Win Conditions
+
+#### Lose when starting city is lost
+#### Lose when starting hero is lost
+
+#### City Hold
+Players must capture and hold a designated city for a set number of days to win.
+
+- The city location is chosen automatically based on topology:
+  - **Hub** — the hub zone becomes the hold city
+  - **Other layouts** — the highest-quality neutral zone that is maximally equidistant from all players is attempted to be selected
+- The hold city is highlighted with a **golden house icon** in the preview image
+- Generation is blocked if no valid city zone can be determined
+
+#### Tournament Mode
+A special competitive mode designed for 1v1 play with an isolated preparation phase.
+
+- **Only available with exactly 2 players** — generation is blocked otherwise
+- Each player starts in a **completely isolated cluster** of zones; it is impossible to reach the opponent until the tournament begins
+- Neutral zones are **balanced by quality tier** across both players (each side gets the same mix of low/medium/high zones)
+- Zone order within each cluster is **randomised** but **mirrored** — both players experience the same layout
+- Supports multiple topologies:
+  - **Chain / Ring** — two mirrored isolated chains
+  - **Random** — two mirrored isolated Delaunay-like clusters
+  - **Hub** — each player gets their own private hub cluster (respects hub zone size setting)
+- Configure: **first tournament day**, **announcement lead time**, **tournament interval**, and **points needed to win**
 
 ---
 
@@ -42,24 +103,12 @@ A small Windows desktop tool that generates `.rmg.json` random map templates for
 ## How to use
 
 1. Fill in the settings you want
-2. Click **Generate & Save…**
-3. Save the `.rmg.json` file to your Olden Era templates folder:  
+2. Click **Preview** to see a visual overview of the generated zone layout (optional)
+3. Click **Generate & Save…**
+4. Save the `.rmg.json` file to your Olden Era templates folder:  
    `<Olden Era install folder>\HeroesOldenEra_Data\StreamingAssets\map_templates`  
    *(The tool tries to open this folder automatically if it can find your Steam installation)*
-4. Launch Olden Era and select your template in the map generator
-
----
-
-## Experimental features
-
-The following topologies are marked **[EXPERIMENTAL]** in the UI because they have not been thoroughly tested and may produce maps with game-breaking issues:
-
-| Topology | Known risks |
-|---|---|
-| **Hub & Spoke** | The central hub zone may cause pathing or balance issues |
-| **Shared Web** | Zone connectivity and guard placement are not well-tested with all player/neutral counts |
-
-Use these at your own risk.
+5. Launch Olden Era and select your template when creating a game
 
 ---
 
@@ -68,7 +117,6 @@ Use these at your own risk.
 ```
 <Olden Era install folder>\HeroesOldenEra_Data\StreamingAssets\map_templates
 ```
-
 
 ---
 
