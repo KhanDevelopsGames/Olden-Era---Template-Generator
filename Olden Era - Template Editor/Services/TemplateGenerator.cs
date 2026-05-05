@@ -53,7 +53,7 @@ namespace Olden_Era___Template_Editor.Services
             int totalZones = settings.PlayerCount + neutralCount;
             var tuning = new GenerationTuning(
                 ComputeContentScale(settings.MapSize, totalZones),
-                settings.ResourceDensityPercent / 100.0,
+                settings.ResourceDensityPercent / 200.0,
                 settings.StructureDensityPercent / 100.0,
                 settings.NeutralStackStrengthPercent / 100.0,
                 settings.BorderGuardStrengthPercent / 100.0,

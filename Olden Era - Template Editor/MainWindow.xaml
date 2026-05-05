@@ -563,7 +563,7 @@
                                            Margin="0,0,10,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
                             <Slider Grid.Row="6" Grid.Column="1" x:Name="SldResourceDensity"
-                                    Minimum="20" Maximum="200" Value="100"
+                                    Minimum="20" Maximum="400" Value="100"
                                     TickFrequency="10" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
 
