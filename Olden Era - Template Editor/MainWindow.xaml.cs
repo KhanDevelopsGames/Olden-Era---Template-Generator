@@ -132,10 +132,9 @@ namespace Olden_Era___Template_Editor
         {
             if (TxtOutdatedWarning == null) return;
             bool outdated = _templateOutdated && _generatedTemplate is not null;
-            TxtOutdatedWarning.Visibility  = outdated ? Visibility.Visible  : Visibility.Collapsed;
-            if (BtnSaveGenerated != null)   BtnSaveGenerated.IsEnabled  = !outdated;
-            if (ChkSavePreviewImage != null && _generatedTemplate is not null)
-                ChkSavePreviewImage.Visibility = outdated ? Visibility.Collapsed : Visibility.Visible;
+            TxtOutdatedWarning.Visibility = outdated ? Visibility.Visible : Visibility.Hidden;
+            if (BtnSaveGenerated != null)
+                BtnSaveGenerated.IsEnabled = _generatedTemplate is not null && !outdated;
         }
 
         private void UpdateTitle()

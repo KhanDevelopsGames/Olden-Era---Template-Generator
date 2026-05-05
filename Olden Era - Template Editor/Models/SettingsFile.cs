@@ -28,9 +28,9 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("playerZoneSize")]  public double  PlayerZoneSize       { get; set; } = 1.0;
         [JsonPropertyName("neutralZoneSize")] public double  NeutralZoneSize      { get; set; } = 1.0;
         [JsonPropertyName("guardRandomization")] public double GuardRandomization { get; set; } = 0.05;
-        [JsonPropertyName("heroMin")]           public int     HeroCountMin           { get; set; } = 10;
-        [JsonPropertyName("heroMax")]           public int     HeroCountMax           { get; set; } = 10;
-        [JsonPropertyName("heroIncrement")]     public int     HeroCountIncrement     { get; set; } = 0;
+        [JsonPropertyName("heroMin")]           public int     HeroCountMin           { get; set; } = 4;
+        [JsonPropertyName("heroMax")]           public int     HeroCountMax           { get; set; } = 8;
+        [JsonPropertyName("heroIncrement")]     public int     HeroCountIncrement     { get; set; } = 1;
         [JsonPropertyName("topology")]          public MapTopology Topology           { get; set; } = MapTopology.Random;
         [JsonPropertyName("randomPortals")]     public bool    RandomPortals          { get; set; } = false;
         [JsonPropertyName("maxPortalConns")]    public int     MaxPortalConnections   { get; set; } = 32;

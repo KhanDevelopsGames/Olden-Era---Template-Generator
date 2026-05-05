@@ -207,7 +207,7 @@
 
                             <DockPanel Grid.Row="0" Grid.Column="0">
                                 <Label Content="Initial hero cap" Padding="5,2" DockPanel.Dock="Left"/>
-                                <TextBlock x:Name="TxtHeroMin" Text="10" DockPanel.Dock="Right"
+                                <TextBlock x:Name="TxtHeroMin" Text="4" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
@@ -218,7 +218,7 @@
 
                             <DockPanel Grid.Row="2" Grid.Column="0">
                                 <Label Content="Max hero cap" Padding="5,2" DockPanel.Dock="Left"/>
-                                <TextBlock x:Name="TxtHeroMax" Text="10" DockPanel.Dock="Right"
+                                <TextBlock x:Name="TxtHeroMax" Text="8" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
@@ -229,7 +229,7 @@
 
                             <DockPanel Grid.Row="4" Grid.Column="0">
                                 <Label Content="Increase cap / castle" Padding="5,2" DockPanel.Dock="Left"/>
-                                <TextBlock x:Name="TxtHeroIncrement" Text="0" DockPanel.Dock="Right"
+                                <TextBlock x:Name="TxtHeroIncrement" Text="1" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
@@ -316,7 +316,7 @@
                                           Unchecked="WinConditionOption_Changed"/>
 
                                 <CheckBox x:Name="ChkCityHold"
-                                          Content="Win by holding the city in the center"
+                                          Content="Win by holding a neutral city"
                                           Margin="0,6,0,0"
                                           Checked="WinConditionOption_Changed"
                                           Unchecked="WinConditionOption_Changed"/>
@@ -444,7 +444,7 @@
                     </Grid>
                 </TabItem>
 
-        <TabItem Header="Layout">
+            <TabItem Header="Layout &amp; Zones">
             <Grid Margin="0,8,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>     <!-- Layout -->
@@ -840,9 +840,9 @@
                     <RowDefinition Height="8"/>
                     <RowDefinition Height="*"/>      <!-- image -->
                     <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>   <!-- show preview checkbox -->
-                    <RowDefinition Height="6"/>
                     <RowDefinition Height="Auto"/>   <!-- outdated warning -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>   <!-- show preview checkbox -->
                     <RowDefinition Height="6"/>
                     <RowDefinition Height="Auto"/>   <!-- save button -->
                 </Grid.RowDefinitions>
@@ -872,19 +872,19 @@
                            HorizontalAlignment="Center"/>
                 </Border>
 
-                <CheckBox Grid.Row="6"
+                <CheckBox Grid.Row="8"
                           x:Name="ChkSavePreviewImage"
                           Content="Show preview in-game"
                           IsChecked="True"
-                          Visibility="Collapsed"
+                          Visibility="Visible"
                           Foreground="{StaticResource BrushText}"
                           HorizontalAlignment="Left"/>
 
-                <TextBlock Grid.Row="8"
+                <TextBlock Grid.Row="6"
                            x:Name="TxtOutdatedWarning"
                            Foreground="{StaticResource BrushError}"
                            FontSize="12" TextWrapping="Wrap"
-                           Visibility="Collapsed"
+                           Visibility="Hidden"
                            HorizontalAlignment="Stretch" TextAlignment="Center"
                            Text="⚠️ Settings have changed — generate a new template before saving to reflect the latest changes."/>
 
@@ -892,7 +892,8 @@
                         x:Name="BtnSaveGenerated"
                         Content="💾  Save Template"
                         Style="{StaticResource GenerateButton}"
-                        Visibility="Collapsed"
+                        Visibility="Visible"
+                        IsEnabled="False"
                         Click="BtnSaveGenerated_Click"/>
             </Grid>
 
