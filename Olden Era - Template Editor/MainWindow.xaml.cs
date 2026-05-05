@@ -309,6 +309,16 @@ namespace Olden_Era___Template_Editor
                 }
             }
 
+            string selectedVictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
+                ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+                : "win_condition_1";
+            if (selectedVictoryCondition == "win_condition_6" && players != 2)
+            {
+                SetValidationText("Tournament mode only supports exactly 2 players.");
+                BtnPreview.IsEnabled = false;
+                return false;
+            }
+
             SetValidationText(string.Join("\n\n", warnings));
 
             BtnPreview.IsEnabled = true;
