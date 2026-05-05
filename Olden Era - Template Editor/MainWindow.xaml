@@ -91,13 +91,12 @@
 
         <!-- ════════ TOOLBAR ══════════════════════════════════════════ -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Content="📄  New"     Width="80"  Margin="0,0,6,0" Click="BtnNew_Click"    Style="{StaticResource ToolbarButton}" ToolTip="New (Ctrl+N)"/>
-            <Button Content="📂  Open"    Width="80"  Margin="0,0,6,0" Click="BtnOpen_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Open (Ctrl+O)"/>
-            <Button Content="💾  Save"    Width="80"  Margin="0,0,6,0" Click="BtnSave_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Save (Ctrl+S)"/>
-            <Button Content="💾  Save As" Width="96"  Margin="0,0,0,0" Click="BtnSaveAs_Click" Style="{StaticResource ToolbarButton}" ToolTip="Save As (Ctrl+Shift+S)"/>
-        </StackPanel>
-
-        <!-- ════════ WIP WARNING ═══════════════════════════════════════ -->
+            <Button Content="📄  Reset Settings"      Margin="0,0,6,0" Click="BtnNew_Click"    Style="{StaticResource ToolbarButton}" ToolTip="New (Ctrl+N)"/>
+            <Button Content="📂  Open Settings"      Margin="0,0,6,0" Click="BtnOpen_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Open (Ctrl+O)"/>
+            <Button Content="💾  Save Settings"      Margin="0,0,6,0" Click="BtnSave_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Save (Ctrl+S)"/>
+            <Button Content="💾  Save Settings As"   Margin="0,0,0,0" Click="BtnSaveAs_Click" Style="{StaticResource ToolbarButton}" ToolTip="Save As (Ctrl+Shift+S)"/>
+                </StackPanel>
+                <!-- ════════ WIP WARNING ═══════════════════════════════════════ -->
         <Border Grid.Row="2"
                 Background="{StaticResource BrushWarnBg}"
                 BorderBrush="{StaticResource BrushWarnBorder}"
@@ -207,8 +206,8 @@
                             </Grid.RowDefinitions>
 
                             <DockPanel Grid.Row="0" Grid.Column="0">
-                                <Label Content="Min Heroes" Padding="5,2" DockPanel.Dock="Left"/>
-                                <TextBlock x:Name="TxtHeroMin" Text="4" DockPanel.Dock="Right"
+                                <Label Content="Initial hero cap" Padding="5,2" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtHeroMin" Text="10" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
@@ -218,8 +217,8 @@
                                     ValueChanged="Slider_ValueChanged"/>
 
                             <DockPanel Grid.Row="2" Grid.Column="0">
-                                <Label Content="Max Heroes" Padding="5,2" DockPanel.Dock="Left"/>
-                                <TextBlock x:Name="TxtHeroMax" Text="8" DockPanel.Dock="Right"
+                                <Label Content="Max hero cap" Padding="5,2" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtHeroMax" Text="10" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
@@ -229,8 +228,8 @@
                                     ValueChanged="Slider_ValueChanged"/>
 
                             <DockPanel Grid.Row="4" Grid.Column="0">
-                                <Label Content="Increase heroes / castle" Padding="5,2" DockPanel.Dock="Left"/>
-                                <TextBlock x:Name="TxtHeroIncrement" Text="1" DockPanel.Dock="Right"
+                                <Label Content="Increase cap / castle" Padding="5,2" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtHeroIncrement" Text="0" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
@@ -239,20 +238,7 @@
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
                         </Grid>
-                        <StackPanel Margin="0,8,0,0">
-                            <TextBlock Foreground="{StaticResource BrushTextDim}"
-                                       FontSize="12"
-                                       TextWrapping="Wrap"
-                                       Text="Min Heroes: Initial Max Number of Heroes (with 1 castle)."/>
-                            <TextBlock Foreground="{StaticResource BrushTextDim}"
-                                       FontSize="12"
-                                       TextWrapping="Wrap"
-                                       Text="Max Heroes: Max Number of Heroes (with all castles)."/>
-                            <TextBlock Foreground="{StaticResource BrushTextDim}"
-                                       FontSize="12"
-                                       TextWrapping="Wrap"
-                                       Text="Increase heroes / castle: How Much The Hero Cap Increases Per Castle."/>
-                        </StackPanel>
+                        
                     </StackPanel>
                 </Border>
 
@@ -562,7 +548,7 @@
                                            Margin="0,0,10,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
                             <Slider Grid.Row="6" Grid.Column="1" x:Name="SldResourceDensity"
-                                    Minimum="20" Maximum="200" Value="100"
+                                    Minimum="20" Maximum="400" Value="100"
                                     TickFrequency="10" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
 

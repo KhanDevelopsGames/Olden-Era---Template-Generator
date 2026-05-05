@@ -36,7 +36,7 @@ public class TemplateGeneratorTests
         Assert.Equal(settings.VictoryCondition, template.DisplayWinCondition);
         Assert.Matches(@"^Generated with Olden Era Template Generator v\d+\.\d+: Ring layout, no neutral zones, 1 castle per player zone\.$", template.Description);
         Assert.NotNull(template.GameRules);
-        Assert.Equal(settings.HeroCountMin, template.GameRules.HeroCountMin);
+        Assert.Equal(settings.HeroCountMin - settings.HeroCountIncrement, template.GameRules.HeroCountMin);
         Assert.Equal(settings.HeroCountMax, template.GameRules.HeroCountMax);
         Assert.Equal(settings.HeroCountIncrement, template.GameRules.HeroCountIncrement);
         Assert.NotEmpty(template.ZoneLayouts ?? []);
@@ -243,8 +243,8 @@ public class TemplateGeneratorTests
         Assert.Equal(3000, spawnZone.GuardedContentValuePerArea);
         Assert.Equal(75000, spawnZone.UnguardedContentValue);
         Assert.Equal(600, spawnZone.UnguardedContentValuePerArea);
-        Assert.Equal(40000, spawnZone.ResourcesValue);
-        Assert.Equal(300, spawnZone.ResourcesValuePerArea);
+        Assert.Equal(20000, spawnZone.ResourcesValue);
+        Assert.Equal(150, spawnZone.ResourcesValuePerArea);
     }
 
     [Fact]
