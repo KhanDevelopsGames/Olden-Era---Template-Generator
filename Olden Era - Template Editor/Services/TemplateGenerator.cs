@@ -349,7 +349,7 @@ namespace Olden_Era___Template_Editor.Services
 
         private static GameRules BuildGameRules(GeneratorSettings settings, string effectiveVictoryCondition) => new()
         {
-            HeroCountMin = settings.HeroCountMin,
+            HeroCountMin = settings.HeroCountMin-settings.HeroCountIncrement,
             HeroCountMax = settings.HeroCountMax,
             HeroCountIncrement = settings.HeroCountIncrement,
             HeroHireBan = false,

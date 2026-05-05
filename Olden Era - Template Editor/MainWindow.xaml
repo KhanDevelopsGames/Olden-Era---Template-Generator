@@ -221,7 +221,7 @@
                             </Grid.RowDefinitions>
 
                             <DockPanel Grid.Row="0" Grid.Column="0">
-                                <Label Content="Min Heroes" Padding="5,2" DockPanel.Dock="Left"/>
+                                <Label Content="Initial Hero cap" Padding="5,2" DockPanel.Dock="Left"/>
                                 <TextBlock x:Name="TxtHeroMin" Text="10" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
@@ -232,7 +232,7 @@
                                     ValueChanged="Slider_ValueChanged"/>
 
                             <DockPanel Grid.Row="2" Grid.Column="0">
-                                <Label Content="Max Heroes" Padding="5,2" DockPanel.Dock="Left"/>
+                                <Label Content="Max Hero cap" Padding="5,2" DockPanel.Dock="Left"/>
                                 <TextBlock x:Name="TxtHeroMax" Text="10" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
