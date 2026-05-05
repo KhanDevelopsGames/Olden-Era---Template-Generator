@@ -408,19 +408,25 @@ namespace Olden_Era___Template_Editor.Services
 
             if (useTournament)
             {
-                int roundCount = Math.Clamp(settings.TournamentRoundCount, 1, 5);
-                int roundDuration = Math.Clamp(settings.TournamentRoundDuration, 1, 14);
-                int firstAnnounceDay = Math.Clamp(settings.TournamentFirstAnnounceDay, 1, 60);
-                int interval = Math.Clamp(settings.TournamentRoundInterval, 1, 30);
-
+                int firstTournamentDay = Math.Clamp(settings.TournamentFirstTournamentDay, 1, 60);
+                int announcementLeadDays = Math.Clamp(settings.TournamentAnnouncementLeadDays, 1, 30);
+                int tournamentInterval = Math.Clamp(settings.TournamentInterval, 1, 30);
+                int pointsToWin = Math.Clamp(settings.TournamentPointsToWin, 1, 5);
+                // Round count is derived from points to win: with N points to win, the maximum number of rounds is 2N-1
+                int roundCount = pointsToWin * 2 - 1;
+                // Common tournament settings, for now not editable
                 winConditions.ChampionSelectRule = "StartHero";
                 winConditions.Tournament = true;
-                winConditions.TournamentDays = Enumerable.Repeat(roundDuration, roundCount).ToList();
-                winConditions.TournamentAnnounceDays = Enumerable.Range(0, roundCount)
-                    .Select(i => firstAnnounceDay + i * interval)
-                    .ToList();
-                winConditions.TournamentPointsToWin = Math.Clamp(settings.TournamentPointsToWin, 1, roundCount);
                 winConditions.TournamentSaveArmy = true;
+
+                // Tournament annouce days are the starting point to tournament countdown.
+                winConditions.TournamentAnnounceDays = Enumerable.Range(0, roundCount)
+                    .Select(i => (firstTournamentDay - announcementLeadDays) + i * tournamentInterval)
+                    .ToList();
+                    
+                // Tournament days are relative to announcement days
+                winConditions.TournamentDays = Enumerable.Repeat(announcementLeadDays, roundCount).ToList();
+                winConditions.TournamentPointsToWin = pointsToWin;
             }
             return winConditions;
         }

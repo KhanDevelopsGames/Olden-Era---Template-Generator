@@ -47,10 +47,9 @@ namespace Olden_Era___Template_Editor.Models
         public int GladiatorArenaDaysDelayStart { get; set; } = 30;
         public int GladiatorArenaCountDay { get; set; } = 3;
         public bool Tournament { get; set; } = false;
-        public int TournamentRoundCount { get; set; } = 3;
-        public int TournamentRoundDuration { get; set; } = 3;
-        public int TournamentFirstAnnounceDay { get; set; } = 7;
-        public int TournamentRoundInterval { get; set; } = 7;
+        public int TournamentFirstTournamentDay { get; set; } = 8;
+        public int TournamentAnnouncementLeadDays { get; set; } = 3;
+        public int TournamentInterval { get; set; } = 7;
         public int TournamentPointsToWin { get; set; } = 2;
     }
 
