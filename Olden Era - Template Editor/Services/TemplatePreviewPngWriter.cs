@@ -200,10 +200,11 @@ namespace Olden_Era___Template_Editor.Services
 
         private static void DrawZone(DrawingContext dc, Zone zone, Point pt)
         {
-            bool isSpawn   = zone.Name.StartsWith("Spawn-",   StringComparison.Ordinal);
-            bool isHub     = string.Equals(zone.Name, "Hub",  StringComparison.Ordinal);
-            bool isNeutral = zone.Name.StartsWith("Neutral-", StringComparison.Ordinal);
-            int  castles   = CastleCount(zone);
+            bool isSpawn    = zone.Name.StartsWith("Spawn-",   StringComparison.Ordinal);
+            bool isHub      = string.Equals(zone.Name, "Hub",  StringComparison.Ordinal);
+            bool isNeutral  = zone.Name.StartsWith("Neutral-", StringComparison.Ordinal);
+            bool isHoldCity = IsHoldCityZone(zone);
+            int  castles    = CastleCount(zone);
 
             Brush fillBrush;
             Pen   outlinePen;
@@ -223,20 +224,24 @@ namespace Olden_Era___Template_Editor.Services
                 outlinePen = new Pen(new SolidColorBrush(SpawnBorder), 2.5);
             }
 
+            // Hold-city zones get a bright golden outline on top of the normal one
+            if (isHoldCity)
+                outlinePen = new Pen(new SolidColorBrush(Color.FromRgb(255, 215, 0)), 3.5);
+
             dc.DrawEllipse(fillBrush, outlinePen, pt, _zoneRadius, _zoneRadius);
 
-            if (isSpawn)
+            if (isHoldCity)
             {
-                // Person icon fills the circle
+                DrawHoldCityIcon(dc, pt, _zoneRadius);
+            }
+            else if (isSpawn)
+            {
                 DrawPersonIcon(dc, pt, _zoneRadius);
-
-                // Castle count badge — only shown when there is more than one castle
                 if (castles > 1)
                     DrawCastleBadge(dc, pt, _zoneRadius, castles);
             }
             else if (isNeutral)
             {
-                // House icon + count side by side inside the circle, or nothing if no castles
                 if (castles > 0)
                     DrawNeutralCastleContent(dc, pt, castles);
             }
@@ -244,6 +249,32 @@ namespace Olden_Era___Template_Editor.Services
             {
                 DrawText(dc, "Hub", pt, 32, Brushes.White, centered: true);
             }
+        }
+
+        // ── Hold-city detection ──────────────────────────────────────────────────
+
+        private static bool IsHoldCityZone(Zone zone) =>
+            zone.MainObjects?.Any(o => o.HoldCityWinCon == true) == true;
+
+        // ── Hold-city icon (big golden house) ────────────────────────────────────
+        // Drawn centred in the zone circle; a star/crown badge marks it as the target.
+
+        private static void DrawHoldCityIcon(DrawingContext dc, Point centre, double r)
+        {
+            // Big golden house
+            double iconSize = r * 1.35;
+            var goldBrush   = new SolidColorBrush(Color.FromRgb(255, 215, 0));
+            DrawHouseIcon(dc, centre, iconSize, goldBrush);
+
+            // Small golden star badge at top-right of the circle
+            double bx = centre.X + r * 0.62;
+            double by = centre.Y - r * 0.62;
+            double br = r * 0.30;
+            dc.DrawEllipse(
+                new SolidColorBrush(Color.FromRgb(80, 60, 0)),
+                new Pen(goldBrush, 1.2),
+                new Point(bx, by), br, br);
+            DrawText(dc, "★", new Point(bx, by), br * 1.55, goldBrush, centered: true, FontWeights.Bold);
         }
 
         // ── Castle badge (player zones) ──────────────────────────────────────────

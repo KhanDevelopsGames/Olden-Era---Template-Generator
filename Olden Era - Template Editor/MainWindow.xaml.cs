@@ -299,6 +299,18 @@ namespace Olden_Era___Template_Editor
                     warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
             }
 
+            bool cityHoldActive = ChkCityHold.IsChecked == true;
+            if (cityHoldActive)
+            {
+                var topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default;
+                if (topology != MapTopology.HubAndSpoke && neutral == 0)
+                {
+                    SetValidationText("City Hold requires at least one neutral zone to place the hold city. Add a neutral zone or switch to the Hub layout.");
+                    BtnPreview.IsEnabled = false;
+                    return false;
+                }
+            }
+
             SetValidationText(string.Join("\n\n", warnings));
 
             BtnPreview.IsEnabled = true;

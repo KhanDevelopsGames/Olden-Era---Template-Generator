@@ -33,6 +33,17 @@ namespace Olden_Era___Template_Editor.Services
             var playerLetters = ZoneLetters.Take(settings.PlayerCount).ToList();
             var neutralZones = BuildNeutralZonePlan(settings);
 
+            // When city hold is active on Hub & Spoke the hub itself becomes the hold city,
+            // so no neutral zone needs to carry that flag. For all other topologies we pick
+            // the best-candidate neutral zone now so every downstream builder can query it.
+            bool useCityHold = settings.CityHold || settings.VictoryCondition == "win_condition_5";
+            string? holdCityNeutralLetter = null;
+            if (useCityHold && settings.Topology != MapTopology.HubAndSpoke)
+            {
+                var adjacency = BuildTopologyAdjacency(settings, playerLetters, neutralZones);
+                holdCityNeutralLetter = PickHoldCityNeutralLetter(neutralZones, playerLetters, adjacency);
+            }
+
             // Hub & Spoke handles isolation via hub; for all other topologies the
             // isolation is done by skipping player–player connections, so no extra
             // neutral zones need to be auto-created.
@@ -59,7 +70,7 @@ namespace Olden_Era___Template_Editor.Services
                 SizeX = settings.MapSize,
                 SizeZ = settings.MapSize,
                 GameRules = BuildGameRules(settings, effectiveVictoryCondition),
-                Variants = [BuildVariant(settings, playerLetters, neutralZones, tuning)],
+                Variants = [BuildVariant(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter, useCityHold && settings.Topology == MapTopology.HubAndSpoke)],
                 ZoneLayouts = BuildZoneLayouts(),
                 MandatoryContent = BuildAllMandatoryContent(playerLetters, neutralZones, settings),
                 ContentCountLimits = BuildAllContentCountLimits(),
@@ -178,6 +189,160 @@ namespace Olden_Era___Template_Editor.Services
             }
 
             return plans;
+        }
+
+        /// <summary>
+        /// Picks the letter of the neutral zone that should host the hold city.
+        ///
+        /// Uses BFS over the actual topology adjacency graph to compute exact hop-distances
+        /// from every player zone to every neutral zone, then selects the neutral that is
+        /// most equidistant from all players:
+        ///   1. Maximise the minimum hop-distance to any player (farthest from all players).
+        ///   2. Minimise the variance of distances across players (most equidistant).
+        ///   3. Prefer higher quality tier.
+        ///   4. Prefer zones that already have a castle.
+        ///
+        /// <paramref name="adjacency"/> maps each zone letter to the set of directly adjacent
+        /// zone letters (undirected graph). Returns null when there are no eligible neutral zones.
+        /// </summary>
+        private static string? PickHoldCityNeutralLetter(
+            List<NeutralZonePlan> neutralZones,
+            List<string> playerLetters,
+            Dictionary<string, HashSet<string>> adjacency)
+        {
+            if (neutralZones.Count == 0) return null;
+
+            var neutralByLetter = neutralZones.ToDictionary(z => z.Letter);
+
+            // BFS from a given player letter; returns hop-distance to every reachable zone.
+            static Dictionary<string, int> Bfs(string start, Dictionary<string, HashSet<string>> adj)
+            {
+                var dist = new Dictionary<string, int>(StringComparer.Ordinal) { [start] = 0 };
+                var queue = new Queue<string>();
+                queue.Enqueue(start);
+                while (queue.Count > 0)
+                {
+                    string cur = queue.Dequeue();
+                    if (!adj.TryGetValue(cur, out var neighbours)) continue;
+                    foreach (string nb in neighbours)
+                    {
+                        if (!dist.ContainsKey(nb))
+                        {
+                            dist[nb] = dist[cur] + 1;
+                            queue.Enqueue(nb);
+                        }
+                    }
+                }
+                return dist;
+            }
+
+            // Compute BFS distances from each player to every neutral zone.
+            var distsByPlayer = playerLetters
+                .Select(p => Bfs(p, adjacency))
+                .ToList();
+
+            var best = neutralZones
+                .Select(plan =>
+                {
+                    string letter = plan.Letter;
+                    var dists = distsByPlayer
+                        .Select(d => d.TryGetValue(letter, out int v) ? v : int.MaxValue / 2)
+                        .ToList();
+                    int    minDist  = dists.Min();
+                    double mean     = dists.Average();
+                    double variance = dists.Average(d => (d - mean) * (d - mean));
+                    return (letter, minDist, variance, quality: (int)plan.Quality, hasCastle: plan.CastleCount > 0 ? 1 : 0);
+                })
+                .OrderByDescending(t => t.minDist)
+                .ThenBy(t => t.variance)
+                .ThenByDescending(t => t.quality)
+                .ThenByDescending(t => t.hasCastle)
+                .FirstOrDefault();
+
+            return best.letter;
+        }
+
+        /// <summary>
+        /// Builds a zone-letter adjacency graph for the given topology so that
+        /// <see cref="PickHoldCityNeutralLetter"/> can compute exact hop-distances.
+        /// </summary>
+        private static Dictionary<string, HashSet<string>> BuildTopologyAdjacency(
+            GeneratorSettings settings,
+            List<string> playerLetters,
+            List<NeutralZonePlan> neutralZones)
+        {
+            var adj = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
+
+            void Link(string a, string b)
+            {
+                if (!adj.TryGetValue(a, out var sa)) adj[a] = sa = new HashSet<string>(StringComparer.Ordinal);
+                if (!adj.TryGetValue(b, out var sb)) adj[b] = sb = new HashSet<string>(StringComparer.Ordinal);
+                sa.Add(b);
+                sb.Add(a);
+            }
+
+            switch (settings.Topology)
+            {
+                case MapTopology.Chain:
+                {
+                    var ordered = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: false);
+                    bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
+                    var playerSet = playerLetters.ToHashSet(StringComparer.Ordinal);
+                    for (int i = 0; i < ordered.Count - 1; i++)
+                    {
+                        bool bothPlayers = playerSet.Contains(ordered[i]) && playerSet.Contains(ordered[i + 1]);
+                        if (isolate && bothPlayers) continue;
+                        Link(ordered[i], ordered[i + 1]);
+                    }
+                    break;
+                }
+
+                case MapTopology.Default:
+                {
+                    // Mirror exactly what BuildVariantDefault does: ring edges, with
+                    // player–player pairs skipped when isolation is enabled.
+                    var ordered = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: true);
+                    bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
+                    var playerSet = playerLetters.ToHashSet(StringComparer.Ordinal);
+                    int n = ordered.Count;
+                    for (int i = 0; i < n; i++)
+                    {
+                        int next = (i + 1) % n;
+                        bool bothPlayers = playerSet.Contains(ordered[i]) && playerSet.Contains(ordered[next]);
+                        if (isolate && bothPlayers) continue;
+                        Link(ordered[i], ordered[next]);
+                    }
+                    break;
+                }
+
+                case MapTopology.Random:
+                {
+                    // Delaunay adjacency is computed from random positions at generation
+                    // time and can't be reproduced exactly during the pick phase.
+                    // We use the balanced ring ordering as the best structural proxy:
+                    // BuildBalancedRingLetters places players evenly around a circle and
+                    // fills gaps with neutrals in quality order, which closely matches the
+                    // ring-like adjacency that Delaunay produces on those positions.
+                    // For non-balanced random placement the same ring proxy is used, since
+                    // any position-independent approximation is equivalent in expectation.
+                    var ordered = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: true);
+                    int rn = ordered.Count;
+                    for (int i = 0; i < rn; i++)
+                        Link(ordered[i], ordered[(i + 1) % rn]);
+                    break;
+                }
+
+                default:
+                {
+                    var ordered = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: true);
+                    int dn = ordered.Count;
+                    for (int i = 0; i < dn; i++)
+                        Link(ordered[i], ordered[(i + 1) % dn]);
+                    break;
+                }
+            }
+
+            return adj;
         }
 
         // ── Game rules ───────────────────────────────────────────────────────────
@@ -575,24 +740,24 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Variant ──────────────────────────────────────────────────────────────
 
-        private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
+        private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null, bool hubIsHoldCity = false)
         {
             // Always shuffle player letters so players are not always at the same geometric positions.
             playerLetters = [.. playerLetters.OrderBy(_ => Random.Shared.Next())];
 
             return settings.Topology switch
             {
-                MapTopology.HubAndSpoke => BuildVariantHubAndSpoke(settings, playerLetters, neutralZones, tuning),
-                MapTopology.Chain       => BuildVariantChain(settings, playerLetters, neutralZones, tuning),
-                MapTopology.SharedWeb   => BuildVariantSharedWeb(settings, playerLetters, neutralZones, tuning),
-                MapTopology.Random      => BuildVariantRandom(settings, playerLetters, neutralZones, tuning),
-                _                       => BuildVariantDefault(settings, playerLetters, neutralZones, tuning),
+                MapTopology.HubAndSpoke => BuildVariantHubAndSpoke(settings, playerLetters, neutralZones, tuning, hubIsHoldCity),
+                MapTopology.Chain       => BuildVariantChain(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
+                MapTopology.SharedWeb   => BuildVariantSharedWeb(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
+                MapTopology.Random      => BuildVariantRandom(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
+                _                       => BuildVariantDefault(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
             };
         }
 
         // ── Topology: Default (Ring) ──────────────────────────────────────────────
 
-        private static Variant BuildVariantDefault(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
+        private static Variant BuildVariantDefault(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null)
         {
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
             var orderedLetters = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: true);
@@ -626,7 +791,7 @@ namespace Olden_Era___Template_Editor.Services
                 if (playerIdx >= 0)
                     zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
-                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning, letter == holdCityNeutralLetter));
             }
 
             var connections = new List<Connection>();
@@ -640,7 +805,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Topology: Random Proximity ────────────────────────────────────────────
 
-        private static Variant BuildVariantRandom(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
+        private static Variant BuildVariantRandom(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null)
         {
             var rng = new Random();
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
@@ -708,7 +873,7 @@ namespace Olden_Era___Template_Editor.Services
                 if (playerIdx >= 0)
                     zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
-                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning, letter == holdCityNeutralLetter));
             }
 
             if (settings.RandomPortals)
@@ -829,7 +994,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Topology: Hub & Spoke ─────────────────────────────────────────────────
 
-        private static Variant BuildVariantHubAndSpoke(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
+        private static Variant BuildVariantHubAndSpoke(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, bool hubIsHoldCity = false)
         {
             // A central "Hub" zone connects to every outer zone.
             // Outer zones are players + neutrals arranged around the hub.
@@ -853,7 +1018,7 @@ namespace Olden_Era___Template_Editor.Services
 
             // Hub zone (neutral, no castle, high loot).
             var hubConns = outerLetters.Select(l => $"Hub-{l}").ToArray();
-            zones.Add(BuildHubZone(hubConns, tuning));
+            zones.Add(BuildHubZone(hubConns, tuning, hubIsHoldCity));
 
             // Outer zones each connect only to the hub.
             for (int i = 0; i < outerLetters.Count; i++)
@@ -936,7 +1101,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Topology: Chain ───────────────────────────────────────────────────────
 
-        private static Variant BuildVariantChain(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
+        private static Variant BuildVariantChain(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null)
         {
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
             var orderedLetters = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: false);
@@ -966,7 +1131,7 @@ namespace Olden_Era___Template_Editor.Services
                 if (playerIdx >= 0)
                     zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns.ToArray(), settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
-                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns.ToArray(), settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns.ToArray(), settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning, letter == holdCityNeutralLetter));
             }
 
             var connections = new List<Connection>();
@@ -1001,7 +1166,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Topology: Shared Web ──────────────────────────────────────────────────
 
-        private static Variant BuildVariantSharedWeb(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning)
+        private static Variant BuildVariantSharedWeb(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null)
         {
             // Each player connects to two neutral zones.
             // Neutral zones are arranged in a ring connecting all players.
@@ -1052,7 +1217,7 @@ namespace Olden_Era___Template_Editor.Services
 
                 neutralConns.AddRange(spokeConnsByNeutral[neutrals[i]]);
                 string[] nConns = neutralConns.Distinct().ToArray();
-                Zone neutralZone = BuildNeutralZone(neutralByLetter[neutrals[i]], nConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
+                Zone neutralZone = BuildNeutralZone(neutralByLetter[neutrals[i]], nConns, settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning, neutrals[i] == holdCityNeutralLetter);
                 if (neutralByLetter[neutrals[i]].CastleCount == 0)
                     neutralZone.Roads = BuildConnectorZoneRoads(nConns, settings.GenerateRoads);
                 zones.Add(neutralZone);
@@ -1129,8 +1294,27 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Hub zone (only used by Hub & Spoke topology) ─────────────────────────
 
-        private static Zone BuildHubZone(string[] spokeConns, GenerationTuning tuning) => new()
+        private static Zone BuildHubZone(string[] spokeConns, GenerationTuning tuning, bool isHoldCity = false)
         {
+            var mainObjects = new List<MainObject>();
+            if (isHoldCity)
+            {
+                mainObjects.Add(new MainObject
+                {
+                    Type = "City",
+                    GuardChance = 1.0,
+                    GuardValue = ScaleNeutralGuardValue(25000, tuning),
+                    GuardWeeklyIncrement = 0.10,
+                    BuildingsConstructionSid = "ultra_rich_buildings_construction",
+                    Faction = new TypedSelector { Type = "FromList", Args = [] },
+                    Placement = "Center",
+                    PlacementArgs = [],
+                    HoldCityWinCon = true
+                });
+            }
+
+            return new Zone
+            {
             Name = "Hub",
             Size = 1.0,
             Layout = CenterLayoutName,
@@ -1151,13 +1335,16 @@ namespace Olden_Era___Template_Editor.Services
             UnguardedContentValuePerArea = ScaleStructureValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
             ResourcesValue = ScaleResourceValue(80000 * tuning.ContentScale, tuning),
             ResourcesValuePerArea = ScaleResourceValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
-            MainObjects = [],
+            MainObjects = mainObjects,
             ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
             ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
             MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
-            CrossroadsPosition = 0,
-            Roads = spokeConns.Select(c => PlainRoad(ConnectionEndpoint(c), ConnectionEndpoint(c))).ToList()
-        };
+                    CrossroadsPosition = 0,
+                    Roads = spokeConns.Select(c => PlainRoad(
+                        isHoldCity ? MainObjectEndpoint("0") : ConnectionEndpoint(c),
+                        ConnectionEndpoint(c))).ToList()
+                };
+            }
 
         // ── Isolation failsafe ───────────────────────────────────────────────────
 
@@ -1332,25 +1519,29 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Neutral zone ─────────────────────────────────────────────────────────
 
-        private static Zone BuildNeutralZone(NeutralZonePlan plan, string[] ringConns, double zoneSize, bool spawnFootholds, bool generateRoads, GenerationTuning tuning)
+        private static Zone BuildNeutralZone(NeutralZonePlan plan, string[] ringConns, double zoneSize, bool spawnFootholds, bool generateRoads, GenerationTuning tuning, bool isHoldCity = false)
         {
             string letter = plan.Letter;
-            int castleCount = plan.CastleCount;
+            // When this zone is the hold city target, guarantee it has at least one castle.
+            int castleCount = isHoldCity ? Math.Max(1, plan.CastleCount) : plan.CastleCount;
             var profile = GetNeutralZoneProfile(plan.Quality);
 
             var mainObjects = new List<MainObject>();
             if (castleCount > 0)
+            {
                 mainObjects.Add(new MainObject
                 {
                     Type = "City",
-                    GuardChance = 0.5,
-                    GuardValue = ScaleNeutralGuardValue(profile.PrimaryCityGuardValue, tuning),
+                    GuardChance = isHoldCity ? 1.0 : 0.5,
+                    GuardValue = ScaleNeutralGuardValue(isHoldCity ? Math.Max(profile.PrimaryCityGuardValue, 20000) : profile.PrimaryCityGuardValue, tuning),
                     GuardWeeklyIncrement = 0.10,
-                    BuildingsConstructionSid = profile.PrimaryBuildingsConstructionSid,
+                    BuildingsConstructionSid = isHoldCity ? "ultra_rich_buildings_construction" : profile.PrimaryBuildingsConstructionSid,
                     Faction = new TypedSelector { Type = "FromList", Args = [] },
-                    Placement = "Uniform",
-                    PlacementArgs = ["true", "0.8", "2"]
+                    Placement = isHoldCity ? "Center" : "Uniform",
+                    PlacementArgs = isHoldCity ? [] : ["true", "0.8", "2"],
+                    HoldCityWinCon = isHoldCity ? true : null
                 });
+            }
 
             for (int i = 1; i < castleCount; i++)
             {
