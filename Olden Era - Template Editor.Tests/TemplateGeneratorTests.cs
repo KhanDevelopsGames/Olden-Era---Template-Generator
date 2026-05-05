@@ -34,7 +34,7 @@ public class TemplateGeneratorTests
         Assert.Equal(settings.MapSize, template.SizeX);
         Assert.Equal(settings.MapSize, template.SizeZ);
         Assert.Equal(settings.VictoryCondition, template.DisplayWinCondition);
-        Assert.Equal("Generated with Olden Era Template Generator: Classic mode, 2 players, 200x200 map, Ring layout, no neutral zones, 1 castle per player zone.", template.Description);
+        Assert.Matches(@"^Generated with Olden Era Template Generator v\d+\.\d+: Ring layout, no neutral zones, 1 castle per player zone\.$", template.Description);
         Assert.NotNull(template.GameRules);
         Assert.Equal(settings.HeroCountMin, template.GameRules.HeroCountMin);
         Assert.Equal(settings.HeroCountMax, template.GameRules.HeroCountMax);
@@ -63,7 +63,7 @@ public class TemplateGeneratorTests
 
         RmgTemplate template = TemplateGenerator.Generate(settings);
 
-        Assert.Equal("Generated with Olden Era Template Generator: SingleHero mode, 4 players, 192x192 map, Chain layout, 2 neutral zones, 2 castles per player zone, no castles per neutral zone, options: isolated player starts, random portals, no remote footholds, roads disabled.", template.Description);
+        Assert.Matches(@"^Generated with Olden Era Template Generator v\d+\.\d+: Chain layout, 2 neutral zones, 2 castles per player zone, no castles per neutral zone, options: isolated player starts, random portals, no remote footholds, roads disabled\.$", template.Description);
     }
 
     [Fact]
