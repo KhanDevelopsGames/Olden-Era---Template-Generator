@@ -19,7 +19,7 @@ A small Windows desktop tool that generates `.rmg.json` random map templates for
 - Experimental map sizes available via an opt-in checkbox
 - **Auto update check** — notifies you on startup if a newer version is available on GitHub
 - Automatically detects your **Olden Era install path** via Steam registry and opens the Save dialog in the correct `map_templates` folder
-- **Preview image** — generate a visual overview of the zone layout before saving; optionally embed it in the template file for in-game display
+- **Preview image** — generate a visual overview of the zone layout before saving; optionally save it in the template directory for in-game display
 
 ### Hero Settings
 
