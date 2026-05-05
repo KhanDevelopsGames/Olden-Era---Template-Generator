@@ -225,6 +225,7 @@ namespace Olden_Era___Template_Editor
             TxtMinNeutralBetweenPlayers.Text = ((int)SldMinNeutralBetweenPlayers.Value).ToString();
             TxtPlayerZoneSize.Text = $"{SldPlayerZoneSize.Value:F2}x";
             TxtNeutralZoneSize.Text = $"{SldNeutralZoneSize.Value:F2}x";
+            TxtHubZoneSize.Text = $"{SldHubZoneSize.Value:F2}x";
             TxtGuardRandomization.Text = $"{(int)SldGuardRandomization.Value}%";
             TxtLostStartCityDay.Text = ((int)SldLostStartCityDay.Value).ToString();
             TxtCityHoldDays.Text = ((int)SldCityHoldDays.Value).ToString();
@@ -397,6 +398,7 @@ namespace Olden_Era___Template_Editor
             if (!isolateApplicable) ChkNoDirectPlayerConn.IsChecked = false;
             UpdateIsolateDescVisibility();
             UpdateAdvancedZoneSettingsVisibility();
+            PnlHubZoneSize.Visibility = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
 
             MarkDirty();
             Validate();
@@ -656,6 +658,7 @@ namespace Olden_Era___Template_Editor
             ExperimentalMapSizes  = ChkExperimentalMapSizes.IsChecked == true,
             PlayerZoneSize        = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
             NeutralZoneSize       = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
+            HubZoneSize           = SldHubZoneSize.Value,
             GuardRandomization    = SldGuardRandomization.Value / 100.0,
             HeroCountMin          = (int)SldHeroMin.Value,
             HeroCountMax          = (int)SldHeroMax.Value,
@@ -713,6 +716,7 @@ namespace Olden_Era___Template_Editor
             ChkBalancedZonePlacement.IsChecked = s.ExperimentalBalancedZonePlacement;
             SldPlayerZoneSize.Value = Math.Clamp(s.PlayerZoneSize, 0.1, 2.0);
             SldNeutralZoneSize.Value = Math.Clamp(s.NeutralZoneSize, 0.1, 2.0);
+            SldHubZoneSize.Value = Math.Clamp(s.HubZoneSize, 0.25, 3.0);
             SldGuardRandomization.Value = GuardRandomizationPercent(s.GuardRandomization);
             SldHeroMin.Value        = s.HeroCountMin;
             SldHeroMax.Value        = s.HeroCountMax;
@@ -924,6 +928,7 @@ namespace Olden_Era___Template_Editor
             ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
             PlayerZoneSize = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
             NeutralZoneSize = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
+            HubZoneSize = SldHubZoneSize.Value,
             GuardRandomization = _advancedZoneSettings ? SldGuardRandomization.Value / 100.0 : 0.05,
             NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
             RandomPortals = ChkRandomPortals.IsChecked == true,

@@ -27,6 +27,7 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("experimentalMapSizes")] public bool ExperimentalMapSizes { get; set; } = false;
         [JsonPropertyName("playerZoneSize")]  public double  PlayerZoneSize       { get; set; } = 1.0;
         [JsonPropertyName("neutralZoneSize")] public double  NeutralZoneSize      { get; set; } = 1.0;
+        [JsonPropertyName("hubZoneSize")]     public double  HubZoneSize          { get; set; } = 1.0;
         [JsonPropertyName("guardRandomization")] public double GuardRandomization { get; set; } = 0.05;
         [JsonPropertyName("heroMin")]           public int     HeroCountMin           { get; set; } = 4;
         [JsonPropertyName("heroMax")]           public int     HeroCountMax           { get; set; } = 8;

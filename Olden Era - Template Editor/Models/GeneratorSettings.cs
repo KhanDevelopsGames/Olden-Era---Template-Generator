@@ -25,6 +25,7 @@ namespace Olden_Era___Template_Editor.Models
         public bool ExperimentalBalancedZonePlacement { get; set; } = false;
         public double PlayerZoneSize { get; set; } = 1.0;
         public double NeutralZoneSize { get; set; } = 1.0;
+        public double HubZoneSize { get; set; } = 1.0;
         public double GuardRandomization { get; set; } = 0.05;
         public bool NoDirectPlayerConnections { get; set; } = false;
         public bool RandomPortals { get; set; } = false;

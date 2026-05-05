@@ -469,6 +469,22 @@
                                    Foreground="{StaticResource BrushTextDim}"
                                    FontSize="11" TextWrapping="Wrap"
                                    Margin="0,6,0,0"/>
+                        <Grid x:Name="PnlHubZoneSize" Visibility="Collapsed" Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="155"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <DockPanel Grid.Column="0">
+                                <Label Content="Hub zone size" DockPanel.Dock="Left"/>
+                                <TextBlock x:Name="TxtHubZoneSize" Text="1.00x" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                            </DockPanel>
+                            <Slider Grid.Column="1" x:Name="SldHubZoneSize"
+                                    Minimum="0.25" Maximum="3" Value="1"
+                                    TickFrequency="0.05" IsSnapToTickEnabled="True"
+                                    ValueChanged="Slider_ValueChanged"/>
+                        </Grid>
                     </StackPanel>
                 </Border>
 
