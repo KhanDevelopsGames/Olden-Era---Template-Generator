@@ -201,7 +201,8 @@ namespace Olden_Era___Template_Editor.Services
         private static void DrawZone(DrawingContext dc, Zone zone, Point pt)
         {
             bool isSpawn    = zone.Name.StartsWith("Spawn-",   StringComparison.Ordinal);
-            bool isHub      = string.Equals(zone.Name, "Hub",  StringComparison.Ordinal);
+            bool isHub      = string.Equals(zone.Name, "Hub",  StringComparison.Ordinal)
+                           || zone.Name.StartsWith("Hub-",     StringComparison.Ordinal);
             bool isNeutral  = zone.Name.StartsWith("Neutral-", StringComparison.Ordinal);
             bool isHoldCity = IsHoldCityZone(zone);
             int  castles    = CastleCount(zone);

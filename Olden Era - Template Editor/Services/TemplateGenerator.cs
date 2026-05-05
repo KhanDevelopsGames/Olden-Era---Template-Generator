@@ -751,6 +751,10 @@ namespace Olden_Era___Template_Editor.Services
             // Always shuffle player letters so players are not always at the same geometric positions.
             playerLetters = [.. playerLetters.OrderBy(_ => Random.Shared.Next())];
 
+            bool isTournament = settings.Tournament || settings.VictoryCondition == "win_condition_6";
+            if (isTournament && playerLetters.Count == 2)
+                return BuildVariantTournament(settings, playerLetters, neutralZones, tuning);
+
             return settings.Topology switch
             {
                 MapTopology.HubAndSpoke => BuildVariantHubAndSpoke(settings, playerLetters, neutralZones, tuning, hubIsHoldCity),
@@ -759,6 +763,325 @@ namespace Olden_Era___Template_Editor.Services
                 MapTopology.Random      => BuildVariantRandom(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
                 _                       => BuildVariantDefault(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
             };
+        }
+
+        // ── Topology: Tournament (2 fully-isolated player clusters) ──────────────
+
+        /// <summary>
+        /// Builds a variant where both players are completely isolated from each other.
+        /// Neutral zones are split roughly evenly between the two players; each player
+        /// connects to their exclusive neutrals using the selected topology.
+        /// Chain / Default (Ring) / SharedWeb → simple chain per cluster.
+        /// Random → Delaunay-connected cluster per player.
+        /// Hub &amp; Spoke → not meaningful for isolation; falls back to chain.
+        /// There is never a path that crosses from one player's cluster to the other.
+        /// </summary>
+        private static Variant BuildVariantTournament(
+            GeneratorSettings settings,
+            List<string> playerLetters,
+            List<NeutralZonePlan> neutralZones,
+            GenerationTuning tuning)
+        {
+            var neutralByLetter = neutralZones.ToDictionary(z => z.Letter);
+
+            // Distribute neutrals in a balanced round-robin so that quality tiers are
+            // spread evenly: sort by descending quality/castle score first, then assign
+            // zones alternately: index 0,2,4,… → player 0; index 1,3,5,… → player 1.
+            var sorted = neutralZones
+                .OrderByDescending(z => (int)z.Quality)
+                .ThenByDescending(z => z.CastleCount)
+                .ThenBy(z => z.Letter, StringComparer.Ordinal)
+                .ToList();
+
+            var neutralsForPlayer = new List<List<NeutralZonePlan>> { new(), new() };
+            for (int i = 0; i < sorted.Count; i++)
+                neutralsForPlayer[i % 2].Add(sorted[i]);
+
+            // Randomize the chain order, but use the same permutation for both players
+            // so each cluster has an identical slot structure (mirrored layout).
+            var rng = new Random();
+            int maxSlots = Math.Max(neutralsForPlayer[0].Count, neutralsForPlayer[1].Count);
+            var slotOrder = Enumerable.Range(0, maxSlots).OrderBy(_ => rng.Next()).ToList();
+            for (int p = 0; p < 2; p++)
+            {
+                var original = neutralsForPlayer[p];
+                neutralsForPlayer[p] = slotOrder
+                    .Where(i => i < original.Count)
+                    .Select(i => original[i])
+                    .ToList();
+            }
+
+            var zones = new List<Zone>();
+            var connections = new List<Connection>();
+
+            bool useRandom = settings.Topology == MapTopology.Random;
+            bool useHub    = settings.Topology == MapTopology.HubAndSpoke;
+
+            if (useHub)
+            {
+                // Each player gets their own private mini-hub. The slot permutation is
+                // not meaningful for hub (all neutrals connect directly to the hub), so
+                // we skip it and build each cluster independently.
+                for (int p = 0; p < 2; p++)
+                    BuildTournamentHubCluster(p, playerLetters[p], neutralsForPlayer[p], neutralByLetter, settings, tuning, zones, connections);
+            }
+            else if (useRandom)
+            {
+                // Generate positions and Delaunay edges once from the larger cluster size,
+                // then reuse the identical edge topology for both clusters so the layouts mirror each other.
+                int templateSize = maxSlots + 1; // +1 for player zone
+                var templatePos = new List<(double X, double Y)>(templateSize);
+                for (int i = 0; i < templateSize; i++)
+                    templatePos.Add((rng.NextDouble() * 0.9 + 0.05, rng.NextDouble() * 0.9 + 0.05));
+                var templateEdges = DelaunayEdges(templatePos);
+
+                for (int p = 0; p < 2; p++)
+                    BuildTournamentRandomCluster(p, playerLetters[p], neutralsForPlayer[p], neutralByLetter, settings, tuning, zones, connections, templateEdges);
+            }
+            else
+            {
+                for (int p = 0; p < 2; p++)
+                    BuildTournamentChainCluster(p, playerLetters[p], neutralsForPlayer[p], neutralByLetter, settings, tuning, zones, connections);
+            }
+
+            int totalZones = zones.Count;
+            return MakeVariant(playerLetters, playerLetters[0], totalZones, zones, connections);
+        }
+
+        /// <summary>
+        /// Builds one player's isolated cluster as a chain: player → n0 → n1 → …
+        /// </summary>
+        private static void BuildTournamentChainCluster(
+            int playerIndex,
+            string playerLetter,
+            List<NeutralZonePlan> myNeutrals,
+            Dictionary<string, NeutralZonePlan> neutralByLetter,
+            GeneratorSettings settings,
+            GenerationTuning tuning,
+            List<Zone> zones,
+            List<Connection> connections)
+        {
+            var chainLetters = new List<string> { playerLetter };
+            chainLetters.AddRange(myNeutrals.Select(n => n.Letter));
+
+            var connNamesInChain = new string[chainLetters.Count - 1];
+            for (int i = 0; i < connNamesInChain.Length; i++)
+                connNamesInChain[i] = $"Tourney-{chainLetters[i]}-{chainLetters[i + 1]}";
+
+            for (int i = 0; i < chainLetters.Count; i++)
+            {
+                string letter = chainLetters[i];
+                var myConns = new List<string>();
+                if (i > 0)                        myConns.Add(connNamesInChain[i - 1]);
+                if (i < connNamesInChain.Length)  myConns.Add(connNamesInChain[i]);
+
+                if (i == 0)
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIndex + 1}", myConns.ToArray(),
+                        settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions,
+                        settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                else
+                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns.ToArray(),
+                        settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+            }
+
+            for (int i = 0; i < connNamesInChain.Length; i++)
+            {
+                string fromLetter = chainLetters[i];
+                string toLetter   = chainLetters[i + 1];
+                string fromZone = i == 0 ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
+                string toZone   = $"Neutral-{toLetter}";
+                connections.Add(new Connection
+                {
+                    Name = connNamesInChain[i],
+                    From = fromZone,
+                    To = toZone,
+                    ConnectionType = "Direct",
+                    GuardZone = fromZone,
+                    GuardEscape = false,
+                    SimTurnSquad = true,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardWeeklyIncrement = 0.15,
+                    GuardMatchGroup = $"tourney_guard_{fromLetter}_{toLetter}"
+                });
+            }
+        }
+
+        /// <summary>
+        /// Builds one player's isolated cluster as a private hub-and-spoke layout.
+        /// A dedicated mini-hub zone (named "Hub-{playerLetter}") sits at the centre
+        /// and connects directly to the player's spawn and all of their exclusive
+        /// neutral zones.  No connection touches the other player's cluster.
+        /// </summary>
+        private static void BuildTournamentHubCluster(
+            int playerIndex,
+            string playerLetter,
+            List<NeutralZonePlan> myNeutrals,
+            Dictionary<string, NeutralZonePlan> neutralByLetter,
+            GeneratorSettings settings,
+            GenerationTuning tuning,
+            List<Zone> zones,
+            List<Connection> connections)
+        {
+            string hubName = $"Hub-{playerLetter}";
+
+            // All spokes: player spawn + each neutral.
+            var spokeLetters = new List<string> { playerLetter };
+            spokeLetters.AddRange(myNeutrals.Select(n => n.Letter));
+
+            // Connection name for each spoke: "THubSpoke-{playerLetter}-{spokeLetter}"
+            var spokeConnNames = spokeLetters
+                .Select(l => $"THubSpoke-{playerLetter}-{l}")
+                .ToList();
+
+            // Build the hub zone itself.
+            zones.Add(new Zone
+            {
+                Name = hubName,
+                Size = 1.0,
+                Layout = CenterLayoutName,
+                GuardCutoffValue = 2000,
+                GuardRandomization = 0.05,
+                GuardMultiplier = ScaleGuardMultiplier(1.5, tuning),
+                GuardWeeklyIncrement = 0.20,
+                GuardReactionDistribution = [0, 10, 10, 20, 10, 0],
+                DiplomacyModifier = -0.5,
+                GuardedContentPool = ["template_pool_jebus_cross_guarded_side_zone"],
+                UnguardedContentPool = ["template_pool_jebus_cross_unguarded_side_zone"],
+                ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
+                MandatoryContent = [],
+                ContentCountLimits = BuildSideContentLimits(),
+                GuardedContentValue = ScaleStructureValue(300000 * tuning.ContentScale, tuning),
+                GuardedContentValuePerArea = ScaleStructureValue(2400 * Math.Sqrt(tuning.ContentScale), tuning),
+                UnguardedContentValue = ScaleStructureValue(50000 * tuning.ContentScale, tuning),
+                UnguardedContentValuePerArea = ScaleStructureValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
+                ResourcesValue = ScaleResourceValue(80000 * tuning.ContentScale, tuning),
+                ResourcesValuePerArea = ScaleResourceValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
+                MainObjects = [],
+                ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
+                ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
+                MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
+                CrossroadsPosition = 0,
+                Roads = spokeConnNames.Select(c => PlainRoad(ConnectionEndpoint(c), ConnectionEndpoint(c))).ToList()
+            });
+
+            // Build each spoke zone (player spawn or neutral).
+            for (int i = 0; i < spokeLetters.Count; i++)
+            {
+                string letter = spokeLetters[i];
+                string connName = spokeConnNames[i];
+
+                if (i == 0)
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIndex + 1}", [connName],
+                        settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions,
+                        settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                else
+                    zones.Add(BuildNeutralZone(neutralByLetter[letter], [connName],
+                        settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+            }
+
+            // Build the hub → spoke connections.
+            for (int i = 0; i < spokeLetters.Count; i++)
+            {
+                string spokeLetter = spokeLetters[i];
+                string spokeZone   = i == 0 ? $"Spawn-{spokeLetter}" : $"Neutral-{spokeLetter}";
+                connections.Add(new Connection
+                {
+                    Name = spokeConnNames[i],
+                    From = hubName,
+                    To = spokeZone,
+                    ConnectionType = "Direct",
+                    GuardZone = hubName,
+                    GuardEscape = false,
+                    SimTurnSquad = true,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardWeeklyIncrement = 0.15,
+                    GuardMatchGroup = $"tourney_hub_guard_{playerLetter}_{spokeLetter}"
+                });
+            }
+
+            // Proximity ring around the spokes so the engine places them in a sensible
+            // order around the hub rather than arbitrarily.
+            for (int i = 0; i < spokeLetters.Count; i++)
+            {
+                int next = (i + 1) % spokeLetters.Count;
+                string fromLetter = spokeLetters[i];
+                string toLetter   = spokeLetters[next];
+                string fromZone = i    == 0 ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
+                string toZone   = next == 0 ? $"Spawn-{toLetter}"   : $"Neutral-{toLetter}";
+                connections.Add(new Connection
+                {
+                    Name = $"TPseudo-{playerLetter}-{fromLetter}-{toLetter}",
+                    From = fromZone,
+                    To = toZone,
+                    ConnectionType = "Proximity"
+                });
+            }
+        }
+
+
+        /// <summary>
+        /// Builds one player's isolated cluster using a shared Delaunay edge template so
+        /// both clusters have an identical internal topology, ensuring a mirrored layout.
+        /// Only edges whose both endpoints fall within this cluster's zone count are used.
+        /// </summary>
+        private static void BuildTournamentRandomCluster(
+            int playerIndex,
+            string playerLetter,
+            List<NeutralZonePlan> myNeutrals,
+            Dictionary<string, NeutralZonePlan> neutralByLetter,
+            GeneratorSettings settings,
+            GenerationTuning tuning,
+            List<Zone> zones,
+            List<Connection> connections,
+            List<(int A, int B)> templateEdges)
+        {
+            var clusterLetters = new List<string> { playerLetter };
+            clusterLetters.AddRange(myNeutrals.Select(n => n.Letter));
+            int count = clusterLetters.Count;
+
+            // Use only edges where both endpoints exist in this cluster (handles odd splits
+            // where one cluster has fewer zones than the template).
+            var pairs = templateEdges.Where(e => e.A < count && e.B < count).ToList();
+
+            var connsByIndex = Enumerable.Range(0, count).ToDictionary(i => i, _ => new List<string>());
+
+            foreach (var (a, b) in pairs)
+            {
+                string fromLetter = clusterLetters[a];
+                string toLetter   = clusterLetters[b];
+                string connName   = $"TourneyRnd-{fromLetter}-{toLetter}";
+                connsByIndex[a].Add(connName);
+                connsByIndex[b].Add(connName);
+
+                string fromZone = a == 0 ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
+                string toZone   = b == 0 ? $"Spawn-{toLetter}"   : $"Neutral-{toLetter}";
+                connections.Add(new Connection
+                {
+                    Name = connName,
+                    From = fromZone,
+                    To = toZone,
+                    ConnectionType = "Direct",
+                    GuardZone = fromZone,
+                    GuardEscape = false,
+                    SimTurnSquad = true,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardWeeklyIncrement = 0.15,
+                    GuardMatchGroup = $"tourney_rnd_guard_{fromLetter}_{toLetter}"
+                });
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                string letter = clusterLetters[i];
+                var myConns = connsByIndex[i].ToArray();
+                if (i == 0)
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIndex + 1}", myConns,
+                        settings.PlayerZoneCastles, settings.MatchPlayerCastleFactions,
+                        settings.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                else
+                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns,
+                        settings.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+            }
         }
 
         // ── Topology: Default (Ring) ──────────────────────────────────────────────
