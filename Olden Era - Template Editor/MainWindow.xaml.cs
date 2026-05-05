@@ -71,6 +71,7 @@ namespace Olden_Era___Template_Editor
             TxtTemplateName.TextChanged += (_, _) => MarkDirty();
             UpdateTitle();
             TxtWindowTitle.Text = Title;
+            UpdateVisualDesignerMode();
         }
 
         private async Task CheckForUpdateAsync(Version? currentVersion)
@@ -187,6 +188,22 @@ namespace Olden_Era___Template_Editor
 
         private void BtnClose_Click(object sender, RoutedEventArgs e) =>
             Close();
+
+        private void MainTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.Source == MainTabs)
+                UpdateVisualDesignerMode();
+        }
+
+        private void UpdateVisualDesignerMode()
+        {
+            if (GenericPreviewColumn == null || MainTabs == null)
+                return;
+
+            bool visualDesignerSelected = MainTabs.SelectedItem is TabItem tab
+                && string.Equals(tab.Header?.ToString(), "Visual Designer", StringComparison.Ordinal);
+            GenericPreviewColumn.Visibility = visualDesignerSelected ? Visibility.Collapsed : Visibility.Visible;
+        }
 
         // Keep value labels in sync with slider positions.
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
