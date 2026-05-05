@@ -525,7 +525,7 @@ public class TemplateGeneratorTests
             ["win_condition_1", "win_condition_3", "win_condition_5", "win_condition_6"],
             KnownValues.VictoryConditionIds);
         Assert.DoesNotContain("Gladiator Arena", KnownValues.VictoryConditionLabels);
-        Assert.Contains("Tournament [EXPERIMENTAL]", KnownValues.VictoryConditionLabels);
+        Assert.Contains("Tournament", KnownValues.VictoryConditionLabels);
     }
 
     [Fact]
