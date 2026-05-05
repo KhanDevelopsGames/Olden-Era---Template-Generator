@@ -53,10 +53,9 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("gladiatorArenaDaysDelayStart")] public int GladiatorArenaDaysDelayStart { get; set; } = 30;
         [JsonPropertyName("gladiatorArenaCountDay")] public int GladiatorArenaCountDay       { get; set; } = 3;
         [JsonPropertyName("tournament")]        public bool    Tournament                   { get; set; } = false;
-        [JsonPropertyName("tournamentRoundCount")] public int  TournamentRoundCount         { get; set; } = 3;
-        [JsonPropertyName("tournamentRoundDuration")] public int TournamentRoundDuration    { get; set; } = 3;
-        [JsonPropertyName("tournamentFirstAnnounceDay")] public int TournamentFirstAnnounceDay { get; set; } = 7;
-        [JsonPropertyName("tournamentRoundInterval")] public int TournamentRoundInterval    { get; set; } = 7;
+        [JsonPropertyName("tournamentFirstTournamentDay")] public int TournamentFirstTournamentDay { get; set; } = 8;
+        [JsonPropertyName("tournamentAnnouncementLeadDays")] public int TournamentAnnouncementLeadDays    { get; set; } = 3;
+        [JsonPropertyName("tournamentInterval")] public int TournamentInterval    { get; set; } = 7;
         [JsonPropertyName("tournamentPointsToWin")] public int TournamentPointsToWin        { get; set; } = 2;
 
         // Legacy setting from v0.2 and earlier; when present, it seeds both split density sliders.

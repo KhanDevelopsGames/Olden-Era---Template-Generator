@@ -231,11 +231,10 @@ namespace Olden_Era___Template_Editor
             TxtCityHoldDays.Text = ((int)SldCityHoldDays.Value).ToString();
             TxtGladiatorDelay.Text = ((int)SldGladiatorDelay.Value).ToString();
             TxtGladiatorCountDay.Text = ((int)SldGladiatorCountDay.Value).ToString();
-            TxtTournamentRoundCount.Text = ((int)SldTournamentRoundCount.Value).ToString();
-            TxtTournamentRoundDuration.Text = ((int)SldTournamentRoundDuration.Value).ToString();
-            TxtTournamentFirstAnnounceDay.Text = ((int)SldTournamentFirstAnnounceDay.Value).ToString();
-            TxtTournamentRoundInterval.Text = ((int)SldTournamentRoundInterval.Value).ToString();
             TxtTournamentPointsToWin.Text = ((int)SldTournamentPointsToWin.Value).ToString();
+            TxtTournamentAnnouncementLeadDays.Text = ((int)SldTournamentAnnouncementLeadDays.Value).ToString();
+            TxtTournamentFirstTournamentDay.Text = ((int)SldTournamentFirstTournamentDay.Value).ToString();
+            TxtTournamentInterval.Text = ((int)SldTournamentInterval.Value).ToString();
         }
 
         private void SetValidationText(string text)
@@ -511,11 +510,11 @@ namespace Olden_Era___Template_Editor
             SldCityHoldDays.Value = 6;
             SldGladiatorDelay.Value = 30;
             SldGladiatorCountDay.Value = 3;
-            SldTournamentRoundCount.Value = 3;
-            SldTournamentRoundDuration.Value = 3;
-            SldTournamentFirstAnnounceDay.Value = 7;
-            SldTournamentRoundInterval.Value = 7;
+
             SldTournamentPointsToWin.Value = 2;
+            SldTournamentInterval.Value = 3;
+            SldTournamentFirstTournamentDay.Value = 8;
+            SldTournamentAnnouncementLeadDays.Value = 3;
 
             switch (victoryCondition)
             {
@@ -676,10 +675,9 @@ namespace Olden_Era___Template_Editor
             GladiatorArenaDaysDelayStart = (int)SldGladiatorDelay.Value,
             GladiatorArenaCountDay       = (int)SldGladiatorCountDay.Value,
             Tournament                   = ChkTournament.IsChecked == true,
-            TournamentRoundCount = (int)SldTournamentRoundCount.Value,
-            TournamentRoundDuration = (int)SldTournamentRoundDuration.Value,
-            TournamentFirstAnnounceDay = (int)SldTournamentFirstAnnounceDay.Value,
-            TournamentRoundInterval = (int)SldTournamentRoundInterval.Value,
+            TournamentAnnouncementLeadDays = (int)SldTournamentAnnouncementLeadDays.Value,
+            TournamentFirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
+            TournamentInterval = (int)SldTournamentInterval.Value,
             TournamentPointsToWin = (int)SldTournamentPointsToWin.Value,
         };
 
@@ -735,10 +733,9 @@ namespace Olden_Era___Template_Editor
             SldGladiatorDelay.Value = Math.Clamp(s.GladiatorArenaDaysDelayStart, 1, 60);
             SldGladiatorCountDay.Value = Math.Clamp(s.GladiatorArenaCountDay, 1, 30);
             ChkTournament.IsChecked = s.Tournament;
-            SldTournamentRoundCount.Value = Math.Clamp(s.TournamentRoundCount, 1, 5);
-            SldTournamentRoundDuration.Value = Math.Clamp(s.TournamentRoundDuration, 1, 14);
-            SldTournamentFirstAnnounceDay.Value = Math.Clamp(s.TournamentFirstAnnounceDay, 1, 60);
-            SldTournamentRoundInterval.Value = Math.Clamp(s.TournamentRoundInterval, 1, 30);
+            SldTournamentFirstTournamentDay.Value = Math.Clamp(s.TournamentFirstTournamentDay, 1, 14);
+            SldTournamentAnnouncementLeadDays.Value = Math.Clamp(s.TournamentAnnouncementLeadDays, 1, 60);
+            SldTournamentInterval.Value = Math.Clamp(s.TournamentInterval, 1, 30);
             SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 5);
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
@@ -940,10 +937,9 @@ namespace Olden_Era___Template_Editor
             GladiatorArenaDaysDelayStart = (int)SldGladiatorDelay.Value,
             GladiatorArenaCountDay = (int)SldGladiatorCountDay.Value,
             Tournament = ChkTournament.IsChecked == true,
-            TournamentRoundCount = (int)SldTournamentRoundCount.Value,
-            TournamentRoundDuration = (int)SldTournamentRoundDuration.Value,
-            TournamentFirstAnnounceDay = (int)SldTournamentFirstAnnounceDay.Value,
-            TournamentRoundInterval = (int)SldTournamentRoundInterval.Value,
+            TournamentFirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
+            TournamentAnnouncementLeadDays = (int)SldTournamentAnnouncementLeadDays.Value,
+            TournamentInterval = (int)SldTournamentInterval.Value,
             TournamentPointsToWin = (int)SldTournamentPointsToWin.Value
         };
 
@@ -993,5 +989,6 @@ namespace Olden_Era___Template_Editor
             }
             return null;
         }
+        
     }
 }

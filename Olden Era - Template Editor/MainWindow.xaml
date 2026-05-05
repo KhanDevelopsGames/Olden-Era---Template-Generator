@@ -106,7 +106,6 @@
                        Foreground="{StaticResource BrushWarnText}"
                        FontSize="11" TextWrapping="Wrap"/>
         </Border>
-
         <!-- ════════ HEADER ════════════════════════════════════════════ -->
         <Rectangle Grid.Row="4" Height="1" Fill="{StaticResource BrushBorder}" VerticalAlignment="Bottom"/>
 
@@ -120,20 +119,26 @@
                 <ColumnDefinition Width="260"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ─── LEFT COLUMN ─────────────────────────────────────── -->
-            <Grid Grid.Column="0">
+            <TabControl x:Name="MainTabs"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3">
+                <TabItem Header="Rules">
+                <Grid Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>  <!-- template -->
+                    <RowDefinition Height="Auto"/>  <!-- 1st row -->
                     <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>  <!-- topology -->
+                    <RowDefinition Height="Auto"/>  <!-- 2nd row -->
                     <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>  <!-- heroes -->
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="*"/>     <!-- advanced game rules -->
+                    <RowDefinition Height="*"/>  <!-- 3rd row -->
                 </Grid.RowDefinitions>
 
                 <!-- TEMPLATE -->
-                <Border Grid.Row="0" Style="{StaticResource SectionBorder}">
+                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource SectionBorder}">
                     <StackPanel>
                         <TextBlock Text="◆  TEMPLATE" Style="{StaticResource SectionHeader}"/>
                         <Grid>
@@ -147,13 +152,14 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="8"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Label Grid.Row="0" Grid.Column="0" Content="Template Name"/>
                             <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtTemplateName" Text="Custom Template"/>
                             <Label Grid.Row="2" Grid.Column="0" Content="Map Size"/>
-                            <StackPanel Grid.Row="2" Grid.Column="1">
-                                <ComboBox x:Name="CmbMapSize"
-                                          SelectionChanged="CmbMapSize_SelectionChanged"/>
+                            <ComboBox x:Name="CmbMapSize" Grid.Row="2" Grid.Column="1" SelectionChanged="CmbMapSize_SelectionChanged"/>
+                            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
                                 <CheckBox x:Name="ChkExperimentalMapSizes"
                                           Content="Experimental large map sizes"
                                           Margin="0,6,0,0"
@@ -168,13 +174,13 @@
                                            Visibility="Collapsed"
                                            Text="Adds 256x256 through 512x512. Official templates top out at 240x240, so larger maps may fail, freeze, or behave unpredictably in game."/>
                             </StackPanel>
-                            <DockPanel Grid.Row="4" Grid.Column="0">
+                            <DockPanel Grid.Row="6" Grid.Column="0">
                                 <Label Content="Players" DockPanel.Dock="Left"/>
                                 <TextBlock x:Name="TxtPlayers" Text="2" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
-                            <Slider Grid.Row="4" Grid.Column="1" x:Name="SldPlayers"
+                            <Slider Grid.Row="6" Grid.Column="1" x:Name="SldPlayers"
                                     Minimum="2" Maximum="8" Value="2"
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
@@ -182,28 +188,8 @@
                     </StackPanel>
                 </Border>
 
-                <!-- TOPOLOGY -->
-                <Border Grid.Row="2" Style="{StaticResource SectionBorder}">
-                    <StackPanel>
-                        <TextBlock Text="◆  LAYOUT" Style="{StaticResource SectionHeader}"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="155"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Content="Map Layout"/>
-                            <ComboBox Grid.Column="1" x:Name="CmbTopology"
-                                      SelectionChanged="CmbTopology_SelectionChanged"/>
-                        </Grid>
-                        <TextBlock x:Name="TxtTopologyDesc"
-                                   Foreground="{StaticResource BrushTextDim}"
-                                   FontSize="11" TextWrapping="Wrap"
-                                   Margin="0,6,0,0"/>
-                    </StackPanel>
-                </Border>
-
                 <!-- HEROES -->
-                <Border Grid.Row="4" Style="{StaticResource SectionBorder}">
+                <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource SectionBorder}">
                     <StackPanel>
                         <TextBlock Text="◆  HEROES" Style="{StaticResource SectionHeader}"/>
                         <Grid>
@@ -226,7 +212,7 @@
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
                             <Slider Grid.Row="0" Grid.Column="1" x:Name="SldHeroMin"
-                                    Minimum="1" Maximum="50" Value="10"
+                                    Minimum="1" Maximum="12" Value="4"
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
 
@@ -237,7 +223,7 @@
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
                             <Slider Grid.Row="2" Grid.Column="1" x:Name="SldHeroMax"
-                                    Minimum="1" Maximum="50" Value="10"
+                                    Minimum="1" Maximum="12" Value="8"
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
 
@@ -248,7 +234,7 @@
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                             </DockPanel>
                             <Slider Grid.Row="4" Grid.Column="1" x:Name="SldHeroIncrement"
-                                    Minimum="0" Maximum="10" Value="0"
+                                    Minimum="0" Maximum="10" Value="1"
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
                         </Grid>
@@ -257,7 +243,7 @@
                 </Border>
 
                 <!-- ADVANCED GAME RULES -->
-                <Border Grid.Row="6" x:Name="PnlAdvancedGameRules" Style="{StaticResource SectionBorder}">
+                <Border Grid.Row="2" x:Name="PnlAdvancedGameRules" Style="{StaticResource SectionBorder}">
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" Text="◆ GAME RULES" Style="{StaticResource SectionHeader}"/>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -410,53 +396,43 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
                                     <DockPanel Grid.Row="0" Grid.Column="0">
-                                        <Label Content="Tournament rounds" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtTournamentRoundCount" Text="3" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Row="0" Grid.Column="1" x:Name="SldTournamentRoundCount"
-                                            Minimum="1" Maximum="5" Value="3"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                    <DockPanel Grid.Row="2" Grid.Column="0">
-                                        <Label Content="Round duration" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtTournamentRoundDuration" Text="3" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Row="2" Grid.Column="1" x:Name="SldTournamentRoundDuration"
-                                            Minimum="1" Maximum="14" Value="3"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                    <DockPanel Grid.Row="4" Grid.Column="0">
-                                        <Label Content="First announce day" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtTournamentFirstAnnounceDay" Text="7" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Row="4" Grid.Column="1" x:Name="SldTournamentFirstAnnounceDay"
-                                            Minimum="1" Maximum="60" Value="7"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                    <DockPanel Grid.Row="6" Grid.Column="0">
-                                        <Label Content="Round interval" Padding="5,2" DockPanel.Dock="Left"/>
-                                        <TextBlock x:Name="TxtTournamentRoundInterval" Text="7" DockPanel.Dock="Right"
-                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                                    </DockPanel>
-                                    <Slider Grid.Row="6" Grid.Column="1" x:Name="SldTournamentRoundInterval"
-                                            Minimum="1" Maximum="30" Value="7"
-                                            TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
-                                    <DockPanel Grid.Row="8" Grid.Column="0">
                                         <Label Content="Points to win" Padding="5,2" DockPanel.Dock="Left"/>
                                         <TextBlock x:Name="TxtTournamentPointsToWin" Text="2" DockPanel.Dock="Right"
                                                    HorizontalAlignment="Right" VerticalAlignment="Center"
                                                    Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                     </DockPanel>
-                                    <Slider Grid.Row="8" Grid.Column="1" x:Name="SldTournamentPointsToWin"
+                                    <Slider Grid.Row="0" Grid.Column="1" x:Name="SldTournamentPointsToWin"
                                             Minimum="1" Maximum="5" Value="2"
+                                            TickFrequency="1" IsSnapToTickEnabled="True"
+                                            ValueChanged="Slider_ValueChanged"/>
+                                    <DockPanel Grid.Row="2" Grid.Column="0">
+                                        <Label Content="First tournament day" Padding="5,2" DockPanel.Dock="Left"/>
+                                        <TextBlock x:Name="TxtTournamentFirstTournamentDay" Text="8" DockPanel.Dock="Right"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                    </DockPanel>
+                                    <Slider Grid.Row="2" Grid.Column="1" x:Name="SldTournamentFirstTournamentDay"
+                                            Minimum="1" Maximum="30" Value="8"
+                                            TickFrequency="1" IsSnapToTickEnabled="True"
+                                            ValueChanged="Slider_ValueChanged"/>
+                                    <DockPanel Grid.Row="4" Grid.Column="0">
+                                        <Label Content="Announcement Days" Padding="5,2" DockPanel.Dock="Left"/>
+                                        <TextBlock x:Name="TxtTournamentAnnouncementLeadDays" Text="3" DockPanel.Dock="Right"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                    </DockPanel>
+                                    <Slider Grid.Row="4" Grid.Column="1" x:Name="SldTournamentAnnouncementLeadDays"
+                                            Minimum="1" Maximum="10" Value="3"
+                                            TickFrequency="1" IsSnapToTickEnabled="True"
+                                            ValueChanged="Slider_ValueChanged"/>
+                                    <DockPanel Grid.Row="6" Grid.Column="0">
+                                        <Label Content="Days between rounds" Padding="5,2" DockPanel.Dock="Left"/>
+                                        <TextBlock x:Name="TxtTournamentInterval" Text="7" DockPanel.Dock="Right"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                    </DockPanel>
+                                    <Slider Grid.Row="6" Grid.Column="1" x:Name="SldTournamentInterval"
+                                            Minimum="1" Maximum="30" Value="7"
                                             TickFrequency="1" IsSnapToTickEnabled="True"
                                             ValueChanged="Slider_ValueChanged"/>
                                                 </Grid>
@@ -465,16 +441,39 @@
                                     </ScrollViewer>
                                    </DockPanel>
                                 </Border>
-            </Grid>
+                    </Grid>
+                </TabItem>
 
-            <!-- ─── RIGHT COLUMN ─────────────────────────────────────── -->
-            <Grid Grid.Column="2">
+        <TabItem Header="Layout">
+            <Grid Margin="0,8,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>     <!-- zone config -->
+                    <RowDefinition Height="Auto"/>     <!-- Layout -->
+                    <RowDefinition Height="6"/>     
+                    <RowDefinition Height="*"/>     <!-- Zone Configuration -->
                 </Grid.RowDefinitions>
 
-                <!-- ZONE CONFIGURATION -->
+                <!-- TOPOLOGY -->
                 <Border Grid.Row="0" Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <TextBlock Text="◆  LAYOUT" Style="{StaticResource SectionHeader}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="155"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Content="Map Layout"/>
+                            <ComboBox Grid.Column="1" x:Name="CmbTopology"
+                                      SelectionChanged="CmbTopology_SelectionChanged"/>
+                        </Grid>
+                        <TextBlock x:Name="TxtTopologyDesc"
+                                   Foreground="{StaticResource BrushTextDim}"
+                                   FontSize="11" TextWrapping="Wrap"
+                                   Margin="0,6,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- ZONE CONFIGURATION -->
+                <Border Grid.Row="2" Style="{StaticResource SectionBorder}">
                     <DockPanel>
                         <DockPanel LastChildFill="False" DockPanel.Dock="Top">
                             <TextBlock Text="◆  ZONE CONFIGURATION" Style="{StaticResource SectionHeader}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
@@ -824,11 +823,13 @@
                                    FontSize="13" TextWrapping="Wrap"
                                    Margin="25,3,0,0"
                                    Text="The game tries to connect player zones to neutral zones only. If no neutral zone borders a player zone, it will fall back to connecting directly to another player zone."/>
-                                                             </StackPanel>
-                                                             </ScrollViewer>
-                                                    </DockPanel>
-                                                         </Border>
-                                                     </Grid>
+                        </StackPanel>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+            </Grid>
+        </TabItem>
+    </TabControl>
 
             <!-- ─── PREVIEW COLUMN ───────────────────────────────────── -->
             <Grid Grid.Column="4">

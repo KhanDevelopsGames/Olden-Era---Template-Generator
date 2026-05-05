@@ -535,10 +535,9 @@ public class TemplateGeneratorTests
         {
             AdvancedMode = true,
             VictoryCondition = "win_condition_6",
-            TournamentRoundCount = 3,
-            TournamentRoundDuration = 5,
-            TournamentFirstAnnounceDay = 7,
-            TournamentRoundInterval = 7,
+            TournamentFirstTournamentDay = 8,
+            TournamentAnnouncementLeadDays = 3,
+            TournamentInterval = 7,
             TournamentPointsToWin = 2,
             Topology = MapTopology.Default
         };
@@ -550,8 +549,8 @@ public class TemplateGeneratorTests
         Assert.NotNull(winConditions);
         Assert.True(winConditions.Tournament);
         Assert.Null(winConditions.GladiatorArena);
-        Assert.Equal([5, 5, 5], winConditions.TournamentDays);
-        Assert.Equal([7, 14, 21], winConditions.TournamentAnnounceDays);
+        Assert.Equal([3, 3, 3], winConditions.TournamentDays);
+        Assert.Equal([5, 12, 19], winConditions.TournamentAnnounceDays);
         Assert.Equal(2, winConditions.TournamentPointsToWin);
         Assert.True(winConditions.TournamentSaveArmy);
         Assert.False(winConditions.LostStartHero);
