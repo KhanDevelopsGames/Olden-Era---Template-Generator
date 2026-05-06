@@ -1,0 +1,24 @@
+[
+{
+		"name": "content_list_building_template_sprint_uncommon_guarded_units_banks",
+		"content": 
+		[			
+			{ "sid": "jousting_range",			"weight": 0	},
+			{ "sid": "unforgotten_grave",		"weight": 0	},
+			{ "sid": "petrified_memorial",		"weight": 0	},
+			{ "sid": "ritual_pyre",				"weight": 0	},
+			{ "sid": "boreal_call",				"weight": 0	},
+			{ "sid": "the_gorge",				"weight": 0	},
+
+			{ "sid": "point_of_balance",		"weight": 0	},
+
+			{ "sid": "jousting_range",			"weight": 1000, 	"biome": "Grass"		},
+			{ "sid": "unforgotten_grave",		"weight": 1000, 	"biome": "Deathland"	},
+			{ "sid": "petrified_memorial",		"weight": 1000, 	"biome": "Dirt"			},
+			{ "sid": "ritual_pyre",				"weight": 1000, 	"biome": "Autumn"		},
+			{ "sid": "boreal_call",				"weight": 1000, 	"biome": "Snow"			},
+			{ "sid": "the_gorge",				"weight": 1000, 	"biome": "Lava"			},
+			{ "sid": "point_of_balance",		"weight": 1000, 	"biome": "Sand"			}
+		]
+	}	
+]

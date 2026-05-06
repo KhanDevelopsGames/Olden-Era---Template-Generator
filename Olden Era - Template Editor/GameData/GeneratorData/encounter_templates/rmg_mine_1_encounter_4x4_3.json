@@ -1,0 +1,113 @@
+{
+    "name": "rmg_mine_1_encounter_4x4_3",
+    "encounterType": 1,
+    "relativeFrequency": 1.0,
+    "allowMirrorX": true,
+    "allowMirrorY": false,
+    "width": 4,
+    "height": 4,
+    "roadTargetType": 1,
+    "roadTarget": {
+        "x": 2,
+        "y": 1
+    },
+    "guards": [
+        {
+            "position": {
+                "x": 2,
+                "y": 1
+            }
+        }
+    ],
+    "buildings": [
+        {
+            "width": 2,
+            "height": 2,
+            "interaction": 0,
+            "position": {
+                "x": 0,
+                "y": 2
+            }
+        }
+    ],
+    "pickups": [
+        {
+            "position": {
+                "x": 1,
+                "y": 1
+            },
+            "isOptional": true,
+            "canBeHole": false
+        },
+        {
+            "position": {
+                "x": 2,
+                "y": 2
+            },
+            "isOptional": false,
+            "canBeHole": false
+        },
+        {
+            "position": {
+                "x": 3,
+                "y": 1
+            },
+            "isOptional": true,
+            "canBeHole": false
+        }
+    ],
+    "entrances": [
+        {
+            "x": 1,
+            "y": -1
+        },
+        {
+            "x": 2,
+            "y": -1
+        },
+        {
+            "x": 3,
+            "y": -1
+        },
+        {
+            "x": 4,
+            "y": 0
+        },
+        {
+            "x": 4,
+            "y": 1
+        }
+    ],
+    "holeTiles": [
+        {
+            "x": 0,
+            "y": 1
+        },
+        {
+            "x": 2,
+            "y": 3
+        },
+        {
+            "x": 3,
+            "y": 3
+        }
+    ],
+    "tileContents": [
+        2,
+        0,
+        0,
+        0,
+        1,
+        5,
+        4,
+        5,
+        3,
+        3,
+        5,
+        1,
+        3,
+        3,
+        1,
+        1
+    ]
+}

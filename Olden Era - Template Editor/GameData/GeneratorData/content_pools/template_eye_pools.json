@@ -1,0 +1,406 @@
+[
+	{
+		"name": "content_pool_template_eye_guarded_start_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 15000 ], "weights": [ 5, 10, 15, 0 ] },
+
+		"groups":
+		[
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 50 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 12500,
+				"includeLists":		[ "basic_content_list_pickup_pandora_box_gold", "basic_content_list_pickup_pandora_box_exp" ]
+			},
+			{ 	"weight": 8000,
+				"includeLists":		[ "basic_content_list_pickup_pandora_box" ]
+			},
+
+			{ 	"weight": 12500,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+			{ 	"weight": 1000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_2" ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ],
+				"content": 			[ { "sid" : "mana_well", "weight": 0 }, { "sid" : "fountain", "weight": 0 }, { "sid" : "fountain_2", "weight": 0 }, { "sid" : "stables", "weight": 0 } ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "basic_content_list_building_magic_tier_1" ]
+			},
+
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_4", "weight": 0 }, { "sid" : "random_hire_5", "weight": 0 }, { "sid" : "random_hire_6", "weight": 0 }, { "sid" : "random_hire_7", "weight": 0 } ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_2" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			}
+		],
+		"bans": [ { "sid" : "fountain" }, { "sid" : "fountain_2" }, { "sid" : "lost_library" }, { "sid" : "stables" },
+				  { "sid" : "pandora_box", "variant": 14 }, { "sid" : "pandora_box", "variant": 13 }, { "sid" : "pandora_box", "variant": 12 }, { "sid" : "pandora_box", "variant": 11 }  ]
+	},
+
+	{
+		"name": "content_pool_template_eye_unguarded_start_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999 ], "weights": [ 5, 15, 10 ] },
+
+		"groups":
+		[
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ],
+				"content": 			[ { "sid" : "stables", "weight": 0 } ]
+			},
+
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_4", "weight": 0 }, { "sid" : "random_hire_5", "weight": 0 }, { "sid" : "random_hire_6", "weight": 0 }, { "sid" : "random_hire_7", "weight": 0 } ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_1" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			}
+		],
+		"bans": [ { "sid" : "fountain" }, { "sid" : "fountain_2" }, { "sid" : "lost_library" }, { "sid" : "stables" }  ]
+	},
+
+
+
+	{
+		"name": "content_pool_template_eye_guarded_side_gold_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 22500 ], "weights": [ 5, 10, 15, 15, 1 ] },
+
+		"groups":
+		[
+			{ 	"weight": 25000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 75 }, { "sid" : "random_item_rare", "weight": 50 }, { "sid" : "random_item_epic", "weight": 25 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+			
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box" ]
+			},
+			{ 	"weight": 6000,
+				"includeLists": 	[ "basic_content_list_pickup_enchanted_scroll_box" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_building_magic_tier_2" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_uncommon_interact" ]
+			},
+
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_2" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			},			
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ]
+			}
+		],
+		"bans": [ { "sid" : "fountain" }, { "sid" : "fountain_2" }, { "sid" : "stables" }, { "sid" : "tree_of_abundance" },
+				  { "sid" : "pandora_box", "variant": 14 }, { "sid" : "pandora_box", "variant": 13 }, { "sid" : "pandora_box", "variant": 9 }, { "sid" : "pandora_box", "variant": 8 }  ]
+	},
+
+	{
+		"name": "content_pool_template_eye_unguarded_side_gold_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999 ], "weights": [ 5, 10, 15, 10 ] },
+
+		"groups":
+		[
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+
+			{ 	"weight": 40000,
+				"includeLists": 	[ "basic_content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 0 }, { "sid" : "random_hire_2", "weight": 0 }, { "sid" : "random_hire_6", "weight": 0 }, { "sid" : "random_hire_7", "weight": 0 } ]
+			},
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			}
+		],
+		"bans": [ { "sid" : "fountain" }, { "sid" : "fountain_2" }, { "sid" : "lost_library" }, { "sid" : "stables" } ]
+	},
+
+{
+		"name": "content_pool_template_eye_guarded_side_army_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 22500 ], "weights": [ 5, 10, 15, 15, 1 ] },
+
+		"groups":
+		[
+			{ 	"weight": 25000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 75 }, { "sid" : "random_item_rare", "weight": 50 }, { "sid" : "random_item_epic", "weight": 25 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_2" ]
+			},
+
+			{ 	"weight": 12500,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+			{ 	"weight": 30000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_building_magic_tier_2" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_uncommon_interact" ]
+			},
+			{ 	"weight": 40000,
+				"includeLists": 	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ]
+			},
+
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 0 }, { "sid" : "random_hire_2", "weight": 0 }, { "sid" : "random_hire_6", "weight": 0 }, { "sid" : "random_hire_7", "weight": 0 } ]
+			}
+		],
+		"bans": [ { "sid" : "fountain" }, { "sid" : "fountain_2" }, { "sid" : "stables" }, { "sid" : "tree_of_abundance" },
+				  { "sid" : "pandora_box", "variant": 14 }, { "sid" : "pandora_box", "variant": 13 }, { "sid" : "pandora_box", "variant": 9 }, { "sid" : "pandora_box", "variant": 8 }  ]
+	},
+
+	{
+		"name": "content_pool_template_eye_unguarded_side_army_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999 ], "weights": [ 5, 10, 15, 10 ] },
+
+		"groups":
+		[
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+
+			{ 	"weight": 40000,
+				"includeLists": 	[ "basic_content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 0 }, { "sid" : "random_hire_2", "weight": 0 }, { "sid" : "random_hire_6", "weight": 0 }, { "sid" : "random_hire_7", "weight": 0 } ]
+			},
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			}
+		],
+		"bans": [ { "sid" : "fountain" }, { "sid" : "fountain_2" }, { "sid" : "lost_library" }, { "sid" : "stables" } ]
+	},
+
+
+	{
+		"name": "content_pool_template_eye_guarded_center_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999 ], "weights": [ 3, 2, 6, 9 ] },
+
+		"groups":
+		[
+			{ 	"weight": 50000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 0 } ]
+			},
+
+			{ 	"weight": 50000,
+				"includeLists":		[ "basic_content_list_pickup_pandora_box" ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box" ]
+			},
+			{ 	"weight": 50000,
+				"includeLists": 	[ "basic_content_list_pickup_enchanted_scroll_box" ]
+			},
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+			{ 	"weight": 30000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_2" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+			{ 	"weight": 40000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+			},
+			{ 	"weight": 40000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_3" ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+
+			{ 	"weight": 75000,
+				"includeLists": 	[ "basic_content_list_building_magic_tier_1" ],
+				"content": 			[ { "sid" : "celestial_sphere", "weight": 100 } ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_magic_tier_2" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_uncommon_interact" ]
+			},
+
+			{ 	"weight": 50000,
+				"includeLists": 	[ "basic_content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 0 }, { "sid" : "random_hire_2", "weight": 0 }, { "sid" : "random_hire_3", "weight": 0 }, { "sid" : "random_hire_4", "weight": 0 } ]
+			},
+
+			{ 	"weight": 50000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_2" ]
+			},
+
+			{ 	"weight": 40000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ]
+			},		
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			},	
+			{ 	"weight": 30000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ]
+			}
+		],
+		"bans": [ { "sid" : "tree_of_abundance" },
+				  { "sid" : "pandora_box", "variant": 11 }, { "sid" : "pandora_box", "variant": 10 }, { "sid" : "pandora_box", "variant": 9 }, { "sid" : "pandora_box", "variant": 8 }  ]
+	},
+
+	{
+		"name": "content_pool_template_eye_unguarded_center_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999 ], "weights": [ 1, 2, 5, 10 ] },
+
+		"groups":
+		[
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+			
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},	
+			{ 	"weight": 40000,
+				"includeLists": 	[ "basic_content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 0 }, { "sid" : "random_hire_2", "weight": 0 }, { "sid" : "random_hire_3", "weight": 0 }, { "sid" : "random_hire_4", "weight": 0 } ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ]
+			},			
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			},	
+			{ 	"weight": 25000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ]
+			}
+		],
+		"bans": [ { "sid" : "fountain" }, { "sid" : "fountain_2" }, { "sid" : "lost_library" }, { "sid" : "stables" } ]
+	}
+]

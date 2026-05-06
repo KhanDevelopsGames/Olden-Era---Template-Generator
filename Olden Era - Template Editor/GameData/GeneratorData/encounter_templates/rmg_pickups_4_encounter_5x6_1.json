@@ -1,0 +1,137 @@
+{
+    "name": "rmg_pickups_4_encounter_5x6_1",
+    "encounterType": 0,
+    "relativeFrequency": 4.0,
+    "allowMirrorX": true,
+    "allowMirrorY": true,
+    "width": 5,
+    "height": 6,
+    "roadTargetType": 1,
+    "roadTarget": {
+        "x": 2,
+        "y": 3
+    },
+    "guards": [
+        {
+            "position": {
+                "x": 2,
+                "y": 1
+            }
+        }
+    ],
+    "buildings": [],
+    "pickups": [
+        {
+            "position": {
+                "x": 2,
+                "y": 4
+            },
+            "isOptional": false,
+            "canBeHole": false
+        },
+        {
+            "position": {
+                "x": 2,
+                "y": 3
+            },
+            "isOptional": false,
+            "canBeHole": false
+        },
+        {
+            "position": {
+                "x": 3,
+                "y": 3
+            },
+            "isOptional": false,
+            "canBeHole": false
+        },
+        {
+            "position": {
+                "x": 1,
+                "y": 3
+            },
+            "isOptional": false,
+            "canBeHole": false
+        }
+    ],
+    "entrances": [
+        {
+            "x": 1,
+            "y": -1
+        },
+        {
+            "x": 2,
+            "y": -1
+        },
+        {
+            "x": 3,
+            "y": -1
+        },
+        {
+            "x": 0,
+            "y": -1
+        },
+        {
+            "x": -1,
+            "y": 0
+        },
+        {
+            "x": 4,
+            "y": -1
+        },
+        {
+            "x": 5,
+            "y": 0
+        },
+        {
+            "x": 5,
+            "y": 1
+        },
+        {
+            "x": -1,
+            "y": 1
+        }
+    ],
+    "holeTiles": [
+        {
+            "x": 1,
+            "y": 4
+        },
+        {
+            "x": 3,
+            "y": 4
+        }
+    ],
+    "tileContents": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        4,
+        0,
+        2,
+        1,
+        2,
+        0,
+        2,
+        1,
+        1,
+        5,
+        5,
+        5,
+        1,
+        1,
+        1,
+        5,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        2
+    ]
+}

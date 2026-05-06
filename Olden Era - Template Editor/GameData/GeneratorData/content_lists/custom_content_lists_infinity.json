@@ -1,0 +1,73 @@
+[
+	{
+		"name": "template_pool_infinity_guarded_start_zone_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 0,	"weight": 1000	},
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 1500	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 1500	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 1000	},
+		
+			{ "sid" : "pandora_box",	"variant": 4,	"weight": 1000	},
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 1500	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 1500	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 1000	},
+
+			{ "sid" : "pandora_box",	"variant": 19,	"weight": 400	},			
+			{ "sid" : "pandora_box",	"variant": 20,	"weight": 400	},
+			{ "sid" : "pandora_box",	"variant": 21,	"weight": 400	},
+			{ "sid" : "pandora_box",	"variant": 22,	"weight": 400	},
+			
+			{ "sid" : "pandora_box",	"variant": 23,	"weight": 50	},
+			{ "sid" : "pandora_box",	"variant": 24,	"weight": 100	},
+			{ "sid" : "pandora_box",	"variant": 25,	"weight": 200	},
+			{ "sid" : "pandora_box",	"variant": 26,	"weight": 400	},
+			{ "sid" : "pandora_box",	"variant": 27,	"weight": 800	}
+		]
+	},
+
+	{
+		"name": "template_pool_infinity_guarded_center_zone_pandora_box",
+		"content": 
+		[	
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 840	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 840	},
+		
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 840	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 840	},
+		
+			{ "sid" : "pandora_box",	"variant": 16,	"weight": 860	},
+			{ "sid" : "pandora_box",	"variant": 17,	"weight": 860	},
+			{ "sid" : "pandora_box",	"variant": 18,	"weight": 860	},
+
+			{ "sid" : "pandora_box",	"variant": 19,	"weight": 430	},			
+			{ "sid" : "pandora_box",	"variant": 20,	"weight": 430	},
+			{ "sid" : "pandora_box",	"variant": 21,	"weight": 430	},
+			{ "sid" : "pandora_box",	"variant": 22,	"weight": 430	},
+	
+			{ "sid" : "pandora_box",	"variant": 24,	"weight": 150	},
+			{ "sid" : "pandora_box",	"variant": 25,	"weight": 480	},
+			{ "sid" : "pandora_box",	"variant": 26,	"weight": 590	},
+			{ "sid" : "pandora_box",	"variant": 27,	"weight": 700	}
+		]
+	},
+
+		{
+		"name": "template_pool_infinity_guarded_resource_banks_tier_3_base",
+		"content": 
+		[
+			{ "sid": "troglodyte_throne",		"weight": 100	},
+			{ "sid": "twilight_bloom",			"weight": 100	}
+		]
+	},
+
+	{
+		"name": "template_pool_infinity_guarded_resource_banks_tier_3_pro",
+		"content": 
+		[
+			{ "sid": "unstable_ruins",			"weight": 100	},
+			{ "sid": "dragon_utopia",			"weight": 100	},
+			{ "sid": "research_laboratory",		"weight": 100	}
+		]
+	}
+]

@@ -1,0 +1,125 @@
+[
+	{
+		"name": "template_pool_harmony_guarded_start_zone_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 0,	"weight": 1953	},
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 1953	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 1953	},
+		
+			{ "sid" : "pandora_box",	"variant": 4,	"weight": 2198	},
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 2198	},
+
+			{ "sid" : "pandora_box",	"variant": 8,	"weight": 400	},
+			{ "sid" : "pandora_box",	"variant": 9,	"weight": 400	},
+			{ "sid" : "pandora_box",	"variant": 10,	"weight": 400	},
+
+			{ "sid" : "pandora_box",	"variant": 15,	"weight": 586	},	
+
+			{ "sid" : "pandora_box",	"variant": 23,	"weight": 293	},
+			{ "sid" : "pandora_box",	"variant": 24,	"weight": 293	}
+		]
+	},
+
+	{
+		"name": "template_pool_harmony_guarded_side_zone_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 1400	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 1400	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 1400	},
+		
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 2500	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 2500	},
+
+			{ "sid" : "pandora_box",	"variant": 10,	"weight": 750	},
+			{ "sid" : "pandora_box",	"variant": 11,	"weight": 750	},
+			{ "sid" : "pandora_box",	"variant": 12,	"weight": 750	},
+
+			{ "sid" : "pandora_box",	"variant": 15,	"weight": 1050	},			
+			{ "sid" : "pandora_box",	"variant": 16,	"weight": 1050	},
+
+			{ "sid" : "pandora_box",	"variant": 19,	"weight": 125	},			
+			{ "sid" : "pandora_box",	"variant": 20,	"weight": 125	},
+			{ "sid" : "pandora_box",	"variant": 21,	"weight": 125	},
+			{ "sid" : "pandora_box",	"variant": 22,	"weight": 125	},
+
+			{ "sid" : "pandora_box",	"variant": 23,	"weight": 350	},			
+			{ "sid" : "pandora_box",	"variant": 24,	"weight": 350	},
+			{ "sid" : "pandora_box",	"variant": 25,	"weight": 350	}
+		]
+	},
+
+	{
+		"name": "template_pool_harmony_guarded_center_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 1100	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 3100	},
+		
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 700	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 1400	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 2100	},
+
+			{ "sid" : "pandora_box",	"variant": 12,	"weight": 750	},
+			{ "sid" : "pandora_box",	"variant": 13,	"weight": 750	},
+			{ "sid" : "pandora_box",	"variant": 14,	"weight": 750	},
+		
+			{ "sid" : "pandora_box",	"variant": 16,	"weight": 1250	},
+			{ "sid" : "pandora_box",	"variant": 17,	"weight": 1250	},
+			{ "sid" : "pandora_box",	"variant": 18,	"weight": 1250	},
+
+			{ "sid" : "pandora_box",	"variant": 19,	"weight": 375	},			
+			{ "sid" : "pandora_box",	"variant": 20,	"weight": 375	},
+			{ "sid" : "pandora_box",	"variant": 21,	"weight": 375	},
+			{ "sid" : "pandora_box",	"variant": 22,	"weight": 375	},
+		
+			{ "sid" : "pandora_box",	"variant": 24,	"weight": 325	},
+			{ "sid" : "pandora_box",	"variant": 25,	"weight": 525	},
+			{ "sid" : "pandora_box",	"variant": 26,	"weight": 625	},
+			{ "sid" : "pandora_box",	"variant": 27,	"weight": 625	}
+		]
+	},
+
+	{
+		"name": "template_pool_harmony_building_random_hires_spawn",
+		"content":
+		[
+			{ "sid": "random_hire_1",			"weight": 100	},
+			{ "sid": "random_hire_2",			"weight": 100	},
+			{ "sid": "random_hire_3",			"weight": 75	},
+			{ "sid": "random_hire_4",			"weight": 25	},
+			{ "sid": "random_hire_5",			"weight": 25	},
+			{ "sid": "random_hire_6",			"weight": 25	},
+			{ "sid": "random_hire_7",			"weight": 0		}
+		]
+	},
+
+	{
+		"name": "template_pool_harmony_building_random_hires_side",
+		"content":
+		[
+			{ "sid": "random_hire_1",			"weight": 100	},
+			{ "sid": "random_hire_2",			"weight": 100	},
+			{ "sid": "random_hire_3",			"weight": 125	},
+			{ "sid": "random_hire_4",			"weight": 300	},
+			{ "sid": "random_hire_5",			"weight": 150	},
+			{ "sid": "random_hire_6",			"weight": 15	},
+			{ "sid": "random_hire_7",			"weight": 15	}
+		]
+	},
+
+	{
+		"name": "template_pool_harmony_building_random_hires_center",
+		"content":
+		[
+			{ "sid": "random_hire_1",			"weight": 0		},
+			{ "sid": "random_hire_2",			"weight": 25	},
+			{ "sid": "random_hire_3",			"weight": 25	},
+			{ "sid": "random_hire_4",			"weight": 25	},
+			{ "sid": "random_hire_5",			"weight": 75	},
+			{ "sid": "random_hire_6",			"weight": 150	},
+			{ "sid": "random_hire_7",			"weight": 125	}
+		]
+	}
+]

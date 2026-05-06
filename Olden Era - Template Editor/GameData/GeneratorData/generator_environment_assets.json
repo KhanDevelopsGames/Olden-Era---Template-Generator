@@ -1,0 +1,3929 @@
+{
+    "biomes": [
+        {
+            "sid": "Sand",
+            "tilesets": [
+                {
+                    "sid": "Palms",
+                    "weight": 1.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "obstacle 2x2",
+                            "sids": [
+                                "hill_desert_big_1",
+                                "hill_desert_big_2",
+                                "desert_cracked_stones_1",
+                                "desert_dune_1",
+                                "desert_dune_2"
+                            ],
+                            "weight": 7.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 2x2",
+                            "sids": [
+                                "pool_desert_small_1"
+                            ],
+                            "weight": 5.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 3x3",
+                            "sids": [
+                                "pool_desert_big_1"
+                            ],
+                            "weight": 23.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Palms",
+                            "sids": [
+                                "palms_1",
+                                "palms_2",
+                                "palms_3"
+                            ],
+                            "weight": 45.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "obstacles 1x1",
+                            "sids": [
+                                "ruins_desert_1",
+                                "ruins_desert_2",
+                                "ruins_desert_3",
+                                "hill_desert_small_1",
+                                "hill_desert_small_2"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_desert_1",
+                                "grass_desert_2"
+                            ],
+                            "weight": 6.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "camel",
+                            "sids": [
+                                "camel"
+                            ],
+                            "weight": 0.2800000011920929,
+                            "rules": []
+                        },
+                        {
+                            "name": "insects",
+                            "sids": [
+                                "scarab_1",
+                                "scarab_2",
+                                "scorpion",
+                                "spider"
+                            ],
+                            "weight": 0.6000000238418579,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "Cactus",
+                    "weight": 1.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "Cactus_dry",
+                            "sids": [
+                                "cactus_dry_1",
+                                "cactus_dry_2",
+                                "cactus_dry_3"
+                            ],
+                            "weight": 8.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Cactus",
+                            "sids": [
+                                "cactus_1",
+                                "cactus_2",
+                                "cactus_3"
+                            ],
+                            "weight": 45.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "2x2 obstacles",
+                            "sids": [
+                                "hill_desert_big_1",
+                                "hill_desert_big_2",
+                                "desert_cracked_stones_1",
+                                "desert_dune_1",
+                                "desert_dune_2"
+                            ],
+                            "weight": 8.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Pool2x2",
+                            "sids": [
+                                "pool_desert_small_1"
+                            ],
+                            "weight": 5.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Pool3x3",
+                            "sids": [
+                                "pool_desert_big_1"
+                            ],
+                            "weight": 23.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "1x1 obstacles",
+                            "sids": [
+                                "hill_desert_small_1",
+                                "ruins_desert_1",
+                                "ruins_desert_2",
+                                "ruins_desert_3",
+                                "hill_desert_small_2"
+                            ],
+                            "weight": 5.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_desert_1",
+                                "grass_desert_2"
+                            ],
+                            "weight": 6.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "camel",
+                            "sids": [
+                                "camel"
+                            ],
+                            "weight": 0.2800000011920929,
+                            "rules": []
+                        },
+                        {
+                            "name": "insects",
+                            "sids": [
+                                "scarab_1",
+                                "scarab_2",
+                                "scorpion",
+                                "spider"
+                            ],
+                            "weight": 0.6000000238418579,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains_border",
+                    "weight": 0.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [
+                        "zone_border"
+                    ],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "ruins_desert_1",
+                                "ruins_desert_2",
+                                "ruins_desert_3",
+                                "hill_desert_small_1"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_3x3",
+                            "sids": [
+                                "mountain_desert_5",
+                                "mountain_desert_6"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_desert_3",
+                                "mountain_desert_4"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_desert_1",
+                                "mountain_desert_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "desert_stones_1",
+                                "desert_stones_2"
+                            ],
+                            "weight": 6.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "camel",
+                            "sids": [
+                                "camel"
+                            ],
+                            "weight": 0.12999999523162843,
+                            "rules": []
+                        },
+                        {
+                            "name": "insects",
+                            "sids": [
+                                "scarab_1",
+                                "scarab_2",
+                                "scorpion",
+                                "spider"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains",
+                    "weight": 0.699999988079071,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "hill_desert_small_1",
+                                "ruins_desert_1",
+                                "ruins_desert_2",
+                                "ruins_desert_3",
+                                "hill_desert_small_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "mountain_3x3",
+                            "sids": [
+                                "mountain_desert_5",
+                                "mountain_desert_6"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_desert_3",
+                                "mountain_desert_4"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_desert_1",
+                                "mountain_desert_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "desert_stones_1",
+                                "desert_stones_2"
+                            ],
+                            "weight": 6.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "camel",
+                            "sids": [
+                                "camel"
+                            ],
+                            "weight": 0.2800000011920929,
+                            "rules": []
+                        },
+                        {
+                            "name": "insects",
+                            "sids": [
+                                "scarab_1",
+                                "scarab_2",
+                                "spider",
+                                "scorpion"
+                            ],
+                            "weight": 0.6000000238418579,
+                            "rules": []
+                        }
+                    ]
+                }
+            ],
+            "walkable": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.10000000149011612,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "grass",
+                        "sids": [
+                            "grass_desert_1",
+                            "grass_desert_2"
+                        ],
+                        "weight": 6.0,
+                        "rules": []
+                    }
+                ]
+            },
+            "water": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.15000000596046449,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "fish",
+                        "sids": [
+                            "fish"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    }
+                ]
+            }
+        },
+        {
+            "sid": "Deathland",
+            "tilesets": [
+                {
+                    "sid": "pinetree",
+                    "weight": 1.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "obstacle 2x2",
+                            "sids": [
+                                "hill_dead_big",
+                                "bones_1",
+                                "bones_2",
+                                "bones_3",
+                                "dead_burials_tree",
+                                "dead_cliffs_of_the_dead",
+                                "dead_mountain_lake",
+                                "dead_sculls_bones_hill",
+                                "dead_shadowy_hill",
+                                "dead_sinister_roots"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 2x2",
+                            "sids": [
+                                "pool_dead_acid_1",
+                                "pool_dead_acid_2",
+                                "pool_dead_acid_3",
+                                "pool_dead_blood_1",
+                                "pool_dead_blood_2",
+                                "pool_dead_blood_3",
+                                "pool_dead_small_1"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "obstacles 1x1",
+                            "sids": [
+                                "coffins_1",
+                                "coffins_2",
+                                "coffins_3",
+                                "coffins_4",
+                                "thorns_dead",
+                                "snag_1",
+                                "bones_dead_pack",
+                                "gallows_dead"
+                            ],
+                            "weight": 4.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pinetree_withered",
+                            "sids": [
+                                "pinetree_withered_4",
+                                "pinetree_withered_3",
+                                "pinetree_withered_2",
+                                "pinetree_withered_1"
+                            ],
+                            "weight": 45.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Tree_dead",
+                            "sids": [
+                                "tree_dead_1",
+                                "tree_dead_2",
+                                "tree_dead_3",
+                                "tree_dead_4"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "three_sculls"
+                            ],
+                            "weight": 0.10000000149011612,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "grass2",
+                            "sids": [
+                                "grass_death_2",
+                                "grass_death_1"
+                            ],
+                            "weight": 2.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "pig_undead",
+                                "ram_undead_1",
+                                "ram_undead_2"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Chickens",
+                            "sids": [
+                                "chicken_undead_1",
+                                "chicken_undead_2",
+                                "chicken_undead_3"
+                            ],
+                            "weight": 0.15000000596046449,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains_border",
+                    "weight": 0.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [
+                        "zone_border"
+                    ],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "tree_dead_3",
+                                "thorns_dead",
+                                "snag_1",
+                                "tree_dead_2",
+                                "pinetree_withered_2",
+                                "tree_dead_5"
+                            ],
+                            "weight": 1.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "mountain_3x3",
+                            "sids": [
+                                "mountain_dead_big_3",
+                                "mountain_dead_big_4"
+                            ],
+                            "weight": 100.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_dead_big_1",
+                                "mountain_dead_big_2"
+                            ],
+                            "weight": 70.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_dead_small_1",
+                                "mountain_dead_small_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "dead_stones_1",
+                                "dead_stones_2"
+                            ],
+                            "weight": 1.0499999523162842,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_death_1",
+                                "grass_death_2"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "animals",
+                            "sids": [
+                                "ram_undead_1",
+                                "ram_undead_2",
+                                "pig_undead"
+                            ],
+                            "weight": 0.20000000298023225,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Chicken",
+                            "sids": [
+                                "chicken_undead_1",
+                                "chicken_undead_2",
+                                "chicken_undead_3"
+                            ],
+                            "weight": 0.10000000149011612,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains",
+                    "weight": 0.699999988079071,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "snag_1",
+                                "thorns_dead",
+                                "tree_dead_2",
+                                "tree_dead_3",
+                                "tree_dead_6",
+                                "tree_dead_7",
+                                "pinetree_withered_4",
+                                "pinetree_withered_3"
+                            ],
+                            "weight": 1.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "mountain_3x3",
+                            "sids": [
+                                "mountain_dead_big_3",
+                                "mountain_dead_big_4"
+                            ],
+                            "weight": 100.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_dead_big_1",
+                                "mountain_dead_big_2"
+                            ],
+                            "weight": 70.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_dead_small_1",
+                                "mountain_dead_small_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "dead_stones_1",
+                                "dead_stones_2"
+                            ],
+                            "weight": 1.2000000476837159,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Grass",
+                            "sids": [
+                                "grass_death_1",
+                                "grass_death_2"
+                            ],
+                            "weight": 0.20000000298023225,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "pig_undead",
+                                "ram_undead_1",
+                                "ram_undead_2"
+                            ],
+                            "weight": 0.20000000298023225,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "chicken_undead_1",
+                                "chicken_undead_2",
+                                "chicken_undead_3"
+                            ],
+                            "weight": 0.10000000149011612,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sid": "tree_dead",
+                    "weight": 1.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "obstacle 2x2",
+                            "sids": [
+                                "hill_dead_big",
+                                "bones_1",
+                                "bones_2",
+                                "bones_3",
+                                "dead_burials_tree",
+                                "dead_cliffs_of_the_dead",
+                                "dead_mountain_lake",
+                                "dead_sculls_bones_hill",
+                                "dead_shadowy_hill",
+                                "dead_sinister_roots"
+                            ],
+                            "weight": 3.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 2x2",
+                            "sids": [
+                                "pool_dead_acid_1",
+                                "pool_dead_acid_2",
+                                "pool_dead_acid_3",
+                                "pool_dead_blood_1",
+                                "pool_dead_blood_2",
+                                "pool_dead_blood_3",
+                                "pool_dead_small_1"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "obstacles 1x1",
+                            "sids": [
+                                "coffins_1",
+                                "coffins_2",
+                                "coffins_3",
+                                "coffins_4",
+                                "thorns_dead",
+                                "snag_1",
+                                "bones_dead_pack",
+                                "gallows_dead"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pinetree_withered",
+                            "sids": [
+                                "tree_dead_1",
+                                "tree_dead_2",
+                                "tree_dead_3",
+                                "tree_dead_4"
+                            ],
+                            "weight": 45.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Tree_Blend",
+                            "sids": [
+                                "tree_dead_7",
+                                "tree_dead_8",
+                                "pinetree_withered_3",
+                                "pinetree_withered_2"
+                            ],
+                            "weight": 7.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "three_sculls"
+                            ],
+                            "weight": 0.20000000298023225,
+                            "rules": []
+                        },
+                        {
+                            "name": "grass2",
+                            "sids": [
+                                "grass_death_1",
+                                "grass_death_2"
+                            ],
+                            "weight": 2.109999895095825,
+                            "rules": []
+                        },
+                        {
+                            "name": "Stones",
+                            "sids": [
+                                "dead_stones_1",
+                                "dead_stones_2"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        },
+                        {
+                            "name": "animals",
+                            "sids": [
+                                "pig_undead",
+                                "ram_undead_2",
+                                "ram_undead_1"
+                            ],
+                            "weight": 0.3700000047683716,
+                            "rules": []
+                        },
+                        {
+                            "name": "animals",
+                            "sids": [
+                                "chicken_undead_1",
+                                "chicken_undead_2",
+                                "chicken_undead_3"
+                            ],
+                            "weight": 0.17000000178813935,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "tree_dead_capusta",
+                    "weight": 1.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "obstacle 2x2",
+                            "sids": [
+                                "hill_dead_big",
+                                "bones_1",
+                                "bones_2",
+                                "bones_3",
+                                "dead_burials_tree",
+                                "dead_cliffs_of_the_dead",
+                                "dead_mountain_lake",
+                                "dead_sculls_bones_hill",
+                                "dead_shadowy_hill",
+                                "dead_sinister_roots"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 2x2",
+                            "sids": [
+                                "pool_dead_acid_1",
+                                "pool_dead_acid_2",
+                                "pool_dead_acid_3",
+                                "pool_dead_blood_1",
+                                "pool_dead_blood_2",
+                                "pool_dead_blood_3",
+                                "pool_dead_small_1"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "obstacles 1x1",
+                            "sids": [
+                                "coffins_1",
+                                "coffins_2",
+                                "coffins_3",
+                                "coffins_4",
+                                "thorns_dead",
+                                "snag_1",
+                                "bones_dead_pack",
+                                "gallows_dead"
+                            ],
+                            "weight": 7.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Capusta_tree",
+                            "sids": [
+                                "tree_dead_5",
+                                "tree_dead_6",
+                                "tree_dead_7",
+                                "tree_dead_8"
+                            ],
+                            "weight": 45.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Tree_blend",
+                            "sids": [
+                                "tree_dead_1",
+                                "tree_dead_3",
+                                "pinetree_withered_2",
+                                "pinetree_withered_4"
+                            ],
+                            "weight": 8.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "Three Sculs",
+                            "sids": [
+                                "three_sculls"
+                            ],
+                            "weight": 0.20000000298023225,
+                            "rules": []
+                        },
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_death_1",
+                                "grass_death_2"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Stones",
+                            "sids": [
+                                "dead_stones_1",
+                                "dead_stones_2"
+                            ],
+                            "weight": 0.20000000298023225,
+                            "rules": []
+                        },
+                        {
+                            "name": "Chickens",
+                            "sids": [
+                                "chicken_undead_1",
+                                "chicken_undead_2",
+                                "chicken_undead_3"
+                            ],
+                            "weight": 0.15000000596046449,
+                            "rules": []
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "pig_undead",
+                                "ram_undead_1",
+                                "ram_undead_2"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        }
+                    ]
+                }
+            ],
+            "walkable": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.10000000149011612,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "walkuble",
+                        "sids": [
+                            "three_sculls"
+                        ],
+                        "weight": 0.6000000238418579,
+                        "rules": [
+                            {
+                                "type": 1
+                            },
+                            {
+                                "type": 2
+                            }
+                        ]
+                    },
+                    {
+                        "name": "grass2",
+                        "sids": [
+                            "grass_death_2"
+                        ],
+                        "weight": 2.0,
+                        "rules": [
+                            {
+                                "type": 1
+                            },
+                            {
+                                "type": 2
+                            }
+                        ]
+                    },
+                    {
+                        "name": "grass",
+                        "sids": [
+                            "grass_death_1"
+                        ],
+                        "weight": 6.0,
+                        "rules": [
+                            {
+                                "type": 1
+                            },
+                            {
+                                "type": 2
+                            }
+                        ]
+                    }
+                ]
+            },
+            "water": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.15000000596046449,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "Water_DECOR",
+                        "sids": [
+                            "water_reed_1",
+                            "water_reed_2",
+                            "water_weed_1",
+                            "water_weed_2"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    }
+                ]
+            }
+        },
+        {
+            "sid": "Snow",
+            "tilesets": [
+                {
+                    "sid": "mountains_border",
+                    "weight": 0.0,
+                    "skirtFill": 0.3499999940395355,
+                    "tags": [
+                        "zone_border"
+                    ],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "ice_1",
+                                "ice_2",
+                                "ice_3",
+                                "ice_4",
+                                "pinetree_snow_1",
+                                "pinetree_snow_2",
+                                "pinetree_snow_3",
+                                "pinetree_snow_4",
+                                "tree_dead_snow_1",
+                                "tree_dead_snow_2",
+                                "tree_dead_snow_3",
+                                "tree_dead_snow_4"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_green_3x3",
+                            "sids": [
+                                "mountain_snow_big_3",
+                                "mountain_snow_big_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_snow_big_1",
+                                "mountain_snow_big_2"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_green_1x1",
+                            "sids": [
+                                "mountain_snow_small_1",
+                                "mountain_snow_small_2"
+                            ],
+                            "weight": 5.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "snow_stones_1",
+                                "snow_stones_2",
+                                "snow_stones_3",
+                                "snow_stones_4"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_snow_1",
+                                "grass_snow_2"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "lesser_shoggoth_1",
+                                "lesser_shoggoth_2",
+                                "lesser_shoggoth_3",
+                                "penguin",
+                                "penguin",
+                                "penguin"
+                            ],
+                            "weight": 0.1599999964237213,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains",
+                    "weight": 0.699999988079071,
+                    "skirtFill": 0.6000000238418579,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "ice_1",
+                                "ice_2",
+                                "ice_3",
+                                "ice_4",
+                                "pinetree_snow_1",
+                                "pinetree_snow_2",
+                                "pinetree_snow_3",
+                                "pinetree_snow_4",
+                                "tree_dead_snow_1",
+                                "tree_dead_snow_2",
+                                "tree_dead_snow_3",
+                                "tree_dead_snow_4"
+                            ],
+                            "weight": 1.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "mountain_green_3x3",
+                            "sids": [
+                                "mountain_snow_big_3",
+                                "mountain_snow_big_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_snow_big_1",
+                                "mountain_snow_big_2"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_green_1x1",
+                            "sids": [
+                                "mountain_snow_small_1",
+                                "mountain_snow_small_2"
+                            ],
+                            "weight": 5.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "snow_stones_1",
+                                "snow_stones_2",
+                                "snow_stones_3",
+                                "snow_stones_4"
+                            ],
+                            "weight": 1.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "snow_stones_1",
+                                "snow_stones_2",
+                                "snow_stones_3",
+                                "snow_stones_4"
+                            ],
+                            "weight": 0.5,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "penguin",
+                                "penguin",
+                                "penguin",
+                                "lesser_shoggoth_1",
+                                "lesser_shoggoth_2",
+                                "lesser_shoggoth_3"
+                            ],
+                            "weight": 0.20000000298023225,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sid": "pine_snow",
+                    "weight": 1.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "dead_snow_tree",
+                            "sids": [
+                                "tree_dead_snow_1",
+                                "tree_dead_snow_2",
+                                "tree_dead_snow_3",
+                                "tree_dead_snow_4"
+                            ],
+                            "weight": 15.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "pinetree",
+                            "sids": [
+                                "pinetree_snow_1",
+                                "pinetree_snow_2",
+                                "pinetree_snow_3",
+                                "pinetree_snow_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "hill",
+                            "sids": [
+                                "hill_snow_small"
+                            ],
+                            "weight": 2.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "obstacle 2x2",
+                            "sids": [
+                                "hill_snow_big",
+                                "snow_rock_hill_1",
+                                "snow_grassy_hill_1",
+                                "snow_tree_hill_1"
+                            ],
+                            "weight": 5.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 2x2",
+                            "sids": [
+                                "pool_snow_small_1",
+                                "pool_snow_small_2"
+                            ],
+                            "weight": 5.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 3x3",
+                            "sids": [
+                                "pool_snow_big_1"
+                            ],
+                            "weight": 23.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Obstacles 1x1",
+                            "sids": [
+                                "hill_snow_small",
+                                "ice_1",
+                                "ice_2",
+                                "ice_3",
+                                "ice_4"
+                            ],
+                            "weight": 15.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "Grass",
+                            "sids": [
+                                "grass_snow_1",
+                                "grass_snow_2"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "lesser_shoggoth_1",
+                                "lesser_shoggoth_2",
+                                "lesser_shoggoth_3",
+                                "penguin",
+                                "penguin",
+                                "penguin"
+                            ],
+                            "weight": 0.36000001430511477,
+                            "rules": []
+                        },
+                        {
+                            "name": "Stones",
+                            "sids": [
+                                "snow_stones_1",
+                                "snow_stones_2",
+                                "snow_stones_3",
+                                "snow_stones_4"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "tree_dead_snow",
+                    "weight": 1.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "dead_snow_tree",
+                            "sids": [
+                                "tree_dead_snow_1",
+                                "tree_dead_snow_2",
+                                "tree_dead_snow_3",
+                                "tree_dead_snow_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "pinetree",
+                            "sids": [
+                                "pinetree_snow_1",
+                                "pinetree_snow_2",
+                                "pinetree_snow_3",
+                                "pinetree_snow_4"
+                            ],
+                            "weight": 15.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "hill",
+                            "sids": [
+                                "hill_snow_small"
+                            ],
+                            "weight": 2.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "obstacle 2x2",
+                            "sids": [
+                                "hill_snow_big",
+                                "snow_rock_hill_1",
+                                "snow_grassy_hill_1",
+                                "snow_tree_hill_1"
+                            ],
+                            "weight": 5.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 2x2",
+                            "sids": [
+                                "pool_snow_small_1",
+                                "pool_snow_small_2"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 3x3",
+                            "sids": [
+                                "pool_snow_big_1"
+                            ],
+                            "weight": 23.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Obstacles 1x1",
+                            "sids": [
+                                "hill_snow_small",
+                                "ice_1",
+                                "ice_2",
+                                "ice_3",
+                                "ice_4"
+                            ],
+                            "weight": 15.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "Grass",
+                            "sids": [
+                                "grass_snow_1",
+                                "grass_snow_2"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "lesser_shoggoth_1",
+                                "lesser_shoggoth_2",
+                                "lesser_shoggoth_3",
+                                "penguin",
+                                "penguin",
+                                "penguin"
+                            ],
+                            "weight": 0.36000001430511477,
+                            "rules": []
+                        },
+                        {
+                            "name": "Stones",
+                            "sids": [
+                                "snow_stones_1",
+                                "snow_stones_2",
+                                "snow_stones_3",
+                                "snow_stones_4"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        }
+                    ]
+                }
+            ],
+            "walkable": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.10000000149011612,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "Grass",
+                        "sids": [
+                            "grass_snow_1",
+                            "grass_snow_2"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "Animals",
+                        "sids": [
+                            "lesser_shoggoth_1",
+                            "lesser_shoggoth_2",
+                            "lesser_shoggoth_3",
+                            "penguin",
+                            "penguin",
+                            "penguin"
+                        ],
+                        "weight": 0.20000000298023225,
+                        "rules": []
+                    },
+                    {
+                        "name": "Animals",
+                        "sids": [
+                            "snow_stones_1",
+                            "snow_stones_2",
+                            "snow_stones_3",
+                            "snow_stones_4"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    }
+                ]
+            },
+            "water": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.0,
+                "tags": [],
+                "obstacles": [],
+                "skirt": []
+            }
+        },
+        {
+            "sid": "Autumn",
+            "tilesets": [
+                {
+                    "sid": "tree_autmn",
+                    "weight": 1.0,
+                    "skirtFill": 0.20000000298023225,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "pool 3x3",
+                            "sids": [
+                                "pool_autumn_big_1"
+                            ],
+                            "weight": 8.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 2x2",
+                            "sids": [
+                                "pool_autumn_small_1"
+                            ],
+                            "weight": 23.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "hill 2x2",
+                            "sids": [
+                                "hill_autumn_5",
+                                "hill_autumn_6"
+                            ],
+                            "weight": 4.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "hill",
+                            "sids": [
+                                "hill_autumn_1",
+                                "hill_autumn_2",
+                                "hill_autumn_3",
+                                "hill_autumn_4"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "tree_big_autumn",
+                            "sids": [
+                                "tree_big_autumn_1",
+                                "tree_big_autumn_2"
+                            ],
+                            "weight": 6.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "tree_autumn",
+                            "sids": [
+                                "tree_autumn_1",
+                                "tree_autumn_2",
+                                "tree_autumn_3"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "Flowers",
+                            "sids": [
+                                "flowers_autumn_1"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_autumn_1",
+                                "grass_autumn_2"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "mushroom_cow"
+                            ],
+                            "weight": 0.5,
+                            "rules": []
+                        },
+                        {
+                            "name": "mushrooms",
+                            "sids": [
+                                "mushrooms_1",
+                                "mushrooms_2",
+                                "mushrooms_3",
+                                "mushrooms_4"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mushrooms",
+                            "sids": [
+                                "autumn_stones_1",
+                                "autumn_stones_2"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains_border",
+                    "weight": 0.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [
+                        "zone_border"
+                    ],
+                    "obstacles": [
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_autumn_big_3",
+                                "mountain_autumn_big_4"
+                            ],
+                            "weight": 35.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_autumn_big_1",
+                                "mountain_autumn_big_2"
+                            ],
+                            "weight": 25.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "hill_autumn_1",
+                                "hill_autumn_2",
+                                "hill_autumn_3",
+                                "hill_autumn_4",
+                                "tree_big_autumn_1",
+                                "tree_big_autumn_2"
+                            ],
+                            "weight": 15.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_green_1x1",
+                            "sids": [
+                                "mountain_autumn_small_1",
+                                "mountain_autumn_small_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "tree",
+                            "sids": [
+                                "tree_autumn_1",
+                                "tree_autumn_2",
+                                "tree_autumn_3"
+                            ],
+                            "weight": 25.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "autumn_stones_1",
+                                "autumn_stones_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Flowers",
+                            "sids": [
+                                "flowers_autumn_1"
+                            ],
+                            "weight": 0.25,
+                            "rules": []
+                        },
+                        {
+                            "name": "Grass",
+                            "sids": [
+                                "grass_autumn_1",
+                                "grass_autumn_2"
+                            ],
+                            "weight": 0.5,
+                            "rules": []
+                        },
+                        {
+                            "name": "Mushrooms",
+                            "sids": [
+                                "mushrooms_1",
+                                "mushrooms_2",
+                                "mushrooms_3",
+                                "mushrooms_4"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains",
+                    "weight": 0.699999988079071,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_autumn_big_3",
+                                "mountain_autumn_big_4"
+                            ],
+                            "weight": 35.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_autumn_big_1",
+                                "mountain_autumn_big_2"
+                            ],
+                            "weight": 25.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "hill_autumn_1",
+                                "hill_autumn_2",
+                                "hill_autumn_3",
+                                "hill_autumn_4",
+                                "tree_big_autumn_1",
+                                "tree_big_autumn_2"
+                            ],
+                            "weight": 15.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_autumn_small_1",
+                                "mountain_autumn_small_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "tree",
+                            "sids": [
+                                "tree_autumn_1",
+                                "tree_autumn_2",
+                                "tree_autumn_3"
+                            ],
+                            "weight": 25.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "autumn_stones_1",
+                                "autumn_stones_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Grass",
+                            "sids": [
+                                "grass_autumn_1",
+                                "grass_autumn_2"
+                            ],
+                            "weight": 0.5,
+                            "rules": []
+                        },
+                        {
+                            "name": "Flowers",
+                            "sids": [
+                                "flowers_autumn_1"
+                            ],
+                            "weight": 0.25,
+                            "rules": []
+                        },
+                        {
+                            "name": "Mushroom",
+                            "sids": [
+                                "mushrooms_1",
+                                "mushrooms_2",
+                                "mushrooms_3",
+                                "mushrooms_4"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        }
+                    ]
+                }
+            ],
+            "walkable": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.10000000149011612,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "Flowers",
+                        "sids": [
+                            "flowers_autumn_1"
+                        ],
+                        "weight": 2.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "grass",
+                        "sids": [
+                            "grass_autumn_1",
+                            "grass_autumn_2"
+                        ],
+                        "weight": 6.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "Animals",
+                        "sids": [
+                            "mushroom_cow"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "mushrooms",
+                        "sids": [
+                            "mushrooms_1",
+                            "mushrooms_2",
+                            "mushrooms_3",
+                            "mushrooms_4"
+                        ],
+                        "weight": 2.0,
+                        "rules": []
+                    }
+                ]
+            },
+            "water": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.15000000596046449,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "Water_DECOR",
+                        "sids": [
+                            "water_reed_1",
+                            "water_reed_2",
+                            "water_weed_1",
+                            "water_weed_2"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    }
+                ]
+            }
+        },
+        {
+            "sid": "Dirt",
+            "tilesets": [
+                {
+                    "sid": "pine_forest",
+                    "weight": 1.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "pool 3x3",
+                            "sids": [
+                                "pool_dirt_big_1"
+                            ],
+                            "weight": 8.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pinetree_withered",
+                            "sids": [
+                                "pinetree_withered_1",
+                                "pinetree_withered_2",
+                                "pinetree_withered_3",
+                                "pinetree_withered_4",
+                                "grass_stump_3"
+                            ],
+                            "weight": 15.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "obstacles 2x2",
+                            "sids": [
+                                "pool_dirt_small_1",
+                                "dirt_crack_in_the_ground",
+                                "dirt_rock_1",
+                                "dirt_rock_2",
+                                "dirt_rock_3",
+                                "dirt_rock_4",
+                                "dirt_strange_flower",
+                                "dirt_volcanic_rock"
+                            ],
+                            "weight": 14.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "LogsStumps",
+                            "sids": [
+                                "stump_1",
+                                "stump_2",
+                                "log_1",
+                                "log_2",
+                                "dirt_old_stump"
+                            ],
+                            "weight": 4.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pinetree",
+                            "sids": [
+                                "pinetree_1",
+                                "pinetree_2",
+                                "pinetree_3",
+                                "pinetree_4",
+                                "grass_stump_1"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "tree dirt",
+                            "sids": [
+                                "tree_dirt_1",
+                                "tree_dirt_2",
+                                "tree_dirt_3",
+                                "tree_dirt_4",
+                                "grass_stump_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "Flowers",
+                            "sids": [
+                                "flowers_1",
+                                "flowers_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_1",
+                                "grass_2"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "pig",
+                                "ram_1",
+                                "ram_2",
+                                "chicken_1",
+                                "chick_1"
+                            ],
+                            "weight": 0.5299999713897705,
+                            "rules": []
+                        },
+                        {
+                            "name": "mushrooms",
+                            "sids": [
+                                "mushrooms_1",
+                                "mushrooms_2",
+                                "mushrooms_3",
+                                "mushrooms_4"
+                            ],
+                            "weight": 0.800000011920929,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "leaf_forest",
+                    "weight": 1.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "Pool3x3",
+                            "sids": [
+                                "pool_dirt_big_1"
+                            ],
+                            "weight": 8.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "2x2 obstacles",
+                            "sids": [
+                                "pool_dirt_small_1",
+                                "dirt_crack_in_the_ground",
+                                "dirt_rock_1",
+                                "dirt_rock_2",
+                                "dirt_rock_3",
+                                "dirt_rock_4",
+                                "dirt_strange_flower",
+                                "dirt_volcanic_rock"
+                            ],
+                            "weight": 7.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "logsStump",
+                            "sids": [
+                                "stump_1",
+                                "stump_2",
+                                "log_1",
+                                "log_2",
+                                "dirt_old_stump"
+                            ],
+                            "weight": 2.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "tree",
+                            "sids": [
+                                "tree_dirt_1",
+                                "tree_dirt_2",
+                                "tree_dirt_3",
+                                "tree_dirt_4",
+                                "grass_stump_1"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "tree blend",
+                            "sids": [
+                                "pinetree_1",
+                                "pinetree_2",
+                                "pinetree_3",
+                                "pinetree_4",
+                                "pinetree_withered_1",
+                                "pinetree_withered_2",
+                                "pinetree_withered_3",
+                                "pinetree_withered_4",
+                                "grass_stump_2"
+                            ],
+                            "weight": 13.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_2",
+                                "grass_1"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "flowers",
+                            "sids": [
+                                "flowers_1",
+                                "flowers_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "animals",
+                            "sids": [
+                                "pig",
+                                "ram_2",
+                                "ram_1",
+                                "chick_1",
+                                "chicken_1"
+                            ],
+                            "weight": 0.44999998807907107,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains",
+                    "weight": 0.699999988079071,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "pinetree_1",
+                                "pinetree_withered_4",
+                                "pinetree_2",
+                                "pinetree_withered_3",
+                                "tree_dirt_1",
+                                "tree_dirt_2",
+                                "tree_dirt_3",
+                                "tree_dirt_4",
+                                "grass_stump_1",
+                                "grass_stump_2",
+                                "grass_stump_3",
+                                "dirt_old_stump"
+                            ],
+                            "weight": 1.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "mountain_green_3x3",
+                            "sids": [
+                                "mountain_dirt_big_3",
+                                "mountain_dirt_big_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_dirt_big_1",
+                                "mountain_dirt_big_2"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_dirt_small_1",
+                                "mountain_dirt_small_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "dirt_stones_1",
+                                "dirt_stones_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "animals",
+                            "sids": [
+                                "chick_1",
+                                "chicken_1",
+                                "pig",
+                                "ram_1",
+                                "ram_2"
+                            ],
+                            "weight": 0.25999999046325686,
+                            "rules": []
+                        },
+                        {
+                            "name": "mushrooms",
+                            "sids": [
+                                "mushrooms_1",
+                                "mushrooms_2",
+                                "mushrooms_3",
+                                "mushrooms_4"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        },
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_1",
+                                "grass_2"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains_border",
+                    "weight": 0.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [
+                        "zone_border"
+                    ],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "pinetree_1",
+                                "pinetree_withered_4",
+                                "pinetree_2",
+                                "pinetree_withered_3",
+                                "tree_dirt_1",
+                                "tree_dirt_2",
+                                "tree_dirt_3",
+                                "tree_dirt_4",
+                                "dirt_old_stump"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_green_3x3",
+                            "sids": [
+                                "mountain_dirt_big_3",
+                                "mountain_dirt_big_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_dirt_big_1",
+                                "mountain_dirt_big_2"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_dirt_small_1",
+                                "mountain_dirt_small_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "dirt_stones_1",
+                                "dirt_stones_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "ram_1",
+                                "ram_2",
+                                "pig",
+                                "chick_1",
+                                "chicken_1"
+                            ],
+                            "weight": 0.20999999344348908,
+                            "rules": []
+                        },
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_1",
+                                "grass_2"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        },
+                        {
+                            "name": "mushroom",
+                            "sids": [
+                                "mushrooms_1",
+                                "mushrooms_2",
+                                "mushrooms_3",
+                                "mushrooms_4"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "filler",
+                    "weight": 0.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [
+                        "filler"
+                    ],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "pinetree_1",
+                                "pinetree_withered_4",
+                                "pinetree_2",
+                                "pinetree_withered_3",
+                                "tree_dirt_1",
+                                "tree_dirt_2",
+                                "tree_dirt_3",
+                                "tree_dirt_4"
+                            ],
+                            "weight": 200.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_green_3x3",
+                            "sids": [
+                                "mountain_dirt_big_3",
+                                "mountain_dirt_big_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_dirt_big_1",
+                                "mountain_dirt_big_2"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_dirt_small_1",
+                                "mountain_dirt_small_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "dirt_stones_1",
+                                "dirt_stones_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "ram_1",
+                                "ram_2",
+                                "pig",
+                                "chick_1",
+                                "chicken_1"
+                            ],
+                            "weight": 0.20999999344348908,
+                            "rules": []
+                        },
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_1",
+                                "grass_2"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        },
+                        {
+                            "name": "mushroom",
+                            "sids": [
+                                "mushrooms_1",
+                                "mushrooms_2",
+                                "mushrooms_3",
+                                "mushrooms_4"
+                            ],
+                            "weight": 0.30000001192092898,
+                            "rules": []
+                        }
+                    ]
+                }
+            ],
+            "walkable": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.10000000149011612,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "Flowers",
+                        "sids": [
+                            "flowers_1",
+                            "flowers_2",
+                            "grass_1"
+                        ],
+                        "weight": 2.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "grass",
+                        "sids": [
+                            "grass_2"
+                        ],
+                        "weight": 6.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "Animals",
+                        "sids": [
+                            "pig",
+                            "ram_1",
+                            "ram_2"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "mushrooms",
+                        "sids": [
+                            "mushrooms_1",
+                            "mushrooms_2",
+                            "mushrooms_3",
+                            "mushrooms_4"
+                        ],
+                        "weight": 2.0,
+                        "rules": []
+                    }
+                ]
+            },
+            "water": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.15000000596046449,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "Water_DECOR",
+                        "sids": [
+                            "water_reed_1",
+                            "water_reed_2",
+                            "water_weed_1",
+                            "water_weed_2"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "fish",
+                        "sids": [
+                            "fish"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    }
+                ]
+            }
+        },
+        {
+            "sid": "Grass",
+            "tilesets": [
+                {
+                    "sid": "pine_forest",
+                    "weight": 1.0,
+                    "skirtFill": 0.25,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "obstacle 2x2",
+                            "sids": [
+                                "hill_big",
+                                "grass_tropical_2",
+                                "grass_hill_1",
+                                "grass_hill_2"
+                            ],
+                            "weight": 3.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 2x2",
+                            "sids": [
+                                "pool_small"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 3x3",
+                            "sids": [
+                                "pool_big",
+                                "grass_forest_lawn_1"
+                            ],
+                            "weight": 23.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pinetree_withered",
+                            "sids": [
+                                "pinetree_withered_1",
+                                "pinetree_withered_2",
+                                "pinetree_withered_3",
+                                "pinetree_withered_4"
+                            ],
+                            "weight": 15.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "obstacles 1x1",
+                            "sids": [
+                                "hill_small_1",
+                                "hill_small_2"
+                            ],
+                            "weight": 3.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "LogsStumps",
+                            "sids": [
+                                "stump_1",
+                                "stump_2",
+                                "log_1",
+                                "log_2",
+                                "grass_forest_lawn_2",
+                                "grass_tropical_1",
+                                "grass_log_1"
+                            ],
+                            "weight": 4.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pinetree",
+                            "sids": [
+                                "pinetree_1",
+                                "pinetree_2",
+                                "pinetree_3",
+                                "pinetree_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "grass_tree_stumps",
+                            "sids": [
+                                "grass_stump_1",
+                                "grass_stump_2",
+                                "grass_stump_3"
+                            ],
+                            "weight": 6.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "Flowers",
+                            "sids": [
+                                "flowers_1",
+                                "flowers_2",
+                                "grass_1"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_2"
+                            ],
+                            "weight": 6.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mushrooms",
+                            "sids": [
+                                "mushrooms_1",
+                                "mushrooms_2",
+                                "mushrooms_3",
+                                "mushrooms_4"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "pig",
+                                "ram_1",
+                                "ram_2"
+                            ],
+                            "weight": 1.3300000429153443,
+                            "rules": []
+                        },
+                        {
+                            "name": "Chicks",
+                            "sids": [
+                                "chick_1",
+                                "chick_2",
+                                "chick_3",
+                                "chicken_1",
+                                "chicken_2"
+                            ],
+                            "weight": 0.550000011920929,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "leaf_forest",
+                    "weight": 1.0,
+                    "skirtFill": 0.25,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "2x2 obstacles",
+                            "sids": [
+                                "hill_big",
+                                "grass_hill_1",
+                                "grass_hill_2",
+                                "grass_tropical_2"
+                            ],
+                            "weight": 4.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Pool2x2",
+                            "sids": [
+                                "pool_small"
+                            ],
+                            "weight": 8.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Pool3x3",
+                            "sids": [
+                                "pool_big",
+                                "grass_forest_lawn_1"
+                            ],
+                            "weight": 23.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "1x1 obstacles",
+                            "sids": [
+                                "hill_small_2",
+                                "hill_small_1"
+                            ],
+                            "weight": 3.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "logsStump",
+                            "sids": [
+                                "stump_1",
+                                "stump_2",
+                                "log_1",
+                                "log_2",
+                                "grass_forest_lawn_2",
+                                "grass_tropical_1"
+                            ],
+                            "weight": 2.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "tree",
+                            "sids": [
+                                "tree_dirt_1",
+                                "tree_dirt_2",
+                                "tree_dirt_3",
+                                "tree_dirt_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "tree",
+                            "sids": [
+                                "grass_stump_1",
+                                "grass_stump_2",
+                                "grass_stump_3"
+                            ],
+                            "weight": 4.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "mushrooms",
+                            "sids": [
+                                "mushrooms_1",
+                                "mushrooms_2",
+                                "mushrooms_3",
+                                "mushrooms_4"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "grass",
+                            "sids": [
+                                "grass_2"
+                            ],
+                            "weight": 6.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "flowers",
+                            "sids": [
+                                "flowers_1",
+                                "flowers_2",
+                                "grass_1"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "animals",
+                            "sids": [
+                                "pig",
+                                "ram_2",
+                                "ram_1"
+                            ],
+                            "weight": 1.7599999904632569,
+                            "rules": []
+                        },
+                        {
+                            "name": "chickens",
+                            "sids": [
+                                "chicken_2",
+                                "chicken_1",
+                                "chick_3",
+                                "chick_2",
+                                "chick_1"
+                            ],
+                            "weight": 1.2000000476837159,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains",
+                    "weight": 0.699999988079071,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "pinetree_1",
+                                "pinetree_withered_4",
+                                "pinetree_2",
+                                "pinetree_withered_3",
+                                "hill_small_2",
+                                "hill_small_1",
+                                "grass_tropical_1",
+                                "grass_forest_lawn_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "mountain_green_3x3",
+                            "sids": [
+                                "mountain_green_big_3",
+                                "mountain_green_big_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_green_big_1",
+                                "mountain_green_big_2"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_green_1x1",
+                            "sids": [
+                                "mountain_green_small_1",
+                                "mountain_green_small_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "grass_stones_1",
+                                "grass_stones_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains_border",
+                    "weight": 0.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [
+                        "zone_border"
+                    ],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "pinetree_1",
+                                "pinetree_withered_4",
+                                "pinetree_2",
+                                "pinetree_withered_3",
+                                "hill_small_2",
+                                "hill_small_1"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_green_3x3",
+                            "sids": [
+                                "mountain_green_big_3",
+                                "mountain_green_big_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_green_big_1",
+                                "mountain_green_big_2"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_green_1x1",
+                            "sids": [
+                                "mountain_green_small_1",
+                                "mountain_green_small_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "grass_stones_1",
+                                "grass_stones_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "animals",
+                            "sids": [
+                                "ram_1",
+                                "ram_2",
+                                "chick_1",
+                                "pig",
+                                "chicken_1"
+                            ],
+                            "weight": 0.15000000596046449,
+                            "rules": []
+                        },
+                        {
+                            "name": "animals",
+                            "sids": [
+                                "chick_1",
+                                "chicken_1"
+                            ],
+                            "weight": 0.12999999523162843,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "filler",
+                    "weight": 0.0,
+                    "skirtFill": 0.30000001192092898,
+                    "tags": [
+                        "filler"
+                    ],
+                    "obstacles": [
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "pinetree_1",
+                                "pinetree_withered_4",
+                                "pinetree_2",
+                                "pinetree_withered_3",
+                                "hill_small_2",
+                                "hill_small_1",
+                                "pinetree_3",
+                                "pinetree_4"
+                            ],
+                            "weight": 200.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_green_3x3",
+                            "sids": [
+                                "mountain_green_big_3",
+                                "mountain_green_big_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_green_big_1",
+                                "mountain_green_big_2"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_green_1x1",
+                            "sids": [
+                                "mountain_green_small_1",
+                                "mountain_green_small_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "grass_stones_1",
+                                "grass_stones_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "animals",
+                            "sids": [
+                                "ram_1",
+                                "ram_2",
+                                "chick_1",
+                                "pig",
+                                "chicken_1"
+                            ],
+                            "weight": 0.15000000596046449,
+                            "rules": []
+                        },
+                        {
+                            "name": "animals",
+                            "sids": [
+                                "chick_1",
+                                "chicken_1"
+                            ],
+                            "weight": 0.12999999523162843,
+                            "rules": []
+                        }
+                    ]
+                }
+            ],
+            "walkable": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.10000000149011612,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "Flowers",
+                        "sids": [
+                            "flowers_1",
+                            "flowers_2",
+                            "grass_1"
+                        ],
+                        "weight": 2.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "grass",
+                        "sids": [
+                            "grass_2"
+                        ],
+                        "weight": 6.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "Animals",
+                        "sids": [
+                            "pig",
+                            "ram_1",
+                            "ram_2",
+                            "chick_1",
+                            "chick_2",
+                            "chick_3",
+                            "chicken_1",
+                            "chicken_2"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "mushrooms",
+                        "sids": [
+                            "mushrooms_1",
+                            "mushrooms_2",
+                            "mushrooms_3",
+                            "mushrooms_4"
+                        ],
+                        "weight": 2.0,
+                        "rules": []
+                    }
+                ]
+            },
+            "water": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.15000000596046449,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "fish",
+                        "sids": [
+                            "fish"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    },
+                    {
+                        "name": "Water_DECOR",
+                        "sids": [
+                            "water_reed_1",
+                            "water_reed_2",
+                            "water_weed_1",
+                            "water_weed_2"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    }
+                ]
+            }
+        },
+        {
+            "sid": "Lava",
+            "tilesets": [
+                {
+                    "sid": "mountains",
+                    "weight": 0.699999988079071,
+                    "skirtFill": 0.44999998807907107,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_lava_big_1wl",
+                                "mountain_lava_big_2wl"
+                            ],
+                            "weight": 20.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_lava_big_1",
+                                "mountain_lava_big_2"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_3x3",
+                            "sids": [
+                                "mountain_lava_big_3wl",
+                                "mountain_lava_big_4wl"
+                            ],
+                            "weight": 40.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_3x3",
+                            "sids": [
+                                "mountain_lava_big_3",
+                                "mountain_lava_big_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_lava_small_1",
+                                "mountain_lava_small_3"
+                            ],
+                            "weight": 4.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_lava_small_2",
+                                "mountain_lava_small_4"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "tree_lava_ash_1",
+                                "tree_lava_mum_2",
+                                "lava_eggs_ash_1",
+                                "lava_eggs_mum_2",
+                                "tree_lava_ash_2",
+                                "tree_lava_ash_3",
+                                "tree_lava_mum_1",
+                                "tree_lava_mum_3",
+                                "tree_dead_1",
+                                "tree_dead_2",
+                                "tree_dead_3",
+                                "tree_dead_4",
+                                "lava_eggs_1",
+                                "lava_eggs_ash_2",
+                                "lava_eggs_mum_1",
+                                "tree_lava_1",
+                                "tree_lava_2",
+                                "tree_lava_3"
+                            ],
+                            "weight": 1.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "tree_lava_ash_1",
+                                "tree_lava_mum_2",
+                                "lava_eggs_ash_1",
+                                "lava_eggs_mum_2",
+                                "tree_lava_ash_2",
+                                "tree_lava_ash_3",
+                                "tree_lava_mum_1",
+                                "tree_lava_mum_3",
+                                "tree_dead_1",
+                                "tree_dead_2",
+                                "tree_dead_3",
+                                "tree_dead_4",
+                                "lava_eggs_1",
+                                "lava_eggs_ash_2",
+                                "lava_eggs_mum_1"
+                            ],
+                            "weight": 1.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "lava_stones_1",
+                                "lava_stones_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "animals",
+                            "sids": [
+                                "lava_snails_1",
+                                "lava_snails_2"
+                            ],
+                            "weight": 0.11999999731779099,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "mountains_border",
+                    "weight": 0.0,
+                    "skirtFill": 0.44999998807907107,
+                    "tags": [
+                        "zone_border"
+                    ],
+                    "obstacles": [
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_lava_big_1wl",
+                                "mountain_lava_big_2wl"
+                            ],
+                            "weight": 20.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_2x2",
+                            "sids": [
+                                "mountain_lava_big_1",
+                                "mountain_lava_big_2"
+                            ],
+                            "weight": 30.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_3x3",
+                            "sids": [
+                                "mountain_lava_big_3wl",
+                                "mountain_lava_big_4wl"
+                            ],
+                            "weight": 40.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountains_3x3",
+                            "sids": [
+                                "mountain_lava_big_3",
+                                "mountain_lava_big_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_lava_small_1",
+                                "mountain_lava_small_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "mountain_1x1",
+                            "sids": [
+                                "mountain_lava_small_3",
+                                "mountain_lava_small_4"
+                            ],
+                            "weight": 4.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "1x1",
+                            "sids": [
+                                "tree_lava_ash_1",
+                                "tree_lava_mum_2",
+                                "tree_lava_3",
+                                "lava_eggs_ash_1",
+                                "lava_eggs_mum_2",
+                                "tree_lava_ash_2",
+                                "tree_lava_ash_3",
+                                "tree_lava_mum_1",
+                                "tree_lava_mum_3",
+                                "tree_dead_1",
+                                "tree_dead_2",
+                                "tree_dead_3",
+                                "tree_dead_4",
+                                "tree_lava_1",
+                                "tree_lava_2",
+                                "tree_lava_3",
+                                "lava_eggs_ash_2",
+                                "lava_eggs_mum_1",
+                                "lava_eggs_1"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "walkuble",
+                            "sids": [
+                                "lava_stones_1",
+                                "lava_stones_2"
+                            ],
+                            "weight": 1.0,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "egg_tree",
+                    "weight": 1.0,
+                    "skirtFill": 0.20000000298023225,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "obstacles 2x2",
+                            "sids": [
+                                "mountain_lava_2",
+                                "lava_ground_1",
+                                "lava_ground_2",
+                                "lava_ground_3",
+                                "lava_ground_4"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "obstacles 1x1",
+                            "sids": [
+                                "mountain_lava_3",
+                                "mountain_lava_4",
+                                "mountain_lava_1"
+                            ],
+                            "weight": 5.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "tree_lava",
+                            "sids": [
+                                "tree_lava_1",
+                                "tree_lava_2",
+                                "tree_lava_3"
+                            ],
+                            "weight": 4.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "tree_lava_ash",
+                            "sids": [
+                                "tree_lava_ash_1",
+                                "tree_lava_ash_2",
+                                "tree_lava_ash_3"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "pool 2x2",
+                            "sids": [
+                                "pool_lava_small_1"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 3x3",
+                            "sids": [
+                                "pool_lava_big_1",
+                                "pool_lava_big_2"
+                            ],
+                            "weight": 24.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "tree_lava_mum",
+                            "sids": [
+                                "tree_lava_mum_1",
+                                "tree_lava_mum_2",
+                                "tree_lava_mum_3"
+                            ],
+                            "weight": 15.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "tree_lava_mum",
+                            "sids": [
+                                "tree_dead_1",
+                                "tree_dead_2",
+                                "tree_dead_3",
+                                "tree_dead_4"
+                            ],
+                            "weight": 45.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "lava_snails_1",
+                                "lava_snails_2"
+                            ],
+                            "weight": 0.44999998807907107,
+                            "rules": []
+                        },
+                        {
+                            "name": "Walkabule",
+                            "sids": [
+                                "lava_stones_1",
+                                "lava_stones_2"
+                            ],
+                            "weight": 1.399999976158142,
+                            "rules": []
+                        },
+                        {
+                            "name": "Walkabule",
+                            "sids": [
+                                "lava_walkable_eggs_1",
+                                "lava_walkable_eggs_2"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        }
+                    ]
+                },
+                {
+                    "sid": "egg_bush",
+                    "weight": 1.0,
+                    "skirtFill": 0.23999999463558198,
+                    "tags": [],
+                    "obstacles": [
+                        {
+                            "name": "obstacles 2x2",
+                            "sids": [
+                                "mountain_lava_2",
+                                "lava_ground_1",
+                                "lava_ground_2",
+                                "lava_ground_3",
+                                "lava_ground_4"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Obstacles 1x1",
+                            "sids": [
+                                "mountain_lava_1",
+                                "mountain_lava_3",
+                                "mountain_lava_4"
+                            ],
+                            "weight": 4.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "bush_lava",
+                            "sids": [
+                                "lava_eggs_1",
+                                "lava_eggs_2"
+                            ],
+                            "weight": 3.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "bush_lava_ash",
+                            "sids": [
+                                "lava_eggs_ash_1",
+                                "lava_eggs_ash_2"
+                            ],
+                            "weight": 10.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "pool 2x2",
+                            "sids": [
+                                "pool_lava_small_1"
+                            ],
+                            "weight": 6.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "pool 3x3",
+                            "sids": [
+                                "pool_lava_big_1",
+                                "pool_lava_big_2"
+                            ],
+                            "weight": 23.0,
+                            "rules": [
+                                {
+                                    "type": 1
+                                },
+                                {
+                                    "type": 2
+                                }
+                            ]
+                        },
+                        {
+                            "name": "bush_lava_mum",
+                            "sids": [
+                                "lava_eggs_mum_1",
+                                "lava_eggs_mum_2"
+                            ],
+                            "weight": 15.0,
+                            "rules": []
+                        },
+                        {
+                            "name": "bush_lava_mum",
+                            "sids": [
+                                "tree_dead_1",
+                                "tree_dead_2",
+                                "tree_dead_3",
+                                "tree_dead_4"
+                            ],
+                            "weight": 50.0,
+                            "rules": []
+                        }
+                    ],
+                    "skirt": [
+                        {
+                            "name": "Animals",
+                            "sids": [
+                                "lava_snails_1",
+                                "lava_snails_2"
+                            ],
+                            "weight": 0.46000000834465029,
+                            "rules": []
+                        },
+                        {
+                            "name": "Walkuble",
+                            "sids": [
+                                "lava_stones_1",
+                                "lava_stones_2"
+                            ],
+                            "weight": 1.5,
+                            "rules": []
+                        },
+                        {
+                            "name": "Walkuble",
+                            "sids": [
+                                "lava_walkable_eggs_1",
+                                "lava_walkable_eggs_2"
+                            ],
+                            "weight": 2.0,
+                            "rules": []
+                        }
+                    ]
+                }
+            ],
+            "walkable": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.10000000149011612,
+                "tags": [],
+                "obstacles": [],
+                "skirt": [
+                    {
+                        "name": "walkuble",
+                        "sids": [
+                            "lava_stones_1",
+                            "lava_stones_2"
+                        ],
+                        "weight": 1.0,
+                        "rules": []
+                    }
+                ]
+            },
+            "water": {
+                "sid": "",
+                "weight": 0.0,
+                "skirtFill": 0.0,
+                "tags": [],
+                "obstacles": [],
+                "skirt": []
+            }
+        }
+    ]
+}

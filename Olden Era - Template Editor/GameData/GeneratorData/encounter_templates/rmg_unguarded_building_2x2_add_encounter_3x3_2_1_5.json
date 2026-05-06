@@ -1,0 +1,53 @@
+{
+    "name": "rmg_unguarded_building_2x2_add_encounter_3x3_2_1_5",
+    "encounterType": 4,
+    "relativeFrequency": 4.0,
+    "allowMirrorX": true,
+    "allowMirrorY": false,
+    "width": 3,
+    "height": 3,
+    "roadTargetType": 1,
+    "roadTarget": {
+        "x": 0,
+        "y": 0
+    },
+    "guards": [],
+    "buildings": [
+        {
+            "width": 2,
+            "height": 2,
+            "interaction": 1,
+            "position": {
+                "x": 0,
+                "y": 0
+            }
+        }
+    ],
+    "pickups": [],
+    "entrances": [
+        {
+            "x": 0,
+            "y": -1
+        },
+        {
+            "x": -1,
+            "y": 0
+        },
+        {
+            "x": 1,
+            "y": -1
+        }
+    ],
+    "holeTiles": [],
+    "tileContents": [
+        3,
+        3,
+        1,
+        3,
+        3,
+        1,
+        2,
+        2,
+        2
+    ]
+}

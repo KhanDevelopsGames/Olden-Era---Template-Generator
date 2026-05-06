@@ -1,0 +1,263 @@
+[
+	{
+		"name": "template_pool_blitz_guarded_resource_banks_tier_3_base",
+		"content": 
+		[
+			{ "sid": "troglodyte_throne",		"weight": 100	},
+			{ "sid": "twilight_bloom",			"weight": 100	}
+		]
+	},
+
+	{
+		"name": "template_pool_blitz_guarded_resource_banks_tier_3_pro",
+		"content": 
+		[
+			{ "sid": "unstable_ruins",			"weight": 50	},
+			{ "sid": "dragon_utopia",			"weight": 100	},
+			{ "sid": "research_laboratory",		"weight": 100	}
+		]
+	},
+
+	{
+		"name": "template_pool_blitz_guarded_start_zone_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 0,	"weight": 2100	},			
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 2100	},
+
+			{ "sid" : "pandora_box",	"variant": 4,	"weight": 2100	},			
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 2100	},
+
+			{ "sid" : "pandora_box",	"variant": 8,	"weight": 1100	},			
+			{ "sid" : "pandora_box",	"variant": 9,	"weight": 1100	},
+			{ "sid" : "pandora_box",	"variant": 10,	"weight": 1100	}
+		]
+	},
+
+	{
+		"name": "template_pool_blitz_guarded_side_1_zone_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 0,	"weight": 700	},			
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 900	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 500	},
+
+			{ "sid" : "pandora_box",	"variant": 4,	"weight": 350	},			
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 350	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 350	},
+
+			{ "sid" : "pandora_box",	"variant": 11,	"weight": 1500	},
+			{ "sid" : "pandora_box",	"variant": 12,	"weight": 1500	},
+
+			{ "sid" : "pandora_box",	"variant": 19,	"weight": 150	},			
+			{ "sid" : "pandora_box",	"variant": 20,	"weight": 150	},
+			{ "sid" : "pandora_box",	"variant": 21,	"weight": 150	},
+			{ "sid" : "pandora_box",	"variant": 22,	"weight": 150	}
+		]
+	},
+
+	{
+		"name": "template_pool_blitz_guarded_side_2_zone_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 0,	"weight": 700	},			
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 700	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 700	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 700	},
+
+			{ "sid" : "pandora_box",	"variant": 4,	"weight": 350	},			
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 350	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 350	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 350	},
+
+			{ "sid" : "pandora_box",	"variant": 12,	"weight": 1500	},
+			{ "sid" : "pandora_box",	"variant": 13,	"weight": 1500	},
+
+			{ "sid" : "pandora_box",	"variant": 19,	"weight": 250	},			
+			{ "sid" : "pandora_box",	"variant": 20,	"weight": 250	},
+			{ "sid" : "pandora_box",	"variant": 21,	"weight": 250	},
+			{ "sid" : "pandora_box",	"variant": 22,	"weight": 250	}
+		]
+	},
+
+	{
+		"name": "template_pool_blitz_guarded_side_3_zone_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 500	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 900	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 700	},
+			
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 350	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 350	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 350	},
+
+			{ "sid" : "pandora_box",	"variant": 13,	"weight": 1500	},
+			{ "sid" : "pandora_box",	"variant": 14,	"weight": 1500	},
+
+			{ "sid" : "pandora_box",	"variant": 19,	"weight": 350	},			
+			{ "sid" : "pandora_box",	"variant": 20,	"weight": 350	},
+			{ "sid" : "pandora_box",	"variant": 21,	"weight": 350	},
+			{ "sid" : "pandora_box",	"variant": 22,	"weight": 350	}
+		]
+	},
+
+	{
+		"name": "template_pool_blitz_guarded_treasure_1_zone_pandora_box",
+		"content": 
+		[
+	
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 1052	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 752	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 452	},
+
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 1815	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 1415	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 1015	},
+
+			{ "sid" : "pandora_box",	"variant": 15,	"weight": 1480	},
+			{ "sid" : "pandora_box",	"variant": 16,	"weight": 740	},
+
+			{ "sid" : "pandora_box",	"variant": 23,	"weight": 600	},			
+			{ "sid" : "pandora_box",	"variant": 24,	"weight": 600	},			
+			{ "sid" : "pandora_box",	"variant": 25,	"weight": 600	}
+		]
+	},
+
+	{
+		"name": "template_pool_blitz_guarded_treasure_2_zone_pandora_box",
+		"content": 
+		[
+	
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 752	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 752	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 752	},
+
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 1415	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 1415	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 1415	},
+
+			{ "sid" : "pandora_box",	"variant": 16,	"weight": 1480	},
+			{ "sid" : "pandora_box",	"variant": 17,	"weight": 740	},
+
+			{ "sid" : "pandora_box",	"variant": 24,	"weight": 600	},			
+			{ "sid" : "pandora_box",	"variant": 25,	"weight": 600	},			
+			{ "sid" : "pandora_box",	"variant": 26,	"weight": 600	}
+		]
+	},
+
+	{
+		"name": "template_pool_blitz_guarded_treasure_3_zone_pandora_box",
+		"content": 
+		[
+	
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 452	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 752	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 1052	},
+
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 1015	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 1415	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 1815	},
+
+			{ "sid" : "pandora_box",	"variant": 17,	"weight": 1480	},
+			{ "sid" : "pandora_box",	"variant": 18,	"weight": 740	},
+
+			{ "sid" : "pandora_box",	"variant": 25,	"weight": 600	},			
+			{ "sid" : "pandora_box",	"variant": 26,	"weight": 600	},			
+			{ "sid" : "pandora_box",	"variant": 27,	"weight": 600	}
+		]
+	},
+
+	{
+		"name": "template_pool_blitz_guarded_supertreasure_1_zone_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 1500	},			
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 1000	},		
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 500	},
+
+			{ "sid" : "pandora_box",	"variant": 9,	"weight": 1250	},			
+			{ "sid" : "pandora_box",	"variant": 10,	"weight": 1250	},
+			{ "sid" : "pandora_box",	"variant": 11,	"weight": 1250	},
+			{ "sid" : "pandora_box",	"variant": 12,	"weight": 1250	},
+
+			{ "sid" : "pandora_box",	"variant": 15,	"weight": 400	},			
+			{ "sid" : "pandora_box",	"variant": 16,	"weight": 600	},
+			{ "sid" : "pandora_box",	"variant": 17,	"weight": 600	},
+			{ "sid" : "pandora_box",	"variant": 18,	"weight": 400	},
+
+			{ "sid" : "pandora_box",	"variant": 19,	"weight": 200	},			
+			{ "sid" : "pandora_box",	"variant": 20,	"weight": 200	},
+			{ "sid" : "pandora_box",	"variant": 21,	"weight": 200	},
+			{ "sid" : "pandora_box",	"variant": 22,	"weight": 200	},
+
+			{ "sid" : "pandora_box",	"variant": 23,	"weight": 500	},			
+			{ "sid" : "pandora_box",	"variant": 24,	"weight": 400	},
+			{ "sid" : "pandora_box",	"variant": 25,	"weight": 300	},
+			{ "sid" : "pandora_box",	"variant": 26,	"weight": 200	},
+			{ "sid" : "pandora_box",	"variant": 27,	"weight": 100	}
+		]
+	},
+
+	{
+		"name": "template_pool_blitz_guarded_supertreasure_2_zone_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 1000	},			
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 1000	},		
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 1000	},
+
+			{ "sid" : "pandora_box",	"variant": 10,	"weight": 1250	},
+			{ "sid" : "pandora_box",	"variant": 11,	"weight": 1250	},
+			{ "sid" : "pandora_box",	"variant": 12,	"weight": 1250	},
+			{ "sid" : "pandora_box",	"variant": 13,	"weight": 1250	},
+
+			{ "sid" : "pandora_box",	"variant": 15,	"weight": 400	},			
+			{ "sid" : "pandora_box",	"variant": 16,	"weight": 600	},
+			{ "sid" : "pandora_box",	"variant": 17,	"weight": 600	},
+			{ "sid" : "pandora_box",	"variant": 18,	"weight": 400	},
+
+			{ "sid" : "pandora_box",	"variant": 19,	"weight": 300	},			
+			{ "sid" : "pandora_box",	"variant": 20,	"weight": 300	},
+			{ "sid" : "pandora_box",	"variant": 21,	"weight": 300	},
+			{ "sid" : "pandora_box",	"variant": 22,	"weight": 300	},
+
+			{ "sid" : "pandora_box",	"variant": 23,	"weight": 300	},			
+			{ "sid" : "pandora_box",	"variant": 24,	"weight": 300	},
+			{ "sid" : "pandora_box",	"variant": 25,	"weight": 300	},
+			{ "sid" : "pandora_box",	"variant": 26,	"weight": 300	},
+			{ "sid" : "pandora_box",	"variant": 27,	"weight": 300	}
+		]
+	},
+
+	{
+		"name": "template_pool_blitz_guarded_supertreasure_3_zone_pandora_box",
+		"content": 
+		[	
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 500	},			
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 1000	},		
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 1500	},
+		
+			{ "sid" : "pandora_box",	"variant": 11,	"weight": 1250	},
+			{ "sid" : "pandora_box",	"variant": 12,	"weight": 1250	},
+			{ "sid" : "pandora_box",	"variant": 13,	"weight": 1250	},
+			{ "sid" : "pandora_box",	"variant": 14,	"weight": 1250	},
+
+			{ "sid" : "pandora_box",	"variant": 15,	"weight": 400	},			
+			{ "sid" : "pandora_box",	"variant": 16,	"weight": 600	},
+			{ "sid" : "pandora_box",	"variant": 17,	"weight": 600	},
+			{ "sid" : "pandora_box",	"variant": 18,	"weight": 400	},
+
+			{ "sid" : "pandora_box",	"variant": 19,	"weight": 400	},			
+			{ "sid" : "pandora_box",	"variant": 20,	"weight": 400	},
+			{ "sid" : "pandora_box",	"variant": 21,	"weight": 400	},
+			{ "sid" : "pandora_box",	"variant": 22,	"weight": 400	},
+
+			{ "sid" : "pandora_box",	"variant": 23,	"weight": 100	},			
+			{ "sid" : "pandora_box",	"variant": 24,	"weight": 200	},
+			{ "sid" : "pandora_box",	"variant": 25,	"weight": 300	},
+			{ "sid" : "pandora_box",	"variant": 26,	"weight": 400	},
+			{ "sid" : "pandora_box",	"variant": 27,	"weight": 500	}
+		]
+	}
+]

@@ -1,0 +1,164 @@
+{
+	"metaObjects":
+	[
+		{
+			"sid": "random_item_common",
+			"value": 3500,
+			"type": "RandomItem",
+			"args": ["Common"]
+		},
+		{
+			"sid": "random_item_rare",
+			"value": 7000,
+			"type": "RandomItem",
+			"args": ["Rare"]
+		},
+		{
+			"sid": "random_item_epic",
+			"value": 14000,
+			"type": "RandomItem",
+			"args": ["Epic"]
+		},
+		{
+			"sid": "random_item_legendary",
+			"value": 28000,
+			"type": "RandomItem",
+			"args": ["Legendary"]
+		},
+
+		{
+			"sid": "random_hire_1",
+			"value": 4000,
+			"guardValue": 4000,
+			"type": "RandomHire",
+			"args": ["1"]
+		},
+		{
+			"sid": "random_hire_2",
+			"value": 6000,
+			"guardValue": 4500,
+			"type": "RandomHire",
+			"args": ["2"]
+		},
+		{
+			"sid": "random_hire_3",
+			"value": 8000,
+			"guardValue": 5000,
+			"type": "RandomHire",
+			"args": ["3"]
+		},
+		{
+			"sid": "random_hire_4",
+			"value": 10000,
+			"guardValue": 6000,
+			"type": "RandomHire",
+			"args": ["4"]
+		},
+		{
+			"sid": "random_hire_5",
+			"value": 12000,
+			"guardValue": 8000,
+			"type": "RandomHire",
+			"args": ["5"]
+		},
+		{
+			"sid": "random_hire_6",
+			"value": 14000,
+			"guardValue": 11000,
+			"type": "RandomHire",
+			"args": ["6"]
+		},
+		{
+			"sid": "random_hire_7",
+			"value": 16000,
+			"guardValue": 15000,
+			"type": "RandomHire",
+			"args": ["7"]
+		}
+	],
+
+	"portals": [
+		"portal_1",
+		"portal_2",
+		"portal_3",
+		"portal_4",
+		"portal_5",
+		"portal_1_2",
+		"portal_2_2",
+		"portal_3_2",
+		"portal_4_2",
+		"portal_5_2",
+		"portal_1_3",
+		"portal_2_3",
+		"portal_3_3",
+		"portal_4_3",
+		"portal_5_3"
+	],
+
+	"waterForBiome": [
+		{
+			"key": "Grass",
+			"val": "water grass"
+		},
+		{
+			"key": "Sand",
+			"val": "water sand"
+		},
+		{
+			"key": "Deathland",
+			"val": "water death"
+		},
+		{
+			"key": "Snow",
+			"val": "water snow"
+		},
+		{
+			"key": "Autumn",
+			"val": "water fallen"
+		},
+		{
+			"key": "Lava",
+			"val": "lava"
+		},
+		{
+			"key": "Dirt",
+			"val": "water dirt"
+		}
+	],
+
+	"resourceByMine": [
+		{
+			"key": "mine_gold",
+			"val": "resource_gold"
+		},
+		{
+			"key": "mine_wood",
+			"val": "resource_wood"
+		},
+
+		{
+			"key": "mine_ore",
+			"val": "resource_ore"
+		},
+
+		{
+			"key": "mine_crystals",
+			"val": "resource_crystals"
+		},
+
+		{
+			"key": "mine_mercury",
+			"val": "resource_mercury"
+		},
+
+		{
+			"key": "mine_gemstones",
+			"val": "resource_gemstones"
+		},
+
+		{
+			"key": "alchemy_lab",
+			"val": "resource_dust"
+		}
+	]
+}

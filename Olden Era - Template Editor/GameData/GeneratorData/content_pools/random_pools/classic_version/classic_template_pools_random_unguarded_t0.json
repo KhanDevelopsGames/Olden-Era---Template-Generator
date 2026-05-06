@@ -1,0 +1,369 @@
+[
+	{
+		"name": "classic_template_pool_random_unguarded_t0_base",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999 ], "weights": [ 1, 1, 1, 1, 1 ] },
+
+		"groups":
+		[
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_random_items" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_pandora_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_enchanted_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_mythic_scroll_box" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_basic_storage" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_magic_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_magic_tier_2" ] },
+			{ 	"weight": 25,	"includeLists":	[ "basic_content_list_building_hero_buff_tier_1" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_uncommon_interact" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_epic_interact" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_2" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_3" ] },
+
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_1" ] },
+			{ 	"weight": 75,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2" ] },
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_3" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ] },
+
+			{ 	"weight": 20,	"includeLists": [ "basic_content_list_building_random_hires" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ] },
+			{ 	"weight": 10,	"includeLists": [ "basic_content_list_building_guarded_units_banks_only_biome_restriction" ] }
+		],
+		"bans": [  ]
+	},
+
+	{
+		"name": "classic_template_pool_random_unguarded_t0_item",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999 ], "weights": [ 1, 1, 1, 1, 1 ] },
+
+		"groups":
+		[
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_random_items" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_pandora_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_enchanted_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_mythic_scroll_box" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_basic_storage" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_magic_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_magic_tier_2" ] },
+			{ 	"weight": 25,	"includeLists":	[ "basic_content_list_building_hero_buff_tier_1" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_uncommon_interact" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_epic_interact" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_2" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_3" ] },
+
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_1" ] },
+			{ 	"weight": 75,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2" ] },
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_3" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ] },
+
+			{ 	"weight": 20,	"includeLists": [ "basic_content_list_building_random_hires" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ] },
+			{ 	"weight": 10,	"includeLists": [ "basic_content_list_building_guarded_units_banks_only_biome_restriction" ] }
+		],
+		"bans": [  ]
+	},
+
+	{
+		"name": "classic_template_pool_random_unguarded_t0_pandora",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999 ], "weights": [ 1, 1, 1, 1, 1 ] },
+
+		"groups":
+		[
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_random_items" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_pandora_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_enchanted_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_mythic_scroll_box" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_basic_storage" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_magic_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_magic_tier_2" ] },
+			{ 	"weight": 25,	"includeLists":	[ "basic_content_list_building_hero_buff_tier_1" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_uncommon_interact" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_epic_interact" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_2" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_3" ] },
+
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_1" ] },
+			{ 	"weight": 75,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2" ] },
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_3" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ] },
+
+			{ 	"weight": 20,	"includeLists": [ "basic_content_list_building_random_hires" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ] },
+			{ 	"weight": 10,	"includeLists": [ "basic_content_list_building_guarded_units_banks_only_biome_restriction" ] }
+		],
+		"bans": [  ]
+	},
+
+	{
+		"name": "classic_template_pool_random_unguarded_t0_hire",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999 ], "weights": [ 1, 1, 1, 1, 1 ] },
+
+		"groups":
+		[
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_random_items" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_pandora_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_enchanted_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_mythic_scroll_box" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_basic_storage" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_magic_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_magic_tier_2" ] },
+			{ 	"weight": 25,	"includeLists":	[ "basic_content_list_building_hero_buff_tier_1" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_uncommon_interact" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_epic_interact" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_2" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_3" ] },
+
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_1" ] },
+			{ 	"weight": 75,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2" ] },
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_3" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ] },
+
+			{ 	"weight": 100,	"includeLists": [ "basic_content_list_building_random_hires" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ] },
+			{ 	"weight": 10,	"includeLists": [ "basic_content_list_building_guarded_units_banks_only_biome_restriction" ] }
+		],
+		"bans": [  ]
+	},
+
+	{
+		"name": "classic_template_pool_random_unguarded_t0_unit_bank",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999 ], "weights": [ 1, 1, 1, 1, 1 ] },
+
+		"groups":
+		[
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_random_items" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_pandora_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_enchanted_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_mythic_scroll_box" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_basic_storage" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_magic_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_magic_tier_2" ] },
+			{ 	"weight": 25,	"includeLists":	[ "basic_content_list_building_hero_buff_tier_1" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_uncommon_interact" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_epic_interact" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_2" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_3" ] },
+
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_1" ] },
+			{ 	"weight": 75,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2" ] },
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_3" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ] },
+
+			{ 	"weight": 20,	"includeLists": [ "basic_content_list_building_random_hires" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ] },
+			{ 	"weight": 50,	"includeLists": [ "basic_content_list_building_guarded_units_banks_only_biome_restriction" ] }
+		],
+		"bans": [  ]
+	},
+
+	{
+		"name": "classic_template_pool_random_unguarded_t0_res_bank",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999 ], "weights": [ 1, 1, 1, 1, 1 ] },
+
+		"groups":
+		[
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_random_items" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_pandora_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_enchanted_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_mythic_scroll_box" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_basic_storage" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_magic_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_magic_tier_2" ] },
+			{ 	"weight": 25,	"includeLists":	[ "basic_content_list_building_hero_buff_tier_1" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_uncommon_interact" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_epic_interact" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_2" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_3" ] },
+
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_2" ] },
+
+			{ 	"weight": 500,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_1" ] },
+			{ 	"weight": 375,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2" ] },
+			{ 	"weight": 250,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_3" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ] },
+
+			{ 	"weight": 20,	"includeLists": [ "basic_content_list_building_random_hires" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ] },
+			{ 	"weight": 10,	"includeLists": [ "basic_content_list_building_guarded_units_banks_only_biome_restriction" ] }
+		],
+		"bans": [  ]
+	},
+
+	{
+		"name": "classic_template_pool_random_unguarded_t0_stat",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999 ], "weights": [ 1, 1, 1, 1, 1 ] },
+
+		"groups":
+		[
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_random_items" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_pandora_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_enchanted_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_mythic_scroll_box" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_basic_storage" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_magic_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_magic_tier_2" ] },
+			{ 	"weight": 25,	"includeLists":	[ "basic_content_list_building_hero_buff_tier_1" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_uncommon_interact" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_epic_interact" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_2" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_3" ] },
+
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_1" ] },
+			{ 	"weight": 75,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2" ] },
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_3" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ] },
+
+			{ 	"weight": 20,	"includeLists": [ "basic_content_list_building_random_hires" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ] },
+			{ 	"weight": 10,	"includeLists": [ "basic_content_list_building_guarded_units_banks_only_biome_restriction" ] }
+		],
+		"bans": [  ]
+	},
+
+	{
+		"name": "classic_template_pool_random_unguarded_t0_magic",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999 ], "weights": [ 1, 1, 1, 1, 1 ] },
+
+		"groups":
+		[
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_random_items" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_pandora_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_enchanted_scroll_box" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_pickup_mythic_scroll_box" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_basic_storage" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_hero_exp_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_magic_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_magic_tier_2" ] },
+			{ 	"weight": 25,	"includeLists":	[ "basic_content_list_building_hero_buff_tier_1" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_uncommon_interact" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_epic_interact" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_2" ] },
+			{ 	"weight": 0,	"includeLists": [ "basic_content_list_building_hero_stats_and_skills_tier_3" ] },
+
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_1" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_resource_banks_tier_2" ] },
+
+			{ 	"weight": 100,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_1" ] },
+			{ 	"weight": 75,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2" ] },
+			{ 	"weight": 50,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_3" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ] },
+
+			{ 	"weight": 20,	"includeLists": [ "basic_content_list_building_random_hires" ] },
+
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks" ] },
+			{ 	"weight": 0,	"includeLists":	[ "basic_content_list_building_guarded_units_banks_no_biome_restriction" ] },
+			{ 	"weight": 10,	"includeLists": [ "basic_content_list_building_guarded_units_banks_only_biome_restriction" ] }
+		],
+		"bans": [  ]
+	}
+]

@@ -1,0 +1,67 @@
+[
+	{
+		"name": "content_pool_default_guarded",
+
+		"groups":
+		[
+			{ 	
+				"weight": 1,
+				"includeLists": 	
+				[ 
+					"content_list_pickup_random_items",
+					"content_list_basic_storage",
+					"content_list_basic_buildings",
+					"content_list_building_common_interact",
+					"content_list_building_uncommon_interact",
+					"content_list_building_common_hero_stats",
+					"content_list_building_common_hero_buffs",
+					"content_list_building_uncommon_hero_stats",
+					"content_list_building_random_hires",
+					"content_list_building_epic_guarded_resource_banks"
+				]
+			}
+		],
+		"bans": [ ]
+	},
+	{
+		"name": "content_pool_default_unguarded",
+
+		"groups":
+		[
+			{ 	
+				"weight": 1,
+				"includeLists": 	
+				[ 
+					"content_list_pickup_random_items",
+					"content_list_basic_storage",
+					"content_list_basic_buildings",
+					"content_list_building_common_interact",
+					"content_list_building_uncommon_interact",
+					"content_list_building_common_hero_stats",
+					"content_list_building_common_hero_buffs",
+					"content_list_building_uncommon_hero_stats",
+					"content_list_building_random_hires",
+					"content_list_building_epic_guarded_resource_banks"
+				]
+			}
+		],
+		"bans": [ ]
+	},
+	{
+		"name": "content_pool_default_resources",
+
+		"groups":
+		[
+			{ 	
+				"weight": 1,
+				"includeLists": 	
+				[ 
+					"content_list_basic_resources",
+					"content_list_rare_resources",
+					"content_list_special_resources"
+				]
+			}
+		],
+		"bans": [ ]
+	}
+]

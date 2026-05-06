@@ -1,0 +1,497 @@
+[
+	{
+		"name": "basic_content_list_basic_resources",
+		"content": 
+		[
+			{ "sid": "resource_gold",			"weight": 250	},
+			{ "sid": "resource_wood",			"weight": 100	},
+			{ "sid": "resource_ore",			"weight": 100	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_rare_resources",
+		"content": 
+		[
+			{ "sid": "resource_crystals",		"weight": 50	},
+			{ "sid": "resource_mercury",		"weight": 50	},
+			{ "sid": "resource_gemstones",		"weight": 50	},
+
+			{ "sid": "resource_gemstones",		"weight": 100, 	"biome": "Grass"		},
+			{ "sid": "resource_mercury",		"weight": 100, 	"biome": "Deathland"	},
+			{ "sid": "resource_gemstones",		"weight": 100, 	"biome": "Dirt"			},
+			{ "sid": "resource_crystals",		"weight": 100, 	"biome": "Autumn"		},
+			{ "sid": "resource_mercury",		"weight": 100, 	"biome": "Snow"			},
+			{ "sid": "resource_crystals",		"weight": 100, 	"biome": "Lava"			}
+		]
+	},
+	
+	{
+		"name": "basic_content_list_special_resources",
+		"content": 
+		[
+			{ "sid": "resource_dust",			"weight": 25	},
+			{ "sid": "chest",					"weight": 250	},
+			{ "sid": "camp_fire",				"weight": 100	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_basic_mines",
+		"content": 
+		[
+			{ "sid": "mine_gold",				"weight": 100	},
+			{ "sid": "mine_wood",				"weight": 100	},
+			{ "sid": "mine_ore",				"weight": 100	}
+		]
+	},
+	
+	{
+		"name": "basic_content_list_rare_mines",
+		"content": 
+		[
+			{ "sid": "mine_gemstones",			"weight": 100	},
+			{ "sid": "mine_crystals",			"weight": 100	},
+			{ "sid": "mine_mercury",			"weight": 100	}
+		]
+	},
+	
+	{
+		"name": "basic_content_list_rare_mines_by_biome",
+		"content": 
+		[
+			{ "sid": "mine_gemstones",			"weight": 100, 	"biome": "Grass"		},
+			{ "sid": "mine_gemstones",			"weight": 100, 	"biome": "Dirt"			},
+			{ "sid": "mine_crystals",			"weight": 100, 	"biome": "Autumn"		},
+			{ "sid": "mine_crystals",			"weight": 100, 	"biome": "Lava"			},
+			{ "sid": "mine_mercury",			"weight": 100, 	"biome": "Deathland"	},
+			{ "sid": "mine_mercury",			"weight": 100, 	"biome": "Snow"			}
+		]
+	},
+	
+	{
+		"name": "basic_content_list_special_mines",
+		"content": 
+		[
+			{ "sid": "alchemy_lab",			"weight": 100	}
+		]
+	},
+
+
+
+	{
+		"name": "basic_content_list_basic_storage",
+		"content": 
+		[
+			{ "sid": "storage_wood",			"weight": 100	},
+			{ "sid": "storage_ore",				"weight": 100	},
+			{ "sid": "storage_gold",			"weight": 100	},
+			{ "sid": "storage_gemstones",		"weight": 75	},
+			{ "sid": "storage_crystals",		"weight": 75	},
+			{ "sid": "storage_mercury",			"weight": 75	},
+			{ "sid": "storage_dust",			"weight": 50	}
+		]
+	},
+
+
+
+	{
+		"name": "basic_content_list_non_content",
+		"content": 
+		[
+			{ "sid": "mirage",					"weight": 0		},
+			{ "sid": "eternal_dragon",			"weight": 0		},
+
+			{ "sid": "insaras_eye",				"weight": 0		},
+			{ "sid": "remote_foothold",			"weight": 0		},
+			{ "sid": "abandoned_outpost",		"weight": 0		},
+
+			{ "sid": "market",					"weight": 100	},
+			{ "sid": "forge",					"weight": 100	},
+			{ "sid": "tavern",					"weight": 100	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_vision_buildings_tier_1",
+		"content": 
+		[
+			{ "sid": "flattering_mirror",		"weight": 0	},
+			{ "sid": "watchtower",				"weight": 100	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_vision_buildings_tier_2",
+		"content": 
+		[
+			{ "sid": "wind_rose",				"weight": 100	}
+		]
+	},
+
+
+
+
+	{
+		"name": "basic_content_list_pickup_random_items",
+		"content":
+		[
+			{ "sid" : "random_item_common",		"weight": 100	},
+			{ "sid" : "random_item_rare",		"weight": 100	},
+			{ "sid" : "random_item_epic",		"weight": 100	},
+			{ "sid" : "random_item_legendary",	"weight": 100	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_pickup_prison",
+		"content": 
+		[
+			{ "sid": "prison",					"weight": 100	}
+		]
+	},
+	 
+	{
+		"name": "basic_content_list_pickup_pandora_box",
+		"content":
+		[
+			{ "sid" : "pandora_box",			"weight": 100	}
+		]
+	},	
+	 
+	{
+		"name": "basic_content_list_pickup_scroll_box",
+		"content":
+		[
+			{ "sid" : "scroll_box",				"weight": 100	}
+		]
+	},	
+	 
+	{
+		"name": "basic_content_list_pickup_enchanted_scroll_box",
+		"content":
+		[
+			{ "sid" : "enchanted_scroll_box",	"weight": 100	}
+		]
+	},
+	 
+	{
+		"name": "basic_content_list_pickup_mythic_scroll_box",
+		"content":
+		[
+			{ "sid" : "mythic_scroll_box",	"weight": 100	}
+		]
+	},
+
+
+
+
+
+	{
+		"name": "basic_content_list_building_hero_exp_tier_1",
+		"content": 
+		[
+			{ "sid": "learning_stone",			"weight": 100	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_building_hero_exp_tier_2",
+		"content": 
+		[
+			{ "sid": "lost_library",			"weight": 100	},
+			{ "sid": "tree_of_knowledge",		"weight": 75	}
+		]
+	},
+
+
+
+
+
+	{
+		"name": "basic_content_list_building_magic_tier_1",
+		"content": 
+		[
+			{ "sid": "mystical_tower",			"weight": 75	},
+
+			{ "sid": "celestial_sphere",		"weight": 25	},
+
+			{ "sid": "altar_of_magic_1",		"weight": 100	},
+			{ "sid": "altar_of_magic_2",		"weight": 100	},
+			{ "sid": "altar_of_magic_3",		"weight": 100	},
+			{ "sid": "altar_of_magic_4",		"weight": 100	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_building_magic_tier_2",
+		"content": 
+		[
+			{ "sid": "magic_amplifier_1",			"weight": 100	},
+			{ "sid": "magic_amplifier_2",			"weight": 100	},
+			{ "sid": "magic_amplifier_3",			"weight": 100	},
+			{ "sid": "magic_amplifier_4",			"weight": 100	}
+		]
+	},	
+
+
+
+
+	{
+		"name": "basic_content_list_building_hero_buff_tier_1",
+		"content": 
+		[
+			{ "sid": "mana_well",				"weight": 150	},
+			{ "sid": "fountain",				"weight": 100	},
+			{ "sid": "fountain_2",				"weight": 100	},
+			{ "sid": "stables",					"weight": 150	},
+			{ "sid": "tear_of_truth",			"weight": 25	},
+
+			{ "sid": "beer_fountain",			"weight": 100	},
+			{ "sid": "quixs_path",				"weight": 100	},
+			{ "sid": "pile_of_books",			"weight": 100	},
+			{ "sid": "mysterious_stone",		"weight": 100	},
+			{ "sid": "crystal_trail",			"weight": 25	}
+		]
+	},
+
+
+
+
+
+	{
+		"name": "basic_content_list_building_uncommon_interact",
+		"content": 
+		[
+			{ "sid": "mercenary_guild",			"weight": 100	},
+			{ "sid": "sacrificial_shrine",		"weight": 100	},
+			{ "sid": "chimerologist",			"weight": 100	},
+			{ "sid": "arena",					"weight": 50	}
+		]
+	},
+
+
+
+
+
+	{
+		"name": "basic_content_list_building_epic_interact",
+		"content": 
+		[
+			{ "sid": "tree_of_abundance",		"weight": 100	},
+			{ "sid": "eternal_dragon",			"weight": 100	},			
+			{ "sid": "fickle_shrine",			"weight": 100	}
+		]
+	},
+
+
+
+
+
+
+	{
+		"name": "basic_content_list_building_hero_stats_and_skills_tier_1",
+		"content": 
+		[
+			{ "sid": "stinging_sword",			"weight": 250	},
+			{ "sid": "armory_automaton",		"weight": 250	},
+			{ "sid": "magic_wheel",				"weight": 250	},
+			{ "sid": "knowledge_garden",		"weight": 250	},
+
+			{ "sid": "wise_owl",				"weight": 200	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_building_hero_stats_and_skills_tier_2",
+		"content": 
+		[
+			{ "sid": "fort",					"weight": 100	},
+			{ "sid": "orb_observatory",			"weight": 100	},
+
+			{ "sid": "university",				"weight": 100	},
+			{ "sid": "circus",					"weight": 50	},
+			{ "sid": "infernal_cirque",			"weight": 50	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_building_hero_stats_and_skills_tier_3",
+		"content": 
+		[
+			{ "sid": "maze",					"weight": 200	},
+			{ "sid": "trial_scales",			"weight": 150	},			
+			{ "sid": "college_of_wonder",		"weight": 150	}
+		]
+	},
+
+
+
+
+	{
+		"name": "basic_content_list_building_resource_banks_tier_1",
+		"content": 
+		[
+			{ "sid": "gardener",				"weight": 75	},
+			{ "sid": "windmill",				"weight": 100	},
+			{ "sid": "village",					"weight": 100	},
+			{ "sid": "gingerbread_house",		"weight": 75	},
+			{ "sid": "peasant_cart",			"weight": 50	},
+			{ "sid": "abandoned_corpse",		"weight": 50	},
+			{ "sid": "crow_nest",				"weight": 25	},
+			{ "sid": "goblin_cache",			"weight": 25	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_building_resource_banks_tier_2",
+		"content": 
+		[
+			{ "sid": "monty_hall",				"weight": 100	},
+			{ "sid": "heros_crypt",				"weight": 100	}
+		]
+	},
+
+
+	
+
+
+	{
+		"name": "basic_content_list_building_guarded_resource_banks_tier_1",
+		"content": 
+		[			
+			{ "sid": "black_tower",				"weight": 100	},
+			{ "sid": "abandoned_mansion",		"weight": 100	},
+			{ "sid": "mereas_shrine",			"weight": 100	},
+			{ "sid": "shady_den",				"weight": 100	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_building_guarded_resource_banks_tier_2",
+		"content": 
+		[			
+			{ "sid": "raiders_camp",			"weight": 100	},
+			{ "sid": "overgrown_grave",			"weight": 100	},
+			{ "sid": "legions_memorial",		"weight": 100	},
+			{ "sid": "alvars_eye",				"weight": 100	},
+			{ "sid": "cursed_old_house",		"weight": 125	},
+			{ "sid": "abnormal_structure",		"weight": 125	},
+			{ "sid": "prismatic_lair",			"weight": 100	},
+			{ "sid": "uncanny_rite",			"weight": 150	},
+			{ "sid": "circle_of_life",			"weight": 150	},
+			{ "sid": "iridescent_abbey",		"weight": 150	},
+
+			{ "sid": "iridescent_abbey",		"weight": 500, 		"biome": "Grass"		},
+			{ "sid": "iridescent_abbey",		"weight": 500, 		"biome": "Dirt"			},
+			{ "sid": "uncanny_rite",			"weight": 500, 		"biome": "Deathland"	},
+			{ "sid": "uncanny_rite",			"weight": 500, 		"biome": "Snow"			},
+			{ "sid": "circle_of_life",			"weight": 500, 		"biome": "Autumn"		},
+			{ "sid": "circle_of_life",			"weight": 500, 		"biome": "Lava"			},
+			{ "sid": "legions_memorial",		"weight": 500, 		"biome": "Sand"			},
+			{ "sid": "cursed_old_house",		"weight": 500, 		"biome": "Sand"			},
+			{ "sid": "abnormal_structure",		"weight": 500, 		"biome": "Sand"			},
+			{ "sid": "prismatic_lair",			"weight": 500, 		"biome": "Sand"			},
+			{ "sid": "alvars_eye",				"weight": 500, 		"biome": "Sand"			}
+		]
+	},
+
+	{
+		"name": "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction",
+		"content": 
+		[			
+			{ "sid": "raiders_camp",			"weight": 100	},
+			{ "sid": "overgrown_grave",			"weight": 100	},
+			{ "sid": "legions_memorial",		"weight": 100	},
+			{ "sid": "alvars_eye",				"weight": 100	},
+			{ "sid": "cursed_old_house",		"weight": 100	},
+			{ "sid": "abnormal_structure",		"weight": 100	},
+			{ "sid": "prismatic_lair",			"weight": 100	},
+			{ "sid": "uncanny_rite",			"weight": 150	},
+			{ "sid": "circle_of_life",			"weight": 150	},
+			{ "sid": "iridescent_abbey",		"weight": 150	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_building_guarded_resource_banks_tier_3",
+		"content": 
+		[			
+			{ "sid": "troglodyte_throne",		"weight": 100	},
+			{ "sid": "twilight_bloom",			"weight": 100	},
+			{ "sid": "unstable_ruins",			"weight": 100	},
+			{ "sid": "dragon_utopia",			"weight": 100	},
+			{ "sid": "research_laboratory",		"weight": 100	}			
+		]
+	},
+
+
+
+
+
+	{
+		"name": "basic_content_list_building_random_hires",
+		"content":
+		[
+			{ "sid": "random_hire_1",			"weight": 100	},
+			{ "sid": "random_hire_2",			"weight": 100	},
+			{ "sid": "random_hire_3",			"weight": 100	},
+			{ "sid": "random_hire_4",			"weight": 100	},
+			{ "sid": "random_hire_5",			"weight": 100	},
+			{ "sid": "random_hire_6",			"weight": 100	},
+			{ "sid": "random_hire_7",			"weight": 100	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_building_guarded_units_banks",
+		"content": 
+		[			
+			{ "sid": "jousting_range",			"weight": 10	},
+			{ "sid": "unforgotten_grave",		"weight": 10	},
+			{ "sid": "petrified_memorial",		"weight": 10	},
+			{ "sid": "ritual_pyre",				"weight": 10	},
+			{ "sid": "boreal_call",				"weight": 10	},
+			{ "sid": "the_gorge",				"weight": 10	},
+
+			{ "sid": "point_of_balance",		"weight": 400	},
+
+			{ "sid": "jousting_range",			"weight": 1000, 	"biome": "Grass"		},
+			{ "sid": "unforgotten_grave",		"weight": 1000, 	"biome": "Deathland"	},
+			{ "sid": "petrified_memorial",		"weight": 1000, 	"biome": "Dirt"			},
+			{ "sid": "ritual_pyre",				"weight": 1000, 	"biome": "Autumn"		},
+			{ "sid": "boreal_call",				"weight": 1000, 	"biome": "Snow"			},
+			{ "sid": "the_gorge",				"weight": 1000, 	"biome": "Lava"			},
+			{ "sid": "point_of_balance",		"weight": 1000, 	"biome": "Sand"			}
+		]
+	},
+
+	{
+		"name": "basic_content_list_building_guarded_units_banks_no_biome_restriction",
+		"content": 
+		[			
+			{ "sid": "jousting_range",			"weight": 100	},
+			{ "sid": "unforgotten_grave",		"weight": 100	},
+			{ "sid": "petrified_memorial",		"weight": 100	},
+			{ "sid": "ritual_pyre",				"weight": 100	},
+			{ "sid": "boreal_call",				"weight": 100	},
+			{ "sid": "the_gorge",				"weight": 100	},
+
+			{ "sid": "point_of_balance",		"weight": 150	}
+		]
+	},
+
+	{
+		"name": "basic_content_list_building_guarded_units_banks_only_biome_restriction",
+		"content": 
+		[			
+			{ "sid": "jousting_range",			"weight": 1000, 	"biome": "Grass"		},
+			{ "sid": "unforgotten_grave",		"weight": 1000, 	"biome": "Deathland"	},
+			{ "sid": "petrified_memorial",		"weight": 1000, 	"biome": "Dirt"			},
+			{ "sid": "ritual_pyre",				"weight": 1000, 	"biome": "Autumn"		},
+			{ "sid": "boreal_call",				"weight": 1000, 	"biome": "Snow"			},
+			{ "sid": "the_gorge",				"weight": 1000, 	"biome": "Lava"			},
+			{ "sid": "point_of_balance",		"weight": 1000, 	"biome": "Sand"			}
+		]
+	}
+]

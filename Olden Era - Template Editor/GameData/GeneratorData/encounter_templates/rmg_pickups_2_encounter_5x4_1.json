@@ -1,0 +1,95 @@
+{
+    "name": "rmg_pickups_2_encounter_5x4_1",
+    "encounterType": 0,
+    "relativeFrequency": 48.0,
+    "allowMirrorX": true,
+    "allowMirrorY": true,
+    "width": 5,
+    "height": 4,
+    "roadTargetType": 1,
+    "roadTarget": {
+        "x": 2,
+        "y": 2
+    },
+    "guards": [
+        {
+            "position": {
+                "x": 1,
+                "y": 2
+            }
+        }
+    ],
+    "buildings": [],
+    "pickups": [
+        {
+            "position": {
+                "x": 3,
+                "y": 2
+            },
+            "isOptional": false,
+            "canBeHole": false
+        },
+        {
+            "position": {
+                "x": 3,
+                "y": 1
+            },
+            "isOptional": false,
+            "canBeHole": false
+        }
+    ],
+    "entrances": [
+        {
+            "x": -1,
+            "y": 0
+        },
+        {
+            "x": -1,
+            "y": 1
+        },
+        {
+            "x": -1,
+            "y": 2
+        },
+        {
+            "x": -1,
+            "y": 3
+        },
+        {
+            "x": 0,
+            "y": 4
+        }
+    ],
+    "holeTiles": [
+        {
+            "x": 2,
+            "y": 0
+        },
+        {
+            "x": 3,
+            "y": 3
+        }
+    ],
+    "tileContents": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        2,
+        1,
+        5,
+        1,
+        0,
+        4,
+        0,
+        5,
+        1,
+        0,
+        0,
+        1,
+        1,
+        1
+    ]
+}

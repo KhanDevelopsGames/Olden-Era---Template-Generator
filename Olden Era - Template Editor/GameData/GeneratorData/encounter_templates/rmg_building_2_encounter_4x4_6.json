@@ -1,0 +1,80 @@
+{
+    "name": "rmg_building_2_encounter_4x4_6",
+    "encounterType": 0,
+    "relativeFrequency": 32.0,
+    "allowMirrorX": true,
+    "allowMirrorY": false,
+    "width": 4,
+    "height": 4,
+    "roadTargetType": 1,
+    "roadTarget": {
+        "x": 1,
+        "y": 1
+    },
+    "guards": [
+        {
+            "position": {
+                "x": 1,
+                "y": 1
+            }
+        }
+    ],
+    "buildings": [
+        {
+            "width": 2,
+            "height": 2,
+            "interaction": 1,
+            "position": {
+                "x": 2,
+                "y": 1
+            }
+        }
+    ],
+    "pickups": [],
+    "entrances": [
+        {
+            "x": -1,
+            "y": 0
+        },
+        {
+            "x": 0,
+            "y": -1
+        },
+        {
+            "x": 1,
+            "y": -1
+        },
+        {
+            "x": 2,
+            "y": -1
+        }
+    ],
+    "holeTiles": [
+        {
+            "x": 3,
+            "y": 0
+        },
+        {
+            "x": 1,
+            "y": 3
+        }
+    ],
+    "tileContents": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        4,
+        3,
+        3,
+        1,
+        1,
+        3,
+        3,
+        2,
+        1,
+        1,
+        1
+    ]
+}

@@ -1,0 +1,403 @@
+[
+	{
+		"name": "content_pool_resources_start_zone_jebus_cross",
+
+		"groups":
+		[
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_basic_resources", "content_list_rare_resources", "content_list_special_resources" ]
+			},
+			{ 	"weight": 250,
+				"includeLists": 	[ "content_list_pickup_scroll_box_tier_1" ]
+			},
+			{ 	"weight": 250,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			}
+		],
+		"bans": [ ]
+	},
+
+	{
+		"name": "content_pool_resources_treasure_zone_jebus_cross",
+		"groups":
+		[
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_basic_resources", "content_list_rare_resources", "content_list_special_resources" ],
+				"content":			[ { "sid" : "resource_dust", "weight": 100 }, { "sid" : "resource_crystals", "weight": 200 }, { "sid" : "resource_mercury", "weight": 200 }, { "sid" : "resource_gemstones", "weight": 200 } ]
+			},
+			{ 	"weight": 500,
+				"includeLists": 	[ "content_list_pickup_scroll_box_tier_1", "content_list_pickup_scroll_box_tier_2" ]
+			},
+			{ 	"weight": 1000,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			}
+		],
+		"bans": [ ]
+	},
+
+	{
+		"name": "content_pool_guarded_objects_start_zone_jebus_cross",
+		"valueDistribution":
+		{
+			"priceBounds": [ 3999, 6999, 12999 ],
+			"weights": [ 8, 12, 10, 9 ]
+		},
+		"groups":
+		[
+			{ 	"weight": 50000,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 80 }, { "sid" : "random_item_epic", "weight": 60 }, { "sid" : "random_item_legendary", "weight": 40 } ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_pickup_prison" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists":		[ "content_list_pickup_pandora_box" ]
+			},
+
+			{ 	"weight": 8000,
+				"includeLists": 	[ "content_list_pickup_scroll_box" ]
+			},
+			{ 	"weight": 6000,
+				"includeLists": 	[ "content_list_pickup_enchanted_scroll_box" ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_basic_storage" ]
+			},
+
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_common_interact" ],
+				"content": 			[ { "sid" : "fountain", "weight": 0 }, { "sid" : "fountain_2", "weight": 0 } ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_uncommon_interact" ]
+			},
+
+			{ 	"weight": 1000,
+				"includeLists": 	[ "content_list_vision_buildings" ],
+				"content": 			[ { "sid" : "watchtower", "weight": 25 }, { "sid" : "wind_rose", "weight": 0 } ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+
+			{ 	"weight": 40000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_stats" ],
+				"content": 			[ { "sid" : "fort", "weight": 200 }, { "sid" : "orb_observatory", "weight": 200 }, { "sid" : "college_of_wonder", "weight": 250 } ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_common_hero_buffs" ],
+				"content": 			[ { "sid" : "stables", "weight": 0 }, { "sid" : "quixs_path", "weight": 0 } ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_banks" ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "content_list_building_commons_magic" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_building_uncommons_magic" ]
+			},
+
+
+			{ 	"weight": 100000,
+				"includeLists": 	[ "content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 250 }, { "sid" : "random_hire_2", "weight": 250 }, { "sid" : "random_hire_3", "weight": 225 }, { "sid" : "random_hire_4", "weight": 225 }, { "sid" : "random_hire_5", "weight": 200 }, { "sid" : "random_hire_6", "weight": 200 }, { "sid" : "random_hire_7", "weight": 175 } ]
+			},
+
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_common_resource_banks" ]
+			},
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_uncommon_resource_banks" ]
+			},
+
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_common_guarded_resource_banks" ]
+			},
+			{ 	"weight": 40000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_resource_banks" ]
+			},
+			{ 	"weight": 50000,
+				"includeLists": 	[ "content_list_building_epic_guarded_resource_banks" ]
+			},
+
+			{ 	"weight": 50000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_units_banks" ]
+			}
+		],
+		"bans": [  ]
+	},
+
+	{
+		"name": "content_pool_unguarded_objects_start_zone_jebus_cross",
+		"valueDistribution":
+		{
+			"priceBounds": [ 3999, 6999, 12999 ],
+			"weights": [ 3, 1, 0, 0 ]
+		},
+
+		"groups":
+		[
+			{ 	"weight": 12500,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_pickup_scroll_box" ]
+			},
+
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_common_interact" ]
+			},
+
+			{ 	"weight": 2500,
+				"includeLists": 	[ "content_list_building_uncommon_interact" ],
+				"content": 			[ { "sid" : "arena", "weight": 0 }, { "sid" : "mystical_tower", "weight": 0 } ]
+			},
+
+			{ 	"weight": 1000,
+				"includeLists": 	[ "content_list_vision_buildings" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_common_hero_buffs" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_banks" ]
+			},
+
+
+			{ 	"weight": 60000,
+				"includeLists": 	[ "content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 75 }, { "sid" : "random_hire_2", "weight": 100 }, { "sid" : "random_hire_3", "weight": 125 }, { "sid" : "random_hire_4", "weight": 150 }, { "sid" : "random_hire_5", "weight": 100 }, { "sid" : "random_hire_6", "weight": 75 }, { "sid" : "random_hire_7", "weight": 50 } ]
+			},
+
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_resource_banks" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_building_uncommon_resource_banks" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists":	 	[ "content_list_building_common_guarded_resource_banks" ]
+			},
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_resource_banks" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_building_epic_guarded_resource_banks" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_units_banks" ]
+			}
+		],
+		"bans": [ { "sid" : "wind_rose" }, { "sid" : "monty_hall", "variant": 1 }, { "sid" : "monty_hall", "variant": 2 }, { "sid" : "monty_hall", "variant": 3 } ]
+	},
+
+	{
+		"name": "content_pool_guarded_objects_treasure_zone_jebus_cross",
+		"valueDistribution":
+		{
+			"priceBounds": [ 3999, 6999, 12999 ],
+			"weights": [ 2, 3, 6, 12 ]
+		},
+
+		"groups":
+		[
+			{ 	"weight": 75000,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 40 }, { "sid" : "random_item_rare", "weight": 80 }, { "sid" : "random_item_epic", "weight": 120 }, { "sid" : "random_item_legendary", "weight": 160 } ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_pickup_prison" ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists":		[ "content_list_pickup_pandora_box" ]
+			},
+
+			{ 	"weight": 6000,
+				"includeLists": 	[ "content_list_pickup_scroll_box" ]
+			},
+			{ 	"weight": 8000,
+				"includeLists": 	[ "content_list_pickup_enchanted_scroll_box" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_basic_storage" ]
+			},
+
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_interact" ],
+				"content": 			[ { "sid" : "fountain", "weight": 0 }, { "sid" : "fountain_2", "weight": 0 } ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_uncommon_interact" ]
+			},
+
+			{ 	"weight": 2500,
+				"includeLists": 	[ "content_list_vision_buildings" ],
+				"content": 			[ { "sid" : "watchtower", "weight": 0 }, { "sid" : "wind_rose", "weight": 25 } ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+
+			{ 	"weight": 60000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_stats" ],
+				"content": 			[ { "sid" : "maze", "weight": 500 }, { "sid" : "college_of_wonder", "weight": 500 } ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_common_hero_buffs" ],
+				"content": 			[ { "sid" : "stables", "weight": 0 }, { "sid" : "quixs_path", "weight": 0 } ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_banks" ]
+			},
+
+			{ 	"weight": 75000,
+				"includeLists": 	[ "content_list_building_commons_magic" ]
+			},
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_uncommons_magic" ]
+			},
+
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 0 }, { "sid" : "random_hire_2", "weight": 0 }, { "sid" : "random_hire_3", "weight": 0 }, { "sid" : "random_hire_4", "weight": 0 }, { "sid" : "random_hire_5", "weight": 100 }, { "sid" : "random_hire_6", "weight": 125 }, { "sid" : "random_hire_7", "weight": 150 } ]
+			},
+
+
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_building_common_resource_banks" ]
+			},
+			{ 	"weight": 50000,
+				"includeLists": 	[ "content_list_building_uncommon_resource_banks" ]
+			},
+
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_building_common_guarded_resource_banks" ]
+			},
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_resource_banks" ]
+			},
+			{ 	"weight": 75000,
+				"includeLists": 	[ "content_list_building_epic_guarded_resource_banks" ]
+			},
+
+			{ 	"weight": 40000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_units_banks" ]
+			}
+		],
+		"bans": [ ]
+	},
+
+	{
+		"name": "content_pool_unguarded_objects_treasure_zone_jebus_cross",
+		"valueDistribution":
+		{
+			"priceBounds": [ 3999, 6999, 12999 ],
+			"weights": [ 2, 1, 0, 0 ]
+		},
+
+		"groups":
+		[
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 75 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_pickup_scroll_box" ]
+			},
+
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_interact" ]
+			},
+
+			{ 	"weight": 2500,
+				"includeLists": 	[ "content_list_building_uncommon_interact" ],
+				"content": 			[ { "sid" : "arena", "weight": 0 }, { "sid" : "mystical_tower", "weight": 0 } ]
+			},
+
+			{ 	"weight": 1000,
+				"includeLists": 	[ "content_list_vision_buildings" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_hero_buffs" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_building_uncommon_hero_banks" ]
+			},
+
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 0 }, { "sid" : "random_hire_2", "weight": 0 }, { "sid" : "random_hire_3", "weight": 75 }, { "sid" : "random_hire_4", "weight": 100 }, { "sid" : "random_hire_5", "weight": 125 }, { "sid" : "random_hire_6", "weight": 150 }, { "sid" : "random_hire_7", "weight": 175 } ]
+			},
+
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_resource_banks" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_uncommon_resource_banks" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_building_common_guarded_resource_banks" ]
+			},
+			{ 	"weight": 7500,
+				"includeLists":	 	[ "content_list_building_uncommon_guarded_resource_banks" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_epic_guarded_resource_banks" ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_units_banks" ]
+			}
+		],
+		"bans": [ { "sid" : "wind_rose" }, { "sid" : "monty_hall", "variant": 2 }, { "sid" : "monty_hall", "variant": 3 } ]
+	}
+]

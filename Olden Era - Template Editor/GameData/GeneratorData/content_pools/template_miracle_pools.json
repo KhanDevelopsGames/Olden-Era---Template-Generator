@@ -1,0 +1,265 @@
+[
+    {
+    "name": "content_pool_template_miracle_guarded_start_zone",
+
+    "valueDistribution": { "priceBounds": [ 2999, 4999, 7999 ], "weights": [ 3, 12, 8, 0 ] },
+
+    "groups":
+    [
+        { 	"weight": 10000,
+            "includeLists": 	[ "content_list_pickup_random_items" ],
+            "content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 80 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+        },
+
+        { 	"weight": 5000,
+            "includeLists": 	[ "content_list_pickup_prison" ]
+        },
+        { 	"weight": 7500,
+            "includeLists": 	[ "content_list_building_common_interact_no_imbalance" ]
+        },
+
+        { 	"weight": 10000,
+            "includeLists": 	[ "content_list_building_common_hero_stats" ]
+        },
+       
+        { 	"weight": 15000,
+            "includeLists": 	[ "content_list_building_random_hires" ],
+            "content": 			[ { "sid" : "random_hire_1", "weight": 200 }, { "sid" : "random_hire_2", "weight": 200 }, { "sid" : "random_hire_3", "weight": 125 }, { "sid" : "random_hire_4", "weight": 125 }, { "sid" : "random_hire_5", "weight": 100 }, { "sid" : "random_hire_6", "weight": 75 }, { "sid" : "random_hire_7", "weight": 50 } ]
+        },
+        { 	"weight":7500,
+            "includeLists": 	[ "content_list_building_common_hero_buffs" ]
+        },
+
+      
+
+        { 	"weight": 7500,
+            "includeLists": 	[ "content_list_building_commons_magic" ]
+        },
+
+        { 	"weight": 5000,
+            "includeLists": 	[ "content_list_building_common_resource_banks" ]
+        },
+        { 	"weight": 10000,
+        "includeLists": 	[ "content_list_building_uncommon_guarded_units_banks_equal" ]
+    }
+
+    ],
+    "bans": [ { "sid" : "quixs_path"} ]
+},
+
+{
+    "name": "content_pool_template_miracle_unguarded_start_zone",
+
+"valueDistribution": { "priceBounds": [ 2999, 4999, 7999 ], "weights": [ 3, 12, 8, 0 ] },
+    "groups":
+    [
+     
+        { 	"weight": 5000,
+            "includeLists": 	[ "content_list_building_common_interact_no_imbalance" ]
+        },
+
+        { 	"weight": 5000,
+            "includeLists": 	[ "content_list_building_common_hero_stats" ]
+        },
+
+        { 	"weight": 5000,
+            "includeLists": 	[ "content_list_building_common_hero_buffs" ]
+        },
+      
+        { 	"weight": 10000,
+            "includeLists": 	[ "content_list_building_random_hires" ],
+            "content": 			[ { "sid" : "random_hire_1", "weight": 75 }, { "sid" : "random_hire_2", "weight": 100 }, { "sid" : "random_hire_3", "weight": 125 } ]
+        },
+
+        { 	"weight": 5000,
+        "includeLists": 	[ "content_list_building_uncommon_guarded_units_banks_equal" ]
+    },
+
+        { 	"weight": 7500,
+            "includeLists": 	[ "content_list_building_common_guarded_resource_bank_fix" ]
+        }
+    ],
+    "bans": [ { "sid" : "wind_rose" }, { "sid" : "lost_library" }, { "sid" : "stables" }, { "sid" : "quixs_path" }, {"sid": "monty_hall"} ]
+    },
+	{
+		"name": "content_pool_template_miracle_guarded_treasure_zone",
+
+		"valueDistribution": { "priceBounds": [ 2999, 4999, 6999, 9999 ], "weights": [ 0, 2, 5, 13, 10 ] },
+
+		"groups":
+		[
+
+			{ 	"weight": 70000,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 80 }, { "sid" : "random_item_epic", "weight": 60 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_pickup_prison" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_pickup_scroll_box" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_pickup_enchanted_scroll_box" ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists":		[ "content_list_pickup_pandora_box" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_pickup_scroll_box_tier_1", "content_list_pickup_scroll_box_tier_2", "content_list_pickup_scroll_box_tier_3", "content_list_pickup_scroll_box_tier_4", "content_list_pickup_scroll_box_tier_5" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_interact_no_imbalance" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_uncommon_interact" ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_stats" ],
+				"content": 			[ { "sid" : "fort", "weight": 200 }, { "sid" : "orb_observatory", "weight": 200 }, { "sid" : "college_of_wonder", "weight": 150 } ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_common_hero_buffs" ],
+				"content": 			[ { "sid" : "stables", "weight": 0 }, { "sid" : "quixs_path", "weight": 0 } ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_commons_magic" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 0 }, { "sid" : "random_hire_2", "weight":0 }, { "sid" : "random_hire_3", "weight": 225 }, { "sid" : "random_hire_4", "weight": 225 }, { "sid" : "random_hire_5", "weight": 200 }, { "sid" : "random_hire_6", "weight": 200 }, { "sid" : "random_hire_7", "weight": 175 } ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_common_resource_banks" ]
+			},
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_uncommon_resource_banks" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_guarded_resource_banks" ]
+			},
+			{ 	"weight": 60000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_units_banks_equal" ]
+			}
+		],
+		"bans": [ { "sid" : "stables" } ]
+	},
+    {
+		"name": "content_pool_template_miracle_unguarded_treasure_zone",
+
+		"valueDistribution": { "priceBounds": [  2999, 4999, 6999, 9999 ], "weights": [ 0, 2, 3, 6, 10 ] },
+
+		"groups":
+		[
+		]
+	},
+	{
+		"name": "content_pool_template_miracle_guarded_center_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 5999, 8999, 11999 ], "weights": [ 0, 2, 6, 16, 12 ] },
+
+		"groups":
+		[
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 80 }, { "sid" : "random_item_epic", "weight": 60 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_pickup_prison" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_pickup_scroll_box" ]
+			},
+		
+
+			{ 	"weight": 10000,
+				"includeLists":		[ "content_list_pickup_pandora_box" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_pickup_scroll_box_tier_1", "content_list_pickup_scroll_box_tier_2", "content_list_pickup_scroll_box_tier_3", "content_list_pickup_scroll_box_tier_4", "content_list_pickup_scroll_box_tier_5" ]
+			},
+
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_uncommon_interact" ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_stats" ],
+				"content": 			[ { "sid" : "fort", "weight": 200 }, { "sid" : "orb_observatory", "weight": 200 }, { "sid" : "college_of_wonder", "weight": 100 } ]
+			},
+
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_banks" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_commons_magic" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_uncommons_magic" ]
+			},
+            { 	"weight": 5000,
+                "includeLists": 	[ "content_list_pickup_prison" ]
+            },
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 250 }, { "sid" : "random_hire_2", "weight": 250 }, { "sid" : "random_hire_3", "weight": 225 }, { "sid" : "random_hire_4", "weight": 225 }, { "sid" : "random_hire_5", "weight": 200 }, { "sid" : "random_hire_6", "weight": 200 }, { "sid" : "random_hire_7", "weight": 175 } ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_building_common_resource_banks" ]
+			},
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_uncommon_resource_banks" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_guarded_resource_banks" ]
+			},
+			{ 	"weight": 1000,
+				"includeLists": 	[ "content_list_building_epic_guarded_resource_banks" ],
+				"content": 			[ { "sid" : "troglodyte_throne", "weight": 40 }, { "sid" : "twilight_bloom", "weight": 80 }, { "sid" : "unstable_ruins", "weight": 40 },{ "sid" : "dragon_utopia", "weight": 10 }]
+			},
+			{ 	"weight": 300000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_units_banks_equal" ]
+			}
+		],
+		"bans": [ { "sid" : "stables" } ]
+	},
+    {
+		"name": "content_pool_template_miracle_unguarded_center_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 19999 ], "weights": [ 0, 2, 5, 12, 20 ] },
+
+		"groups":
+		[
+		]
+	}
+	
+]

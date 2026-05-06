@@ -1,0 +1,258 @@
+[
+	{
+		"name": "content_pool_general_resources_start_zone_very_poor",
+
+		"groups":
+		[
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+				"content":			[ 	{ "sid" : "resource_gold", "weight": 80 }, 		{ "sid" : "resource_wood", "weight": 200 }, 		{ "sid" : "resource_ore", "weight": 200 },
+										{ "sid" : "resource_crystals", "weight": 25 },		{ "sid" : "resource_mercury", "weight": 25 },		{ "sid" : "resource_gemstones", "weight": 25 },
+										{ "sid" : "resource_dust", "weight": 25 },			{ "sid" : "chest", "weight": 80 },					{ "sid" : "camp_fire", "weight": 40 } ]
+			},
+			{ 	"weight": 250,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box_tier_1" ]
+			}
+		],
+		"bans": [ ]
+	},
+	{
+		"name": "content_pool_general_resources_start_zone_poor",
+
+		"groups":
+		[
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+				"content":			[ 	{ "sid" : "resource_gold", "weight": 250 }, 		{ "sid" : "resource_wood", "weight": 200 }, 		{ "sid" : "resource_ore", "weight": 200 },
+										{ "sid" : "resource_crystals", "weight": 25 },		{ "sid" : "resource_mercury", "weight": 25 },		{ "sid" : "resource_gemstones", "weight": 25 },
+										{ "sid" : "resource_dust", "weight": 25 },			{ "sid" : "chest", "weight": 200 },					{ "sid" : "camp_fire", "weight": 100 } ]
+			},
+			{ 	"weight": 250,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_pickup_random_items_tier_1" ]
+			}
+		],
+		"bans": [ ]
+	},
+
+	{
+		"name": "content_pool_general_resources_start_zone_medium",
+
+		"groups":
+		[
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+				"content":			[ 	{ "sid" : "resource_gold", "weight": 300 }, 		{ "sid" : "resource_wood", "weight": 150 }, 		{ "sid" : "resource_ore", "weight": 150 },
+										{ "sid" : "resource_crystals", "weight": 50 },		{ "sid" : "resource_mercury", "weight": 50 },		{ "sid" : "resource_gemstones", "weight": 50 },
+										{ "sid" : "resource_dust", "weight": 25 },			{ "sid" : "chest", "weight": 250 },					{ "sid" : "camp_fire", "weight": 100 } ]
+			},
+			{ 	"weight": 250,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_pickup_random_items_tier_1" ]
+			}
+		],
+		"bans": [ ]
+	},
+
+	{
+		"name": "content_pool_general_resources_start_zone_rich",
+
+		"groups":
+		[
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+				"content":			[ 	{ "sid" : "resource_gold", "weight": 400 }, 		{ "sid" : "resource_wood", "weight": 100 }, 		{ "sid" : "resource_ore", "weight": 100 },
+										{ "sid" : "resource_crystals", "weight": 75 },		{ "sid" : "resource_mercury", "weight": 75 },		{ "sid" : "resource_gemstones", "weight": 75 },
+										{ "sid" : "resource_dust", "weight": 50 },			{ "sid" : "chest", "weight": 350 },					{ "sid" : "camp_fire", "weight": 100 } ]
+			},
+			{ 	"weight": 250,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_pickup_random_items_tier_1" ]
+			}
+		],
+		"bans": [ ]
+	},
+
+
+
+
+
+	{
+		"name": "content_pool_general_resources_side_zone_poor",
+		"groups":
+		[
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+				"content":			[ 	{ "sid" : "resource_gold", "weight": 250 }, 		{ "sid" : "resource_wood", "weight": 100 }, 		{ "sid" : "resource_ore", "weight": 100 },
+										{ "sid" : "resource_crystals", "weight": 25 },		{ "sid" : "resource_mercury", "weight": 25 },		{ "sid" : "resource_gemstones", "weight": 25 },
+										{ "sid" : "resource_dust", "weight": 25 },			{ "sid" : "chest", "weight": 200 },					{ "sid" : "camp_fire", "weight": 100 } ]
+			},
+			{ 	"weight": 100,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_pickup_random_items_tier_1" ]
+			}
+		],
+		"bans": [ ]
+	},
+
+	{
+		"name": "content_pool_general_resources_side_zone_medium",
+		"groups":
+		[
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+				"content":			[ 	{ "sid" : "resource_gold", "weight": 400 }, 		{ "sid" : "resource_wood", "weight": 100 }, 		{ "sid" : "resource_ore", "weight": 100 },
+										{ "sid" : "resource_crystals", "weight": 50 },		{ "sid" : "resource_mercury", "weight": 50 },		{ "sid" : "resource_gemstones", "weight": 50 },
+										{ "sid" : "resource_dust", "weight": 25 },			{ "sid" : "chest", "weight": 250 },					{ "sid" : "camp_fire", "weight": 100 } ]
+			},
+			{ 	"weight": 500,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_pickup_random_items_tier_1" ]
+			}
+		],
+		"bans": [ ]
+	},
+	
+	{
+		"name": "content_pool_general_resources_side_zone_rich",
+		"groups":
+		[
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+				"content":			[ 	{ "sid" : "resource_gold", "weight": 600 }, 		{ "sid" : "resource_wood", "weight": 100 }, 		{ "sid" : "resource_ore", "weight": 100 },
+										{ "sid" : "resource_crystals", "weight": 100 },		{ "sid" : "resource_mercury", "weight": 100 },		{ "sid" : "resource_gemstones", "weight": 100 },
+										{ "sid" : "resource_dust", "weight": 50 },			{ "sid" : "chest", "weight": 400 },					{ "sid" : "camp_fire", "weight": 100 } ]
+			},
+			{ 	"weight": 500,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_pickup_random_items_tier_1" ]
+			}
+		],
+		"bans": [ ]
+	},
+
+
+
+
+
+	{
+		"name": "content_pool_general_resources_treasure_zone_zero",
+		"groups":
+		[
+
+		],
+		"bans": [ ]
+	},
+
+
+
+
+	
+	{
+		"name": "content_pool_general_resources_treasure_zone_poor",
+		"groups":
+		[
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+				"content":			[ 	{ "sid" : "resource_gold", "weight": 250 }, 		{ "sid" : "resource_wood", "weight": 100 }, 		{ "sid" : "resource_ore", "weight": 100 },
+										{ "sid" : "resource_crystals", "weight": 100 },		{ "sid" : "resource_mercury", "weight": 100 },		{ "sid" : "resource_gemstones", "weight": 100 },
+										{ "sid" : "resource_dust", "weight": 50 },			{ "sid" : "chest", "weight": 200 },					{ "sid" : "camp_fire", "weight": 100 } ]
+			},
+			{ 	"weight": 150,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			}
+		],
+		"bans": [ ]
+	},
+
+	{
+		"name": "content_pool_general_resources_treasure_zone_medium",
+		"groups":
+		[
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+				"content":			[ 	{ "sid" : "resource_gold", "weight": 400 }, 		{ "sid" : "resource_wood", "weight": 100 }, 		{ "sid" : "resource_ore", "weight": 100 },
+										{ "sid" : "resource_crystals", "weight": 150 },		{ "sid" : "resource_mercury", "weight": 150 },		{ "sid" : "resource_gemstones", "weight": 150 },
+										{ "sid" : "resource_dust", "weight": 75 },			{ "sid" : "chest", "weight": 250 },					{ "sid" : "camp_fire", "weight": 100 } ]
+			},
+			{ 	"weight": 750,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			}
+		],
+		"bans": [ ]
+	},
+
+	{
+		"name": "content_pool_general_resources_treasure_zone_rich",
+		"groups":
+		[
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+				"content":			[ 	{ "sid" : "resource_gold", "weight": 600 }, 		{ "sid" : "resource_wood", "weight": 100 }, 		{ "sid" : "resource_ore", "weight": 100 },
+										{ "sid" : "resource_crystals", "weight": 200 },		{ "sid" : "resource_mercury", "weight": 200 },		{ "sid" : "resource_gemstones", "weight": 200 },
+										{ "sid" : "resource_dust", "weight": 100 },			{ "sid" : "chest", "weight": 400 },					{ "sid" : "camp_fire", "weight": 100 } ]
+			},
+			{ 	"weight": 750,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			}
+		],
+		"bans": [ ]
+	},
+
+	{
+		"name": "content_pool_general_resources_treasure_zone_rich_no_scrolls",
+		"groups":
+		[
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+				"content":			[ 	{ "sid" : "resource_gold", "weight": 600 }, 		{ "sid" : "resource_wood", "weight": 100 }, 		{ "sid" : "resource_ore", "weight": 100 },
+										{ "sid" : "resource_crystals", "weight": 200 },		{ "sid" : "resource_mercury", "weight": 200 },		{ "sid" : "resource_gemstones", "weight": 200 },
+										{ "sid" : "resource_dust", "weight": 100 },			{ "sid" : "chest", "weight": 400 },					{ "sid" : "camp_fire", "weight": 100 } ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			}
+		],
+		"bans": [ ]
+	},
+
+	{
+	"name": "content_pool_general_resources_dust_only",
+
+	"groups":
+	[
+		{ 	"weight": 10000,
+			"includeLists": 	[ "basic_content_list_basic_resources", "basic_content_list_rare_resources", "basic_content_list_special_resources" ],
+			"content":			[ 	{ "sid" : "resource_gold", "weight": 0 }, 			{ "sid" : "resource_wood", "weight": 0 }, 			{ "sid" : "resource_ore", "weight": 0 },
+									{ "sid" : "resource_crystals", "weight": 0 },		{ "sid" : "resource_mercury", "weight": 0 },		{ "sid" : "resource_gemstones", "weight": 0 },
+									{ "sid" : "resource_dust", "weight": 100 },			{ "sid" : "chest", "weight": 0 },					{ "sid" : "camp_fire", "weight": 0 } ]
+		}
+	],
+	"bans": [ ]
+	}
+]

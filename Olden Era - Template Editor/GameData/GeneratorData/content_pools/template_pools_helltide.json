@@ -1,0 +1,329 @@
+[
+	{
+		"name": "template_pool_helltide_guarded_start_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 17999 ], "weights": [ 3, 11, 14, 12, 6 ] },
+
+		"groups":
+		[
+			{ 	"weight": 50000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 80 }, { "sid" : "random_item_epic", "weight": 60 }, { "sid" : "random_item_legendary", "weight": 40 } ]
+			},
+
+			{ 	"weight": 35000,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box" ]
+			},
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_pickup_enchanted_scroll_box" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+			},
+
+			{ 	"weight": 40000,
+				"includeLists":		[ "template_pool_helltide_guarded_start_zone_pandora_box" ]
+			},
+			{ 	"weight": 0,
+				"includeLists":		[ "basic_content_list_pickup_pandora_box" ]
+			},
+
+			{ 	"weight": 40000,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+
+			{ 	"weight": 50000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_2" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_building_uncommon_interact" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_epic_interact" ]
+			},
+
+			{ 	"weight": 75000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+			{ 	"weight": 50000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ],
+				"content": 			[ { "sid" : "fort", "weight": 200 }, { "sid" : "orb_observatory", "weight": 200 } ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_3" ],
+				"content": 			[ { "sid" : "college_of_wonder", "weight": 250 } ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ],
+				"content": 			[ { "sid" : "stables", "weight": 0 }, { "sid" : "quixs_path", "weight": 0 } ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "basic_content_list_building_magic_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_magic_tier_2" ]
+			},
+
+
+			{ 	"weight": 60000,
+				"includeLists": 	[ "basic_content_list_building_random_hires" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_2" ]
+			},
+
+			{ 	"weight": 50000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 25000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ]
+			}
+		],
+		"bans": [ { "sid" : "pandora_box", "variant": 14 }, { "sid" : "pandora_box", "variant": 13 }, { "sid" : "pandora_box", "variant": 3 }, { "sid" : "pandora_box", "variant": 7 }, { "sid" : "pandora_box", "variant": 18 }, { "sid" : "pandora_box", "variant": 27 } ]
+	},
+
+	{
+		"name": "template_pool_helltide_unguarded_start_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 9999 ], "weights": [ 4, 6, 5, 0 ] },
+
+		"groups":
+		[
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_uncommon_interact" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_epic_interact" ]
+			},
+
+
+			{ 	"weight": 60000,
+				"includeLists": 	[ "basic_content_list_building_random_hires" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 30000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_2" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			}
+		],
+		"bans": [  ]
+	},
+
+
+
+	{
+		"name": "template_pool_helltide_guarded_side_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 19999, 23999 ], "weights": [ 0, 2, 8, 25, 20, 15 ] },
+
+		"groups":
+		[
+			{ 	"weight": 100000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 40 }, { "sid" : "random_item_rare", "weight": 60 }, { "sid" : "random_item_epic", "weight": 80 }, { "sid" : "random_item_legendary", "weight": 100 } ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box" ]
+			},
+			{ 	"weight": 35000,
+				"includeLists": 	[ "basic_content_list_pickup_enchanted_scroll_box" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+			},
+
+			{ 	"weight": 100000,
+				"includeLists":		[ "template_pool_helltide_guarded_side_zone_pandora_box" ]
+			},
+			{ 	"weight": 0,
+				"includeLists":		[ "basic_content_list_pickup_pandora_box" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+			{ 	"weight": 25000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_2" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_building_uncommon_interact" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_epic_interact" ]
+			},
+
+			{ 	"weight": 1000,
+				"includeLists": 	[ "basic_content_list_vision_buildings_tier_2" ]
+			},
+
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+			{ 	"weight": 100000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ],
+				"content": 			[ { "sid" : "fort", "weight": 200 }, { "sid" : "orb_observatory", "weight": 200 } ]
+			},
+			{ 	"weight": 75000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_3" ],
+				"content": 			[ { "sid" : "college_of_wonder", "weight": 250 } ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ],
+				"content": 			[ { "sid" : "stables", "weight": 0 }, { "sid" : "quixs_path", "weight": 0 } ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_building_magic_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_magic_tier_2" ]
+			},
+
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_2" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			},
+			{ 	"weight": 80000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ]
+			},
+
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_guarded_units_banks" ]
+			},
+			{ 	"weight": 135000,
+				"includeLists": 	[ "basic_content_list_building_guarded_units_banks_only_biome_restriction" ]
+			}
+		],
+		"bans": [  ]
+	},
+
+	{
+		"name": "template_pool_helltide_unguarded_side_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 19999 ], "weights": [ 2, 2, 3, 5, 7 ] },
+
+		"groups":
+		[
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_rare", "weight": 10 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box" ]
+			},
+
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_uncommon_interact" ]
+			},
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_epic_interact" ]
+			},
+
+
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_2" ]
+			},
+
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ]
+			},
+
+			{ 	"weight": 0,
+				"includeLists": 	[ "basic_content_list_building_guarded_units_banks" ]
+			},
+			{ 	"weight": 25000,
+				"includeLists": 	[ "basic_content_list_building_guarded_units_banks_only_biome_restriction" ]
+			}
+		],
+		"bans": [  ]
+	},
+
+
+
+	{
+		"name": "template_pool_helltide_guarded_center_zone",
+
+		"groups":
+		[
+			{ 	"weight": 100000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 0 }, { "sid" : "random_item_rare", "weight": 25 }, { "sid" : "random_item_epic", "weight": 50 }, { "sid" : "random_item_legendary", "weight": 100 } ]
+			}
+		],
+		"bans": [  ]
+	}
+]

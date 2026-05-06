@@ -1,0 +1,303 @@
+[
+	{
+		"name": "content_pool_template_christmas_tree_guarded_start_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 20000 ], "weights": [ 4, 16, 20, 20, 0 ] },
+
+		"groups":
+		[
+			{ 	"weight": 50000,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 80 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_pickup_prison" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_pickup_enchanted_scroll_box" ]
+			},
+
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_pickup_scroll_box_tier_1", "content_list_pickup_scroll_box_tier_2", "content_list_pickup_scroll_box_tier_3", "content_list_pickup_scroll_box_tier_4", "content_list_pickup_scroll_box_tier_5" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_basic_storage" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_common_interact_no_imbalance" ],
+				"content": 			[ { "sid" : "fountain", "weight": 0 }, { "sid" : "fountain_2", "weight": 0 } ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "content_list_building_uncommon_interact" ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_stats" ],
+				"content": 			[ { "sid" : "fort", "weight": 200 }, { "sid" : "orb_observatory", "weight": 200 }, { "sid" : "college_of_wonder", "weight": 100 } ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "content_list_building_common_hero_buffs" ],
+				"content": 			[ { "sid" : "stables", "weight": 0 }, { "sid" : "quixs_path", "weight": 0 } ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_banks" ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_commons_magic" ]
+			},
+
+
+			{ 	"weight": 75000,
+				"includeLists": 	[ "content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 0 }, { "sid" : "random_hire_2", "weight": 0 }, { "sid" : "random_hire_3", "weight": 0 }, { "sid" : "random_hire_4", "weight": 225 }, { "sid" : "random_hire_5", "weight": 200 }, { "sid" : "random_hire_6", "weight": 200 }, { "sid" : "random_hire_7", "weight": 175 } ]
+			},
+
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_common_resource_banks" ]
+			},
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_uncommon_resource_banks_fix" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_common_guarded_resource_banks" ]
+			},
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_resource_banks" ]
+			}
+		],
+		"bans": [  {"sid": "monty_hall", "variant":1}, {"sid": "monty_hall", "variant":2}, 
+		{"sid": "monty_hall", "variant":3} ]
+	},
+
+	{
+		"name": "content_pool_template_christmas_tree_unguarded_start_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999 ], "weights": [ 4, 16, 12, 0 ] },
+
+		"groups":
+		[
+			{ 	"weight": 12500,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_pickup_scroll_box_tier_1" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_interact_no_imbalance" ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_common_hero_buffs" ]
+			},
+
+
+			{ 	"weight": 50000,
+				"includeLists": 	[ "content_list_building_random_hires" ],
+				"content": 			[ { "sid" : "random_hire_1", "weight": 75 }, { "sid" : "random_hire_2", "weight": 100 }, { "sid" : "random_hire_3", "weight": 125 }, { "sid" : "random_hire_4", "weight": 150 }, { "sid" : "random_hire_5", "weight": 0 }, { "sid" : "random_hire_6", "weight": 0 }, { "sid" : "random_hire_7", "weight": 0 } ]
+			},
+
+			{ 	"weight": 35000,
+				"includeLists": 	[ "content_list_building_random_hires" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_building_common_resource_banks" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_guarded_resource_banks" ]
+			},
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_resource_banks" ]
+			}
+		],
+		"bans": [ { "sid" : "wind_rose" }, { "sid" : "lost_library" }, { "sid" : "stables" }, { "sid" : "quixs_path" }  ]
+	},
+
+	{
+		"name": "content_pool_template_christmas_tree_guarded_trunk_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999 ], "weights": [ 3, 14, 20, 16 ] },
+
+		"groups":
+		[
+			{ 	"weight": 25000,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 25 }, { "sid" : "random_item_rare", "weight": 75 }, { "sid" : "random_item_epic", "weight": 50 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_pickup_scroll_box_tier_2", "content_list_pickup_scroll_box_tier_3", "content_list_pickup_scroll_box_tier_4" ]
+			},			
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_pickup_enchanted_scroll_box_tier_1", "content_list_pickup_enchanted_scroll_box_tier_2", "content_list_pickup_enchanted_scroll_box_tier_3" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_building_common_interact_no_imbalance" ]
+			},
+
+			{ 	"weight": 12500,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_stats" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_hero_buffs" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_banks" ]
+			},
+			
+			{ 	"weight": 300000,
+				"includeLists": 	[ "content_list_pickup_pandora_box" ]
+			},
+			{ 	"weight": 15000,
+				"includeLists": 	[ "content_list_building_commons_magic" ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "content_list_building_uncommon_resource_banks_fix" ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_resource_banks" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_epic_guarded_resource_banks" ],
+				"content": 			[ { "sid" : "troglodyte_throne", "weight": 40 }, { "sid" : "twilight_bloom", "weight": 80 }, { "sid" : "unstable_ruins", "weight": 80 },{ "sid" : "dragon_utopia", "weight": 0 }]
+
+			}
+		],
+		"bans": [ { "sid" : "fountain" }, { "sid" : "fountain_2" }, { "sid" : "stables" }, { "sid" : "quixs_path" }]
+	},
+	{
+		"name": "content_pool_template_christmas_tree_unguarded_trunk_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999 ], "weights": [ 3, 14, 20, 16 ] },
+
+		"groups":
+		[
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_basic_storage" ]
+			},
+			{ 	"weight": 12500,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+			{ 	"weight": 25000,
+				"includeLists": 	[ "content_list_building_uncommon_guarded_resource_banks" ]
+			}
+		],
+		"bans": [  {"sid": "monty_hall", "variant":1}, {"sid": "monty_hall", "variant":2}, {"sid": "monty_hall", "variant":3}  ]
+	},
+
+	{
+		"name": "content_pool_template_christmas_tree_guarded_branch_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 19999 ], "weights": [ 0, 2, 12, 17, 10 ] },
+
+		"groups":
+		[
+			{ 	"weight": 60000,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 0 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 60 }, { "sid" : "random_item_legendary", "weight": 40 } ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_pickup_scroll_box" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_pickup_enchanted_scroll_box" ]
+			},
+
+			{ 	"weight": 500000,
+				"includeLists":		[ "content_list_pickup_pandora_box" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_pickup_scroll_box_tier_1", "content_list_pickup_scroll_box_tier_2", "content_list_pickup_scroll_box_tier_3", "content_list_pickup_scroll_box_tier_4", "content_list_pickup_scroll_box_tier_5" ]
+			},
+
+			{ 	"weight": 20000,
+				"includeLists": 	[ "content_list_building_common_interact_no_imbalance" ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_stats" ],
+				"content": 			[ { "sid" : "fort", "weight": 200 }, { "sid" : "orb_observatory", "weight": 200 }, { "sid" : "college_of_wonder", "weight": 100 } ]
+			},
+
+			{ 	"weight": 25000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_banks" ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_uncommons_magic" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_epic_guarded_resource_banks" ],
+				"content": 			[ { "sid" : "troglodyte_throne", "weight": 40 }, { "sid" : "twilight_bloom", "weight": 40 }, { "sid" : "unstable_ruins", "weight": 60 },{ "sid" : "dragon_utopia", "weight": 80 }]
+		}
+			
+		],
+		"bans":  [  ]
+	},
+
+	{
+		"name": "content_pool_template_christmas_tree_unguarded_branch_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 19999 ], "weights": [ 0, 2, 10, 17, 10 ] },
+
+		"groups":
+		[
+			{ 	"weight": 7500,
+				"includeLists": 	[ "content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 10 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_pickup_scroll_box_tier_1" ]
+			},
+
+			{ 	"weight": 30000,
+				"includeLists": 	[ "content_list_building_common_hero_stats" ]
+			},
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "content_list_building_common_hero_buffs" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_building_uncommon_hero_banks" ]
+			}
+		],
+		"bans": [ {"sid": "monty_hall", "variant":1}, {"sid": "monty_hall", "variant":2}, {"sid": "monty_hall", "variant":3}   ]
+	}
+]

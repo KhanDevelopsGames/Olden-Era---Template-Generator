@@ -1,0 +1,14 @@
+[
+	{
+		"name": "test_content_pool",
+
+		"groups":
+		[
+			{ 	
+				"weight": 100,
+				"includeLists": 	[ "test_content_list" ]
+			}
+		],
+		"bans": [ ]
+	}
+]

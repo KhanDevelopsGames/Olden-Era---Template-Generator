@@ -1,0 +1,101 @@
+[
+	{
+		"name": "template_pool_chosen_one_guarded_resource_banks_tier_3_base",
+		"content": 
+		[
+			{ "sid": "troglodyte_throne",		"weight": 100	},
+			{ "sid": "twilight_bloom",			"weight": 100	}
+		]
+	},
+
+	{
+		"name": "template_pool_chosen_one_guarded_resource_banks_tier_3_pro",
+		"content": 
+		[
+			{ "sid": "unstable_ruins",			"weight": 100	},
+			{ "sid": "dragon_utopia",			"weight": 100	},
+			{ "sid": "research_laboratory",		"weight": 100	}
+		]
+	},
+
+	{
+		"name": "template_pool_chosen_one_guarded_start_zone_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 0,	"weight": 3150	},			
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 3150	},
+
+			{ "sid" : "pandora_box",	"variant": 4,	"weight": 3150	},			
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 3150	}
+		]
+	},
+
+	{
+		"name": "template_pool_chosen_one_guarded_side_zone_pandora_box",
+		"content": 
+		[		
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 525	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 525	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 525	},
+			
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 250	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 250	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 250	},
+
+			{ "sid" : "pandora_box",	"variant": 15,	"weight": 525	},			
+			{ "sid" : "pandora_box",	"variant": 16,	"weight": 525	},
+			{ "sid" : "pandora_box",	"variant": 17,	"weight": 525	}
+		]
+	},
+	
+	{
+		"name": "template_pool_chosen_one_guarded_side_spawn_zone_pandora_box",
+		"content": 
+		[
+			{ "sid" : "pandora_box",	"variant": 0,	"weight": 1075	},			
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 2075	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 2075	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 1075	},
+
+			{ "sid" : "pandora_box",	"variant": 4,	"weight": 1075	},			
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 2075	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 2075	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 1075	}
+		]
+	},
+
+	{
+		"name": "template_pool_chosen_one_guarded_treasure_zone_pandora_box",
+		"content": 
+		[		
+			{ "sid" : "pandora_box",	"variant": 1,	"weight": 750	},
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 1050	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 1350	},
+			
+			{ "sid" : "pandora_box",	"variant": 5,	"weight": 750	},
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 1050	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 1350	},
+
+			{ "sid" : "pandora_box",	"variant": 15,	"weight": 859	},			
+			{ "sid" : "pandora_box",	"variant": 16,	"weight": 859	},
+			{ "sid" : "pandora_box",	"variant": 17,	"weight": 859	},
+			{ "sid" : "pandora_box",	"variant": 18,	"weight": 859	}
+		]
+	},
+
+	{
+		"name": "template_pool_chosen_one_guarded_supertreasure_zone_pandora_box",
+		"content": 
+		[		
+			{ "sid" : "pandora_box",	"variant": 2,	"weight": 1575	},
+			{ "sid" : "pandora_box",	"variant": 3,	"weight": 1575	},
+		
+			{ "sid" : "pandora_box",	"variant": 6,	"weight": 1575	},
+			{ "sid" : "pandora_box",	"variant": 7,	"weight": 1575	},
+		
+			{ "sid" : "pandora_box",	"variant": 16,	"weight": 1060	},
+			{ "sid" : "pandora_box",	"variant": 17,	"weight": 1360	},
+			{ "sid" : "pandora_box",	"variant": 18,	"weight": 760	}
+		]
+	}
+]

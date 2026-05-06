@@ -1,0 +1,383 @@
+[
+	{
+		"name": "template_pool_symphony_guarded_start_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999 ], "weights": [ 10, 8, 6, 0, 0 ] },
+
+		"groups":
+		[
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 50 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			
+			{ 	"weight": 10000,
+				"includeLists":		[ "template_pool_symphony_guarded_start_zone_pandora_box" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+
+
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_2" ]
+			},
+
+			{ 	"weight": 12500,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			}
+		],
+		"bans": [ { "sid" : "fountain" }, { "sid" : "fountain_2" }, { "sid" : "stables" } ]
+	},
+
+	{
+		"name": "template_pool_symphony_unguarded_start_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 9999 ], "weights": [ 5, 1, 0, 0 ] },
+
+		"groups":
+		[
+
+
+
+			{ 	"weight": 500,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+
+			{ 	"weight": 1000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+
+			{ 	"weight": 1000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_1" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			}
+		],
+		"bans": [ { "sid" : "tear_of_truth" } ]
+	},
+
+
+
+	{
+		"name": "template_pool_symphony_guarded_side_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999 ], "weights": [ 10, 8, 6, 3, 0 ] },
+
+		"groups":
+		[
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 50 }, { "sid" : "random_item_epic", "weight": 25 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			
+			{ 	"weight": 20000,
+				"includeLists":		[ "template_pool_symphony_guarded_side_zone_pandora_box" ]
+			},
+			
+
+			
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box" ]
+			},
+			{ 	"weight": 2000,
+				"includeLists": 	[ "basic_content_list_pickup_enchanted_scroll_box" ]
+			},
+			{ 	"weight": 500,
+				"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_2" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_3" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+
+
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_2" ]
+			},
+
+			{ 	"weight": 7500,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "template_pool_symphony_guarded_resource_banks_tier_3_base" ]
+			}
+		]
+	},
+
+	{
+		"name": "template_pool_symphony_unguarded_side_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 9999 ], "weights": [ 2, 4, 2, 0 ] },
+
+		"groups":
+		[
+			{ 	"weight": 500,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 100 }, { "sid" : "random_item_rare", "weight": 0 }, { "sid" : "random_item_epic", "weight": 0 }, { "sid" : "random_item_legendary", "weight": 0 } ]
+			},
+
+			
+			{ 	"weight": 5000,
+				"includeLists": 	[ "content_list_pickup_scroll_box_tier_1" ]
+			},
+			{ 	"weight": 50,
+				"includeLists": 	[ "basic_content_list_pickup_enchanted_scroll_box" ]
+			},
+			
+			{ 	"weight": 1000,
+				"includeLists": 	[ "basic_content_list_basic_storage" ]
+			},
+
+		
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_1" ]
+			},
+			
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+
+			
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			}
+		],
+		"bans": [ { "sid" : "tear_of_truth" } ]
+	},
+
+
+
+	{
+		"name": "template_pool_symphony_guarded_side2_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999, 18999 ], "weights": [ 1, 2, 3, 4, 5, 3 ] },
+
+		"groups":
+		[
+			{ 	"weight": 40000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 25 }, { "sid" : "random_item_rare", "weight": 25 }, { "sid" : "random_item_epic", "weight": 50 }, { "sid" : "random_item_legendary", "weight": 25 } ]
+			},
+
+			
+			{ 	"weight": 60000,
+				"includeLists":		[ "template_pool_symphony_guarded_center_zone_pandora_box" ]
+			},
+		
+			
+			
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_pickup_enchanted_scroll_box" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+			},
+
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_2" ]
+			},
+
+			{ 	"weight": 12500,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+			},
+			{ 	"weight": 12500,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_3" ]
+			},
+
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+
+		
+
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_1" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_resource_banks_tier_2" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ]
+			}
+		],
+		"bans": [  ]
+	},
+
+	{
+		"name": "template_pool_symphony_unguarded_side2_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 19999 ], "weights": [ 0, 3, 5, 0, 0 ] },
+
+		"groups":
+		[
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_1" ]
+			},
+
+
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ]
+			}
+		],
+		"bans": [ { "sid" : "tear_of_truth" } ]
+	},
+
+
+
+	{
+		"name": "template_pool_symphony_guarded_treasure_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 15999, 18999 ], "weights": [ 0, 0, 5, 7, 5, 5 ] },
+
+		"groups":
+		[
+			{ 	"weight": 60000,
+				"includeLists": 	[ "basic_content_list_pickup_random_items" ],
+				"content": 			[ { "sid" : "random_item_common", "weight": 0 }, { "sid" : "random_item_rare", "weight": 25 }, { "sid" : "random_item_epic", "weight": 50 }, { "sid" : "random_item_legendary", "weight": 200 } ]
+			},
+			{ 	"weight": 40000,
+				"includeLists":		[ "template_pool_symphony_guarded_treasure_pandora_box" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_pickup_scroll_box" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_pickup_enchanted_scroll_box" ]
+			},
+			{ 	"weight": 2500,
+				"includeLists": 	[ "basic_content_list_pickup_mythic_scroll_box" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_exp_tier_2" ]
+			},
+			{ 	"weight": 12500,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_2" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_hero_stats_and_skills_tier_3" ]
+			},
+
+			{ 	"weight": 1500,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+			{ 	"weight": 10000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ]
+			},
+			{ 	"weight": 15000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ]
+			}
+		],
+		"bans": [  ]
+	},
+
+	{
+		"name": "template_pool_symphony_unguarded_treasure_zone",
+
+		"valueDistribution": { "priceBounds": [ 3999, 6999, 12999, 19999 ], "weights": [ 1, 3, 5, 2, 1 ] },
+
+		"groups":
+		[
+			
+			{ 	"weight": 1500,
+				"includeLists": 	[ "basic_content_list_building_hero_buff_tier_1" ]
+			},
+
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_3" ]
+			},
+			{ 	"weight": 5000,
+				"includeLists": 	[ "basic_content_list_building_guarded_resource_banks_tier_2_no_biome_restriction" ]
+			}
+		],
+		"bans": [ { "sid" : "tear_of_truth" } ]
+	}
+]

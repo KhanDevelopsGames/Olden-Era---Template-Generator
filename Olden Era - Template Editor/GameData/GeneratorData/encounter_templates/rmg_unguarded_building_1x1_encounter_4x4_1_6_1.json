@@ -1,0 +1,68 @@
+{
+    "name": "rmg_unguarded_building_1x1_encounter_4x4_1_6_1",
+    "encounterType": 4,
+    "relativeFrequency": 4.0,
+    "allowMirrorX": true,
+    "allowMirrorY": true,
+    "width": 4,
+    "height": 4,
+    "roadTargetType": 1,
+    "roadTarget": {
+        "x": 1,
+        "y": 1
+    },
+    "guards": [],
+    "buildings": [
+        {
+            "width": 1,
+            "height": 1,
+            "interaction": 3,
+            "position": {
+                "x": 1,
+                "y": 1
+            }
+        }
+    ],
+    "pickups": [],
+    "entrances": [
+        {
+            "x": 4,
+            "y": 1
+        },
+        {
+            "x": 4,
+            "y": 2
+        },
+        {
+            "x": 4,
+            "y": 0
+        },
+        {
+            "x": 2,
+            "y": -1
+        },
+        {
+            "x": 3,
+            "y": -1
+        }
+    ],
+    "holeTiles": [],
+    "tileContents": [
+        2,
+        1,
+        2,
+        2,
+        2,
+        3,
+        0,
+        2,
+        1,
+        1,
+        0,
+        2,
+        2,
+        1,
+        0,
+        0
+    ]
+}

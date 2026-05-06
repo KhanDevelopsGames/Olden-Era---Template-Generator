@@ -1,0 +1,27 @@
+[
+	{
+		"name": "zone_layout_default",
+		"obstaclesFill": 0.4,
+		"lakesFill": 0.3,
+		"minLakeArea": 20,
+		"elevationClusterScale": 0.15,
+		"elevationModes": [
+			{"weight": 1, "minElevatedFraction": 0.0, "maxElevatedFraction": 0.4 },
+			{"weight": 1, "minElevatedFraction": 0.6, "maxElevatedFraction": 0.8 }
+		],
+		"roadClusterArea": 70,
+		"guardedEncounterDencity": 1.4,
+		"guardedEncounterSizeDistribution": [ 0, 0, 1, 3, 6, 6, 1 ],
+		"unguardedEncounterDencity": 1,
+		"unguardedEncounterSizeDistribution" : [ 0, 0, 1, 1, 1, 1, 1 ],
+		"ambientPickupDensity": 1,
+		"ambientPickupDistribution": 
+		{  
+			"repulsion": 1.0,
+			"noise": 0.2,
+			"roadAttraction": 0.5,
+			"obstacleAttraction": 0.0,
+			"groupSizeWeights": [4, 1, 1]
+		}
+	}
+]
