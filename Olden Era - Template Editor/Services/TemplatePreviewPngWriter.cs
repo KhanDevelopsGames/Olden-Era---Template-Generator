@@ -237,7 +237,7 @@ namespace Olden_Era___Template_Editor.Services
             }
             else if (isSpawn)
             {
-                DrawPersonIcon(dc, pt, _zoneRadius);
+                DrawPlayerNumber(dc, zone, pt, _zoneRadius);
                 if (castles > 1)
                     DrawCastleBadge(dc, pt, _zoneRadius, castles);
             }
@@ -380,18 +380,24 @@ namespace Olden_Era___Template_Editor.Services
             return     (new SolidColorBrush(SilverFill), new Pen(new SolidColorBrush(SilverBorder), 2.5));
         }
 
-        // ── Person icon ──────────────────────────────────────────────────────────
-        // Head + body silhouette centred inside the zone circle.
+        // ── Player number ────────────────────────────────────────────────────────
+        // Shows the player number (1–8) read from the MainObject "spawn" field ("Player1" → "1").
 
-        private static void DrawPersonIcon(DrawingContext dc, Point centre, double r)
+        private static void DrawPlayerNumber(DrawingContext dc, Zone zone, Point centre, double r)
         {
-            double s = r * 0.38;
-            var iconBrush = new SolidColorBrush(Color.FromRgb(160, 230, 170));
+            string label = "?";
+            // Find the Spawn main object and parse its "spawn" value, e.g. "Player3" → "3"
+            string? spawnValue = zone.MainObjects?
+                .FirstOrDefault(o => o.Type == "Spawn")?.Spawn;
+            if (spawnValue is not null && spawnValue.StartsWith("Player", StringComparison.Ordinal))
+            {
+                string number = spawnValue["Player".Length..];
+                if (int.TryParse(number, out _))
+                    label = number;
+            }
 
-            // Head
-            dc.DrawEllipse(iconBrush, null, new Point(centre.X, centre.Y - s * 0.95), s * 0.50, s * 0.50);
-            // Body
-            dc.DrawEllipse(iconBrush, null, new Point(centre.X, centre.Y + s * 0.60), s * 0.70, s * 0.80);
+            var brush = new SolidColorBrush(Color.FromRgb(160, 230, 170));
+            DrawText(dc, label, centre, r * 1.05, brush, centered: true, FontWeights.Bold);
         }
 
         // ── Helpers ──────────────────────────────────────────────────────────────
