@@ -43,7 +43,6 @@ namespace Olden_Era___Template_Editor.Models
         public int NeutralHighCastleCount { get; set; } = 0;
         public double PlayerZoneSize { get; set; } = 1.0;
         public double NeutralZoneSize { get; set; } = 1.0;
-        public double HubZoneSize { get; set; } = 1.0;
         public double GuardRandomization { get; set; } = 0.05;
     }
     public class ZoneConfiguration
@@ -55,6 +54,7 @@ namespace Olden_Era___Template_Editor.Models
         public int StructureDensityPercent { get; set; } = 100;
         public int NeutralStackStrengthPercent { get; set; } = 100;
         public int BorderGuardStrengthPercent { get; set; } = 100;
+        public double HubZoneSize { get; set; } = 1.0;
         public AdvancedSettings Advanced { get; set; } = new AdvancedSettings();
     }
 

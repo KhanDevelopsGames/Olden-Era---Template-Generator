@@ -936,7 +936,7 @@ namespace Olden_Era___Template_Editor.Services
             zones.Add(new Zone
             {
                 Name = hubName,
-                Size = settings.HubZoneSize,
+                Size = settings.ZoneCfg.HubZoneSize,
                 Layout = CenterLayoutName,
                 GuardCutoffValue = 2000,
                 GuardRandomization = 0.05,
@@ -1346,7 +1346,7 @@ namespace Olden_Era___Template_Editor.Services
 
             // Hub zone (neutral, no castle, high loot).
             var hubConns = outerLetters.Select(l => $"Hub-{l}").ToArray();
-            zones.Add(BuildHubZone(hubConns, tuning, hubIsHoldCity, settings.HubZoneSize));
+            zones.Add(BuildHubZone(hubConns, tuning, hubIsHoldCity, settings.ZoneCfg.HubZoneSize));
 
             // Outer zones each connect only to the hub.
             for (int i = 0; i < outerLetters.Count; i++)

@@ -933,6 +933,7 @@ namespace Olden_Era___Template_Editor
                 StructureDensityPercent = (int)SldStructureDensity.Value,
                 NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
                 BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
+                HubZoneSize = SldHubZoneSize.Value,
                 Advanced = new AdvancedSettings
                 {
                     Enabled = _advancedZoneSettings,
@@ -951,7 +952,6 @@ namespace Olden_Era___Template_Editor
             MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)SldMinNeutralBetweenPlayers.Value : 0,
             MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
             ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
-            HubZoneSize = SldHubZoneSize.Value,
             NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
             RandomPortals = ChkRandomPortals.IsChecked == true,
             MaxPortalConnections = (int)SldMaxPortals.Value,
