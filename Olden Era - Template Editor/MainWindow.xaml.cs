@@ -523,7 +523,7 @@ namespace Olden_Era___Template_Editor
             SldGladiatorCountDay.Value = 3;
 
             SldTournamentPointsToWin.Value = 2;
-            SldTournamentInterval.Value = 3;
+            SldTournamentInterval.Value = 7;
             SldTournamentFirstTournamentDay.Value = 8;
             SldTournamentAnnouncementLeadDays.Value = 3;
 
@@ -746,9 +746,9 @@ namespace Olden_Era___Template_Editor
             SldGladiatorDelay.Value = Math.Clamp(s.GladiatorArenaDaysDelayStart, 1, 60);
             SldGladiatorCountDay.Value = Math.Clamp(s.GladiatorArenaCountDay, 1, 30);
             ChkTournament.IsChecked = s.Tournament;
-            SldTournamentFirstTournamentDay.Value = Math.Clamp(s.TournamentFirstTournamentDay, 1, 14);
+            SldTournamentFirstTournamentDay.Value = Math.Clamp(s.TournamentFirstTournamentDay, 2, 14);
             SldTournamentAnnouncementLeadDays.Value = Math.Clamp(s.TournamentAnnouncementLeadDays, 1, 60);
-            SldTournamentInterval.Value = Math.Clamp(s.TournamentInterval, 1, 30);
+            SldTournamentInterval.Value = Math.Clamp(s.TournamentInterval, 2, 30);
             SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 5);
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();

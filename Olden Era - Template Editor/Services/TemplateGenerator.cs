@@ -408,9 +408,9 @@ namespace Olden_Era___Template_Editor.Services
 
             if (useTournament)
             {
-                int firstTournamentDay = Math.Clamp(settings.TournamentFirstTournamentDay, 1, 60);
+                int firstTournamentDay = Math.Clamp(settings.TournamentFirstTournamentDay, 2, 60);
                 int announcementLeadDays = Math.Clamp(settings.TournamentAnnouncementLeadDays, 1, 30);
-                int tournamentInterval = Math.Clamp(settings.TournamentInterval, 1, 30);
+                int tournamentInterval = Math.Clamp(settings.TournamentInterval, 2, 30);
                 int pointsToWin = Math.Clamp(settings.TournamentPointsToWin, 1, 5);
                 // Round count is derived from points to win: with N points to win, the maximum number of rounds is 2N-1
                 int roundCount = pointsToWin * 2 - 1;

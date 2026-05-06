@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Olden_Era___Template_Editor"
         mc:Ignorable="d"
         Title="Olden Era - Simple Template Generator"
         Height="800" Width="1050"
@@ -39,6 +40,7 @@
         <Style x:Key="RowSpacer" TargetType="RowDefinition">
             <Setter Property="Height" Value="8"/>
         </Style>
+        <local:MaxAnnouncementDaysConverter x:Key="MaxAnnouncementDaysConverter"/>
     </Window.Resources>
 
     <!-- Outer border gives the window its themed frame -->
@@ -412,7 +414,7 @@
                                                    Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                     </DockPanel>
                                     <Slider Grid.Row="2" Grid.Column="1" x:Name="SldTournamentFirstTournamentDay"
-                                            Minimum="1" Maximum="30" Value="8"
+                                            Minimum="2" Maximum="30" Value="8"
                                             TickFrequency="1" IsSnapToTickEnabled="True"
                                             ValueChanged="Slider_ValueChanged"/>
                                     <DockPanel Grid.Row="4" Grid.Column="0">
@@ -422,9 +424,16 @@
                                                    Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                     </DockPanel>
                                     <Slider Grid.Row="4" Grid.Column="1" x:Name="SldTournamentAnnouncementLeadDays"
-                                            Minimum="1" Maximum="10" Value="3"
+                                            Minimum="1" Value="3"
                                             TickFrequency="1" IsSnapToTickEnabled="True"
-                                            ValueChanged="Slider_ValueChanged"/>
+                                            ValueChanged="Slider_ValueChanged">
+                                        <Slider.Maximum>
+                                            <MultiBinding Converter="{StaticResource MaxAnnouncementDaysConverter}">
+                                                <Binding ElementName="SldTournamentFirstTournamentDay" Path="Value"/>
+                                                <Binding ElementName="SldTournamentInterval" Path="Value"/>
+                                            </MultiBinding>
+                                        </Slider.Maximum>
+                                    </Slider>
                                     <DockPanel Grid.Row="6" Grid.Column="0">
                                         <Label Content="Days between rounds" Padding="5,2" DockPanel.Dock="Left"/>
                                         <TextBlock x:Name="TxtTournamentInterval" Text="7" DockPanel.Dock="Right"
@@ -432,7 +441,7 @@
                                                    Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                                     </DockPanel>
                                     <Slider Grid.Row="6" Grid.Column="1" x:Name="SldTournamentInterval"
-                                            Minimum="1" Maximum="30" Value="7"
+                                            Minimum="2" Maximum="30" Value="7"
                                             TickFrequency="1" IsSnapToTickEnabled="True"
                                             ValueChanged="Slider_ValueChanged"/>
                                                 </Grid>
