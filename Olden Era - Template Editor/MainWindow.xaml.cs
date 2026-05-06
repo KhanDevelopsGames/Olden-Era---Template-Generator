@@ -68,7 +68,7 @@ namespace Olden_Era___Template_Editor
             // Fire-and-forget background update check — never blocks the UI.
             _ = CheckForUpdateAsync(version);
 
-            TxtTemplateName.TextChanged += (_, _) => MarkDirty();
+            TxtTemplateName.TextChanged += (_, _) => { MarkDirtyNameOnly(); Validate(); };
             UpdateTitle();
             TxtWindowTitle.Text = Title;
         }
@@ -125,6 +125,15 @@ namespace Olden_Era___Template_Editor
             if (_generatedTemplate is not null)
                 _templateOutdated = true;
             UpdateOutdatedWarning();
+            UpdateTitle();
+        }
+
+        private void MarkDirtyNameOnly()
+        {
+            if (!IsInitialized) return;
+            _isDirty = true;
+            if (_generatedTemplate is not null)
+                _generatedTemplate.Name = TxtTemplateName.Text.Trim();
             UpdateTitle();
         }
 
@@ -273,6 +282,9 @@ namespace Olden_Era___Template_Editor
             }
 
             var warnings = new System.Collections.Generic.List<string>();
+
+            if (TxtTemplateName.Text.Trim().Equals("Custom Template", StringComparison.OrdinalIgnoreCase))
+                warnings.Add("⚠️ The template is still using the default name \"Custom Template\". Consider renaming it before saving.");
 
             int selectedMapSize = SelectedMapSize();
             int totalZones = players + neutral;
@@ -858,17 +870,44 @@ namespace Olden_Era___Template_Editor
 
             string? gameTemplatesPath = FindOldenEraTemplatesPath();
 
+            string currentTemplateName = TxtTemplateName.Text.Trim();
+
             var dlg = new SaveFileDialog
             {
                 Title = "Save Template",
                 Filter = "RMG Template (*.rmg.json)|*.rmg.json",
-                FileName = $"{_generatedTemplate.Name ?? "Custom Template"}.rmg.json"
+                FileName = $"{(currentTemplateName.Length > 0 ? currentTemplateName : "Custom Template")}.rmg.json",
+                DefaultExt = ".rmg.json"
             };
 
             if (gameTemplatesPath != null)
                 dlg.InitialDirectory = gameTemplatesPath;
 
             if (dlg.ShowDialog() != true) return;
+
+            if (!IsInsideGameTemplatesFolder(dlg.FileName, gameTemplatesPath))
+            {
+                string expectedDesc = gameTemplatesPath != null
+                    ? $"Expected:\n{gameTemplatesPath}\n\n"
+                    : $"Expected folder structure:\n...\\HeroesOldenEra_Data\\StreamingAssets\\map_templates\n\n";
+                var wrongFolderResult = MessageBox.Show(
+                    $"The file is being saved outside the expected templates folder.\n\n{expectedDesc}Chosen:\n{Path.GetDirectoryName(dlg.FileName)}\n\nTemplates saved elsewhere will not appear in-game. Save here anyway?",
+                    "Wrong Folder",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+                if (wrongFolderResult != MessageBoxResult.Yes) return;
+            }
+
+            string chosenBaseName = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(dlg.FileName));
+            if (!chosenBaseName.Equals(currentTemplateName, StringComparison.Ordinal))
+            {
+                var mismatchResult = MessageBox.Show(
+                    $"The file will be saved as \"{Path.GetFileName(dlg.FileName)}\", but the template will appear in-game as \"{currentTemplateName}\".\n\nClick Yes to save anyway, or No to go back and rename the template first.",
+                    "Template Name Mismatch",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+                if (mismatchResult != MessageBoxResult.Yes) return;
+            }
 
             string json = JsonSerializer.Serialize(_generatedTemplate, JsonOptions);
             File.WriteAllText(dlg.FileName, json);
@@ -975,6 +1014,24 @@ namespace Olden_Era___Template_Editor
                 PointsToWin = (int)SldTournamentPointsToWin.Value
             }
         };
+
+        /// <summary>
+        /// Returns true when <paramref name="filePath"/> is inside the expected game templates folder.
+        /// If <paramref name="gameTemplatesPath"/> was resolved, an exact directory match is used.
+        /// Otherwise the chosen directory is checked against the known folder-structure tail
+        /// <c>HeroesOldenEra_Data\StreamingAssets\map_templates</c>.
+        /// </summary>
+        private static bool IsInsideGameTemplatesFolder(string filePath, string? gameTemplatesPath)
+        {
+            string chosenDir = Path.GetDirectoryName(filePath) ?? string.Empty;
+
+            if (gameTemplatesPath != null)
+                return chosenDir.Equals(gameTemplatesPath, StringComparison.OrdinalIgnoreCase);
+
+            // Game not found via registry/fallback paths — match on the known folder-structure tail.
+            const string expectedTail = @"HeroesOldenEra_Data\StreamingAssets\map_templates";
+            return chosenDir.EndsWith(expectedTail, StringComparison.OrdinalIgnoreCase);
+        }
 
         /// <summary>
         /// Tries to locate the Olden Era map_templates folder via the Steam registry.
