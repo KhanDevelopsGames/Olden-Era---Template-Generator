@@ -301,8 +301,8 @@ public class TemplateGeneratorTests
 
         Assert.Equal(2.0, spawnZone.GuardMultiplier);
         Assert.Equal([10000, 5000], spawnZone.MainObjects?.Select(mainObject => mainObject.GuardValue).ToArray());
-        Assert.Equal(2.6, neutralZone.GuardMultiplier);
-        Assert.Equal([20000, 10000], neutralZone.MainObjects?.Select(mainObject => mainObject.GuardValue).ToArray());
+        Assert.Equal(2.8, neutralZone.GuardMultiplier);
+        Assert.Equal([16000, 8000], neutralZone.MainObjects?.Select(mainObject => mainObject.GuardValue).ToArray());
         Assert.All(RequiredConnections(variant), connection => Assert.Equal(30000, connection.GuardValue));
     }
 
@@ -435,8 +435,8 @@ public class TemplateGeneratorTests
         Assert.Equal("zone_layout_sides", zones["Neutral-D"].Layout);
         Assert.Equal("zone_layout_treasure_zone", zones["Neutral-E"].Layout);
         Assert.Equal("zone_layout_treasure_zone", zones["Neutral-F"].Layout);
-        Assert.Equal("zone_layout_center", zones["Neutral-G"].Layout);
-        Assert.Equal("zone_layout_center", zones["Neutral-H"].Layout);
+        Assert.Equal("zone_layout_treasure_zone", zones["Neutral-G"].Layout);
+        Assert.Equal("zone_layout_treasure_zone", zones["Neutral-H"].Layout);
         Assert.Contains(template.ZoneLayouts ?? [], layout => layout.Name == "zone_layout_spawns");
         Assert.Contains(template.ZoneLayouts ?? [], layout => layout.Name == "zone_layout_sides");
         Assert.Contains(template.ZoneLayouts ?? [], layout => layout.Name == "zone_layout_treasure_zone");
@@ -478,7 +478,7 @@ public class TemplateGeneratorTests
         Assert.All(gaps, gap =>
         {
             Assert.Equal(2, gap.Count);
-            Assert.Single(gap, zoneName => zonesByName[zoneName].Layout == "zone_layout_center");
+            Assert.Single(gap, zoneName => zonesByName[zoneName].Layout == "zone_layout_treasure_zone");
             Assert.Single(gap, zoneName => zonesByName[zoneName].Layout == "zone_layout_sides");
         });
 
@@ -522,7 +522,7 @@ public class TemplateGeneratorTests
                 .ToList();
 
             Assert.Equal(2, connectedLayouts.Count);
-            Assert.Contains("zone_layout_center", connectedLayouts);
+            Assert.Contains("zone_layout_treasure_zone", connectedLayouts);
             Assert.Contains("zone_layout_sides", connectedLayouts);
         });
     }
