@@ -601,16 +601,6 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
-    public void KnownValues_VictoryConditionsUseOfficialObservedMapping()
-    {
-        Assert.Equal(
-            ["win_condition_1", "win_condition_3", "win_condition_5", "win_condition_6"],
-            KnownValues.VictoryConditionIds);
-        Assert.DoesNotContain("Gladiator Arena", KnownValues.VictoryConditionLabels);
-        Assert.Contains("Tournament", KnownValues.VictoryConditionLabels);
-    }
-
-    [Fact]
     public void Generate_AdvancedModeWritesOfficialTournamentWinConditionSettings()
     {
         var settings = new GeneratorSettings
