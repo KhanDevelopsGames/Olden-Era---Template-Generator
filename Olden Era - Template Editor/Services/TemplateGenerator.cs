@@ -1333,9 +1333,9 @@ namespace Olden_Era___Template_Editor.Services
             var zones = new List<Zone>();
             var connections = new List<Connection>();
 
-            // Hub zone (neutral, no castle, high loot).
+            // Hub zone (neutral, configurable castles, high loot).
             var hubConns = outerLetters.Select(l => $"Hub-{l}").ToArray();
-            zones.Add(BuildHubZone(hubConns, tuning, hubIsHoldCity, settings.ZoneCfg.HubZoneSize));
+            zones.Add(BuildHubZone(hubConns, tuning, hubIsHoldCity, settings.ZoneCfg.HubZoneSize, settings.ZoneCfg.HubZoneCastles, settings.GenerateRoads));
 
             // Outer zones each connect only to the hub.
             for (int i = 0; i < outerLetters.Count; i++)
@@ -1611,22 +1611,28 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Hub zone (only used by Hub & Spoke topology) ─────────────────────────
 
-        private static Zone BuildHubZone(string[] spokeConns, GenerationTuning tuning, bool isHoldCity = false, double size = 1.0)
+        private static Zone BuildHubZone(string[] spokeConns, GenerationTuning tuning, bool isHoldCity = false, double size = 1.0, int castleCount = 0, bool generateRoads = true)
         {
+            // When hold city is active, ensure at least one castle exists.
+            // If castles are already configured (>0), pick one at random as the hold city castle;
+            // otherwise force-generate exactly one.
+            int effectiveCastleCount = isHoldCity ? Math.Max(1, castleCount) : castleCount;
+
             var mainObjects = new List<MainObject>();
-            if (isHoldCity)
+            for (int i = 0; i < effectiveCastleCount; i++)
             {
+                bool isHoldCastleSlot = isHoldCity && i == 0;
                 mainObjects.Add(new MainObject
                 {
                     Type = "City",
-                    GuardChance = 1.0,
-                    GuardValue = ScaleNeutralGuardValue(25000, tuning),
+                    GuardChance = isHoldCastleSlot ? 1.0 : 0.5,
+                    GuardValue = ScaleNeutralGuardValue(isHoldCastleSlot ? Math.Max(25000, 20000) : 16000, tuning),
                     GuardWeeklyIncrement = 0.10,
-                    BuildingsConstructionSid = "ultra_rich_buildings_construction",
+                    BuildingsConstructionSid = isHoldCastleSlot ? "ultra_rich_buildings_construction" : "rich_buildings_construction",
                     Faction = new TypedSelector { Type = "FromList", Args = [] },
-                    Placement = "Center",
-                    PlacementArgs = [],
-                    HoldCityWinCon = true
+                    Placement = isHoldCastleSlot ? "Center" : "Uniform",
+                    PlacementArgs = isHoldCastleSlot ? [] : ["true", "0.8", "2"],
+                    HoldCityWinCon = isHoldCastleSlot ? true : null
                 });
             }
 
@@ -1653,13 +1659,19 @@ namespace Olden_Era___Template_Editor.Services
             ResourcesValue = ScaleResourceValue(80000 * tuning.ContentScale, tuning),
             ResourcesValuePerArea = ScaleResourceValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
             MainObjects = mainObjects,
-            ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
-            ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
-            MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
+            ZoneBiome = effectiveCastleCount > 0
+                ? new BiomeSelector { Type = "MatchMainObject", Args = ["0"] }
+                : new BiomeSelector { Type = "MatchZone", Args = [] },
+            ContentBiome = effectiveCastleCount > 0
+                ? new BiomeSelector { Type = "MatchMainObject", Args = ["0"] }
+                : new BiomeSelector { Type = "MatchZone", Args = [] },
+            MetaObjectsBiome = effectiveCastleCount > 0
+                ? new BiomeSelector { Type = "MatchMainObject", Args = ["0"] }
+                : new BiomeSelector { Type = "MatchZone", Args = [] },
                     CrossroadsPosition = 0,
-                    Roads = spokeConns.Select(c => PlainRoad(
-                        isHoldCity ? MainObjectEndpoint("0") : ConnectionEndpoint(c),
-                        ConnectionEndpoint(c))).ToList()
+                    Roads = effectiveCastleCount > 0
+                        ? BuildOuterZoneRoads(spokeConns, effectiveCastleCount, includeFoothold: false, generateRoads: generateRoads)
+                        : BuildConnectorZoneRoads(spokeConns, generateRoads: generateRoads)
                 };
             }
 
@@ -1830,7 +1842,9 @@ namespace Olden_Era___Template_Editor.Services
                 ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 CrossroadsPosition = 0,
-                Roads = BuildOuterZoneRoads(ringConns, castleCount, spawnFootholds, generateRoads)
+                Roads = castleCount > 0
+                    ? BuildOuterZoneRoads(ringConns, castleCount, spawnFootholds, generateRoads)
+                    : BuildConnectorZoneRoads(ringConns, generateRoads)
             };
         }
 
@@ -1908,11 +1922,13 @@ namespace Olden_Era___Template_Editor.Services
                     ? new BiomeSelector { Type = "MatchMainObject", Args = ["0"] }
                     : new BiomeSelector { Type = "MatchZone", Args = [] },
                 CrossroadsPosition = 0,
-                Roads = BuildOuterZoneRoads(ringConns, castleCount, spawnFootholds, generateRoads)
+                Roads = castleCount > 0
+                    ? BuildOuterZoneRoads(ringConns, castleCount, spawnFootholds, generateRoads)
+                    : BuildConnectorZoneRoads(ringConns, generateRoads)
             };
         }
 
-        // Generic tiered pool sets used by many official templates (Staircase, Shamrock, Symphony, Blitz, …)
+        // Generic tiered pool sets
         // t2 = low-tier sides/spawns, t3 = medium-tier sides/treasures, t4/t5 = high-tier treasures/center
         private static readonly string[] T2GuardedPools =
         [

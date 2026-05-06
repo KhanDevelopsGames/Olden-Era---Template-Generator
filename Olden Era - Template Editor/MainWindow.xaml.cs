@@ -235,6 +235,7 @@ namespace Olden_Era___Template_Editor
             TxtPlayerZoneSize.Text = $"{SldPlayerZoneSize.Value:F2}x";
             TxtNeutralZoneSize.Text = $"{SldNeutralZoneSize.Value:F2}x";
             TxtHubZoneSize.Text = $"{SldHubZoneSize.Value:F2}x";
+            TxtHubCastles.Text = ((int)SldHubCastles.Value).ToString();
             TxtGuardRandomization.Text = $"{(int)SldGuardRandomization.Value}%";
             TxtLostStartCityDay.Text = ((int)SldLostStartCityDay.Value).ToString();
             TxtCityHoldDays.Text = ((int)SldCityHoldDays.Value).ToString();
@@ -288,20 +289,30 @@ namespace Olden_Era___Template_Editor
 
             int selectedMapSize = SelectedMapSize();
             int totalZones = players + neutral;
-            if (totalZones > 0 && (selectedMapSize * selectedMapSize) / totalZones < 1024)
+            var selectedTopology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default;
+            // Hub layout has an extra central zone that also occupies map area.
+            int totalZonesIncludingHub = selectedTopology == MapTopology.HubAndSpoke ? totalZones + 1 : totalZones;
+            if (totalZonesIncludingHub > 0 && (selectedMapSize * selectedMapSize) / totalZonesIncludingHub < 1024)
                 warnings.Add($"⚠️ Estimated zone size is too small. The game may freeze when loading the map. Increase the map size or reduce the number of zones.");
 
             if (selectedMapSize > KnownValues.MaxOfficialMapSize)
                 warnings.Add("Experimental map sizes above 240x240 are not confirmed by official templates; generated maps may fail, freeze, or behave unpredictably in game.");
 
+            if (totalZones > 10)
+            {
+                int playerCastles = (int)SldPlayerCastles.Value;
+                int neutralCastles = _advancedZoneSettings ? 0 : (int)SldNeutralCastles.Value;
+                if (playerCastles > 1 || neutralCastles > 1)
+                    warnings.Add("⚠️ Using more than 1 castle per zone with more than 10 total zones may cause the game to freeze when generating the map. Consider reducing the number of castles.");
+            }
+
             int minNeutralBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value;
             if (_advancedZoneSettings && minNeutralBetweenPlayers > 0)
             {
-                var topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default;
                 var separationSettings = new GeneratorSettings
                 {
                     PlayerCount = players,
-                    Topology = topology,
+                    Topology = selectedTopology,
                     RandomPortals = ChkRandomPortals.IsChecked == true,
                     MinNeutralZonesBetweenPlayers = minNeutralBetweenPlayers
                 };
@@ -313,8 +324,7 @@ namespace Olden_Era___Template_Editor
             bool cityHoldActive = ChkCityHold.IsChecked == true;
             if (cityHoldActive)
             {
-                var topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default;
-                if (topology != MapTopology.HubAndSpoke && neutral == 0)
+                if (selectedTopology != MapTopology.HubAndSpoke && neutral == 0)
                 {
                     SetValidationText("City Hold requires at least one neutral zone to place the hold city. Add a neutral zone or switch to the Hub layout.");
                     BtnPreview.IsEnabled = false;
@@ -411,6 +421,7 @@ namespace Olden_Era___Template_Editor
             UpdateIsolateDescVisibility();
             UpdateAdvancedZoneSettingsVisibility();
             PnlHubZoneSize.Visibility = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
+            PnlHubCastles.Visibility  = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
 
             MarkDirty();
             Validate();
@@ -671,6 +682,7 @@ namespace Olden_Era___Template_Editor
             PlayerZoneSize        = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
             NeutralZoneSize       = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
             HubZoneSize           = SldHubZoneSize.Value,
+            HubZoneCastles        = (int)SldHubCastles.Value,
             GuardRandomization    = SldGuardRandomization.Value / 100.0,
             HeroCountMin          = (int)SldHeroMin.Value,
             HeroCountMax          = (int)SldHeroMax.Value,
@@ -729,6 +741,7 @@ namespace Olden_Era___Template_Editor
             SldPlayerZoneSize.Value = Math.Clamp(s.PlayerZoneSize, 0.1, 2.0);
             SldNeutralZoneSize.Value = Math.Clamp(s.NeutralZoneSize, 0.1, 2.0);
             SldHubZoneSize.Value = Math.Clamp(s.HubZoneSize, 0.25, 3.0);
+            SldHubCastles.Value = Math.Clamp(s.HubZoneCastles, 0, 4);
             SldGuardRandomization.Value = GuardRandomizationPercent(s.GuardRandomization);
             SldHeroMin.Value        = s.HeroCountMin;
             SldHeroMax.Value        = s.HeroCountMax;
@@ -973,6 +986,7 @@ namespace Olden_Era___Template_Editor
                 NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
                 BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
                 HubZoneSize = SldHubZoneSize.Value,
+                HubZoneCastles = (int)SldHubCastles.Value,
                 Advanced = new AdvancedSettings
                 {
                     Enabled = _advancedZoneSettings,

@@ -55,6 +55,7 @@ namespace Olden_Era___Template_Editor.Models
         public int NeutralStackStrengthPercent { get; set; } = 100;
         public int BorderGuardStrengthPercent { get; set; } = 100;
         public double HubZoneSize { get; set; } = 1.0;
+        public int HubZoneCastles { get; set; } = 0;
         public AdvancedSettings Advanced { get; set; } = new AdvancedSettings();
     }
 
