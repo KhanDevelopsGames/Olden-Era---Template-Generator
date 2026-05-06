@@ -365,21 +365,20 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Neutral tier styles ──────────────────────────────────────────────────
 
-        private static (Brush Fill, Pen Outline) NeutralTierStyle(Zone zone) => zone.Layout switch
+        private static (Brush Fill, Pen Outline) NeutralTierStyle(Zone zone)
         {
-            // Bronze — Low tier
-            SideLayoutName => (
-                new SolidColorBrush(BronzeFill),
-                new Pen(new SolidColorBrush(BronzeBorder), 2.5)),
-            // Gold — High tier
-            CenterLayoutName => (
-                new SolidColorBrush(GoldFill),
-                new Pen(new SolidColorBrush(GoldBorder), 2.5)),
-            // Silver — Medium tier (default / TreasureLayoutName)
-            _ => (
-                new SolidColorBrush(SilverFill),
-                new Pen(new SolidColorBrush(SilverBorder), 2.5)),
-        };
+            // Derive tier from the guarded content pool names, which encode the tier number
+            // directly (e.g. "classic_template_pool_random_t4_item") and are never scaled.
+            //   t4 or t5 → Gold  (High)
+            //   t2       → Bronze (Low)
+            //   anything else / t3 → Silver (Medium)
+            var pool = zone.GuardedContentPool?.FirstOrDefault() ?? string.Empty;
+            if (pool.Contains("_t4_") || pool.Contains("_t5_"))
+                return (new SolidColorBrush(GoldFill),   new Pen(new SolidColorBrush(GoldBorder),   2.5));
+            if (pool.Contains("_t2_") || pool.Contains("_t1_"))
+                return (new SolidColorBrush(BronzeFill), new Pen(new SolidColorBrush(BronzeBorder), 2.5));
+            return     (new SolidColorBrush(SilverFill), new Pen(new SolidColorBrush(SilverBorder), 2.5));
+        }
 
         // ── Person icon ──────────────────────────────────────────────────────────
         // Head + body silhouette centred inside the zone circle.

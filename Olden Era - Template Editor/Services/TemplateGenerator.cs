@@ -135,9 +135,9 @@ namespace Olden_Era___Template_Editor.Services
         private sealed record NeutralZoneProfile(
             string Layout,
             double GuardMultiplier,
-            string GuardedContentPool,
-            string UnguardedContentPool,
-            string ResourcesContentPool,
+            string[] GuardedContentPool,
+            string[] UnguardedContentPool,
+            string[] ResourcesContentPool,
             int GuardedContentValue,
             int GuardedContentValuePerArea,
             int UnguardedContentValue,
@@ -944,20 +944,9 @@ namespace Olden_Era___Template_Editor.Services
                 GuardWeeklyIncrement = 0.20,
                 GuardReactionDistribution = [0, 10, 10, 20, 10, 0],
                 DiplomacyModifier = -0.5,
-                GuardedContentPool = ["template_pool_jebus_cross_guarded_side_zone"],
-                UnguardedContentPool = ["template_pool_jebus_cross_unguarded_side_zone"],
-                ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
-                MandatoryContent = [],
-                ContentCountLimits = BuildSideContentLimits(),
-                GuardedContentValue = ScaleStructureValue(300000 * tuning.ContentScale, tuning),
-                GuardedContentValuePerArea = ScaleStructureValue(2400 * Math.Sqrt(tuning.ContentScale), tuning),
-                UnguardedContentValue = ScaleStructureValue(50000 * tuning.ContentScale, tuning),
-                UnguardedContentValuePerArea = ScaleStructureValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
-                ResourcesValue = ScaleResourceValue(80000 * tuning.ContentScale, tuning),
-                ResourcesValuePerArea = ScaleResourceValue(600 * Math.Sqrt(tuning.ContentScale), tuning),
-                MainObjects = [],
-                ZoneBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
-                ContentBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
+                GuardedContentPool = [.. T3GuardedPools],
+                UnguardedContentPool = [.. T3UnguardedPools],
+                ResourcesContentPool = [.. GeneralResourcesMedium],
                 MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
                 CrossroadsPosition = 0,
                 Roads = spokeConnNames.Select(c => PlainRoad(ConnectionEndpoint(c), ConnectionEndpoint(c))).ToList()
@@ -1652,9 +1641,9 @@ namespace Olden_Era___Template_Editor.Services
             GuardWeeklyIncrement = 0.20,
             GuardReactionDistribution = [0, 10, 10, 20, 10, 0],
             DiplomacyModifier = -0.5,
-            GuardedContentPool = ["template_pool_jebus_cross_guarded_side_zone"],
-            UnguardedContentPool = ["template_pool_jebus_cross_unguarded_side_zone"],
-            ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
+            GuardedContentPool = [.. T3GuardedPools],
+            UnguardedContentPool = [.. T3UnguardedPools],
+            ResourcesContentPool = [.. GeneralResourcesMedium],
             MandatoryContent = [],
             ContentCountLimits = BuildSideContentLimits(),
             GuardedContentValue = ScaleStructureValue(300000 * tuning.ContentScale, tuning),
@@ -1825,9 +1814,9 @@ namespace Olden_Era___Template_Editor.Services
                 GuardWeeklyIncrement = 0.20,
                 GuardReactionDistribution = [60, 20, 10, 10, 2, 0],
                 DiplomacyModifier = -0.5,
-                GuardedContentPool = ["template_pool_jebus_cross_guarded_start_zone"],
-                UnguardedContentPool = ["template_pool_jebus_cross_unguarded_start_zone"],
-                ResourcesContentPool = ["content_pool_general_resources_start_zone_rich"],
+                GuardedContentPool = [.. T2GuardedPools],
+                UnguardedContentPool = [.. T2UnguardedPools],
+                ResourcesContentPool = [.. GeneralResourcesPoor],
                 MandatoryContent = [$"mandatory_content_side_{letter}"],
                 ContentCountLimits = BuildSideContentLimits(),
                 GuardedContentValue = ScaleStructureValue(200000 * tuning.ContentScale, tuning),
@@ -1897,9 +1886,9 @@ namespace Olden_Era___Template_Editor.Services
                 GuardWeeklyIncrement = 0.20,
                 GuardReactionDistribution = plan.Quality == NeutralZoneQuality.High ? [0, 10, 10, 20, 10, 0] : [0, 10, 10, 10, 10, 0],
                 DiplomacyModifier = -0.5,
-                GuardedContentPool = [profile.GuardedContentPool],
-                UnguardedContentPool = [profile.UnguardedContentPool],
-                ResourcesContentPool = [profile.ResourcesContentPool],
+                GuardedContentPool = [.. profile.GuardedContentPool],
+                UnguardedContentPool = [.. profile.UnguardedContentPool],
+                ResourcesContentPool = [.. profile.ResourcesContentPool],
                 MandatoryContent = [$"mandatory_content_neutral_{letter}"],
                 ContentCountLimits = BuildSideContentLimits(),
                 GuardedContentValue = ScaleStructureValue(profile.GuardedContentValue * tuning.ContentScale, tuning),
@@ -1923,54 +1912,143 @@ namespace Olden_Era___Template_Editor.Services
             };
         }
 
+        // Generic tiered pool sets used by many official templates (Staircase, Shamrock, Symphony, Blitz, …)
+        // t2 = low-tier sides/spawns, t3 = medium-tier sides/treasures, t4/t5 = high-tier treasures/center
+        private static readonly string[] T2GuardedPools =
+        [
+            "classic_template_pool_random_t2_item",
+            "classic_template_pool_random_t2_pandora",
+            "classic_template_pool_random_t2_hire",
+            "classic_template_pool_random_t2_unit_bank",
+            "classic_template_pool_random_t2_res_bank",
+            "classic_template_pool_random_t2_stat",
+            "classic_template_pool_random_t2_magic",
+        ];
+        private static readonly string[] T2UnguardedPools =
+        [
+            "classic_template_pool_random_unguarded_t2_item",
+            "classic_template_pool_random_unguarded_t2_pandora",
+            "classic_template_pool_random_unguarded_t2_hire",
+            "classic_template_pool_random_unguarded_t2_unit_bank",
+            "classic_template_pool_random_unguarded_t2_res_bank",
+            "classic_template_pool_random_unguarded_t2_stat",
+            "classic_template_pool_random_unguarded_t2_magic",
+        ];
+        private static readonly string[] T3GuardedPools =
+        [
+            "classic_template_pool_random_t3_item",
+            "classic_template_pool_random_t3_pandora",
+            "classic_template_pool_random_t3_hire",
+            "classic_template_pool_random_t3_unit_bank",
+            "classic_template_pool_random_t3_res_bank",
+            "classic_template_pool_random_t3_stat",
+            "classic_template_pool_random_t3_magic",
+        ];
+        private static readonly string[] T3UnguardedPools =
+        [
+            "classic_template_pool_random_unguarded_t3_item",
+            "classic_template_pool_random_unguarded_t3_pandora",
+            "classic_template_pool_random_unguarded_t3_hire",
+            "classic_template_pool_random_unguarded_t3_unit_bank",
+            "classic_template_pool_random_unguarded_t3_res_bank",
+            "classic_template_pool_random_unguarded_t3_stat",
+            "classic_template_pool_random_unguarded_t3_magic",
+        ];
+        private static readonly string[] T4GuardedPools =
+        [
+            "classic_template_pool_random_t4_item",
+            "classic_template_pool_random_t4_pandora",
+            "classic_template_pool_random_t4_hire",
+            "classic_template_pool_random_t4_unit_bank",
+            "classic_template_pool_random_t4_res_bank",
+            "classic_template_pool_random_t4_stat",
+            "classic_template_pool_random_t4_magic",
+        ];
+        private static readonly string[] T4UnguardedPools =
+        [
+            "classic_template_pool_random_unguarded_t4_item",
+            "classic_template_pool_random_unguarded_t4_pandora",
+            "classic_template_pool_random_unguarded_t4_hire",
+            "classic_template_pool_random_unguarded_t4_unit_bank",
+            "classic_template_pool_random_unguarded_t4_res_bank",
+            "classic_template_pool_random_unguarded_t4_stat",
+            "classic_template_pool_random_unguarded_t4_magic",
+        ];
+        private static readonly string[] T5GuardedPools =
+        [
+            "classic_template_pool_random_t5_item",
+            "classic_template_pool_random_t5_pandora",
+            "classic_template_pool_random_t5_hire",
+            "classic_template_pool_random_t5_unit_bank",
+            "classic_template_pool_random_t5_res_bank",
+            "classic_template_pool_random_t5_stat",
+            "classic_template_pool_random_t5_magic",
+        ];
+        private static readonly string[] T5UnguardedPools =
+        [
+            "classic_template_pool_random_unguarded_t5_item",
+            "classic_template_pool_random_unguarded_t5_pandora",
+            "classic_template_pool_random_unguarded_t5_hire",
+            "classic_template_pool_random_unguarded_t5_unit_bank",
+            "classic_template_pool_random_unguarded_t5_res_bank",
+            "classic_template_pool_random_unguarded_t5_stat",
+            "classic_template_pool_random_unguarded_t5_magic",
+        ];
+        private static readonly string[] GeneralResourcesPoor   = ["content_pool_general_resources_start_zone_poor"];
+        private static readonly string[] GeneralResourcesMedium = ["content_pool_general_resources_start_zone_medium"];
+        private static readonly string[] GeneralResourcesRich   = ["content_pool_general_resources_start_zone_rich"];
+
         private static NeutralZoneProfile GetNeutralZoneProfile(NeutralZoneQuality quality) => quality switch
         {
+            // Low — t2 pools, zone_layout_sides, guard mult ~1.1, poor resources
             NeutralZoneQuality.Low => new NeutralZoneProfile(
                 SideLayoutName,
-                1.0,
-                "template_pool_jebus_cross_guarded_start_zone",
-                "template_pool_jebus_cross_unguarded_start_zone",
-                "content_pool_general_resources_start_zone_rich",
-                140000,
-                1200,
+                1.1,
+                T2GuardedPools,
+                T2UnguardedPools,
+                GeneralResourcesPoor,
+                120000,
+                1000,
+                25000,
+                200,
                 30000,
                 240,
-                40000,
-                320,
-                5000,
-                2500,
+                4000,
+                2000,
                 "poor_buildings_construction",
                 "poor_buildings_construction"),
+            // High — t4+t5 pools mixed, zone_layout_treasures, guard mult ~1.8, rich resources
             NeutralZoneQuality.High => new NeutralZoneProfile(
-                CenterLayoutName,
-                1.6,
-                "template_pool_jebus_cross_guarded_center_zone",
-                "template_pool_jebus_cross_unguarded_center_zone",
-                "content_pool_general_resources_treasure_zone_rich_no_scrolls",
-                520000,
-                3200,
+                TreasureLayoutName,
+                1.8,
+                [.. T4GuardedPools, .. T5GuardedPools],
+                [.. T4UnguardedPools, .. T5UnguardedPools],
+                GeneralResourcesRich,
+                480000,
+                3000,
+                80000,
+                620,
                 90000,
-                700,
-                100000,
-                650,
-                18000,
-                9000,
+                580,
+                16000,
+                8000,
                 "rich_buildings_construction",
                 "rich_buildings_construction"),
+            // Medium — t3 pools, zone_layout_sides or treasures, guard mult ~1.4, medium resources
             _ => new NeutralZoneProfile(
                 TreasureLayoutName,
-                1.3,
-                "template_pool_jebus_cross_guarded_side_zone",
-                "template_pool_jebus_cross_unguarded_side_zone",
-                "content_pool_general_resources_start_zone_rich",
-                260000,
-                2400,
-                40000,
-                320,
-                60000,
-                480,
-                10000,
-                5000,
+                1.4,
+                T3GuardedPools,
+                T3UnguardedPools,
+                GeneralResourcesMedium,
+                240000,
+                2000,
+                38000,
+                300,
+                55000,
+                420,
+                8000,
+                4000,
                 "rich_buildings_construction",
                 "poor_buildings_construction"),
         };
@@ -2246,7 +2324,7 @@ namespace Olden_Era___Template_Editor.Services
                 groups.Add(BuildSpawnMandatoryContent(letter, settings.ZoneCfg.PlayerZoneCastles, settings.SpawnRemoteFootholds));
 
             foreach (var neutralZone in neutralZones)
-                groups.Add(BuildNeutralMandatoryContent(neutralZone.Letter, neutralZone.CastleCount, settings.SpawnRemoteFootholds));
+                groups.Add(BuildNeutralMandatoryContent(neutralZone.Letter, neutralZone.CastleCount, settings.SpawnRemoteFootholds, neutralZone.Quality));
 
             return groups;
         }
@@ -2256,80 +2334,248 @@ namespace Olden_Era___Template_Editor.Services
             return new MandatoryContentGroup
             {
                 Name = $"mandatory_content_side_{letter}",
-                Content = BuildOuterZoneMandatoryContent(isNeutral: false, castleCount, spawnFootholds)
+                Content = BuildPlayerZoneMandatoryContent(castleCount, spawnFootholds)
             };
         }
 
-        private static MandatoryContentGroup BuildNeutralMandatoryContent(string letter, int castleCount, bool spawnFootholds)
+        private static MandatoryContentGroup BuildNeutralMandatoryContent(string letter, int castleCount, bool spawnFootholds, NeutralZoneQuality quality)
         {
             return new MandatoryContentGroup
             {
                 Name = $"mandatory_content_neutral_{letter}",
-                Content = BuildOuterZoneMandatoryContent(isNeutral: true, castleCount, spawnFootholds)
+                Content = quality switch
+                {
+                    NeutralZoneQuality.Low    => BuildLowNeutralMandatoryContent(castleCount, spawnFootholds),
+                    NeutralZoneQuality.High   => BuildHighNeutralMandatoryContent(castleCount, spawnFootholds),
+                    _                         => BuildMediumNeutralMandatoryContent(castleCount, spawnFootholds),
+                }
             };
         }
 
-        private static List<ContentItem> BuildOuterZoneMandatoryContent(bool isNeutral, int castleCount, bool spawnFootholds)
+        /// <summary>
+        /// Player spawn zone — utility-focused with guaranteed wood/ore mines near the castle,
+        /// hiring buildings, stat trainers, and basic economic structures.
+        /// Mirrors the consensus mandatory content for spawn zones across example templates
+        /// (Jebus Cross side zones, Universe/Exodus spawn zones).
+        /// </summary>
+        private static List<ContentItem> BuildPlayerZoneMandatoryContent(int castleCount, bool spawnFootholds)
         {
-            var footholdRules = new List<ContentPlacementRule>
-            {
-                new() { Type = "Crossroads", Args = [], TargetMin = 0.2, TargetMax = 0.3, Weight = 0 },
-            };
-            if (castleCount > 0)
-                footholdRules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.2, TargetMax = 0.4, Weight = 0 });
-            if (castleCount > 1)
-                footholdRules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["1"], TargetMin = 0.5, TargetMax = 0.5, Weight = 2 });
-
+            var footholdRules = FootholdRules(castleCount);
             var content = new List<ContentItem>();
 
             if (spawnFootholds)
                 content.Add(new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules });
 
-            content.AddRange(new List<ContentItem>
-            {
-                new() { IncludeLists = ["template_pool_jebus_cross_guarded_resource_banks_tier_3_base"], Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 }] },
-                new() { IncludeLists = ["template_pool_jebus_cross_guarded_resource_banks_tier_3_pro"], Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.3, TargetMax = 0.6, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.5, Weight = 1 }] },
-            });
+            // Guaranteed wood and ore mines anchored near the player castle.
+            content.AddRange([
+                new() { Sid = "mine_wood", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 }, new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
+                new() { Sid = "mine_ore",  IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 }, new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
+            ]);
 
-            // One wood mine and one ore mine anchored near the initial castle.
-            // Rules match the consensus pattern across all example templates:
-            // MainObject(0) biases placement toward the castle, Crossroads biases toward road intersections.
-            if (!isNeutral)
-            {
-                content.AddRange(new List<ContentItem>
-                {
-                    new() { Sid = "mine_wood", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 }, new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                    new() { Sid = "mine_ore",  IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 }, new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                });
-            }
-
-            content.AddRange(new List<ContentItem>
-            {
-                new() { Sid = "fountain", IsGuarded = false },
+            // Utility and economic buildings — matches JC side zone + Universe spawn.
+            content.AddRange([
+                new() { Sid = "fountain",  IsGuarded = false },
+                new() { Sid = "fountain_2", IsGuarded = false },
                 new() { Sid = "watchtower", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                new() { Sid = "mana_well", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
+                new() { Sid = "mana_well",  IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
                 new() { Sid = "market" },
                 new() { Sid = "forge" },
-                new() { Sid = "tavern", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.4, Weight = 1 }] },
+                new() { Sid = "tavern",  IsGuarded = false, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.4, Weight = 1 }] },
                 new() { Sid = "stables", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
                 new() { Sid = "university" },
                 new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
+                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
+                new() { Sid = "college_of_wonder" },
                 new() { Sid = "mystical_tower" },
                 new() { Sid = "prison", Variant = 0, IsGuarded = false },
+                new() { Sid = "random_hire_7" },
+                new() { Sid = "random_hire_6" },
                 new() { Sid = "random_hire_5" },
                 new() { IncludeLists = ["basic_content_list_building_random_hires"] },
-                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"], IsGuarded = isNeutral ? null : false },
-                new() { Sid = "pandora_box", Variant = 0, SoloEncounter = true },
-                new() { Sid = "mine_wood", IsMine = true },
-                new() { Sid = "mine_ore", IsMine = true },
-                new() { Sid = "mine_gold", IsMine = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 1 }] },
+                new() { IncludeLists = ["basic_content_list_building_random_hires"] },
+                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"], IsGuarded = false },
+                // Additional mines — secondary spawns not anchored to castle.
+                new() { Sid = "mine_gold",     IsMine = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 1 }] },
                 new() { Sid = "mine_crystals", IsMine = true },
-                new() { Sid = "mine_mercury", IsMine = true },
+                new() { Sid = "mine_mercury",  IsMine = true },
                 new() { Sid = "mine_gemstones", IsMine = true },
-                new() { Sid = "alchemy_lab", IsMine = true },
-            });
+                new() { Sid = "alchemy_lab",   IsMine = true },
+            ]);
 
             return content;
+        }
+
+        /// <summary>
+        /// Low-quality neutral zone — t2 pools, intentionally lean mandatory content.
+        /// The t2 content pools supply most of the variety; mandatory content only guarantees
+        /// the essential items that every low zone must have: a few rare mines, basic utility
+        /// buildings, and a handful of random hires. Modelled after Universe side zones,
+        /// Kerberos connector zones, and Madness side zones from the template corpus.
+        /// No high-end encounters (no dragon utopias, research labs, unstable ruins).
+        /// </summary>
+        private static List<ContentItem> BuildLowNeutralMandatoryContent(int castleCount, bool spawnFootholds)
+        {
+            var footholdRules = FootholdRules(castleCount);
+            var content = new List<ContentItem>();
+
+            if (spawnFootholds)
+                content.Add(new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules });
+
+            content.AddRange([
+                // Mines — biome-based rare mine + one fixed rare mine (Blitz Side-1 pattern).
+                new() { Name = "name_mine_by_biome_1", IncludeLists = ["basic_content_list_rare_mines_by_biome"], IsMine = true },
+                new() { IncludeLists = ["basic_content_list_rare_mines"], IsMine = true },
+                // Utility — one guarded market near crossroads, one vision building.
+                new() { Sid = "market", IsGuarded = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.20, Weight = 1 }] },
+                new() { IncludeLists = ["basic_content_list_vision_buildings_tier_1"] },
+                // Buff buildings — picked from the real hero-buff pool (mana_well, fountain, stables, etc.).
+                new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
+                new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
+                // Common hero stat building (stinging_sword, armory_automaton, magic_wheel, knowledge_garden).
+                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_1"] },
+                // Hiring — low-tier random hires (hires 1–4, confirmed content_list name).
+                new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
+                new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
+                // Loot — solo pandora box + low-tier army pandora (variants 8–11).
+                new() { Sid = "pandora_box", SoloEncounter = true },
+                new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"] },
+                // Pickup — random item + common magic pickup.
+                new() { IncludeLists = ["basic_content_list_pickup_random_items"] },
+                new() { IncludeLists = ["basic_content_list_building_magic_tier_1"] },
+            ]);
+
+            return content;
+        }
+
+        /// <summary>
+        /// Medium-quality neutral zone — t3 pools, tier-3 resource banks, medium hires, stat buildings,
+        /// epic+legendary loot, pandora boxes, gold and rare mines.
+        /// Based on t3-pool side/treasure zones found in Staircase, Shamrock, Blitz, Kerberos, and similar templates.
+        /// No high-end encounters (no dragon utopias, research labs, unstable ruins).
+        /// </summary>
+        private static List<ContentItem> BuildMediumNeutralMandatoryContent(int castleCount, bool spawnFootholds)
+        {
+            var footholdRules = FootholdRules(castleCount);
+            var content = new List<ContentItem>();
+
+            if (spawnFootholds)
+                content.Add(new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules });
+
+            content.AddRange([
+                // Mines — full rare set + gold + alchemy lab (Yin Yang/Staircase t3 pattern).
+                new() { Name = "name_mine_crystals", Sid = "mine_crystals",  IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
+                new() { Name = "name_mine_mercury",  Sid = "mine_mercury",   IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
+                new() { Name = "name_mine_gemstones",Sid = "mine_gemstones", IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
+                new() { Sid = "mine_gold",    IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.20, Weight = 1 }] },
+                new() { Sid = "alchemy_lab",  IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.20, TargetMax = 0.30, Weight = 1 }] },
+                // Utility — watchtower (guarded) + vision building.
+                new() { Sid = "watchtower", IsGuarded = true },
+                new() { IncludeLists = ["basic_content_list_vision_buildings_tier_2"] },
+                // Buff buildings.
+                new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
+                // Hero stats — tier 1 common + tier 2 uncommon picks.
+                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_1"] },
+                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
+                // Magic buildings — tier 1 + tier 2.
+                new() { IncludeLists = ["basic_content_list_building_magic_tier_1"] },
+                new() { IncludeLists = ["basic_content_list_building_magic_tier_2"] },
+                // Hiring — low-tier + high-tier random hires (confirmed generator list names).
+                new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
+                new() { IncludeLists = ["content_list_building_random_hires_high_tier"] },
+                // Unit banks — biome-restricted (Blitz Treasure-2 pattern).
+                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_only_biome_restriction"] },
+                // Guarded resource banks — tier 2 (no black tower / tier-1 banks).
+                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_2"] },
+                // Loot — epic items + pandora boxes with army variants.
+                new() { Sid = "random_item_epic", SoloEncounter = true },
+                new() { Sid = "random_item_epic" },
+                new() { Sid = "pandora_box", SoloEncounter = true },
+                new() { Sid = "pandora_box" },
+                new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"] },
+            ]);
+
+            return content;
+        }
+
+        /// <summary>
+        /// High-quality neutral zone — t4/t5 pools, highest-challenge encounters: dragon utopias,
+        /// unstable ruins, research labs, mythic scroll boxes, tier-3 hero stats, many unit banks
+        /// (including biome-restricted), legendary loot, many pandora boxes, gold-heavy mines.
+        /// Based on t4/t5-pool treasure zones found in Staircase, Symphony, Blitz, Crossroads, and
+        /// high-zone mandatory content across the example template corpus.
+        /// Only this tier spawns dragon utopias, unstable ruins, and research laboratories.
+        /// </summary>
+        private static List<ContentItem> BuildHighNeutralMandatoryContent(int castleCount, bool spawnFootholds)
+        {
+            var footholdRules = FootholdRules(castleCount);
+            var content = new List<ContentItem>();
+
+            if (spawnFootholds)
+                content.Add(new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules });
+
+            content.AddRange([
+                // Epic encounters — exclusive to high zones.
+                new() { IncludeLists = ["content_list_building_utopia"] },
+                new() { IncludeLists = ["content_list_building_utopia"] },
+                new() { IncludeLists = ["content_list_building_epic_guarded_resource_banks"] },
+                new() { IncludeLists = ["content_list_building_epic_guarded_resource_banks"] },
+                // Utility — vision + buff buildings.
+                new() { IncludeLists = ["basic_content_list_vision_buildings_tier_2"] },
+                new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
+                // Hero stats — tier 2 + tier 3 (fort/university/maze/college_of_wonder).
+                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
+                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_3"] },
+                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_3"] },
+                // Magic buildings — tier 2 (magic amplifiers).
+                new() { IncludeLists = ["basic_content_list_building_magic_tier_2"] },
+                new() { IncludeLists = ["basic_content_list_building_magic_tier_2"] },
+                // Hiring — high-tier hires (hires 5–7) + all hires pool.
+                new() { IncludeLists = ["content_list_building_random_hires_high_tier"] },
+                new() { IncludeLists = ["content_list_building_random_hires_high_tier"] },
+                new() { IncludeLists = ["basic_content_list_building_random_hires"] },
+                // Unit banks — biome-restricted + no-restriction variants.
+                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_only_biome_restriction"] },
+                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"] },
+                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"] },
+                // Guarded resource banks — tier 2 + tier 3.
+                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_2"] },
+                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_3"] },
+                // Loot — mythic scrolls, legendary items, pandora boxes with high-tier armies.
+                new() { IncludeLists = ["basic_content_list_pickup_mythic_scroll_box"] },
+                new() { IncludeLists = ["basic_content_list_pickup_mythic_scroll_box"] },
+                new() { Sid = "random_item_legendary", SoloEncounter = true },
+                new() { Sid = "random_item_legendary" },
+                new() { Sid = "random_item_epic" },
+                new() { Sid = "pandora_box", SoloEncounter = true },
+                new() { Sid = "pandora_box" },
+                new() { Sid = "pandora_box" },
+                new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
+                new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
+                // Mines — gold-heavy with full rare set.
+                new() { Sid = "mine_gold",      IsMine = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 1 }] },
+                new() { Sid = "mine_gold",      IsMine = true },
+                new() { Sid = "mine_gold",      IsMine = true },
+                new() { Sid = "mine_crystals",  IsMine = true },
+                new() { Sid = "mine_mercury",   IsMine = true },
+                new() { Sid = "mine_gemstones", IsMine = true },
+                new() { Sid = "alchemy_lab",    IsMine = true },
+                new() { Sid = "alchemy_lab",    IsMine = true },
+            ]);
+
+            return content;
+        }
+
+        private static List<ContentPlacementRule> FootholdRules(int castleCount)
+        {
+            var rules = new List<ContentPlacementRule>
+            {
+                new() { Type = "Crossroads", Args = [], TargetMin = 0.2, TargetMax = 0.3, Weight = 0 },
+            };
+            if (castleCount > 0)
+                rules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.2, TargetMax = 0.4, Weight = 0 });
+            if (castleCount > 1)
+                rules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["1"], TargetMin = 0.5, TargetMax = 0.5, Weight = 2 });
+            return rules;
         }
 
         // ── Content count limits ─────────────────────────────────────────────────
@@ -2342,6 +2588,8 @@ namespace Olden_Era___Template_Editor.Services
         {
             var sidLimits = new List<ContentSidLimit>
             {
+                // ── Banned in generated zones ────────────────────────────────────
+                new() { Sid = "black_tower",          MaxCount = 0 }, // tier-1 resource bank; too weak/out-of-place in neutral zones
                 // ── Utility / buff buildings ─────────────────────────────────────
                 new() { Sid = "fountain",             MaxCount = 2 },
                 new() { Sid = "fountain_2",           MaxCount = 2 },
