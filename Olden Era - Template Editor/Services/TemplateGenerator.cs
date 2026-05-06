@@ -2353,10 +2353,11 @@ namespace Olden_Era___Template_Editor.Services
         }
 
         /// <summary>
-        /// Player spawn zone — utility-focused with guaranteed wood/ore mines near the castle,
-        /// hiring buildings, stat trainers, and basic economic structures.
-        /// Mirrors the consensus mandatory content for spawn zones across example templates
-        /// (Jebus Cross side zones, Universe/Exodus spawn zones).
+        /// Player spawn zone — guaranteed starter mines anchored near the castle, a full rare mine
+        /// set spread along roads, utility/economic buildings, tier-split hiring picks, one hero
+        /// stat trainer, guarded resource banks, and starter loot.
+        /// Grounded in the consensus across Exodus, Staircase, Kerberos, Blitz, Universe, and
+        /// Yin Yang spawn zones from the example template corpus.
         /// </summary>
         private static List<ContentItem> BuildPlayerZoneMandatoryContent(int castleCount, bool spawnFootholds)
         {
@@ -2366,40 +2367,52 @@ namespace Olden_Era___Template_Editor.Services
             if (spawnFootholds)
                 content.Add(new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules });
 
-            // Guaranteed wood and ore mines anchored near the player castle.
             content.AddRange([
-                new() { Sid = "mine_wood", IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 }, new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                new() { Sid = "mine_ore",  IsMine = true, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 }, new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-            ]);
+                // ── Basic mines — guarded, anchored near the player castle (every template). ──
+                new() { Name = "name_mine_wood", Sid = "mine_wood", IsMine = true, IsGuarded = true,
+                    Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 },
+                             new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
+                new() { Name = "name_mine_ore",  Sid = "mine_ore",  IsMine = true, IsGuarded = true,
+                    Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 },
+                             new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
 
-            // Utility and economic buildings — matches JC side zone + Universe spawn.
-            content.AddRange([
-                new() { Sid = "fountain",  IsGuarded = false },
-                new() { Sid = "fountain_2", IsGuarded = false },
-                new() { Sid = "watchtower", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                new() { Sid = "mana_well",  IsGuarded = false, Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }, new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                new() { Sid = "market" },
-                new() { Sid = "forge" },
-                new() { Sid = "tavern",  IsGuarded = false, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.2, TargetMax = 0.4, Weight = 1 }] },
-                new() { Sid = "stables", IsGuarded = false, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                new() { Sid = "university" },
+                // ── Gold mine near crossroads (Exodus/Staircase/Yin Yang pattern). ──
+                new() { Sid = "mine_gold", IsMine = true,
+                    Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.10, TargetMax = 0.30, Weight = 1 }] },
+
+                // ── Rare mines spread along roads (Exodus/Staircase/Yin Yang pattern). ──
+                new() { Name = "name_mine_crystals",  Sid = "mine_crystals",  IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
+                new() { Name = "name_mine_mercury",   Sid = "mine_mercury",   IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
+                new() { Name = "name_mine_gemstones", Sid = "mine_gemstones", IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
+                new() { Name = "name_alchemy_lab",    Sid = "alchemy_lab",    IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.20, TargetMax = 0.30, Weight = 1 }] },
+
+                // ── Utility buildings (Blitz/Kerberos/Exodus pattern). ──
+                new() { Sid = "watchtower" },
+                new() { Sid = "market", IsGuarded = true,
+                    Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
+                new() { Sid = "mana_well",
+                    Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
+
+                // ── Hero training — tier-2 stat building (fort/university/orb_observatory) ──
+                //    + uncommon hero bank (university/wise_owl/tree_of_knowledge) (Blitz/Exodus pattern).
                 new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
-                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
-                new() { Sid = "college_of_wonder" },
-                new() { Sid = "mystical_tower" },
-                new() { Sid = "prison", Variant = 0, IsGuarded = false },
-                new() { Sid = "random_hire_7" },
-                new() { Sid = "random_hire_6" },
-                new() { Sid = "random_hire_5" },
+                new() { IncludeLists = ["content_list_building_uncommon_hero_banks"] },
+
+                // ── Hiring — low-tier × 2 + high-tier × 1 + full pool × 1 (Kerberos + Universe blend). ──
+                new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
+                new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
+                new() { IncludeLists = ["content_list_building_random_hires_high_tier"] },
                 new() { IncludeLists = ["basic_content_list_building_random_hires"] },
-                new() { IncludeLists = ["basic_content_list_building_random_hires"] },
-                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"], IsGuarded = false },
-                // Additional mines — secondary spawns not anchored to castle.
-                new() { Sid = "mine_gold",     IsMine = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 1 }] },
-                new() { Sid = "mine_crystals", IsMine = true },
-                new() { Sid = "mine_mercury",  IsMine = true },
-                new() { Sid = "mine_gemstones", IsMine = true },
-                new() { Sid = "alchemy_lab",   IsMine = true },
+
+                // ── Guarded resource banks — tier 1 × 2 + tier 2 × 1 (Exodus pattern). ──
+                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_1"] },
+                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_1"] },
+                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_2"] },
+
+                // ── Loot — epic items + army pandora (Exodus/Blitz pattern). ──
+                new() { Sid = "random_item_epic", SoloEncounter = true },
+                new() { Sid = "pandora_box", SoloEncounter = true },
+                new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"] },
             ]);
 
             return content;
@@ -2468,9 +2481,10 @@ namespace Olden_Era___Template_Editor.Services
                 new() { Name = "name_mine_gemstones",Sid = "mine_gemstones", IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
                 new() { Sid = "mine_gold",    IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.20, Weight = 1 }] },
                 new() { Sid = "alchemy_lab",  IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.20, TargetMax = 0.30, Weight = 1 }] },
-                // Utility — watchtower (guarded) + vision building.
+                // Utility — watchtower (guarded) + vision building (tier 1 only: flattering_mirror/watchtower).
+                // wind_rose (full map reveal) lives in tier_2 and belongs exclusively in high zones.
                 new() { Sid = "watchtower", IsGuarded = true },
-                new() { IncludeLists = ["basic_content_list_vision_buildings_tier_2"] },
+                new() { IncludeLists = ["basic_content_list_vision_buildings_tier_1"] },
                 // Buff buildings.
                 new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
                 // Hero stats — tier 1 common + tier 2 uncommon picks.
@@ -2520,7 +2534,7 @@ namespace Olden_Era___Template_Editor.Services
                 new() { IncludeLists = ["content_list_building_epic_guarded_resource_banks"] },
                 new() { IncludeLists = ["content_list_building_epic_guarded_resource_banks"] },
                 // Utility — vision + buff buildings.
-                new() { IncludeLists = ["basic_content_list_vision_buildings_tier_2"] },
+                new() { IncludeLists = ["basic_content_list_vision_buildings_tier_1"] },
                 new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
                 // Hero stats — tier 2 + tier 3 (fort/university/maze/college_of_wonder).
                 new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
