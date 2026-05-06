@@ -746,8 +746,8 @@ namespace Olden_Era___Template_Editor
             SldGladiatorDelay.Value = Math.Clamp(s.GladiatorArenaDaysDelayStart, 1, 60);
             SldGladiatorCountDay.Value = Math.Clamp(s.GladiatorArenaCountDay, 1, 30);
             ChkTournament.IsChecked = s.Tournament;
-            SldTournamentFirstTournamentDay.Value = Math.Clamp(s.TournamentFirstTournamentDay, 1, 14);
-            SldTournamentAnnouncementLeadDays.Value = Math.Clamp(s.TournamentAnnouncementLeadDays, 1, 60);
+            SldTournamentFirstTournamentDay.Value = Math.Clamp(s.TournamentFirstTournamentDay, 1, 60);
+            SldTournamentAnnouncementLeadDays.Value = Math.Clamp(s.TournamentAnnouncementLeadDays, 1, 14);
             SldTournamentInterval.Value = Math.Clamp(s.TournamentInterval, 1, 30);
             SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 5);
             UpdateValueLabels();
@@ -906,55 +906,74 @@ namespace Olden_Era___Template_Editor
             TemplateName = TxtTemplateName.Text.Trim(),
             GameMode = CmbGameMode.SelectedItem as string ?? "Classic",
             PlayerCount = (int)SldPlayers.Value,
-            HeroCountMin = (int)SldHeroMin.Value,
-            HeroCountMax = (int)SldHeroMax.Value,
-            HeroCountIncrement = (int)SldHeroIncrement.Value,
-            NeutralZoneCount = (int)SldNeutral.Value,
+            HeroSettings = new HeroSettings
+            {
+                HeroCountMin = (int)SldHeroMin.Value,
+                HeroCountMax = (int)SldHeroMax.Value,
+                HeroCountIncrement = (int)SldHeroIncrement.Value
+            },
             MapSize = SelectedMapSize(),
-            VictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
-                ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
-                : "win_condition_1",
-            PlayerZoneCastles = (int)SldPlayerCastles.Value,
-            NeutralZoneCastles = (int)SldNeutralCastles.Value,
-            AdvancedMode = _advancedZoneSettings,
-            NeutralLowNoCastleCount = (int)SldNeutralLowNoCastle.Value,
-            NeutralLowCastleCount = (int)SldNeutralLowCastle.Value,
-            NeutralMediumNoCastleCount = (int)SldNeutralMediumNoCastle.Value,
-            NeutralMediumCastleCount = (int)SldNeutralMediumCastle.Value,
-            NeutralHighNoCastleCount = (int)SldNeutralHighNoCastle.Value,
-            NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
-            MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
+            GameEndConditions = new GameEndConditions
+            {
+                VictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
+                    ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+                    : "win_condition_1",
+                LostStartCity = ChkLostStartCity.IsChecked == true,
+                LostStartCityDay = (int)SldLostStartCityDay.Value,
+                LostStartHero = ChkLostStartHero.IsChecked == true,
+                CityHold = ChkCityHold.IsChecked == true,
+                CityHoldDays = (int)SldCityHoldDays.Value,
+            },
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = (int)SldNeutral.Value,
+                PlayerZoneCastles = (int)SldPlayerCastles.Value,
+                NeutralZoneCastles = (int)SldNeutralCastles.Value,
+                ResourceDensityPercent = (int)SldResourceDensity.Value,
+                StructureDensityPercent = (int)SldStructureDensity.Value,
+                NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
+                BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
+                HubZoneSize = SldHubZoneSize.Value,
+                Advanced = new AdvancedSettings
+                {
+                    Enabled = _advancedZoneSettings,
+                    NeutralLowNoCastleCount = (int)SldNeutralLowNoCastle.Value,
+                    NeutralLowCastleCount = (int)SldNeutralLowCastle.Value,
+                    NeutralMediumNoCastleCount = (int)SldNeutralMediumNoCastle.Value,
+                    NeutralMediumCastleCount = (int)SldNeutralMediumCastle.Value,
+                    NeutralHighNoCastleCount = (int)SldNeutralHighNoCastle.Value,
+                    NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
+                    PlayerZoneSize = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
+                    NeutralZoneSize = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
+                    GuardRandomization = _advancedZoneSettings ? SldGuardRandomization.Value / 100.0 : 0.05,
+                }
+            },
+            // Neutral zones between players can be influenced by advanced zone settings, but is functionally independent.
             MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)SldMinNeutralBetweenPlayers.Value : 0,
+            MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
             ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
-            PlayerZoneSize = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
-            NeutralZoneSize = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
-            HubZoneSize = SldHubZoneSize.Value,
-            GuardRandomization = _advancedZoneSettings ? SldGuardRandomization.Value / 100.0 : 0.05,
             NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
             RandomPortals = ChkRandomPortals.IsChecked == true,
             MaxPortalConnections = (int)SldMaxPortals.Value,
             SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
             GenerateRoads = ChkGenerateRoads.IsChecked == true,
             Topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default,
-            ResourceDensityPercent = (int)SldResourceDensity.Value,
-            StructureDensityPercent = (int)SldStructureDensity.Value,
-            NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
-            BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
             FactionLawsExpPercent = (int)SldFactionLawsExp.Value,
             AstrologyExpPercent = (int)SldAstrologyExp.Value,
-            LostStartCity = ChkLostStartCity.IsChecked == true,
-            LostStartCityDay = (int)SldLostStartCityDay.Value,
-            LostStartHero = ChkLostStartHero.IsChecked == true,
-            CityHold = ChkCityHold.IsChecked == true,
-            CityHoldDays = (int)SldCityHoldDays.Value,
-            GladiatorArena = ChkGladiatorArena.IsChecked == true,
-            GladiatorArenaDaysDelayStart = (int)SldGladiatorDelay.Value,
-            GladiatorArenaCountDay = (int)SldGladiatorCountDay.Value,
-            Tournament = ChkTournament.IsChecked == true,
-            TournamentFirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
-            TournamentAnnouncementLeadDays = (int)SldTournamentAnnouncementLeadDays.Value,
-            TournamentInterval = (int)SldTournamentInterval.Value,
-            TournamentPointsToWin = (int)SldTournamentPointsToWin.Value
+            GladiatorArenaRules = new GladiatorArenaRules
+            {
+                Enabled = ChkGladiatorArena.IsChecked == true,
+                DaysDelayStart = (int)SldGladiatorDelay.Value,
+                CountDay = (int)SldGladiatorCountDay.Value
+            },
+            TournamentRules = new TournamentRules
+            {
+                Enabled = ChkTournament.IsChecked == true,
+                FirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
+                AnnouncementLeadDays = (int)SldTournamentAnnouncementLeadDays.Value,
+                Interval = (int)SldTournamentInterval.Value,
+                PointsToWin = (int)SldTournamentPointsToWin.Value
+            }
         };
 
         /// <summary>

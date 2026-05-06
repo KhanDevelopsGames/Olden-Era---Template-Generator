@@ -19,11 +19,16 @@ public class TemplateGeneratorTests
             TemplateName = "Baseline Test Template",
             GameMode = "Classic",
             MapSize = 200,
-            AdvancedMode = true,
-            VictoryCondition = "win_condition_5",
-            HeroCountMin = 7,
-            HeroCountMax = 15,
-            HeroCountIncrement = 3,
+            GameEndConditions = new GameEndConditions
+            {
+                VictoryCondition = "win_condition_5"
+            },
+            HeroSettings = new HeroSettings
+            {
+                HeroCountMin = 7,
+                HeroCountMax = 15,
+                HeroCountIncrement = 3
+            },
             Topology = MapTopology.Default
         };
 
@@ -33,12 +38,12 @@ public class TemplateGeneratorTests
         Assert.Equal(settings.GameMode, template.GameMode);
         Assert.Equal(settings.MapSize, template.SizeX);
         Assert.Equal(settings.MapSize, template.SizeZ);
-        Assert.Equal(settings.VictoryCondition, template.DisplayWinCondition);
+        Assert.Equal(settings.GameEndConditions.VictoryCondition, template.DisplayWinCondition);
         Assert.Matches(@"^Generated with Olden Era Template Generator v\d+\.\d+: Ring layout, no neutral zones, 1 castle per player zone\.$", template.Description);
         Assert.NotNull(template.GameRules);
-        Assert.Equal(settings.HeroCountMin - settings.HeroCountIncrement, template.GameRules.HeroCountMin);
-        Assert.Equal(settings.HeroCountMax, template.GameRules.HeroCountMax);
-        Assert.Equal(settings.HeroCountIncrement, template.GameRules.HeroCountIncrement);
+        Assert.Equal(settings.HeroSettings.HeroCountMin - settings.HeroSettings.HeroCountIncrement, template.GameRules.HeroCountMin);
+        Assert.Equal(settings.HeroSettings.HeroCountMax, template.GameRules.HeroCountMax);
+        Assert.Equal(settings.HeroSettings.HeroCountIncrement, template.GameRules.HeroCountIncrement);
         Assert.NotEmpty(template.ZoneLayouts ?? []);
         Assert.NotEmpty(template.ContentCountLimits ?? []);
     }
@@ -50,10 +55,13 @@ public class TemplateGeneratorTests
         {
             GameMode = "SingleHero",
             PlayerCount = 4,
-            NeutralZoneCount = 2,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 2,
+                PlayerZoneCastles = 2,
+                NeutralZoneCastles = 0
+            },
             MapSize = 192,
-            PlayerZoneCastles = 2,
-            NeutralZoneCastles = 0,
             Topology = MapTopology.Chain,
             NoDirectPlayerConnections = true,
             RandomPortals = true,
@@ -72,9 +80,12 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 3,
-            NeutralZoneCount = 2,
-            PlayerZoneCastles = 2,
-            NeutralZoneCastles = 1,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 2,
+                PlayerZoneCastles = 2,
+                NeutralZoneCastles = 1
+            },
             Topology = MapTopology.Default,
             RandomPortals = false
         };
@@ -104,8 +115,11 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 4,
-            NeutralZoneCount = 3,
-            NeutralZoneCastles = 1,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 3,
+                NeutralZoneCastles = 1
+            },
             Topology = MapTopology.SharedWeb,
             RandomPortals = false
         };
@@ -132,8 +146,11 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            NeutralZoneCount = 0,
-            NeutralZoneCastles = 0,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 0,
+                NeutralZoneCastles = 0
+            },
             Topology = MapTopology.SharedWeb,
             RandomPortals = false
         };
@@ -163,9 +180,12 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            NeutralZoneCount = 1,
-            PlayerZoneCastles = 3,
-            NeutralZoneCastles = 2,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 1,
+                PlayerZoneCastles = 3,
+                NeutralZoneCastles = 2
+            },
             SpawnRemoteFootholds = true,
             GenerateRoads = false,
             Topology = MapTopology.Default
@@ -182,7 +202,10 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            NeutralZoneCount = 2,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 2
+            },
             NoDirectPlayerConnections = true,
             Topology = MapTopology.Default
         };
@@ -202,7 +225,10 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            NeutralZoneCount = 2,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 2
+            },
             RandomPortals = true,
             Topology = MapTopology.Default
         };
@@ -228,11 +254,14 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            NeutralZoneCount = 2,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 2,
+                ResourceDensityPercent = 50,
+                StructureDensityPercent = 150
+            },
             MapSize = 160,
             Topology = MapTopology.Default,
-            ResourceDensityPercent = 50,
-            StructureDensityPercent = 150
         };
 
         Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
@@ -253,13 +282,16 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            NeutralZoneCount = 2,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 2,
+                PlayerZoneCastles = 2,
+                NeutralZoneCastles = 2,
+                NeutralStackStrengthPercent = 200,
+                BorderGuardStrengthPercent = 100
+            },
             MapSize = 160,
-            PlayerZoneCastles = 2,
-            NeutralZoneCastles = 2,
             Topology = MapTopology.Default,
-            NeutralStackStrengthPercent = 200,
-            BorderGuardStrengthPercent = 100
         };
 
         Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
@@ -280,12 +312,15 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            NeutralZoneCount = 2,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 2,
+                NeutralStackStrengthPercent = 100,
+                BorderGuardStrengthPercent = 50
+            },
             MapSize = 160,
             RandomPortals = true,
-            Topology = MapTopology.Default,
-            NeutralStackStrengthPercent = 100,
-            BorderGuardStrengthPercent = 50
+            Topology = MapTopology.Default
         };
 
         Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
@@ -310,9 +345,15 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            NeutralZoneCount = 2,
-            AdvancedMode = true,
-            GuardRandomization = 0.23,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 2,
+                Advanced = new AdvancedSettings
+                {
+                    Enabled = true,
+                    GuardRandomization = 0.23,
+                }
+            },
             Topology = MapTopology.Default
         };
 
@@ -331,9 +372,15 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            NeutralZoneCount = 2,
-            AdvancedMode = false,
-            GuardRandomization = 0.23,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 2,
+                Advanced = new AdvancedSettings
+                {
+                    Enabled = false,
+                    GuardRandomization = 0.23,
+                }
+            },
             Topology = MapTopology.Default
         };
 
@@ -352,14 +399,20 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            AdvancedMode = true,
-            NeutralZoneCastles = 2,
-            NeutralLowNoCastleCount = 1,
-            NeutralLowCastleCount = 1,
-            NeutralMediumNoCastleCount = 1,
-            NeutralMediumCastleCount = 1,
-            NeutralHighNoCastleCount = 1,
-            NeutralHighCastleCount = 1,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCastles = 2,
+                Advanced = new AdvancedSettings
+                {
+                    Enabled = true,
+                    NeutralLowNoCastleCount = 1,
+                    NeutralLowCastleCount = 1,
+                    NeutralMediumNoCastleCount = 1,
+                    NeutralMediumCastleCount = 1,
+                    NeutralHighNoCastleCount = 1,
+                    NeutralHighCastleCount = 1,
+                }
+            },
             Topology = MapTopology.Default
         };
 
@@ -400,10 +453,17 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 4,
-            AdvancedMode = true,
-            NeutralZoneCastles = 1,
-            NeutralLowNoCastleCount = 4,
-            NeutralHighCastleCount = 4,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCastles = 1,
+                Advanced = new AdvancedSettings
+                {
+                    Enabled = true,
+                    NeutralLowNoCastleCount = 4,
+                    NeutralHighCastleCount = 4,
+                }
+
+            },
             Topology = MapTopology.Default,
             ExperimentalBalancedZonePlacement = true
         };
@@ -432,10 +492,17 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 4,
-            AdvancedMode = true,
-            NeutralZoneCastles = 1,
-            NeutralLowNoCastleCount = 4,
-            NeutralHighCastleCount = 4,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCastles = 1,
+                Advanced = new AdvancedSettings
+                {
+                    Enabled = true,
+                    NeutralLowNoCastleCount = 4,
+                    NeutralHighCastleCount = 4,
+                }
+
+            },
             Topology = MapTopology.SharedWeb,
             ExperimentalBalancedZonePlacement = true
         };
@@ -466,10 +533,16 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 8,
-            AdvancedMode = true,
-            NeutralLowNoCastleCount = 8,
-            NeutralLowCastleCount = 8,
-            NeutralMediumNoCastleCount = 8,
+            ZoneCfg = new ZoneConfiguration
+            {
+                Advanced = new AdvancedSettings
+                {
+                    Enabled = true,
+                    NeutralLowNoCastleCount = 8,
+                    NeutralLowCastleCount = 8,
+                    NeutralMediumNoCastleCount = 8,
+                }
+            },
             Topology = MapTopology.Default,
             RandomPortals = true
         };
@@ -493,9 +566,18 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            NeutralZoneCount = 2,
-            PlayerZoneSize = 2.0,
-            NeutralZoneSize = 0.5,
+            
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 2,
+                Advanced = new AdvancedSettings
+                {
+                    Enabled = true,
+                    PlayerZoneSize = 2.0,
+                    NeutralZoneSize = 0.5,
+                }
+
+            },
             Topology = MapTopology.Default
         };
 
@@ -533,12 +615,24 @@ public class TemplateGeneratorTests
     {
         var settings = new GeneratorSettings
         {
-            AdvancedMode = true,
-            VictoryCondition = "win_condition_6",
-            TournamentFirstTournamentDay = 8,
-            TournamentAnnouncementLeadDays = 3,
-            TournamentInterval = 7,
-            TournamentPointsToWin = 2,
+            ZoneCfg = new ZoneConfiguration
+            {
+                Advanced = new AdvancedSettings
+                {
+                    Enabled = true
+                }
+            },
+            GameEndConditions = new GameEndConditions
+            {
+                VictoryCondition = "win_condition_6"
+            },
+            TournamentRules = new TournamentRules
+            {
+                FirstTournamentDay = 8,
+                AnnouncementLeadDays = 3,
+                Interval = 7,
+                PointsToWin = 2
+            },
             Topology = MapTopology.Default
         };
 
@@ -562,7 +656,13 @@ public class TemplateGeneratorTests
     {
         var settings = new GeneratorSettings
         {
-            AdvancedMode = true,
+            ZoneCfg = new ZoneConfiguration
+            {
+                Advanced = new AdvancedSettings
+                {
+                    Enabled = true
+                }
+            },
             FactionLawsExpPercent = 50,
             AstrologyExpPercent = 200,
             Topology = MapTopology.Default
@@ -580,16 +680,21 @@ public class TemplateGeneratorTests
     {
         var settings = new GeneratorSettings
         {
-            AdvancedMode = false,
-            VictoryCondition = "win_condition_6",
+            GameEndConditions = new GameEndConditions
+            {
+                VictoryCondition = "win_condition_6"
+            },
             FactionLawsExpPercent = 50,
             AstrologyExpPercent = 200,
-            Tournament = true,
+            TournamentRules = new TournamentRules
+            {
+                Enabled = true
+            },
             Topology = MapTopology.Default
         };
 
         RmgTemplate template = TemplateGenerator.Generate(settings);
-
+        Assert.False(settings.ZoneCfg.Advanced.Enabled); // sanity check that we're in simple mode - advanced mode is off by default.
         Assert.Equal("win_condition_6", template.DisplayWinCondition);
         Assert.Equal(0.5, template.GameRules?.FactionLawsExpModifier);
         Assert.Equal(2.0, template.GameRules?.AstrologyExpModifier);
@@ -602,7 +707,10 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 2,
-            PlayerZoneCastles = 3,
+            ZoneCfg = new ZoneConfiguration
+            {
+                PlayerZoneCastles = 3,
+            },
             MatchPlayerCastleFactions = true,
             Topology = MapTopology.Default
         };
@@ -630,7 +738,10 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 3,
-            NeutralZoneCount = 6,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 6,
+            },
             MinNeutralZonesBetweenPlayers = 2,
             Topology = MapTopology.Default
         };
@@ -654,13 +765,16 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 3,
-            NeutralZoneCount = 6,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 6,
+            },
             MinNeutralZonesBetweenPlayers = 2,
             RandomPortals = true,
             Topology = MapTopology.Default
         };
 
-        Assert.False(TemplateGenerator.CanHonorNeutralSeparation(settings, settings.NeutralZoneCount));
+        Assert.False(TemplateGenerator.CanHonorNeutralSeparation(settings, settings.ZoneCfg.NeutralZoneCount));
     }
 
     [Fact]
@@ -739,7 +853,10 @@ public class TemplateGeneratorTests
         {
             TemplateName = "Round Trip Template",
             PlayerCount = 2,
-            NeutralZoneCount = 1,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 1
+            },
             Topology = MapTopology.Default
         };
 
@@ -759,7 +876,10 @@ public class TemplateGeneratorTests
         var settings = new GeneratorSettings
         {
             PlayerCount = 4,
-            NeutralZoneCount = 3,
+            ZoneCfg = new ZoneConfiguration
+            {
+                NeutralZoneCount = 3
+            },
             RandomPortals = true,
             Topology = MapTopology.Default
         };
