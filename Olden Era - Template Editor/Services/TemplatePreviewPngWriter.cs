@@ -48,8 +48,10 @@ namespace Olden_Era___Template_Editor.Services
         private static readonly Color PortalLineColor = Color.FromArgb(180, 90, 170, 210);
 
         // ── Radius ───────────────────────────────────────────────────────────────
-        // Cap; actual radius is computed per-layout by LayoutZones().
+        // Cap for spoke/neutral/spawn zones; actual radius is computed per-layout.
         private const double ZoneRadiusMax = 38;
+        // Hub zones always render at least this large so the "Hub" label is never clipped.
+        private const double HubRadiusMin  = 28;
 
         // ── Human icon (person silhouette drawn with geometry) ───────────────────
         // Drawn relative to the zone centre; scaled to fit the circle.
@@ -159,7 +161,7 @@ namespace Olden_Era___Template_Editor.Services
             // matches the actual in-game arrangement perfectly.
             // Only Random topology uses the spring-embedder to infer placement.
             if (topology != MapTopology.Random)
-                return LayoutZonesRing(zones);
+                return LayoutZonesRing(zones, connections);
 
             int n = zones.Count;
             if (n == 0)
@@ -347,8 +349,10 @@ namespace Olden_Era___Template_Editor.Services
         /// <summary>
         /// Classic ring layout used for all structured topologies (Default, HubAndSpoke, Chain, SharedWeb).
         /// Zones are arranged in a circle; a Hub zone (if present) goes in the centre.
+        /// When multiple Hub-* zones exist (tournament hub layout) each hub is placed at
+        /// the centre of its own cluster and its spokes arranged around it.
         /// </summary>
-        private static Dictionary<string, Point> LayoutZonesRing(List<Zone> zones)
+        private static Dictionary<string, Point> LayoutZonesRing(List<Zone> zones, List<Connection> connections)
         {
             var positions = new Dictionary<string, Point>(StringComparer.Ordinal);
             int n = zones.Count;
@@ -358,6 +362,15 @@ namespace Olden_Era___Template_Editor.Services
                 return positions;
             }
 
+            // ── Multi-hub (tournament) cluster layout ─────────────────────────────
+            var multiHubs = zones
+                .Where(z => z.Name.StartsWith("Hub-", StringComparison.Ordinal))
+                .ToList();
+
+            if (multiHubs.Count >= 2)
+                return LayoutZonesMultiHub(zones, connections, multiHubs);
+
+            // ── Standard single-ring layout ───────────────────────────────────────
             const double margin = 18;
             double ringRadius0  = Width / 2.0 - margin;
             double chord0       = 2.0 * ringRadius0 * Math.Sin(Math.PI / Math.Max(1, n));
@@ -369,7 +382,9 @@ namespace Olden_Era___Template_Editor.Services
             var outer   = hub is null ? zones : zones.Where(z => z != hub).ToList();
             int outerN  = Math.Max(1, outer.Count);
 
-            double ringRadius = Math.Min(ringRadius0, Width / 2.0 - zoneRadius - margin);
+            double ringRadius = Math.Max(
+                HubRadiusMin + zoneRadius + minGap,
+                Math.Min(ringRadius0, Width / 2.0 - zoneRadius - margin));
             var center = new Point(Width / 2.0, Height / 2.0);
 
             if (hub is not null)
@@ -387,6 +402,127 @@ namespace Olden_Era___Template_Editor.Services
                 positions[outer[i].Name] = new Point(
                     center.X + Math.Cos(angle) * ringRadius,
                     center.Y + Math.Sin(angle) * ringRadius);
+            }
+
+            return positions;
+        }
+
+        /// <summary>
+        /// Multi-hub cluster layout for tournament hub-and-spoke templates.
+        /// Each Hub-* zone is placed at the centre of its cluster; its direct
+        /// neighbours (spokes) are arranged in a ring around it.  The clusters
+        /// themselves are evenly distributed around the canvas centre.
+        /// </summary>
+        private static Dictionary<string, Point> LayoutZonesMultiHub(
+            List<Zone> zones,
+            List<Connection> connections,
+            List<Zone> multiHubs)
+        {
+            var positions = new Dictionary<string, Point>(StringComparer.Ordinal);
+            const double margin = 18;
+            const double minGap = 6;
+
+            // Build spoke lists for each hub (Direct connections only)
+            var hubSpokes = new Dictionary<string, List<Zone>>(StringComparer.Ordinal);
+            var zoneByName = zones.ToDictionary(z => z.Name, StringComparer.Ordinal);
+
+            foreach (var hub in multiHubs)
+            {
+                var spokes = connections
+                    .Where(c => !string.Equals(c.ConnectionType, "Proximity", StringComparison.Ordinal)
+                             && !string.Equals(c.ConnectionType, "Portal",    StringComparison.Ordinal))
+                    .Select(c => string.Equals(c.From, hub.Name, StringComparison.Ordinal) ? c.To : (
+                                 string.Equals(c.To,   hub.Name, StringComparison.Ordinal) ? c.From : null))
+                    .Where(name => name != null && zoneByName.ContainsKey(name!))
+                    .Select(name => zoneByName[name!])
+                    .Distinct()
+                    .ToList();
+                hubSpokes[hub.Name] = spokes;
+            }
+
+            int maxSpokes = hubSpokes.Values.Max(s => s.Count);
+            int numHubs   = multiHubs.Count;
+
+            // ── Closed-form sizing — top-down from canvas ─────────────────────────
+            //
+            // Variables:
+            //   hubR   — distance from canvas centre to each hub centre
+            //   spokeR — distance from hub centre to spoke centres
+            //   zoneR  — circle radius
+            //
+            // Three simultaneous constraints, all solved for the optimum:
+            //
+            // (a) Canvas fit:   hubR + spokeR + zoneR + margin = Width/2
+            //                   → spokeR + zoneR = canvasHalf - hubR       [radialLeft]
+            //
+            // (b) Cluster separation (no two cluster envelopes touch):
+            //     inter-hub distance ≥ 2*(spokeR + zoneR + minGap/2)
+            //     inter-hub = 2*hubR*sin(π/numHubs)  (chord of the hub ring)
+            //     → hubR * sinB ≥ radialLeft + minGap/2  (sinB = sin(π/numHubs))
+            //     Substituting radialLeft = canvasHalf - hubR:
+            //     hubR*(1 + sinB) = canvasHalf + minGap/2
+            //     → hubR = (canvasHalf + minGap/2) / (1 + sinB)            [minimum]
+            //
+            // (c) Spoke chord (spokes don't overlap each other):
+            //     2*spokeR*sin(π/maxSpokes) ≥ 2*zoneR + minGap
+            //     → zoneR ≤ (radialLeft*sinA - minGap/2) / (1 + sinA)     [maximum]
+            //        where sinA = sin(π/maxSpokes)
+
+            double canvasHalf = Width / 2.0 - margin;
+            double sinB = numHubs > 1 ? Math.Sin(Math.PI / numHubs) : 0.0;
+            double sinA = maxSpokes > 1 ? Math.Sin(Math.PI / maxSpokes) : 1.0;
+
+            double hubRingRadius = numHubs > 1
+                ? (canvasHalf + minGap / 2.0) / (1.0 + sinB)
+                : 0.0;
+
+            double radialLeft  = canvasHalf - hubRingRadius;
+            // spokeRingRadius must be large enough that spoke circles don't overlap the hub circle
+            double minSpokeR   = HubRadiusMin + minGap;
+            double zoneRadius  = Math.Min(ZoneRadiusMax, (radialLeft * sinA - minGap / 2.0) / (1.0 + sinA));
+            zoneRadius = Math.Max(1.0, zoneRadius);
+            double spokeRingRadius = Math.Max(radialLeft - zoneRadius, minSpokeR + zoneRadius);
+
+            _zoneRadius = zoneRadius;
+
+            var canvasCenter = new Point(Width / 2.0, Height / 2.0);
+
+            // Place each hub and its spokes.
+            for (int h = 0; h < numHubs; h++)
+            {
+                var hub = multiHubs[h];
+
+                // Hubs arranged evenly on a ring; first hub points upward.
+                double hubAngle = -Math.PI / 2.0 + h * Math.PI * 2.0 / numHubs;
+                var hubPos = numHubs == 1
+                    ? canvasCenter
+                    : new Point(
+                        canvasCenter.X + Math.Cos(hubAngle) * hubRingRadius,
+                        canvasCenter.Y + Math.Sin(hubAngle) * hubRingRadius);
+
+                positions[hub.Name] = hubPos;
+
+                var spokes = hubSpokes[hub.Name];
+                int s = spokes.Count;
+                if (s == 0) continue;
+
+                // Spread spokes in a full ring around the hub.
+                // Rotate so the first spoke points outward (away from canvas centre).
+                double spokeBaseAngle = numHubs == 1 ? -Math.PI / 2.0 : hubAngle;
+                for (int i = 0; i < s; i++)
+                {
+                    double spokeAngle = spokeBaseAngle + i * Math.PI * 2.0 / s;
+                    positions[spokes[i].Name] = new Point(
+                        hubPos.X + Math.Cos(spokeAngle) * spokeRingRadius,
+                        hubPos.Y + Math.Sin(spokeAngle) * spokeRingRadius);
+                }
+            }
+
+            // Any zones not yet placed (e.g. cross-cluster connections) go on the canvas centre.
+            foreach (var zone in zones)
+            {
+                if (!positions.ContainsKey(zone.Name))
+                    positions[zone.Name] = canvasCenter;
             }
 
             return positions;
@@ -450,17 +586,18 @@ namespace Olden_Era___Template_Editor.Services
             if (isHoldCity)
                 outlinePen = new Pen(new SolidColorBrush(Color.FromRgb(255, 215, 0)), 3.5);
 
-            dc.DrawEllipse(fillBrush, outlinePen, pt, _zoneRadius, _zoneRadius);
+            double drawRadius = isHub ? Math.Max(_zoneRadius, HubRadiusMin) : _zoneRadius;
+            dc.DrawEllipse(fillBrush, outlinePen, pt, drawRadius, drawRadius);
 
             if (isHoldCity)
             {
-                DrawHoldCityIcon(dc, pt, _zoneRadius);
+                DrawHoldCityIcon(dc, pt, drawRadius);
             }
             else if (isSpawn)
             {
-                DrawPlayerNumber(dc, zone, pt, _zoneRadius);
+                DrawPlayerNumber(dc, zone, pt, drawRadius);
                 if (castles > 1)
-                    DrawCastleBadge(dc, pt, _zoneRadius, castles);
+                    DrawCastleBadge(dc, pt, drawRadius, castles);
             }
             else if (isNeutral)
             {
@@ -469,7 +606,7 @@ namespace Olden_Era___Template_Editor.Services
             }
             else if (isHub)
             {
-                DrawText(dc, "Hub", pt, 32, Brushes.White, centered: true);
+                DrawText(dc, "Hub", pt, drawRadius * 1.1, Brushes.White, centered: true);
             }
         }
 
