@@ -402,7 +402,7 @@
                                         <Label Content="Points to win" Padding="5,2" DockPanel.Dock="Left"/>
                                         <TextBlock x:Name="TxtTournamentPointsToWin" Text="2" DockPanel.Dock="Right"
                                                    HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                   Margin="0,0,0,0" Style="{StaticResource ValueText}"/>
                                     </DockPanel>
                                     <Slider Grid.Row="0" Grid.Column="1" x:Name="SldTournamentPointsToWin"
                                             Minimum="1" Maximum="10" Value="2"
@@ -412,7 +412,7 @@
                                         <Label Content="First battle on day " Padding="5,2" DockPanel.Dock="Left"/>
                                         <TextBlock x:Name="TxtTournamentFirstTournamentDay" Text="8" DockPanel.Dock="Right"
                                                    HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                   Margin="0,0,0,0" Style="{StaticResource ValueText}"/>
                                     </DockPanel>
                                     <Slider Grid.Row="2" Grid.Column="1" x:Name="SldTournamentFirstTournamentDay"
                                             Minimum="3" Maximum="30" Value="14"
@@ -422,7 +422,7 @@
                                         <Label Content="Days between rounds" Padding="5,2" DockPanel.Dock="Left"/>
                                         <TextBlock x:Name="TxtTournamentInterval" Text="7" DockPanel.Dock="Right"
                                                    HorizontalAlignment="Right" VerticalAlignment="Center"
-                                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                                                   Margin="0,0,0,0" Style="{StaticResource ValueText}"/>
                                     </DockPanel>
                                     <Slider Grid.Row="4" Grid.Column="1" x:Name="SldTournamentInterval"
                                             Minimum="3" Maximum="30" Value="7"

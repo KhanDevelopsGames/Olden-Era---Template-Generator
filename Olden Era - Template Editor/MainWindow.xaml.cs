@@ -1038,8 +1038,9 @@ namespace Olden_Era___Template_Editor
         };
 
         /// <summary>
-        /// Returns true when <paramref name="filePath"/> is inside the expected game templates folder.
-        /// If <paramref name="gameTemplatesPath"/> was resolved, an exact directory match is used.
+        /// Returns true when <paramref name="filePath"/> is inside the expected game templates folder
+        /// (including any sub-folders, since the game supports those).
+        /// If <paramref name="gameTemplatesPath"/> was resolved, a prefix match is used.
         /// Otherwise the chosen directory is checked against the known folder-structure tail
         /// <c>HeroesOldenEra_Data\StreamingAssets\map_templates</c>.
         /// </summary>
@@ -1048,11 +1049,19 @@ namespace Olden_Era___Template_Editor
             string chosenDir = Path.GetDirectoryName(filePath) ?? string.Empty;
 
             if (gameTemplatesPath != null)
-                return chosenDir.Equals(gameTemplatesPath, StringComparison.OrdinalIgnoreCase);
+            {
+                // Normalise both paths to ensure consistent separator and casing comparison.
+                string normalised = Path.GetFullPath(chosenDir);
+                string expected   = Path.GetFullPath(gameTemplatesPath);
+                // Accept the folder itself or any sub-folder inside it.
+                return normalised.Equals(expected, StringComparison.OrdinalIgnoreCase)
+                    || normalised.StartsWith(expected + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+            }
 
             // Game not found via registry/fallback paths — match on the known folder-structure tail.
             const string expectedTail = @"HeroesOldenEra_Data\StreamingAssets\map_templates";
-            return chosenDir.EndsWith(expectedTail, StringComparison.OrdinalIgnoreCase);
+            return chosenDir.EndsWith(expectedTail, StringComparison.OrdinalIgnoreCase)
+                || chosenDir.Contains(expectedTail + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
