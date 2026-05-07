@@ -376,7 +376,9 @@ namespace Olden_Era___Template_Editor
                 : 160;
 
         private static string FormatMapSize(int size) =>
-            KnownValues.IsExperimentalMapSize(size) ? $"{size}x{size} (Experimental)" : $"{size}x{size}";
+            KnownValues.IsExperimentalMapSize(size)
+                ? $"{size}x{size} ({KnownValues.MapSizeLabel(size)}) (Experimental)"
+                : $"{size}x{size} ({KnownValues.MapSizeLabel(size)})";
 
         private static double GuardRandomizationPercent(double guardRandomization)
         {

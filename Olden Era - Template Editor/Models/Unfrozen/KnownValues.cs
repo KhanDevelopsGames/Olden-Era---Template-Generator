@@ -34,6 +34,18 @@ namespace OldenEraTemplateEditor.Models
         public static bool IsExperimentalMapSize(int size) =>
             Array.IndexOf(ExperimentalMapSizes, size) >= 0;
 
+        /// <summary>Returns a short size label (S, M, L, XL, H, G, C) for a given map size.</summary>
+        public static string MapSizeLabel(int size) => size switch
+        {
+            64        => "S",
+            80 or 96  => "M",
+            112 or 128 => "L",
+            144 or 160 => "XL",
+            176 or 192 => "H",
+            >= 208 and <= 256 => "G",
+            _ => "C",
+        };
+
         /// <summary>
         /// Human-readable labels for each displayWinCondition ID.
         /// Index-aligned with <see cref="VictoryConditionIds"/>.
