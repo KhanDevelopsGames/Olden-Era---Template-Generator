@@ -133,7 +133,7 @@ namespace Olden_Era___Template_Editor.Services
             var positions    = LayoutZones(orderedZones, connections, topology);
 
             // Draw connections first (below zones)
-            DrawConnections(dc, connections, positions);
+            DrawConnections(dc, connections, positions, _zoneRadius);
 
             // Draw zone circles — non-player zones first, then spawn zones on top
             // so the castle-count badge is never obscured by an adjacent circle.
@@ -159,7 +159,7 @@ namespace Olden_Era___Template_Editor.Services
         {
             // For structured topologies use the simple ring layout — it already
             // matches the actual in-game arrangement perfectly.
-            // Only Random topology uses the spring-embedder to infer placement.
+            // Only Random topology uses the Kamada-Kawai solver to infer placement.
             if (topology != MapTopology.Random)
                 return LayoutZonesRing(zones, connections);
 
@@ -169,36 +169,15 @@ namespace Olden_Era___Template_Editor.Services
                 _zoneRadius = ZoneRadiusMax;
                 return [];
             }
-
-            // ── Determine zone radius ─────────────────────────────────────────────
-            // Use the circle-ring formula as an upper bound so zones never overlap.
-            const double margin = 18;
-            double ringRadius0  = Width / 2.0 - margin;
-            double chord0       = 2.0 * ringRadius0 * Math.Sin(Math.PI / Math.Max(1, n));
-            const double minGap = 6;
-            double zoneRadius   = Math.Min(ZoneRadiusMax, (chord0 - minGap) / 2.0);
-            _zoneRadius = zoneRadius;
-
-            // ── Seed positions on a ring ──────────────────────────────────────────
-            double ringRadius = Math.Min(ringRadius0, Width / 2.0 - zoneRadius - margin);
-            var center = new Point(Width / 2.0, Height / 2.0);
-            var px = new double[n];
-            var py = new double[n];
-            for (int i = 0; i < n; i++)
-            {
-                double angle = -Math.PI / 2 + i * Math.PI * 2 / n;
-                px[i] = center.X + Math.Cos(angle) * ringRadius;
-                py[i] = center.Y + Math.Sin(angle) * ringRadius;
-            }
-
             if (n == 1)
             {
-                px[0] = center.X;
-                py[0] = center.Y;
-                var single = new Dictionary<string, Point>(StringComparer.Ordinal);
-                single[zones[0].Name] = new Point(px[0], py[0]);
-                return single;
+                _zoneRadius = ZoneRadiusMax;
+                return new Dictionary<string, Point>(StringComparer.Ordinal)
+                    { [zones[0].Name] = new Point(Width / 2.0, Height / 2.0) };
             }
+
+            const double margin = 18;
+            const double minGap = 6;
 
             // ── Build adjacency (Direct connections only — no Proximity/Portal) ───
             var idx = new Dictionary<string, int>(StringComparer.Ordinal);
@@ -216,133 +195,337 @@ namespace Olden_Era___Template_Editor.Services
                 adj[b].Add(a);
             }
 
-            // ── Spring-embedder layout ────────────────────────────────────────────
-            // All connected pairs share one fixed ideal edge length so every
-            // connection in the graph is the same visual distance.
-            // Unconnected pairs are only repelled — no attraction between them.
-            double idealEdge   = Math.Max(zoneRadius * 4.0, ringRadius * 0.7);
-            double repStrength = idealEdge * idealEdge;
-
-            double temperature = ringRadius * 0.5;
-            const int iterations = 400;
-            const double cooling = 0.975;
-            var dx = new double[n];
-            var dy = new double[n];
-
-            for (int iter = 0; iter < iterations; iter++)
+            // ── Detect connected components ───────────────────────────────────────
+            var component = new int[n];
+            Array.Fill(component, -1);
+            var components = new List<List<int>>();
+            for (int start = 0; start < n; start++)
             {
-                Array.Clear(dx, 0, n);
-                Array.Clear(dy, 0, n);
-
-                // Repulsion between every pair of zones
-                for (int i = 0; i < n; i++)
+                if (component[start] >= 0) continue;
+                int cid = components.Count;
+                var comp = new List<int>();
+                components.Add(comp);
+                var bfsQ = new Queue<int>();
+                bfsQ.Enqueue(start);
+                component[start] = cid;
+                while (bfsQ.Count > 0)
                 {
-                    for (int j = i + 1; j < n; j++)
+                    int u = bfsQ.Dequeue();
+                    comp.Add(u);
+                    foreach (int v in adj[u])
                     {
-                        double diffX = px[i] - px[j];
-                        double diffY = py[i] - py[j];
-                        double dist  = Math.Sqrt(diffX * diffX + diffY * diffY);
-                        if (dist < 0.001) { dist = 0.001; diffX = 1; diffY = 0; }
-
-                        double rep = repStrength / dist;
-                        double ux  = diffX / dist * rep;
-                        double uy  = diffY / dist * rep;
-                        dx[i] += ux; dy[i] += uy;
-                        dx[j] -= ux; dy[j] -= uy;
+                        if (component[v] >= 0) continue;
+                        component[v] = cid;
+                        bfsQ.Enqueue(v);
                     }
                 }
-
-                // Attraction along edges — fixed ideal length, same for every edge
-                for (int i = 0; i < n; i++)
-                {
-                    foreach (int j in adj[i])
-                    {
-                        if (j <= i) continue;
-                        double diffX = px[i] - px[j];
-                        double diffY = py[i] - py[j];
-                        double dist  = Math.Sqrt(diffX * diffX + diffY * diffY);
-                        if (dist < 0.001) continue;
-
-                        double att = (dist - idealEdge);   // Hooke's law: pull when > ideal, push when < ideal
-                        double ux  = diffX / dist * att;
-                        double uy  = diffY / dist * att;
-                        dx[i] -= ux; dy[i] -= uy;
-                        dx[j] += ux; dy[j] += uy;
-                    }
-                }
-
-                // Weak gravity toward group centroid — prevents disconnected zones drifting away
-                double cx = px.Average(), cy = py.Average();
-                for (int i = 0; i < n; i++)
-                {
-                    dx[i] -= (px[i] - cx) * 0.04;
-                    dy[i] -= (py[i] - cy) * 0.04;
-                }
-
-                // Apply displacements, clamped to temperature
-                for (int i = 0; i < n; i++)
-                {
-                    double disp = Math.Sqrt(dx[i] * dx[i] + dy[i] * dy[i]);
-                    if (disp < 0.001) continue;
-                    double clamp = Math.Min(disp, temperature);
-                    px[i] += dx[i] / disp * clamp;
-                    py[i] += dy[i] / disp * clamp;
-                }
-
-                temperature *= cooling;
             }
 
-            // ── Hard-floor separation pass ────────────────────────────────────────
-            // Guarantee that no two zone centres are closer than 4× zoneRadius
-            // (= gap between circle edges ≥ 2 diameters) after simulation settles.
-            double minDist = zoneRadius * 4.0;
-            for (int pass = 0; pass < 50; pass++)
+            int numComps = components.Count;
+
+            // ── Zone radius: based on the largest component so circles are readable ─
+            int maxCompSize = components.Max(c => c.Count);
+            double ringRadius0 = Width / 2.0 - margin;
+            double chord0      = 2.0 * ringRadius0 * Math.Sin(Math.PI / Math.Max(1, maxCompSize));
+            double zoneRadius  = Math.Min(ZoneRadiusMax, (chord0 - minGap) / 2.0);
+            zoneRadius = Math.Max(zoneRadius, 8.0);
+            _zoneRadius = zoneRadius;
+
+            double idealEdge = zoneRadius * 3.2;
+
+            // ── Run Kamada-Kawai independently per component ──────────────────────
+            // Results stored in local arrays; we'll stitch bounding boxes together
+            // after all components are solved.
+            var compPx   = new double[numComps][];
+            var compPy   = new double[numComps][];
+
+            for (int c = 0; c < numComps; c++)
             {
-                bool anyMoved = false;
-                for (int i = 0; i < n; i++)
+                var comp = components[c];
+                int cn   = comp.Count;
+                var lpx  = new double[cn];
+                var lpy  = new double[cn];
+
+                // Map global index → local index within this component
+                var localIdx = new Dictionary<int, int>();
+                for (int i = 0; i < cn; i++) localIdx[comp[i]] = i;
+
+                // Seed on a ring centred at origin
+                double seedR = idealEdge * cn / (2 * Math.PI);
+                seedR = Math.Max(seedR, idealEdge);
+                for (int i = 0; i < cn; i++)
                 {
-                    for (int j = i + 1; j < n; j++)
+                    double angle = -Math.PI / 2.0 + i * Math.PI * 2.0 / cn;
+                    lpx[i] = Math.Cos(angle) * seedR;
+                    lpy[i] = Math.Sin(angle) * seedR;
+                }
+
+                if (cn == 1) { compPx[c] = lpx; compPy[c] = lpy; continue; }
+
+                // BFS shortest paths within this component
+                var gdist = new int[cn, cn];
+                for (int i = 0; i < cn; i++)
+                    for (int j = 0; j < cn; j++)
+                        gdist[i, j] = i == j ? 0 : cn + 1;
+                for (int si = 0; si < cn; si++)
+                {
+                    var q = new Queue<int>();
+                    q.Enqueue(si);
+                    while (q.Count > 0)
                     {
-                        double diffX = px[i] - px[j];
-                        double diffY = py[i] - py[j];
-                        double dist  = Math.Sqrt(diffX * diffX + diffY * diffY);
-                        if (dist >= minDist) continue;
-                        if (dist < 0.001) { diffX = 1; diffY = 0; dist = 0.001; }
-                        double push = (minDist - dist) / 2.0;
-                        double ux = diffX / dist * push;
-                        double uy = diffY / dist * push;
-                        px[i] += ux; py[i] += uy;
-                        px[j] -= ux; py[j] -= uy;
-                        anyMoved = true;
+                        int u = q.Dequeue();
+                        int gu = comp[u];
+                        foreach (int gv in adj[gu])
+                        {
+                            if (!localIdx.TryGetValue(gv, out int v)) continue;
+                            if (gdist[si, v] > gdist[si, u] + 1)
+                            {
+                                gdist[si, v] = gdist[si, u] + 1;
+                                q.Enqueue(v);
+                            }
+                        }
                     }
                 }
-                if (!anyMoved) break;
+
+                // Precompute K-K spring constants
+                var kd = new double[cn, cn];
+                var kw = new double[cn, cn];
+                for (int i = 0; i < cn; i++)
+                    for (int j = 0; j < cn; j++)
+                    {
+                        int d = gdist[i, j];
+                        kd[i, j] = d * idealEdge;
+                        kw[i, j] = d > 0 ? 1.0 / (d * d) : 0.0;
+                    }
+
+                // K-K solver
+                for (int kkOuter = 0; kkOuter < cn * 50; kkOuter++)
+                {
+                    int bestM = 0; double bestDelta = -1;
+                    for (int m = 0; m < cn; m++)
+                    {
+                        double gx = 0, gy = 0;
+                        for (int i = 0; i < cn; i++)
+                        {
+                            if (i == m) continue;
+                            double ddx = lpx[m] - lpx[i], ddy = lpy[m] - lpy[i];
+                            double d   = Math.Sqrt(ddx * ddx + ddy * ddy);
+                            if (d < 0.001) continue;
+                            gx += kw[m, i] * (ddx - kd[m, i] * ddx / d);
+                            gy += kw[m, i] * (ddy - kd[m, i] * ddy / d);
+                        }
+                        double delta = Math.Sqrt(gx * gx + gy * gy);
+                        if (delta > bestDelta) { bestDelta = delta; bestM = m; }
+                    }
+                    if (bestDelta < 0.01) break;
+
+                    for (int localIter = 0; localIter < 20; localIter++)
+                    {
+                        int m = bestM;
+                        double gx = 0, gy = 0, hxx = 0, hxy = 0, hyy = 0;
+                        for (int i = 0; i < cn; i++)
+                        {
+                            if (i == m) continue;
+                            double ddx = lpx[m] - lpx[i], ddy = lpy[m] - lpy[i];
+                            double d2  = ddx * ddx + ddy * ddy;
+                            double d   = Math.Sqrt(d2);
+                            if (d < 0.001) continue;
+                            double d3 = d * d2;
+                            double w  = kw[m, i], kdi = kd[m, i];
+                            gx  += w * (ddx - kdi * ddx / d);
+                            gy  += w * (ddy - kdi * ddy / d);
+                            hxx += w * (1.0 - kdi * ddy * ddy / d3);
+                            hxy += w * (      kdi * ddx * ddy / d3);
+                            hyy += w * (1.0 - kdi * ddx * ddx / d3);
+                        }
+                        double det = hxx * hyy - hxy * hxy;
+                        if (Math.Abs(det) < 1e-9) break;
+                        double moveX = ( hyy * gx - hxy * gy) / det;
+                        double moveY = (-hxy * gx + hxx * gy) / det;
+                        lpx[m] -= moveX;
+                        lpy[m] -= moveY;
+                        if (Math.Sqrt(moveX * moveX + moveY * moveY) < 0.01) break;
+                    }
+                }
+
+                // Hard-floor zone-zone separation within this component
+                double minDist = zoneRadius * 2.2;
+                for (int pass = 0; pass < 100; pass++)
+                {
+                    bool any = false;
+                    for (int i = 0; i < cn; i++)
+                        for (int j = i + 1; j < cn; j++)
+                        {
+                            double dx = lpx[i] - lpx[j], dy = lpy[i] - lpy[j];
+                            double d  = Math.Sqrt(dx * dx + dy * dy);
+                            if (d >= minDist) continue;
+                            if (d < 0.001) { dx = 1; dy = 0; d = 0.001; }
+                            double push = (minDist - d) / 2.0;
+                            lpx[i] += dx / d * push; lpy[i] += dy / d * push;
+                            lpx[j] -= dx / d * push; lpy[j] -= dy / d * push;
+                            any = true;
+                        }
+                    if (!any) break;
+                }
+
+                // Hard-floor node-edge separation within this component
+                double minEdgeDist = zoneRadius * 1.1;
+                // Build local adjacency list for edge iteration
+                var ladj = new HashSet<int>[cn];
+                for (int i = 0; i < cn; i++) ladj[i] = [];
+                for (int i = 0; i < cn; i++)
+                    foreach (int gv in adj[comp[i]])
+                        if (localIdx.TryGetValue(gv, out int lv)) { ladj[i].Add(lv); ladj[lv].Add(i); }
+
+                for (int outerPass = 0; outerPass < 30; outerPass++)
+                {
+                    bool anyEdge = false;
+                    for (int i = 0; i < cn; i++)
+                        for (int a = 0; a < cn; a++)
+                            foreach (int b in ladj[a])
+                            {
+                                if (b <= a || i == a || i == b) continue;
+                                double ex = lpx[b] - lpx[a], ey = lpy[b] - lpy[a];
+                                double len2 = ex * ex + ey * ey;
+                                if (len2 < 0.001) continue;
+                                double t = ((lpx[i] - lpx[a]) * ex + (lpy[i] - lpy[a]) * ey) / len2;
+                                if (t < 0 || t > 1) continue;
+                                double perpX = lpx[i] - (lpx[a] + t * ex);
+                                double perpY = lpy[i] - (lpy[a] + t * ey);
+                                double pd    = Math.Sqrt(perpX * perpX + perpY * perpY);
+                                if (pd >= minEdgeDist) continue;
+                                if (pd < 0.001) { perpX = 0; perpY = 1; pd = 0.001; }
+                                double move = minEdgeDist - pd;
+                                lpx[i] += perpX / pd * move;
+                                lpy[i] += perpY / pd * move;
+                                anyEdge = true;
+                            }
+                    if (!anyEdge) break;
+
+                    // Re-run zone-zone after each edge-push round
+                    double md = zoneRadius * 2.2;
+                    for (int pass2 = 0; pass2 < 10; pass2++)
+                    {
+                        bool any2 = false;
+                        for (int i = 0; i < cn; i++)
+                            for (int j = i + 1; j < cn; j++)
+                            {
+                                double dx2 = lpx[i] - lpx[j], dy2 = lpy[i] - lpy[j];
+                                double d2  = Math.Sqrt(dx2 * dx2 + dy2 * dy2);
+                                if (d2 >= md) continue;
+                                if (d2 < 0.001) { dx2 = 1; dy2 = 0; d2 = 0.001; }
+                                double p2 = (md - d2) / 2.0;
+                                lpx[i] += dx2 / d2 * p2; lpy[i] += dy2 / d2 * p2;
+                                lpx[j] -= dx2 / d2 * p2; lpy[j] -= dy2 / d2 * p2;
+                                any2 = true;
+                            }
+                        if (!any2) break;
+                    }
+                }
+
+                compPx[c] = lpx;
+                compPy[c] = lpy;
             }
 
-            // ── Normalise: fit result into the canvas with padding ────────────────
-            double minX = px.Min(), maxX = px.Max();
-            double minY = py.Min(), maxY = py.Max();
-            double spanX = Math.Max(maxX - minX, 1);
-            double spanY = Math.Max(maxY - minY, 1);
+            // ── Tile component bounding boxes across the canvas ───────────────────
+            // Compute each component's bounding box, then lay them out left-to-right
+            // (or top-to-bottom for 2 components to match portrait orientation) with
+            // equal padding between them so the canvas is used efficiently.
+            var compMinX = new double[numComps];
+            var compMaxX = new double[numComps];
+            var compMinY = new double[numComps];
+            var compMaxY = new double[numComps];
+            for (int c = 0; c < numComps; c++)
+            {
+                compMinX[c] = compPx[c].Min(); compMaxX[c] = compPx[c].Max();
+                compMinY[c] = compPy[c].Min(); compMaxY[c] = compPy[c].Max();
+            }
 
-            double pad    = zoneRadius + margin;
-            double drawW  = Width  - 2 * pad;
-            double drawH  = Height - 2 * pad;
-
-            double scaleX = drawW / spanX;
-            double scaleY = drawH / spanY;
-            double scale  = Math.Min(scaleX, scaleY);
-
-            double offX = pad + (drawW - spanX * scale) / 2.0;
-            double offY = pad + (drawH - spanY * scale) / 2.0;
+            double pad = zoneRadius + margin;
 
             var positions = new Dictionary<string, Point>(StringComparer.Ordinal);
-            for (int i = 0; i < n; i++)
+
+            if (numComps == 1)
             {
-                positions[zones[i].Name] = new Point(
-                    offX + (px[i] - minX) * scale,
-                    offY + (py[i] - minY) * scale);
+                // Single component — centre on canvas, scale to fit.
+                var comp = components[0];
+                double spanX = Math.Max(compMaxX[0] - compMinX[0], 1);
+                double spanY = Math.Max(compMaxY[0] - compMinY[0], 1);
+                double drawW = Width  - 2 * pad;
+                double drawH = Height - 2 * pad;
+                double scale = Math.Min(drawW / spanX, drawH / spanY);
+                double offX  = pad + (drawW - spanX * scale) / 2.0;
+                double offY  = pad + (drawH - spanY * scale) / 2.0;
+                for (int i = 0; i < comp.Count; i++)
+                    positions[zones[comp[i]].Name] = new Point(
+                        offX + (compPx[0][i] - compMinX[0]) * scale,
+                        offY + (compPy[0][i] - compMinY[0]) * scale);
             }
+            else
+            {
+                // Multiple components — tile side by side with equal inter-cluster gaps.
+                // Choose tiling direction: portrait canvas → stack vertically for 2 comps.
+                bool stackVertical = numComps == 2 && Height >= Width;
+
+                // Find a uniform scale that fits all components in their allocated slot.
+                double totalDraw  = (stackVertical ? Height : Width) - 2 * pad;
+                double slotSize   = totalDraw / numComps;
+                double crossDraw  = (stackVertical ? Width : Height) - 2 * pad;
+
+                double uniformScale = double.MaxValue;
+                for (int c = 0; c < numComps; c++)
+                {
+                    double spanMain  = stackVertical
+                        ? Math.Max(compMaxY[c] - compMinY[c], 1)
+                        : Math.Max(compMaxX[c] - compMinX[c], 1);
+                    double spanCross = stackVertical
+                        ? Math.Max(compMaxX[c] - compMinX[c], 1)
+                        : Math.Max(compMaxY[c] - compMinY[c], 1);
+                    double s = Math.Min((slotSize - 2 * zoneRadius) / spanMain,
+                                        (crossDraw              ) / spanCross);
+                    uniformScale = Math.Min(uniformScale, s);
+                }
+                uniformScale = Math.Max(uniformScale, 0.1);
+
+                double cursor = pad;
+                for (int c = 0; c < numComps; c++)
+                {
+                    var comp = components[c];
+                    double spanMain  = stackVertical
+                        ? Math.Max(compMaxY[c] - compMinY[c], 1)
+                        : Math.Max(compMaxX[c] - compMinX[c], 1);
+                    double spanCross = stackVertical
+                        ? Math.Max(compMaxX[c] - compMinX[c], 1)
+                        : Math.Max(compMaxY[c] - compMinY[c], 1);
+
+                    double mainExtent  = spanMain  * uniformScale;
+                    double crossExtent = spanCross * uniformScale;
+
+                    // Centre within the slot along main axis and within canvas along cross axis
+                    double mainStart  = cursor + (slotSize - mainExtent)  / 2.0;
+                    double crossStart = pad    + (crossDraw - crossExtent) / 2.0;
+
+                    for (int i = 0; i < comp.Count; i++)
+                    {
+                        double mainVal  = stackVertical ? compPy[c][i] : compPx[c][i];
+                        double crossVal = stackVertical ? compPx[c][i] : compPy[c][i];
+                        double mainOff  = stackVertical ? compMinY[c]  : compMinX[c];
+                        double crossOff = stackVertical ? compMinX[c]  : compMinY[c];
+
+                        double px2 = stackVertical
+                            ? crossStart + (crossVal - crossOff) * uniformScale
+                            :  mainStart + (mainVal  - mainOff)  * uniformScale;
+                        double py2 = stackVertical
+                            ?  mainStart + (mainVal  - mainOff)  * uniformScale
+                            : crossStart + (crossVal - crossOff) * uniformScale;
+
+                        positions[zones[comp[i]].Name] = new Point(px2, py2);
+                    }
+
+                    cursor += slotSize;
+                }
+            }
+
             return positions;
         }
 
@@ -533,7 +716,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Connections ──────────────────────────────────────────────────────────
 
-        private static void DrawConnections(DrawingContext dc, List<Connection> connections, Dictionary<string, Point> positions)
+        private static void DrawConnections(DrawingContext dc, List<Connection> connections, Dictionary<string, Point> positions, double zoneRadius)
         {
             foreach (Connection conn in connections)
             {
@@ -549,7 +732,17 @@ namespace Olden_Era___Template_Editor.Services
                     ? new Pen(new SolidColorBrush(PortalLineColor), 2)
                     : new Pen(new SolidColorBrush(DirectLineColor), 3);
 
-                dc.DrawLine(pen, from, to);
+                // Shorten the line so it starts/ends at the zone circle edges, never hidden under a circle.
+                double dx = to.X - from.X;
+                double dy = to.Y - from.Y;
+                double dist = Math.Sqrt(dx * dx + dy * dy);
+                if (dist < 1) continue;
+                double ux = dx / dist;
+                double uy = dy / dist;
+                double r = zoneRadius;
+                Point p1 = new Point(from.X + ux * r, from.Y + uy * r);
+                Point p2 = new Point(to.X   - ux * r, to.Y   - uy * r);
+                dc.DrawLine(pen, p1, p2);
             }
         }
 
