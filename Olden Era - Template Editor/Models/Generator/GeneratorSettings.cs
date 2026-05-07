@@ -3,10 +3,10 @@ namespace Olden_Era___Template_Editor.Models
     public class TournamentRules
     {
         public bool Enabled { get; set; } = false;
-        public int FirstTournamentDay { get; set; } = 8;
-        public int AnnouncementLeadDays { get; set; } = 3;
+        public int FirstTournamentDay { get; set; } = 14;
         public int Interval { get; set; } = 7;
         public int PointsToWin { get; set; } = 2;
+        public bool SaveArmy { get; set; } = true;
     }
     public class GladiatorArenaRules
     {

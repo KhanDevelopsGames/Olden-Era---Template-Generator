@@ -407,24 +407,33 @@ namespace Olden_Era___Template_Editor.Services
 
             if (useTournament)
             {
-                int firstTournamentDay = Math.Clamp(settings.TournamentRules.FirstTournamentDay, 1, 60);
-                int announcementLeadDays = Math.Clamp(settings.TournamentRules.AnnouncementLeadDays, 1, 30);
-                int tournamentInterval = Math.Clamp(settings.TournamentRules.Interval, 1, 30);
-                int pointsToWin = Math.Clamp(settings.TournamentRules.PointsToWin, 1, 5);
+                int firstTournamentDay = Math.Clamp(settings.TournamentRules.FirstTournamentDay, 3, 60);
+                int tournamentInterval = Math.Clamp(settings.TournamentRules.Interval, 3, 30);
+                int pointsToWin = Math.Clamp(settings.TournamentRules.PointsToWin, 1, 10);
                 // Round count is derived from points to win: with N points to win, the maximum number of rounds is 2N-1
                 int roundCount = pointsToWin * 2 - 1;
-                // Common tournament settings, for now not editable
                 winConditions.ChampionSelectRule = "StartHero";
                 winConditions.Tournament = true;
                 winConditions.TournamentSaveArmy = true;
 
-                // Tournament annouce days are the starting point to tournament countdown.
-                winConditions.TournamentAnnounceDays = Enumerable.Range(0, roundCount)
-                    .Select(i => (firstTournamentDay - announcementLeadDays) + i * tournamentInterval)
-                    .ToList();
-                    
-                // Tournament days are relative to announcement days
-                winConditions.TournamentDays = Enumerable.Repeat(announcementLeadDays, roundCount).ToList();
+                // Announce each round as early as possible:
+                // - Round 0: announced on turn 1 (minimum the game supports), battle on firstTournamentDay.
+                // - Round i>0: announced 1 day after the previous battle, battle tournamentInterval days later.
+                // tournamentAnnounceDays[i] = absolute turn of the announcement.
+                // tournamentDays[i]         = relative offset from announcement to battle.
+                var announceDays = new List<int>(roundCount);
+                var battleOffsets = new List<int>(roundCount);
+                int previousBattleTurn = 0;
+                for (int i = 0; i < roundCount; i++)
+                {
+                    int announceTurn = i == 0 ? 1 : previousBattleTurn + 1; // turn 1 for round 0; 1 day after previous battle for subsequent rounds
+                    int offset = i == 0 ? firstTournamentDay - 1 : tournamentInterval - 1;
+                    announceDays.Add(announceTurn);
+                    battleOffsets.Add(offset);
+                    previousBattleTurn = announceTurn + offset;
+                }
+                winConditions.TournamentAnnounceDays = announceDays;
+                winConditions.TournamentDays = battleOffsets;
                 winConditions.TournamentPointsToWin = pointsToWin;
             }
             return winConditions;

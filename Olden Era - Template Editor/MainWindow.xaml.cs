@@ -252,7 +252,6 @@ namespace Olden_Era___Template_Editor
             TxtGladiatorDelay.Text = ((int)SldGladiatorDelay.Value).ToString();
             TxtGladiatorCountDay.Text = ((int)SldGladiatorCountDay.Value).ToString();
             TxtTournamentPointsToWin.Text = ((int)SldTournamentPointsToWin.Value).ToString();
-            TxtTournamentAnnouncementLeadDays.Text = ((int)SldTournamentAnnouncementLeadDays.Value).ToString();
             TxtTournamentFirstTournamentDay.Text = ((int)SldTournamentFirstTournamentDay.Value).ToString();
             TxtTournamentInterval.Text = ((int)SldTournamentInterval.Value).ToString();
         }
@@ -557,8 +556,8 @@ namespace Olden_Era___Template_Editor
 
             SldTournamentPointsToWin.Value = 2;
             SldTournamentInterval.Value = 3;
-            SldTournamentFirstTournamentDay.Value = 8;
-            SldTournamentAnnouncementLeadDays.Value = 3;
+            SldTournamentFirstTournamentDay.Value = 14;
+            ChkTournamentSaveArmy.IsChecked = true;
 
             switch (victoryCondition)
             {
@@ -721,7 +720,6 @@ namespace Olden_Era___Template_Editor
             GladiatorArenaDaysDelayStart = (int)SldGladiatorDelay.Value,
             GladiatorArenaCountDay       = (int)SldGladiatorCountDay.Value,
             Tournament                   = ChkTournament.IsChecked == true,
-            TournamentAnnouncementLeadDays = (int)SldTournamentAnnouncementLeadDays.Value,
             TournamentFirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
             TournamentInterval = (int)SldTournamentInterval.Value,
             TournamentPointsToWin = (int)SldTournamentPointsToWin.Value,
@@ -782,9 +780,9 @@ namespace Olden_Era___Template_Editor
             SldGladiatorCountDay.Value = Math.Clamp(s.GladiatorArenaCountDay, 1, 30);
             ChkTournament.IsChecked = s.Tournament;
             SldTournamentFirstTournamentDay.Value = Math.Clamp(s.TournamentFirstTournamentDay, 1, 60);
-            SldTournamentAnnouncementLeadDays.Value = Math.Clamp(s.TournamentAnnouncementLeadDays, 1, 14);
             SldTournamentInterval.Value = Math.Clamp(s.TournamentInterval, 1, 30);
-            SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 5);
+            SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 10);
+            ChkTournamentSaveArmy.IsChecked = s.TournamentSaveArmy;
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
@@ -1033,9 +1031,9 @@ namespace Olden_Era___Template_Editor
             {
                 Enabled = ChkTournament.IsChecked == true,
                 FirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
-                AnnouncementLeadDays = (int)SldTournamentAnnouncementLeadDays.Value,
                 Interval = (int)SldTournamentInterval.Value,
-                PointsToWin = (int)SldTournamentPointsToWin.Value
+                PointsToWin = (int)SldTournamentPointsToWin.Value,
+                SaveArmy = ChkTournamentSaveArmy.IsChecked == true
             }
         };
 

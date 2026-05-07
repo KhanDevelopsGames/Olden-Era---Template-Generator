@@ -619,7 +619,6 @@ public class TemplateGeneratorTests
             TournamentRules = new TournamentRules
             {
                 FirstTournamentDay = 8,
-                AnnouncementLeadDays = 3,
                 Interval = 7,
                 PointsToWin = 2
             },
@@ -633,8 +632,8 @@ public class TemplateGeneratorTests
         Assert.NotNull(winConditions);
         Assert.True(winConditions.Tournament);
         Assert.Null(winConditions.GladiatorArena);
-        Assert.Equal([3, 3, 3], winConditions.TournamentDays);
-        Assert.Equal([5, 12, 19], winConditions.TournamentAnnounceDays);
+        Assert.Equal([7, 6, 6], winConditions.TournamentDays);
+        Assert.Equal([1, 9, 16], winConditions.TournamentAnnounceDays);
         Assert.Equal(2, winConditions.TournamentPointsToWin);
         Assert.True(winConditions.TournamentSaveArmy);
         Assert.False(winConditions.LostStartHero);
