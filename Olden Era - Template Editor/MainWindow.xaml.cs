@@ -341,6 +341,13 @@ namespace Olden_Era___Template_Editor
                 }
             }
 
+            if (ChkNoDirectPlayerConn.IsChecked == true && neutral == 0)
+            {
+                SetValidationText("\"Connect via neutral zones only\" requires at least one neutral zone. Add a neutral zone or disable this option.");
+                BtnPreview.IsEnabled = false;
+                return false;
+            }
+
             string selectedVictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
                 ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
                 : "win_condition_1";
