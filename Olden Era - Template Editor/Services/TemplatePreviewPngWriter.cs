@@ -1,6 +1,8 @@
 using OldenEraTemplateEditor.Models;
+using Olden_Era___Template_Editor.Models;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -57,13 +59,13 @@ namespace Olden_Era___Template_Editor.Services
                 ? rmgJsonPath[..^".rmg.json".Length] + ".png"
                 : Path.ChangeExtension(rmgJsonPath, ".png");
 
-        public static void Save(RmgTemplate template, string previewPath)
+        public static void Save(RmgTemplate template, string previewPath, MapTopology topology = MapTopology.Default)
         {
             string? directory = Path.GetDirectoryName(previewPath);
             if (!string.IsNullOrEmpty(directory))
                 Directory.CreateDirectory(directory);
 
-            var bitmap = Render(template);
+            var bitmap = Render(template, topology);
 
             var encoder = new PngBitmapEncoder();
             encoder.Frames.Add(BitmapFrame.Create(bitmap));
@@ -76,11 +78,11 @@ namespace Olden_Era___Template_Editor.Services
         }
 
         /// <summary>Renders the preview to a <see cref="BitmapSource"/> without writing any files.</summary>
-        public static BitmapSource Render(RmgTemplate template)
+        public static BitmapSource Render(RmgTemplate template, MapTopology topology = MapTopology.Default)
         {
             var visual = new DrawingVisual();
             using (DrawingContext dc = visual.RenderOpen())
-                DrawPreview(dc, template);
+                DrawPreview(dc, template, topology);
 
             var bitmap = new RenderTargetBitmap(Width, Height, 96, 96, PixelFormats.Pbgra32);
             bitmap.Render(visual);
@@ -88,9 +90,28 @@ namespace Olden_Era___Template_Editor.Services
             return bitmap;
         }
 
+        /// <summary>
+        /// Returns the canvas positions that would be used for each zone when rendering
+        /// <paramref name="template"/>, keyed by zone name.
+        /// </summary>
+        public static Dictionary<string, Point> ComputeLayout(RmgTemplate template, MapTopology topology = MapTopology.Default)
+        {
+            Variant? variant = template.Variants?.FirstOrDefault();
+            List<Zone> zones = variant?.Zones ?? [];
+            if (zones.Count == 0) return [];
+            var orderedZones = OrderZones(zones, variant?.Orientation?.ZeroAngleZone);
+            return LayoutZones(orderedZones, variant?.Connections ?? [], topology);
+        }
+
+        /// <summary>
+        /// Returns the zone-circle radius used when rendering <paramref name="template"/>.
+        /// Must be called from the same thread context as <see cref="ComputeLayout"/> for the same template.
+        /// </summary>
+        public static double GetLastZoneRadius() => _zoneRadius;
+
         // ── Main draw ────────────────────────────────────────────────────────────
 
-        private static void DrawPreview(DrawingContext dc, RmgTemplate template)
+        private static void DrawPreview(DrawingContext dc, RmgTemplate template, MapTopology topology)
         {
             dc.DrawRectangle(new SolidColorBrush(BackgroundColor), null, new Rect(0, 0, Width, Height));
             dc.DrawRoundedRectangle(null,
@@ -106,10 +127,11 @@ namespace Olden_Era___Template_Editor.Services
             }
 
             var orderedZones = OrderZones(zones, variant?.Orientation?.ZeroAngleZone);
-            var positions    = LayoutZones(orderedZones);
+            var connections  = variant?.Connections ?? [];
+            var positions    = LayoutZones(orderedZones, connections, topology);
 
             // Draw connections first (below zones)
-            DrawConnections(dc, variant?.Connections ?? [], positions);
+            DrawConnections(dc, connections, positions);
 
             // Draw zone circles — non-player zones first, then spawn zones on top
             // so the castle-count badge is never obscured by an adjacent circle.
@@ -131,43 +153,242 @@ namespace Olden_Era___Template_Editor.Services
             return ordered.Skip(zeroIndex).Concat(ordered.Take(zeroIndex)).ToList();
         }
 
-        private static Dictionary<string, Point> LayoutZones(List<Zone> zones)
+        private static Dictionary<string, Point> LayoutZones(List<Zone> zones, List<Connection> connections, MapTopology topology)
+        {
+            // For structured topologies use the simple ring layout — it already
+            // matches the actual in-game arrangement perfectly.
+            // Only Random topology uses the spring-embedder to infer placement.
+            if (topology != MapTopology.Random)
+                return LayoutZonesRing(zones);
+
+            int n = zones.Count;
+            if (n == 0)
+            {
+                _zoneRadius = ZoneRadiusMax;
+                return [];
+            }
+
+            // ── Determine zone radius ─────────────────────────────────────────────
+            // Use the circle-ring formula as an upper bound so zones never overlap.
+            const double margin = 18;
+            double ringRadius0  = Width / 2.0 - margin;
+            double chord0       = 2.0 * ringRadius0 * Math.Sin(Math.PI / Math.Max(1, n));
+            const double minGap = 6;
+            double zoneRadius   = Math.Min(ZoneRadiusMax, (chord0 - minGap) / 2.0);
+            _zoneRadius = zoneRadius;
+
+            // ── Seed positions on a ring ──────────────────────────────────────────
+            double ringRadius = Math.Min(ringRadius0, Width / 2.0 - zoneRadius - margin);
+            var center = new Point(Width / 2.0, Height / 2.0);
+            var px = new double[n];
+            var py = new double[n];
+            for (int i = 0; i < n; i++)
+            {
+                double angle = -Math.PI / 2 + i * Math.PI * 2 / n;
+                px[i] = center.X + Math.Cos(angle) * ringRadius;
+                py[i] = center.Y + Math.Sin(angle) * ringRadius;
+            }
+
+            if (n == 1)
+            {
+                px[0] = center.X;
+                py[0] = center.Y;
+                var single = new Dictionary<string, Point>(StringComparer.Ordinal);
+                single[zones[0].Name] = new Point(px[0], py[0]);
+                return single;
+            }
+
+            // ── Build adjacency (Direct connections only — no Proximity/Portal) ───
+            var idx = new Dictionary<string, int>(StringComparer.Ordinal);
+            for (int i = 0; i < n; i++) idx[zones[i].Name] = i;
+
+            var adj = new HashSet<int>[n];
+            for (int i = 0; i < n; i++) adj[i] = [];
+            foreach (var conn in connections)
+            {
+                if (string.Equals(conn.ConnectionType, "Proximity", StringComparison.Ordinal)) continue;
+                if (string.Equals(conn.ConnectionType, "Portal",    StringComparison.Ordinal)) continue;
+                if (!idx.TryGetValue(conn.From, out int a)) continue;
+                if (!idx.TryGetValue(conn.To,   out int b)) continue;
+                adj[a].Add(b);
+                adj[b].Add(a);
+            }
+
+            // ── Spring-embedder layout ────────────────────────────────────────────
+            // All connected pairs share one fixed ideal edge length so every
+            // connection in the graph is the same visual distance.
+            // Unconnected pairs are only repelled — no attraction between them.
+            double idealEdge   = Math.Max(zoneRadius * 4.0, ringRadius * 0.7);
+            double repStrength = idealEdge * idealEdge;
+
+            double temperature = ringRadius * 0.5;
+            const int iterations = 400;
+            const double cooling = 0.975;
+            var dx = new double[n];
+            var dy = new double[n];
+
+            for (int iter = 0; iter < iterations; iter++)
+            {
+                Array.Clear(dx, 0, n);
+                Array.Clear(dy, 0, n);
+
+                // Repulsion between every pair of zones
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = i + 1; j < n; j++)
+                    {
+                        double diffX = px[i] - px[j];
+                        double diffY = py[i] - py[j];
+                        double dist  = Math.Sqrt(diffX * diffX + diffY * diffY);
+                        if (dist < 0.001) { dist = 0.001; diffX = 1; diffY = 0; }
+
+                        double rep = repStrength / dist;
+                        double ux  = diffX / dist * rep;
+                        double uy  = diffY / dist * rep;
+                        dx[i] += ux; dy[i] += uy;
+                        dx[j] -= ux; dy[j] -= uy;
+                    }
+                }
+
+                // Attraction along edges — fixed ideal length, same for every edge
+                for (int i = 0; i < n; i++)
+                {
+                    foreach (int j in adj[i])
+                    {
+                        if (j <= i) continue;
+                        double diffX = px[i] - px[j];
+                        double diffY = py[i] - py[j];
+                        double dist  = Math.Sqrt(diffX * diffX + diffY * diffY);
+                        if (dist < 0.001) continue;
+
+                        double att = (dist - idealEdge);   // Hooke's law: pull when > ideal, push when < ideal
+                        double ux  = diffX / dist * att;
+                        double uy  = diffY / dist * att;
+                        dx[i] -= ux; dy[i] -= uy;
+                        dx[j] += ux; dy[j] += uy;
+                    }
+                }
+
+                // Weak gravity toward group centroid — prevents disconnected zones drifting away
+                double cx = px.Average(), cy = py.Average();
+                for (int i = 0; i < n; i++)
+                {
+                    dx[i] -= (px[i] - cx) * 0.04;
+                    dy[i] -= (py[i] - cy) * 0.04;
+                }
+
+                // Apply displacements, clamped to temperature
+                for (int i = 0; i < n; i++)
+                {
+                    double disp = Math.Sqrt(dx[i] * dx[i] + dy[i] * dy[i]);
+                    if (disp < 0.001) continue;
+                    double clamp = Math.Min(disp, temperature);
+                    px[i] += dx[i] / disp * clamp;
+                    py[i] += dy[i] / disp * clamp;
+                }
+
+                temperature *= cooling;
+            }
+
+            // ── Hard-floor separation pass ────────────────────────────────────────
+            // Guarantee that no two zone centres are closer than 4× zoneRadius
+            // (= gap between circle edges ≥ 2 diameters) after simulation settles.
+            double minDist = zoneRadius * 4.0;
+            for (int pass = 0; pass < 50; pass++)
+            {
+                bool anyMoved = false;
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = i + 1; j < n; j++)
+                    {
+                        double diffX = px[i] - px[j];
+                        double diffY = py[i] - py[j];
+                        double dist  = Math.Sqrt(diffX * diffX + diffY * diffY);
+                        if (dist >= minDist) continue;
+                        if (dist < 0.001) { diffX = 1; diffY = 0; dist = 0.001; }
+                        double push = (minDist - dist) / 2.0;
+                        double ux = diffX / dist * push;
+                        double uy = diffY / dist * push;
+                        px[i] += ux; py[i] += uy;
+                        px[j] -= ux; py[j] -= uy;
+                        anyMoved = true;
+                    }
+                }
+                if (!anyMoved) break;
+            }
+
+            // ── Normalise: fit result into the canvas with padding ────────────────
+            double minX = px.Min(), maxX = px.Max();
+            double minY = py.Min(), maxY = py.Max();
+            double spanX = Math.Max(maxX - minX, 1);
+            double spanY = Math.Max(maxY - minY, 1);
+
+            double pad    = zoneRadius + margin;
+            double drawW  = Width  - 2 * pad;
+            double drawH  = Height - 2 * pad;
+
+            double scaleX = drawW / spanX;
+            double scaleY = drawH / spanY;
+            double scale  = Math.Min(scaleX, scaleY);
+
+            double offX = pad + (drawW - spanX * scale) / 2.0;
+            double offY = pad + (drawH - spanY * scale) / 2.0;
+
+            var positions = new Dictionary<string, Point>(StringComparer.Ordinal);
+            for (int i = 0; i < n; i++)
+            {
+                positions[zones[i].Name] = new Point(
+                    offX + (px[i] - minX) * scale,
+                    offY + (py[i] - minY) * scale);
+            }
+            return positions;
+        }
+
+        /// <summary>
+        /// Classic ring layout used for all structured topologies (Default, HubAndSpoke, Chain, SharedWeb).
+        /// Zones are arranged in a circle; a Hub zone (if present) goes in the centre.
+        /// </summary>
+        private static Dictionary<string, Point> LayoutZonesRing(List<Zone> zones)
         {
             var positions = new Dictionary<string, Point>(StringComparer.Ordinal);
-            Zone? hub = zones.FirstOrDefault(z => string.Equals(z.Name, "Hub", StringComparison.Ordinal));
-            var outer = hub is null ? zones : zones.Where(z => z != hub).ToList();
+            int n = zones.Count;
+            if (n == 0)
+            {
+                _zoneRadius = ZoneRadiusMax;
+                return positions;
+            }
+
+            const double margin = 18;
+            double ringRadius0  = Width / 2.0 - margin;
+            double chord0       = 2.0 * ringRadius0 * Math.Sin(Math.PI / Math.Max(1, n));
+            const double minGap = 6;
+            double zoneRadius   = Math.Min(ZoneRadiusMax, (chord0 - minGap) / 2.0);
+            _zoneRadius = zoneRadius;
+
+            Zone? hub   = zones.FirstOrDefault(z => string.Equals(z.Name, "Hub", StringComparison.Ordinal));
+            var outer   = hub is null ? zones : zones.Where(z => z != hub).ToList();
+            int outerN  = Math.Max(1, outer.Count);
+
+            double ringRadius = Math.Min(ringRadius0, Width / 2.0 - zoneRadius - margin);
+            var center = new Point(Width / 2.0, Height / 2.0);
 
             if (hub is not null)
-                positions[hub.Name] = new Point(Width / 2.0, Height / 2.0);
+                positions[hub.Name] = center;
 
-            int n = Math.Max(1, outer.Count);
-
-            // Ring always fills to the border — zones spread as far apart as possible.
-            // The circle radius then shrinks only if needed to prevent overlap.
-            // chord between adjacent zone centres = 2 · ringRadius · sin(π/n)
-            // require chord ≥ 2 · zoneRadius + gap  →  zoneRadius ≤ (chord/2) - gap/2
-            const double margin    = 18;                          // padding from image edge
-            double ringRadius      = Width / 2.0 - margin;       // always maximum — zones spread as far apart as possible
-
-            double chord           = 2.0 * ringRadius * Math.Sin(Math.PI / n);
-            const double minGap    = 6;                           // minimum gap between circle edges
-            double zoneRadius      = Math.Min(ZoneRadiusMax, (chord - minGap) / 2.0);
-
-            // Ensure circle edges don't clip the image border
-            ringRadius = Math.Min(ringRadius, Width / 2.0 - zoneRadius - margin);
-
-            var center = new Point(Width / 2.0, Height / 2.0);
+            if (n == 1)
+            {
+                positions[zones[0].Name] = center;
+                return positions;
+            }
 
             for (int i = 0; i < outer.Count; i++)
             {
-                double angle = -Math.PI / 2 + i * Math.PI * 2 / n;
+                double angle = -Math.PI / 2 + i * Math.PI * 2 / outerN;
                 positions[outer[i].Name] = new Point(
                     center.X + Math.Cos(angle) * ringRadius,
                     center.Y + Math.Sin(angle) * ringRadius);
             }
 
-            // Store for use during drawing
-            _zoneRadius = zoneRadius;
             return positions;
         }
 

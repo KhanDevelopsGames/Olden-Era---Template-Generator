@@ -871,6 +871,7 @@ namespace Olden_Era___Template_Editor
 
         // The most recently generated template — used by BtnSaveGenerated_Click
         private RmgTemplate? _generatedTemplate;
+        private MapTopology  _generatedTopology;
         private bool _templateOutdated = false;
 
         private void BtnPreview_Click(object sender, RoutedEventArgs e)
@@ -878,8 +879,9 @@ namespace Olden_Era___Template_Editor
             if (!Validate()) return;
             var settings = BuildSettings();
             _generatedTemplate = TemplateGenerator.Generate(settings);
+            _generatedTopology = settings.Topology;
             _templateOutdated = false;
-            ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate);
+            ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
             BtnSaveGenerated.Visibility = Visibility.Visible;
             UpdateOutdatedWarning();
             Validate(); // refresh warnings now that template is up to date
@@ -939,7 +941,7 @@ namespace Olden_Era___Template_Editor
             {
                 try
                 {
-                    TemplatePreviewPngWriter.Save(_generatedTemplate, previewPath);
+                    TemplatePreviewPngWriter.Save(_generatedTemplate, previewPath, _generatedTopology);
                 }
                 catch (Exception ex)
                 {

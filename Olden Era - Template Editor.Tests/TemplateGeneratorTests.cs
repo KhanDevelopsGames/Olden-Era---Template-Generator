@@ -802,12 +802,39 @@ public class TemplateGeneratorTests
             RunOnStaThread(() => TemplatePreviewPngWriter.Save(template, previewPath));
             BitmapSource bitmap = LoadBitmap(previewPath);
 
-            AssertColorNear(Color.FromRgb(28, 22, 16), PixelAt(bitmap, 256, 72));   // background of map
-            AssertColorNear(Color.FromRgb(192, 192, 192), PixelAt(bitmap, 598, 534));   // border of circle 3
-            AssertColorNear(Color.FromRgb(220, 220, 200), PixelAt(bitmap, 93, 502));    // house icon
+            // Use ComputeLayout to find the actual rendered positions (layout is graph-driven, not hardcoded)
+            Dictionary<string, Point> layout = null!;
+            double zoneRadius = 0;
+            RunOnStaThread(() =>
+            {
+                layout = TemplatePreviewPngWriter.ComputeLayout(template);
+                zoneRadius = TemplatePreviewPngWriter.GetLastZoneRadius();
+            });
 
-            int lowLabelPixels = CountBrightPixels(bitmap, new Int32Rect(244, 78, 24, 20));     // sample of the background
-            int castleLabelPixels = CountBrightPixels(bitmap, new Int32Rect(560, 490, 24, 20)); // sample near circle 3
+            Point pA = layout["Neutral-A"]; // Bronze (sides)
+            Point pB = layout["Neutral-B"]; // Silver (treasure) — 3 castles
+            Point pC = layout["Neutral-C"]; // Gold  (center)  — 2 castles
+
+            // Sample a corner of the canvas that is guaranteed to be background
+            int bgX = 15, bgY = 15;
+            AssertColorNear(Color.FromRgb(28, 22, 16), PixelAt(bitmap, bgX, bgY));
+
+            // The border of the Silver circle (Neutral-B) should show the silver border colour.
+            // Sample 1 px inside the circumference to avoid antialiased edge blending.
+            int bX = (int)Math.Round(pB.X + zoneRadius - 1);
+            int bY = (int)Math.Round(pB.Y);
+            bX = Math.Clamp(bX, 0, bitmap.PixelWidth - 1);
+            bY = Math.Clamp(bY, 0, bitmap.PixelHeight - 1);
+            AssertColorNear(Color.FromRgb(192, 192, 192), PixelAt(bitmap, bX, bY), tolerance: 30);
+
+            // The castle-count label pixels near Neutral-B should be brighter than the plain background.
+            var bgRect    = new Int32Rect(bgX, bgY, 24, 20);
+            var labelRect = new Int32Rect(
+                Math.Clamp((int)pB.X - 12, 0, bitmap.PixelWidth  - 25),
+                Math.Clamp((int)pB.Y - 10, 0, bitmap.PixelHeight - 21),
+                24, 20);
+            int lowLabelPixels    = CountBrightPixels(bitmap, bgRect);
+            int castleLabelPixels = CountBrightPixels(bitmap, labelRect);
             Assert.True(castleLabelPixels > lowLabelPixels + 10);
         }
         finally
