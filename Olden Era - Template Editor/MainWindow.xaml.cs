@@ -50,9 +50,10 @@ namespace Olden_Era___Template_Editor
             var area = SystemParameters.WorkArea;
             if (Height > area.Height) { Height = area.Height; MinHeight = area.Height; }
             if (Width  > area.Width)  { Width  = area.Width;  MinWidth  = area.Width;  }
+
             // Stamp version from assembly metadata into all visible locations.
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            string versionLabel = version != null ? $"v{version.Major}.{version.Minor}" : "v?";
+            string versionLabel = version != null ? FormatVersion(version) : "v?";
             _baseTitle = $"Olden Era - Simple Template Generator {versionLabel}";
             TxtAppTitle.Text = $"Olden Era - Simple Template Generator  {versionLabel}";
             TxtWipWarning.Text = $"⚠️ Work in progress — Some generated templates may contain game-breaking bugs or issues.";
@@ -93,7 +94,7 @@ namespace Olden_Era___Template_Editor
                 var release = await JsonSerializer.DeserializeAsync<GitHubRelease>(stream);
                 if (release?.TagName == null) return;
 
-                // Tag expected format: "v1.2" or "1.2" — parse major.minor.
+                // Tag expected format: "v1.2", "1.2", or "v1.2.3" — parse major.minor[.build].
                 string tag = release.TagName.TrimStart('v');
                 if (!Version.TryParse(tag, out Version? latestVersion)) return;
                 if (currentVersion == null || latestVersion <= currentVersion) return;
@@ -102,8 +103,8 @@ namespace Olden_Era___Template_Editor
                 Dispatcher.Invoke(() =>
                 {
                     var result = MessageBox.Show(
-                        $"A new version is available: v{latestVersion.Major}.{latestVersion.Minor}\n" +
-                        $"You are running: v{currentVersion.Major}.{currentVersion.Minor}\n\n" +
+                        $"A new version is available: {FormatVersion(latestVersion)}\n" +
+                        $"You are running: {FormatVersion(currentVersion)}\n\n" +
                         "Open the releases page to download the update?",
                         "Update Available",
                         MessageBoxButton.YesNo,
@@ -115,6 +116,10 @@ namespace Olden_Era___Template_Editor
             }
             catch { /* Network unavailable or API error — silently ignore. */ }
         }
+
+        // Formats a Version as "vMajor.Minor" or "vMajor.Minor.Build" when build > 0.
+        private static string FormatVersion(Version v)
+            => v.Build > 0 ? $"v{v.Major}.{v.Minor}.{v.Build}" : $"v{v.Major}.{v.Minor}";
 
         // Minimal model for GitHub releases API response.
         private sealed class GitHubRelease
