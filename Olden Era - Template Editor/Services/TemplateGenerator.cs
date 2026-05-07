@@ -932,25 +932,15 @@ namespace Olden_Era___Template_Editor.Services
                 .Select(l => $"THubSpoke-{playerLetter}-{l}")
                 .ToList();
 
-            // Build the hub zone itself.
-            zones.Add(new Zone
-            {
-                Name = hubName,
-                Size = settings.ZoneCfg.HubZoneSize,
-                Layout = CenterLayoutName,
-                GuardCutoffValue = 2000,
-                GuardRandomization = 0.05,
-                GuardMultiplier = ScaleGuardMultiplier(1.5, tuning),
-                GuardWeeklyIncrement = 0.20,
-                GuardReactionDistribution = [0, 10, 10, 20, 10, 0],
-                DiplomacyModifier = -0.5,
-                GuardedContentPool = [.. T3GuardedPools],
-                UnguardedContentPool = [.. T3UnguardedPools],
-                ResourcesContentPool = [.. GeneralResourcesMedium],
-                MetaObjectsBiome = new BiomeSelector { Type = "MatchMainObject", Args = ["0"] },
-                CrossroadsPosition = 0,
-                Roads = spokeConnNames.Select(c => PlainRoad(ConnectionEndpoint(c), ConnectionEndpoint(c))).ToList()
-            });
+            // Build the hub zone itself via the shared builder so castles, roads,
+            // biomes, content pools, and guard settings are always consistent.
+            var hubZone = BuildHubZone(spokeConnNames.ToArray(), tuning,
+                isHoldCity: false,
+                size: settings.ZoneCfg.HubZoneSize,
+                castleCount: settings.ZoneCfg.HubZoneCastles,
+                generateRoads: settings.GenerateRoads);
+            hubZone.Name = hubName;
+            zones.Add(hubZone);
 
             // Build each spoke zone (player spawn or neutral).
             for (int i = 0; i < spokeLetters.Count; i++)
