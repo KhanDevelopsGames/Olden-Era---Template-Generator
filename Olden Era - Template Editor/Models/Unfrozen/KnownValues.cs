@@ -44,7 +44,7 @@ namespace OldenEraTemplateEditor.Models
             "Lost Starting City",
             //"Gladiator Arena",
             "Hold City",
-            "Tournament [EXPERIMENTAL]",
+            "Tournament",
         ];
 
         /// <summary>

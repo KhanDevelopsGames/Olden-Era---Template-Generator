@@ -555,7 +555,7 @@ namespace Olden_Era___Template_Editor
             SldGladiatorCountDay.Value = 3;
 
             SldTournamentPointsToWin.Value = 2;
-            SldTournamentInterval.Value = 3;
+            SldTournamentInterval.Value = 7;
             SldTournamentFirstTournamentDay.Value = 14;
             ChkTournamentSaveArmy.IsChecked = true;
 
