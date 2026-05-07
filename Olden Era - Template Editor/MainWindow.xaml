@@ -121,7 +121,8 @@
 
             <TabControl x:Name="MainTabs"
                         Grid.Column="0"
-                        Grid.ColumnSpan="3">
+                        Grid.ColumnSpan="3"
+                        VerticalContentAlignment="Stretch">
                 <TabItem Header="Rules">
                 <Grid Margin="0,8,0,0">
                 <Grid.ColumnDefinitions>
@@ -134,11 +135,12 @@
                     <RowDefinition Height="8"/>
                     <RowDefinition Height="Auto"/>  <!-- 2nd row -->
                     <RowDefinition Height="8"/>
-                    <RowDefinition Height="*"/>  <!-- 3rd row -->
+                    <RowDefinition Height="*"/>     <!-- 3rd row -->
                 </Grid.RowDefinitions>
 
                 <!-- TEMPLATE -->
                 <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource SectionBorder}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
                         <TextBlock Text="◆  TEMPLATE" Style="{StaticResource SectionHeader}"/>
                         <Grid>
@@ -186,10 +188,12 @@
                                     ValueChanged="Slider_ValueChanged"/>
                         </Grid>
                     </StackPanel>
+                    </ScrollViewer>
                 </Border>
 
                 <!-- HEROES -->
                 <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource SectionBorder}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
                         <TextBlock Text="◆  HEROES" Style="{StaticResource SectionHeader}"/>
                         <Grid>
@@ -238,12 +242,13 @@
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
                         </Grid>
-                        
+
                     </StackPanel>
+                    </ScrollViewer>
                 </Border>
 
                 <!-- ADVANCED GAME RULES -->
-                <Border Grid.Row="2" x:Name="PnlAdvancedGameRules" Style="{StaticResource SectionBorder}">
+                <Border Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" x:Name="PnlAdvancedGameRules" Style="{StaticResource SectionBorder}">
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Top" Text="◆ GAME RULES" Style="{StaticResource SectionHeader}"/>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -454,6 +459,7 @@
 
                 <!-- TOPOLOGY -->
                 <Border Grid.Row="0" Style="{StaticResource SectionBorder}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
                         <TextBlock Text="◆  LAYOUT" Style="{StaticResource SectionHeader}"/>
                         <Grid>
@@ -502,6 +508,7 @@
                                     ValueChanged="Slider_ValueChanged"/>
                         </Grid>
                     </StackPanel>
+                    </ScrollViewer>
                 </Border>
 
                 <!-- ZONE CONFIGURATION -->

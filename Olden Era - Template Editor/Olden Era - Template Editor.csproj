@@ -20,6 +20,7 @@
     <!-- Suppress .pdb generation -->
     <DebugSymbols>false</DebugSymbols>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>

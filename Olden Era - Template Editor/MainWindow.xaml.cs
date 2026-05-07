@@ -45,6 +45,11 @@ namespace Olden_Era___Template_Editor
         {
             InitializeComponent();
 
+            // Clamp startup size to the available work area so the window never
+            // overflows the screen at high-DPI scaling (e.g. 125 %, 150 %, 200 %).
+            var area = SystemParameters.WorkArea;
+            if (Height > area.Height) { Height = area.Height; MinHeight = area.Height; }
+            if (Width  > area.Width)  { Width  = area.Width;  MinWidth  = area.Width;  }
             // Stamp version from assembly metadata into all visible locations.
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             string versionLabel = version != null ? $"v{version.Major}.{version.Minor}" : "v?";
