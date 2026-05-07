@@ -1,5 +1,6 @@
 using Olden_Era___Template_Editor.Models;
 using OldenEraTemplateEditor.Models;
+using OldenEraTemplateEditor.Services.ContentManagement;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -2340,8 +2341,8 @@ namespace Olden_Era___Template_Editor.Services
                     From = fromZone,
                     To = toZone,
                     ConnectionType = "Portal",
-                    PortalPlacementRulesFrom = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 2 }],
-                    PortalPlacementRulesTo   = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 2 }],
+                    PortalPlacementRulesFrom = [RulePresets.AtCrossroads(min:0.1, max:0.3, weight:2)],
+                    PortalPlacementRulesTo   = [RulePresets.AtCrossroads(min:0.1, max:0.3, weight:2)],
                     Road = true,
                     GuardEscape = false,
                     GuardValue = ScaleBorderGuardValue(25000, tuning),
@@ -2569,38 +2570,26 @@ namespace Olden_Era___Template_Editor.Services
         /// </summary>
         private static List<ContentItem> BuildPlayerZoneMandatoryContent(int castleCount, bool spawnFootholds)
         {
-            var footholdRules = FootholdRules(castleCount);
             var content = new List<ContentItem>();
 
             if (spawnFootholds)
-                content.Add(new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules });
+                content.Add(ContentPresets.RemoteFoothold(castleCount));
 
             content.AddRange([
                 // ── Basic mines — guarded, anchored near the player castle (every template). ──
-                new() { Name = "name_mine_wood", Sid = "mine_wood", IsMine = true, IsGuarded = true,
-                    Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 },
-                             new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                new() { Name = "name_mine_ore",  Sid = "mine_ore",  IsMine = true, IsGuarded = true,
-                    Rules = [new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 },
-                             new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-
+                ContentPresets.MineWood_Anchored(),
+                ContentPresets.MineOre_Anchored(),
                 // ── Gold mine near crossroads (Exodus/Staircase/Yin Yang pattern). ──
-                new() { Sid = "mine_gold", IsMine = true,
-                    Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.10, TargetMax = 0.30, Weight = 1 }] },
-
+                ContentPresets.MineGold_Crossroads(),
                 // ── Rare mines spread along roads (Exodus/Staircase/Yin Yang pattern). ──
-                new() { Name = "name_mine_crystals",  Sid = "mine_crystals",  IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
-                new() { Name = "name_mine_mercury",   Sid = "mine_mercury",   IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
-                new() { Name = "name_mine_gemstones", Sid = "mine_gemstones", IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
-                new() { Name = "name_alchemy_lab",    Sid = "alchemy_lab",    IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.20, TargetMax = 0.30, Weight = 1 }] },
-
+                ContentPresets.MineCrystals_Road(),
+                ContentPresets.MineMercury_Road(),
+                ContentPresets.MineGemstones_Road(),
+                ContentPresets.AlchemyLab_Road(),
                 // ── Utility buildings (Blitz/Kerberos/Exodus pattern). ──
                 new() { Sid = "watchtower" },
-                new() { Sid = "market", IsGuarded = true,
-                    Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-                new() { Sid = "mana_well",
-                    Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.30, Weight = 1 }] },
-
+                ContentItemBuilder.Create(ContentIds.Market).Guarded().AddRule(RulePresets.NearRoad(min:0.15, max:0.30)).Build(),
+                ContentItemBuilder.Create(ContentIds.ManaWell).AddRule(RulePresets.NearRoad(min:0.15, max:0.30)).Build(),
                 // ── Hero training — tier-2 stat building (fort/university/orb_observatory) ──
                 //    + uncommon hero bank (university/wise_owl/tree_of_knowledge) (Blitz/Exodus pattern).
                 new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
@@ -2618,8 +2607,8 @@ namespace Olden_Era___Template_Editor.Services
                 new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_2"] },
 
                 // ── Loot — epic items + army pandora (Exodus/Blitz pattern). ──
-                new() { Sid = "random_item_epic", SoloEncounter = true },
-                new() { Sid = "pandora_box", SoloEncounter = true },
+                ContentItemBuilder.Create(ContentIds.RandomItemEpic).SoloEncounter().Build(),
+                ContentItemBuilder.Create(ContentIds.PandoraBox).SoloEncounter().Build(),
                 new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"] },
             ]);
 
@@ -2636,18 +2625,17 @@ namespace Olden_Era___Template_Editor.Services
         /// </summary>
         private static List<ContentItem> BuildLowNeutralMandatoryContent(int castleCount, bool spawnFootholds)
         {
-            var footholdRules = FootholdRules(castleCount);
             var content = new List<ContentItem>();
 
             if (spawnFootholds)
-                content.Add(new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules });
+                content.Add(ContentPresets.RemoteFoothold(castleCount));
 
             content.AddRange([
                 // Mines — biome-based rare mine + one fixed rare mine (Blitz Side-1 pattern).
                 new() { Name = "name_mine_by_biome_1", IncludeLists = ["basic_content_list_rare_mines_by_biome"], IsMine = true },
                 new() { IncludeLists = ["basic_content_list_rare_mines"], IsMine = true },
                 // Utility — one guarded market near crossroads, one vision building.
-                new() { Sid = "market", IsGuarded = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.20, Weight = 1 }] },
+                ContentItemBuilder.Create(ContentIds.Market).Guarded().AddRule(RulePresets.AtCrossroads(min:0.15, max:0.20)).Build(),
                 new() { IncludeLists = ["basic_content_list_vision_buildings_tier_1"] },
                 // Buff buildings — picked from the real hero-buff pool (mana_well, fountain, stables, etc.).
                 new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
@@ -2658,7 +2646,7 @@ namespace Olden_Era___Template_Editor.Services
                 new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
                 new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
                 // Loot — solo pandora box + low-tier army pandora (variants 8–11).
-                new() { Sid = "pandora_box", SoloEncounter = true },
+                ContentItemBuilder.Create(ContentIds.PandoraBox).SoloEncounter().Build(),
                 new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"] },
                 // Pickup — random item + common magic pickup.
                 new() { IncludeLists = ["basic_content_list_pickup_random_items"] },
@@ -2676,22 +2664,21 @@ namespace Olden_Era___Template_Editor.Services
         /// </summary>
         private static List<ContentItem> BuildMediumNeutralMandatoryContent(int castleCount, bool spawnFootholds)
         {
-            var footholdRules = FootholdRules(castleCount);
             var content = new List<ContentItem>();
 
             if (spawnFootholds)
-                content.Add(new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules });
+                content.Add(ContentPresets.RemoteFoothold(castleCount));
 
             content.AddRange([
                 // Mines — full rare set + gold + alchemy lab (Yin Yang/Staircase t3 pattern).
-                new() { Name = "name_mine_crystals", Sid = "mine_crystals",  IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
-                new() { Name = "name_mine_mercury",  Sid = "mine_mercury",   IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
-                new() { Name = "name_mine_gemstones",Sid = "mine_gemstones", IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.05, TargetMax = 0.10, Weight = 1 }] },
-                new() { Sid = "mine_gold",    IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.15, TargetMax = 0.20, Weight = 1 }] },
-                new() { Sid = "alchemy_lab",  IsMine = true, Rules = [new ContentPlacementRule { Type = "Road", Args = [], TargetMin = 0.20, TargetMax = 0.30, Weight = 1 }] },
+                ContentPresets.MineCrystals_Road(),
+                ContentPresets.MineMercury_Road(),
+                ContentPresets.MineGemstones_Road(),
+                ContentPresets.AlchemyLab_Road(),
+                ContentItemBuilder.Create(ContentIds.MineGold).Mine().AddRule(RulePresets.NearRoad(min:0.15, max:0.20)).Build(),
                 // Utility — watchtower (guarded) + vision building (tier 1 only: flattering_mirror/watchtower).
                 // wind_rose (full map reveal) lives in tier_2 and belongs exclusively in high zones.
-                new() { Sid = "watchtower", IsGuarded = true },
+                ContentItemBuilder.Create(ContentIds.Watchtower).Guarded().Build(),
                 new() { IncludeLists = ["basic_content_list_vision_buildings_tier_1"] },
                 // Buff buildings.
                 new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
@@ -2709,10 +2696,10 @@ namespace Olden_Era___Template_Editor.Services
                 // Guarded resource banks — tier 2 (no black tower / tier-1 banks).
                 new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_2"] },
                 // Loot — epic items + pandora boxes with army variants.
-                new() { Sid = "random_item_epic", SoloEncounter = true },
-                new() { Sid = "random_item_epic" },
-                new() { Sid = "pandora_box", SoloEncounter = true },
-                new() { Sid = "pandora_box" },
+                ContentItemBuilder.Create(ContentIds.RandomItemEpic).SoloEncounter().Build(),
+                ContentItemBuilder.Create(ContentIds.RandomItemEpic).Build(),
+                ContentItemBuilder.Create(ContentIds.PandoraBox).SoloEncounter().Build(),
+                ContentItemBuilder.Create(ContentIds.PandoraBox).Build(),
                 new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"] },
             ]);
 
@@ -2729,11 +2716,10 @@ namespace Olden_Era___Template_Editor.Services
         /// </summary>
         private static List<ContentItem> BuildHighNeutralMandatoryContent(int castleCount, bool spawnFootholds)
         {
-            var footholdRules = FootholdRules(castleCount);
             var content = new List<ContentItem>();
 
             if (spawnFootholds)
-                content.Add(new ContentItem { Name = "name_remote_foothold_1", Sid = "remote_foothold", IsGuarded = false, Rules = footholdRules });
+                content.Add(ContentPresets.RemoteFoothold(castleCount));
 
             content.AddRange([
                 // Epic encounters — exclusive to high zones.
@@ -2765,39 +2751,26 @@ namespace Olden_Era___Template_Editor.Services
                 // Loot — mythic scrolls, legendary items, pandora boxes with high-tier armies.
                 new() { IncludeLists = ["basic_content_list_pickup_mythic_scroll_box"] },
                 new() { IncludeLists = ["basic_content_list_pickup_mythic_scroll_box"] },
-                new() { Sid = "random_item_legendary", SoloEncounter = true },
-                new() { Sid = "random_item_legendary" },
-                new() { Sid = "random_item_epic" },
-                new() { Sid = "pandora_box", SoloEncounter = true },
-                new() { Sid = "pandora_box" },
-                new() { Sid = "pandora_box" },
+                ContentItemBuilder.Create(ContentIds.RandomItemLegendary).SoloEncounter().Build(),
+                ContentItemBuilder.Create(ContentIds.RandomItemLegendary).Build(),
+                ContentItemBuilder.Create(ContentIds.RandomItemEpic).Build(),
+                ContentItemBuilder.Create(ContentIds.PandoraBox).SoloEncounter().Build(),
+                ContentItemBuilder.Create(ContentIds.PandoraBox).Build(),
+                ContentItemBuilder.Create(ContentIds.PandoraBox).Build(),
                 new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
                 new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
                 // Mines — gold-heavy with full rare set.
-                new() { Sid = "mine_gold",      IsMine = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 1 }] },
-                new() { Sid = "mine_gold",      IsMine = true },
-                new() { Sid = "mine_gold",      IsMine = true },
-                new() { Sid = "mine_crystals",  IsMine = true },
-                new() { Sid = "mine_mercury",   IsMine = true },
-                new() { Sid = "mine_gemstones", IsMine = true },
-                new() { Sid = "alchemy_lab",    IsMine = true },
-                new() { Sid = "alchemy_lab",    IsMine = true },
+                ContentPresets.MineGold_Crossroads(),
+                ContentItemBuilder.Create(ContentIds.MineGold).Mine().Build(),
+                ContentItemBuilder.Create(ContentIds.MineGold).Mine().Build(),
+                ContentItemBuilder.Create(ContentIds.MineCrystals).Mine().Build(),
+                ContentItemBuilder.Create(ContentIds.MineMercury).Mine().Build(),
+                ContentItemBuilder.Create(ContentIds.MineGemstones).Mine().Build(),
+                ContentItemBuilder.Create(ContentIds.AlchemyLab).Mine().Build(),
+                ContentItemBuilder.Create(ContentIds.AlchemyLab).Mine().Build(),
             ]);
 
             return content;
-        }
-
-        private static List<ContentPlacementRule> FootholdRules(int castleCount)
-        {
-            var rules = new List<ContentPlacementRule>
-            {
-                new() { Type = "Crossroads", Args = [], TargetMin = 0.2, TargetMax = 0.3, Weight = 0 },
-            };
-            if (castleCount > 0)
-                rules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.2, TargetMax = 0.4, Weight = 0 });
-            if (castleCount > 1)
-                rules.Add(new ContentPlacementRule { Type = "MainObject", Args = ["1"], TargetMin = 0.5, TargetMax = 0.5, Weight = 2 });
-            return rules;
         }
 
         // ── Content count limits ─────────────────────────────────────────────────
@@ -2811,62 +2784,63 @@ namespace Olden_Era___Template_Editor.Services
             var sidLimits = new List<ContentSidLimit>
             {
                 // ── Banned in generated zones ────────────────────────────────────
+                // black_tower sid is missing from the known values content list. To be investigated...
                 new() { Sid = "black_tower",          MaxCount = 0 }, // tier-1 resource bank; too weak/out-of-place in neutral zones
                 // ── Utility / buff buildings ─────────────────────────────────────
-                new() { Sid = "fountain",             MaxCount = 2 },
-                new() { Sid = "fountain_2",           MaxCount = 2 },
-                new() { Sid = "mana_well",            MaxCount = 2 },
-                new() { Sid = "beer_fountain",        MaxCount = 2 },
-                new() { Sid = "market",               MaxCount = 1 },
-                new() { Sid = "forge",                MaxCount = 2 },
-                new() { Sid = "stables",              MaxCount = 1 },
-                new() { Sid = "watchtower",           MaxCount = 2 },
-                new() { Sid = "wind_rose",            MaxCount = 1 },
-                new() { Sid = "quixs_path",           MaxCount = 2 },
-                new() { Sid = "crystal_trail",        MaxCount = 3 },
-                new() { Sid = "mysterious_stone",     MaxCount = 2 },
+                new() { Sid = ContentIds.Fountain,             MaxCount = 2 },
+                new() { Sid = ContentIds.Fountain2,           MaxCount = 2 },
+                new() { Sid = ContentIds.ManaWell,            MaxCount = 2 },
+                new() { Sid = ContentIds.BeerFountain,        MaxCount = 2 },
+                new() { Sid = ContentIds.Market,               MaxCount = 1 },
+                new() { Sid = ContentIds.Forge,                MaxCount = 2 },
+                new() { Sid = ContentIds.Stables,              MaxCount = 1 },
+                new() { Sid = ContentIds.Watchtower,           MaxCount = 2 },
+                new() { Sid = ContentIds.WindRose,            MaxCount = 1 },
+                new() { Sid = ContentIds.QuixsPath,           MaxCount = 2 },
+                new() { Sid = ContentIds.CrystalTrail,        MaxCount = 3 },
+                new() { Sid = ContentIds.MysteriousStone,     MaxCount = 2 },
 
                 // ── Learning / XP buildings ──────────────────────────────────────
-                new() { Sid = "university",           MaxCount = 2 },
-                new() { Sid = "wise_owl",             MaxCount = 4 },
-                new() { Sid = "celestial_sphere",     MaxCount = 2 },
-                new() { Sid = "pile_of_books",        MaxCount = 2 },
-                new() { Sid = "insaras_eye",          MaxCount = 2 },
-                new() { Sid = "tear_of_truth",        MaxCount = 3 },
-                new() { Sid = "tree_of_abundance",    MaxCount = 2 },
+                new() { Sid = ContentIds.University,           MaxCount = 2 },
+                new() { Sid = ContentIds.WiseOwl,             MaxCount = 4 },
+                new() { Sid = ContentIds.CelestialSphere,     MaxCount = 2 },
+                new() { Sid = ContentIds.PileOfBooks,        MaxCount = 2 },
+                new() { Sid = ContentIds.InsarasEye,          MaxCount = 2 },
+                new() { Sid = ContentIds.TearOfTruth,        MaxCount = 3 },
+                new() { Sid = ContentIds.TreeOfAbundance,    MaxCount = 2 },
 
                 // ── Hire buildings ───────────────────────────────────────────────
-                new() { Sid = "huntsmans_camp",       MaxCount = 2 },
-                new() { Sid = "shady_den",            MaxCount = 2 },
-                new() { Sid = "random_hire_1",        MaxCount = 6 },
-                new() { Sid = "random_hire_2",        MaxCount = 6 },
-                new() { Sid = "random_hire_3",        MaxCount = 6 },
-                new() { Sid = "random_hire_4",        MaxCount = 6 },
-                new() { Sid = "random_hire_5",        MaxCount = 6 },
-                new() { Sid = "random_hire_6",        MaxCount = 6 },
-                new() { Sid = "random_hire_7",        MaxCount = 6 },
+                new() { Sid = ContentIds.HuntsmansCamp,       MaxCount = 2 },
+                new() { Sid = ContentIds.ShadyDen,            MaxCount = 2 },
+                new() { Sid = ContentIds.RandomHire1,        MaxCount = 6 },
+                new() { Sid = ContentIds.RandomHire2,        MaxCount = 6 },
+                new() { Sid = ContentIds.RandomHire3,        MaxCount = 6 },
+                new() { Sid = ContentIds.RandomHire4,        MaxCount = 6 },
+                new() { Sid = ContentIds.RandomHire5,        MaxCount = 6 },
+                new() { Sid = ContentIds.RandomHire6,        MaxCount = 6 },
+                new() { Sid = ContentIds.RandomHire7,        MaxCount = 6 },
 
                 // ── Combat / encounter buildings ─────────────────────────────────
-                new() { Sid = "arena",                MaxCount = 2 },
-                new() { Sid = "sacrificial_shrine",   MaxCount = 2 },
-                new() { Sid = "chimerologist",        MaxCount = 2 },
-                new() { Sid = "circus",               MaxCount = 2 },
-                new() { Sid = "infernal_cirque",      MaxCount = 2 },
-                new() { Sid = "flattering_mirror",    MaxCount = 2 },
-                new() { Sid = "fickle_shrine",        MaxCount = 1 },
-                new() { Sid = "point_of_balance",     MaxCount = 3 },
+                new() { Sid = ContentIds.Arena,                MaxCount = 2 },
+                new() { Sid = ContentIds.SacrificialShrine,   MaxCount = 2 },
+                new() { Sid = ContentIds.Chimerologist,        MaxCount = 2 },
+                new() { Sid = ContentIds.Circus,               MaxCount = 2 },
+                new() { Sid = ContentIds.InfernalCirque,      MaxCount = 2 },
+                new() { Sid = ContentIds.FlatteringMirror,    MaxCount = 2 },
+                new() { Sid = ContentIds.FickleShrine,        MaxCount = 1 },
+                new() { Sid = ContentIds.PointOfBalance,     MaxCount = 3 },
 
                 // ── Special / loot ───────────────────────────────────────────────
-                new() { Sid = "pandora_box",          MaxCount = 4 },
+                new() { Sid = ContentIds.PandoraBox,          MaxCount = 4 },
 
                 // ── Map-feature objects (typically 0 = disabled, 99 = unlimited;
                 //    we cap at a sensible value so they can occasionally appear) ──
-                new() { Sid = "ritual_pyre",          MaxCount = 3 },
-                new() { Sid = "boreal_call",          MaxCount = 3 },
-                new() { Sid = "jousting_range",       MaxCount = 1 },
-                new() { Sid = "unforgotten_grave",    MaxCount = 1 },
-                new() { Sid = "petrified_memorial",   MaxCount = 1 },
-                new() { Sid = "the_gorge",            MaxCount = 1 },
+                new() { Sid = ContentIds.RitualPyre,          MaxCount = 3 },
+                new() { Sid = ContentIds.BorealCall,          MaxCount = 3 },
+                new() { Sid = ContentIds.JoustingRange,       MaxCount = 1 },
+                new() { Sid = ContentIds.UnforgottenGrave,    MaxCount = 1 },
+                new() { Sid = ContentIds.PetrifiedMemorial,   MaxCount = 1 },
+                new() { Sid = ContentIds.TheGorge,            MaxCount = 1 },
             };
 
             var limits = new List<ContentCountLimit>();
