@@ -1144,8 +1144,9 @@ namespace Olden_Era___Template_Editor.Services
                     pos.Add((rng.NextDouble() * 0.9 + 0.05, rng.NextDouble() * 0.9 + 0.05));
             }
 
-            // Compute Delaunay triangulation — every edge is a true zone-to-zone border.
-            // With only up to 32 points this is fast enough to do with Bowyer-Watson.
+            // Compute Delaunay triangulation to find physical zone neighbours.
+            // Delaunay edges correspond exactly to shared Voronoi boundaries, so they
+            // are the correct proxy for zones that physically border each other on the map.
             var pairs = DelaunayEdges(pos);
 
             // Build connection name lookup per zone index.
@@ -1186,10 +1187,14 @@ namespace Olden_Era___Template_Editor.Services
                 string letter = allLetters[i];
                 var myConns = connsByZone[i].ToArray();
                 int playerIdx = playerLetters.IndexOf(letter);
+                Zone zone;
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                    zone = BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
                 else
-                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns, settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning, letter == holdCityNeutralLetter));
+                    zone = BuildNeutralZone(neutralByLetter[letter], myConns, settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning, letter == holdCityNeutralLetter);
+                // Stamp the Delaunay position so the preview can reproduce the exact geometry.
+                zone.GeneratorPosition = pos[i];
+                zones.Add(zone);
             }
 
             if (settings.RandomPortals)

@@ -8,6 +8,14 @@ namespace OldenEraTemplateEditor.Models
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Optional normalised [0,1]×[0,1] position hint set by the generator for random layouts.
+        /// Not serialised — used only by the preview renderer so it can faithfully reproduce
+        /// the same geometry that drove Delaunay connection generation.
+        /// </summary>
+        [JsonIgnore]
+        public (double X, double Y)? GeneratorPosition { get; set; }
+
         [JsonPropertyName("size")]
         public double? Size { get; set; }
 

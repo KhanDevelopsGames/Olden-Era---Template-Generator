@@ -183,6 +183,188 @@ namespace Olden_Era___Template_Editor.Services
             var idx = new Dictionary<string, int>(StringComparer.Ordinal);
             for (int i = 0; i < n; i++) idx[zones[i].Name] = i;
 
+            // ── If the generator stamped positions onto zones, use them directly ──
+            // The raw positions are in an arbitrary unit square; we re-scale them so
+            // the average direct-connection length equals idealEdge (the same target
+            // the FR spring embedder uses), giving consistent readable circle sizes.
+            if (zones.All(z => z.GeneratorPosition.HasValue))
+            {
+                // Build adjacency for radius/scale calculation
+                var gAdj = new HashSet<int>[n];
+                for (int i = 0; i < n; i++) gAdj[i] = [];
+                foreach (var conn in connections)
+                {
+                    if (string.Equals(conn.ConnectionType, "Proximity", StringComparison.Ordinal)) continue;
+                    if (string.Equals(conn.ConnectionType, "Portal",    StringComparison.Ordinal)) continue;
+                    if (!idx.TryGetValue(conn.From, out int ga)) continue;
+                    if (!idx.TryGetValue(conn.To,   out int gb)) continue;
+                    gAdj[ga].Add(gb); gAdj[gb].Add(ga);
+                }
+
+                // Compute the zone radius the same way the FR path does: based on the
+                // largest connected component so circles remain readable.
+                int gMaxComp = n; // conservative — treat all as one component for radius
+                double gZoneRadius;
+                {
+                    double ringRadius0 = Width / 2.0 - margin;
+                    double chord0      = 2.0 * ringRadius0 * Math.Sin(Math.PI / Math.Max(gMaxComp, 2));
+                    gZoneRadius = Math.Min(ZoneRadiusMax, (chord0 - minGap) / 2.0);
+                    gZoneRadius = Math.Max(gZoneRadius, 8.0);
+                }
+                _zoneRadius = gZoneRadius;
+                double idealEdge2 = gZoneRadius * 3.2;
+
+                // Measure mean raw edge length among direct connections
+                double rawEdgeSum = 0; int rawEdgeCount = 0;
+                for (int i = 0; i < n; i++)
+                    foreach (int j in gAdj[i])
+                    {
+                        if (j <= i) continue;
+                        var pi2 = zones[i].GeneratorPosition!.Value;
+                        var pj2 = zones[j].GeneratorPosition!.Value;
+                        double dx2 = pi2.X - pj2.X, dy2 = pi2.Y - pj2.Y;
+                        rawEdgeSum += Math.Sqrt(dx2 * dx2 + dy2 * dy2);
+                        rawEdgeCount++;
+                    }
+
+                // If no edges, fall back to spanning the whole draw area
+                double gScale = rawEdgeCount > 0
+                    ? idealEdge2 / (rawEdgeSum / rawEdgeCount)
+                    : Math.Min((Width - 2 * margin) / 1.0, (Height - 2 * margin) / 1.0);
+
+                // Centre of mass in raw space → will map to canvas centre
+                double gCx = zones.Average(z => z.GeneratorPosition!.Value.X);
+                double gCy = zones.Average(z => z.GeneratorPosition!.Value.Y);
+
+                // Compute pixel positions relative to canvas centre, then offset to centre on canvas
+                double canvasCx = Width  / 2.0;
+                double canvasCy = Height / 2.0;
+
+                // First pass: compute pixel coords centred at origin
+                var gPx = new double[n];
+                var gPy = new double[n];
+                for (int i = 0; i < n; i++)
+                {
+                    var gp = zones[i].GeneratorPosition!.Value;
+                    gPx[i] = (gp.X - gCx) * gScale;
+                    gPy[i] = (gp.Y - gCy) * gScale;
+                }
+
+                // Clamp to canvas with padding
+                double gPad = gZoneRadius + margin;
+                double rawMinX = gPx.Min(), rawMaxX = gPx.Max();
+                double rawMinY = gPy.Min(), rawMaxY = gPy.Max();
+                double rawSpanX = rawMaxX - rawMinX, rawSpanY = rawMaxY - rawMinY;
+                double drawW2 = Width  - 2 * gPad;
+                double drawH2 = Height - 2 * gPad;
+                // Only shrink (never stretch) so topology proportions are preserved
+                double fitScale = 1.0;
+                if (rawSpanX > drawW2 && rawSpanX > 0.001) fitScale = Math.Min(fitScale, drawW2 / rawSpanX);
+                if (rawSpanY > drawH2 && rawSpanY > 0.001) fitScale = Math.Min(fitScale, drawH2 / rawSpanY);
+
+                for (int i = 0; i < n; i++) { gPx[i] = canvasCx + gPx[i] * fitScale; gPy[i] = canvasCy + gPy[i] * fitScale; }
+
+                // ── Pass A+B: same correction passes as the FR path ───────────────
+                double gMinDist   = gZoneRadius * 3.8;
+                double gEdgeClear = gZoneRadius * 1.2;
+
+                for (int abPass = 0; abPass < 500; abPass++)
+                {
+                    bool anyAB = false;
+
+                    // A: hard floor — minimum centre-to-centre distance
+                    for (int i = 0; i < n; i++)
+                        for (int j = i + 1; j < n; j++)
+                        {
+                            double dx = gPx[i] - gPx[j], dy = gPy[i] - gPy[j];
+                            double d  = Math.Sqrt(dx * dx + dy * dy);
+                            if (d >= gMinDist) continue;
+                            if (d < 0.001) { dx = 1; dy = 0; d = 0.001; }
+                            double push = (gMinDist - d) / 2.0;
+                            gPx[i] += dx / d * push; gPy[i] += dy / d * push;
+                            gPx[j] -= dx / d * push; gPy[j] -= dy / d * push;
+                            anyAB = true;
+                        }
+
+                    // B: edge clearance — push nodes off connection lines
+                    for (int a = 0; a < n; a++)
+                        foreach (int b in gAdj[a])
+                        {
+                            if (b <= a) continue;
+                            double ex = gPx[b] - gPx[a], ey = gPy[b] - gPy[a];
+                            double elen2 = ex * ex + ey * ey;
+                            if (elen2 < 0.001) continue;
+                            double elenInv = 1.0 / Math.Sqrt(elen2);
+
+                            for (int c2 = 0; c2 < n; c2++)
+                            {
+                                if (c2 == a || c2 == b) continue;
+                                double tProj = ((gPx[c2] - gPx[a]) * ex + (gPy[c2] - gPy[a]) * ey) / elen2;
+                                if (tProj < 0.0 || tProj > 1.0) continue;
+                                double projX = gPx[a] + tProj * ex, projY = gPy[a] + tProj * ey;
+                                double nx2 = gPx[c2] - projX, ny2 = gPy[c2] - projY;
+                                double dist = Math.Sqrt(nx2 * nx2 + ny2 * ny2);
+                                if (dist >= gEdgeClear) continue;
+
+                                double perpX = (dist < 0.001) ? ey * elenInv : nx2 / dist;
+                                double perpY = (dist < 0.001) ? -ex * elenInv : ny2 / dist;
+                                double cx2A = projX + perpX * gEdgeClear, cy2A = projY + perpY * gEdgeClear;
+                                double cx2B = projX - perpX * gEdgeClear, cy2B = projY - perpY * gEdgeClear;
+
+                                double scoreA = 0, scoreB = 0;
+                                foreach (int nb in gAdj[c2])
+                                {
+                                    double dax = cx2A - gPx[nb], day = cy2A - gPy[nb];
+                                    double dbx = cx2B - gPx[nb], dby = cy2B - gPy[nb];
+                                    scoreA += dax * dax + day * day;
+                                    scoreB += dbx * dbx + dby * dby;
+                                }
+                                if (scoreB < scoreA) { gPx[c2] = cx2B; gPy[c2] = cy2B; }
+                                else                 { gPx[c2] = cx2A; gPy[c2] = cy2A; }
+                                anyAB = true;
+                            }
+                        }
+
+                    if (!anyAB) break;
+                }   // end Pass A+B
+
+                // ── Final fit: re-centre and shrink-to-fit after correction passes ─
+                // Passes A/B can push nodes outside the canvas — translate the whole
+                // layout back to centre, then uniformly scale down if it still overflows.
+                {
+                    double finalMinX = gPx.Min(), finalMaxX = gPx.Max();
+                    double finalMinY = gPy.Min(), finalMaxY = gPy.Max();
+                    double finalCx = (finalMinX + finalMaxX) / 2.0;
+                    double finalCy = (finalMinY + finalMaxY) / 2.0;
+                    // Translate so the bounding box is centred on the canvas
+                    for (int i = 0; i < n; i++) { gPx[i] += canvasCx - finalCx; gPy[i] += canvasCy - finalCy; }
+
+                    // Recompute after translation
+                    finalMinX = gPx.Min(); finalMaxX = gPx.Max();
+                    finalMinY = gPy.Min(); finalMaxY = gPy.Max();
+                    double spanX = finalMaxX - finalMinX, spanY = finalMaxY - finalMinY;
+                    double allowW = Width  - 2 * gPad, allowH = Height - 2 * gPad;
+                    double shrink = 1.0;
+                    if (spanX > allowW && spanX > 0.001) shrink = Math.Min(shrink, allowW / spanX);
+                    if (spanY > allowH && spanY > 0.001) shrink = Math.Min(shrink, allowH / spanY);
+                    if (shrink < 1.0)
+                    {
+                        for (int i = 0; i < n; i++)
+                        {
+                            gPx[i] = canvasCx + (gPx[i] - canvasCx) * shrink;
+                            gPy[i] = canvasCy + (gPy[i] - canvasCy) * shrink;
+                        }
+                        // Also shrink the radius so circles don't overlap after scale-down
+                        _zoneRadius = Math.Max(gZoneRadius * shrink, 8.0);
+                    }
+                }
+
+                var gResult = new Dictionary<string, Point>(StringComparer.Ordinal);
+                for (int i = 0; i < n; i++)
+                    gResult[zones[i].Name] = new Point(gPx[i], gPy[i]);
+                return gResult;
+            }
+
             var adj = new HashSet<int>[n];
             for (int i = 0; i < n; i++) adj[i] = [];
             foreach (var conn in connections)
@@ -241,7 +423,7 @@ namespace Olden_Era___Template_Editor.Services
             }
             _zoneRadius = zoneRadius;
 
-            double idealEdge = zoneRadius * 2.4;
+            double idealEdge = zoneRadius * 3.2;
 
             // ── Run Kamada-Kawai independently per component ──────────────────────
             // Results stored in local arrays; we'll stitch bounding boxes together
@@ -341,8 +523,8 @@ namespace Olden_Era___Template_Editor.Services
                 }
 
                 // Passes A and B run together until both are simultaneously satisfied.
-                double minDist   = zoneRadius * 3.0;
-                double edgeClear = zoneRadius * 1.1;
+                double minDist   = zoneRadius * 3.8;
+                double edgeClear = zoneRadius * 1.2;
 
                 for (int abPass = 0; abPass < 500; abPass++)
                 {
