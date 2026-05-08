@@ -241,7 +241,7 @@ namespace Olden_Era___Template_Editor.Services
             }
             _zoneRadius = zoneRadius;
 
-            double idealEdge = zoneRadius * 3.2;
+            double idealEdge = zoneRadius * 2.4;
 
             // ── Run Kamada-Kawai independently per component ──────────────────────
             // Results stored in local arrays; we'll stitch bounding boxes together
@@ -260,107 +260,89 @@ namespace Olden_Era___Template_Editor.Services
                 var localIdx = new Dictionary<int, int>();
                 for (int i = 0; i < cn; i++) localIdx[comp[i]] = i;
 
-                // Seed on a ring centred at origin
-                double seedR = idealEdge * cn / (2 * Math.PI);
+                if (cn == 1) { compPx[c] = lpx; compPy[c] = lpy; continue; }
+
+                // Build local adjacency for this component
+                var ladj = new HashSet<int>[cn];
+                for (int i = 0; i < cn; i++) ladj[i] = [];
+                for (int i = 0; i < cn; i++)
+                    foreach (int gv in adj[comp[i]])
+                        if (localIdx.TryGetValue(gv, out int lv))
+                        { ladj[i].Add(lv); ladj[lv].Add(i); }
+
+                if (cn == 2)
+                {
+                    lpx[0] = -idealEdge / 2; lpy[0] = 0;
+                    lpx[1] =  idealEdge / 2; lpy[1] = 0;
+                    compPx[c] = lpx; compPy[c] = lpy; continue;
+                }
+
+                // ── Fruchterman-Reingold spring embedder ──────────────────────────
+                // Seed deterministically on a circle so output is stable across runs.
+                double seedR = idealEdge * cn / (2.0 * Math.PI);
                 seedR = Math.Max(seedR, idealEdge);
                 for (int i = 0; i < cn; i++)
                 {
-                    double angle = -Math.PI / 2.0 + i * Math.PI * 2.0 / cn;
-                    lpx[i] = Math.Cos(angle) * seedR;
-                    lpy[i] = Math.Sin(angle) * seedR;
+                    double ang = -Math.PI / 2.0 + i * 2.0 * Math.PI / cn;
+                    lpx[i] = Math.Cos(ang) * seedR;
+                    lpy[i] = Math.Sin(ang) * seedR;
                 }
 
-                if (cn == 1) { compPx[c] = lpx; compPy[c] = lpy; continue; }
+                // k = ideal edge length.  t starts large so nodes can cross the graph.
+                double k  = idealEdge;
+                double t  = k * 2.5;
+                double tMin = k * 0.005;
+                int    frIter = 400;
+                double cool = Math.Pow(tMin / t, 1.0 / frIter);
 
-                // BFS shortest paths within this component
-                var gdist = new int[cn, cn];
-                for (int i = 0; i < cn; i++)
-                    for (int j = 0; j < cn; j++)
-                        gdist[i, j] = i == j ? 0 : cn + 1;
-                for (int si = 0; si < cn; si++)
+                var fx = new double[cn];
+                var fy = new double[cn];
+                for (int iter = 0; iter < frIter; iter++)
                 {
-                    var q = new Queue<int>();
-                    q.Enqueue(si);
-                    while (q.Count > 0)
-                    {
-                        int u = q.Dequeue();
-                        int gu = comp[u];
-                        foreach (int gv in adj[gu])
+                    Array.Clear(fx, 0, cn);
+                    Array.Clear(fy, 0, cn);
+
+                    // Repulsion: every pair (O(n²) — n is small, ≤ ~15)
+                    for (int i = 0; i < cn; i++)
+                        for (int j = i + 1; j < cn; j++)
                         {
-                            if (!localIdx.TryGetValue(gv, out int v)) continue;
-                            if (gdist[si, v] > gdist[si, u] + 1)
-                            {
-                                gdist[si, v] = gdist[si, u] + 1;
-                                q.Enqueue(v);
-                            }
+                            double dx = lpx[i] - lpx[j];
+                            double dy = lpy[i] - lpy[j];
+                            double d  = Math.Sqrt(dx * dx + dy * dy);
+                            if (d < 0.001) { dx = 0.5 + i * 0.1; dy = 0.5 + j * 0.1; d = Math.Sqrt(dx * dx + dy * dy); }
+                            double fr = k * k / d;
+                            fx[i] += fr * dx / d;  fy[i] += fr * dy / d;
+                            fx[j] -= fr * dx / d;  fy[j] -= fr * dy / d;
                         }
+
+                    // Attraction: only along edges
+                    for (int i = 0; i < cn; i++)
+                        foreach (int j in ladj[i])
+                        {
+                            if (j <= i) continue;
+                            double dx = lpx[i] - lpx[j];
+                            double dy = lpy[i] - lpy[j];
+                            double d  = Math.Sqrt(dx * dx + dy * dy);
+                            if (d < 0.001) continue;
+                            double fa = d * d / k;
+                            fx[i] -= fa * dx / d;  fy[i] -= fa * dy / d;
+                            fx[j] += fa * dx / d;  fy[j] += fa * dy / d;
+                        }
+
+                    // Move, capped to temperature
+                    for (int i = 0; i < cn; i++)
+                    {
+                        double len = Math.Sqrt(fx[i] * fx[i] + fy[i] * fy[i]);
+                        if (len > t && len > 0.001) { fx[i] = fx[i] / len * t; fy[i] = fy[i] / len * t; }
+                        lpx[i] += fx[i];
+                        lpy[i] += fy[i];
                     }
+                    t = Math.Max(t * cool, tMin);
                 }
 
-                // Precompute K-K spring constants
-                var kd = new double[cn, cn];
-                var kw = new double[cn, cn];
-                for (int i = 0; i < cn; i++)
-                    for (int j = 0; j < cn; j++)
-                    {
-                        int d = gdist[i, j];
-                        kd[i, j] = d * idealEdge;
-                        kw[i, j] = d > 0 ? 1.0 / (d * d) : 0.0;
-                    }
-
-                // K-K solver
-                for (int kkOuter = 0; kkOuter < cn * 50; kkOuter++)
-                {
-                    int bestM = 0; double bestDelta = -1;
-                    for (int m = 0; m < cn; m++)
-                    {
-                        double gx = 0, gy = 0;
-                        for (int i = 0; i < cn; i++)
-                        {
-                            if (i == m) continue;
-                            double ddx = lpx[m] - lpx[i], ddy = lpy[m] - lpy[i];
-                            double d   = Math.Sqrt(ddx * ddx + ddy * ddy);
-                            if (d < 0.001) continue;
-                            gx += kw[m, i] * (ddx - kd[m, i] * ddx / d);
-                            gy += kw[m, i] * (ddy - kd[m, i] * ddy / d);
-                        }
-                        double delta = Math.Sqrt(gx * gx + gy * gy);
-                        if (delta > bestDelta) { bestDelta = delta; bestM = m; }
-                    }
-                    if (bestDelta < 0.01) break;
-
-                    for (int localIter = 0; localIter < 20; localIter++)
-                    {
-                        int m = bestM;
-                        double gx = 0, gy = 0, hxx = 0, hxy = 0, hyy = 0;
-                        for (int i = 0; i < cn; i++)
-                        {
-                            if (i == m) continue;
-                            double ddx = lpx[m] - lpx[i], ddy = lpy[m] - lpy[i];
-                            double d2  = ddx * ddx + ddy * ddy;
-                            double d   = Math.Sqrt(d2);
-                            if (d < 0.001) continue;
-                            double d3 = d * d2;
-                            double w  = kw[m, i], kdi = kd[m, i];
-                            gx  += w * (ddx - kdi * ddx / d);
-                            gy  += w * (ddy - kdi * ddy / d);
-                            hxx += w * (1.0 - kdi * ddy * ddy / d3);
-                            hxy += w * (      kdi * ddx * ddy / d3);
-                            hyy += w * (1.0 - kdi * ddx * ddx / d3);
-                        }
-                        double det = hxx * hyy - hxy * hxy;
-                        if (Math.Abs(det) < 1e-9) break;
-                        double moveX = ( hyy * gx - hxy * gy) / det;
-                        double moveY = (-hxy * gx + hxx * gy) / det;
-                        lpx[m] -= moveX;
-                        lpy[m] -= moveY;
-                        if (Math.Sqrt(moveX * moveX + moveY * moveY) < 0.01) break;
-                    }
-                }
-
-                // Hard-floor zone-zone separation within this component
-                double minDist = zoneRadius * 2.2;
-                for (int pass = 0; pass < 100; pass++)
+                // Hard-floor: ensure a minimum gap of 1.5× the circle diameter between centres
+                double minDist = zoneRadius * 3.0;
+                for (int pass = 0; pass < 60; pass++)
                 {
                     bool any = false;
                     for (int i = 0; i < cn; i++)
@@ -371,66 +353,11 @@ namespace Olden_Era___Template_Editor.Services
                             if (d >= minDist) continue;
                             if (d < 0.001) { dx = 1; dy = 0; d = 0.001; }
                             double push = (minDist - d) / 2.0;
-                            lpx[i] += dx / d * push; lpy[i] += dy / d * push;
-                            lpx[j] -= dx / d * push; lpy[j] -= dy / d * push;
+                            lpx[i] += dx / d * push;  lpy[i] += dy / d * push;
+                            lpx[j] -= dx / d * push;  lpy[j] -= dy / d * push;
                             any = true;
                         }
                     if (!any) break;
-                }
-
-                // Hard-floor node-edge separation within this component
-                double minEdgeDist = zoneRadius * 1.1;
-                // Build local adjacency list for edge iteration
-                var ladj = new HashSet<int>[cn];
-                for (int i = 0; i < cn; i++) ladj[i] = [];
-                for (int i = 0; i < cn; i++)
-                    foreach (int gv in adj[comp[i]])
-                        if (localIdx.TryGetValue(gv, out int lv)) { ladj[i].Add(lv); ladj[lv].Add(i); }
-
-                for (int outerPass = 0; outerPass < 30; outerPass++)
-                {
-                    bool anyEdge = false;
-                    for (int i = 0; i < cn; i++)
-                        for (int a = 0; a < cn; a++)
-                            foreach (int b in ladj[a])
-                            {
-                                if (b <= a || i == a || i == b) continue;
-                                double ex = lpx[b] - lpx[a], ey = lpy[b] - lpy[a];
-                                double len2 = ex * ex + ey * ey;
-                                if (len2 < 0.001) continue;
-                                double t = ((lpx[i] - lpx[a]) * ex + (lpy[i] - lpy[a]) * ey) / len2;
-                                if (t < 0 || t > 1) continue;
-                                double perpX = lpx[i] - (lpx[a] + t * ex);
-                                double perpY = lpy[i] - (lpy[a] + t * ey);
-                                double pd    = Math.Sqrt(perpX * perpX + perpY * perpY);
-                                if (pd >= minEdgeDist) continue;
-                                if (pd < 0.001) { perpX = 0; perpY = 1; pd = 0.001; }
-                                double move = minEdgeDist - pd;
-                                lpx[i] += perpX / pd * move;
-                                lpy[i] += perpY / pd * move;
-                                anyEdge = true;
-                            }
-                    if (!anyEdge) break;
-
-                    // Re-run zone-zone after each edge-push round
-                    double md = zoneRadius * 2.2;
-                    for (int pass2 = 0; pass2 < 10; pass2++)
-                    {
-                        bool any2 = false;
-                        for (int i = 0; i < cn; i++)
-                            for (int j = i + 1; j < cn; j++)
-                            {
-                                double dx2 = lpx[i] - lpx[j], dy2 = lpy[i] - lpy[j];
-                                double d2  = Math.Sqrt(dx2 * dx2 + dy2 * dy2);
-                                if (d2 >= md) continue;
-                                if (d2 < 0.001) { dx2 = 1; dy2 = 0; d2 = 0.001; }
-                                double p2 = (md - d2) / 2.0;
-                                lpx[i] += dx2 / d2 * p2; lpy[i] += dy2 / d2 * p2;
-                                lpx[j] -= dx2 / d2 * p2; lpy[j] -= dy2 / d2 * p2;
-                                any2 = true;
-                            }
-                        if (!any2) break;
-                    }
                 }
 
                 compPx[c] = lpx;
