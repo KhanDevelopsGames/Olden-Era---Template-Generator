@@ -477,24 +477,29 @@ namespace Olden_Era___Template_Editor.Services
                 // Choose tiling direction: portrait canvas → stack vertically for 2 comps.
                 bool stackVertical = numComps == 2 && Height >= Width;
 
-                // Find a uniform scale that fits all components in their allocated slot.
-                double totalDraw  = (stackVertical ? Height : Width) - 2 * pad;
+                // Reserve an explicit gap between clusters so they never touch.
+                double interGap   = zoneRadius * 3.0;
+                double totalDraw  = (stackVertical ? Height : Width) - 2 * pad - interGap * (numComps - 1);
                 double slotSize   = totalDraw / numComps;
                 double crossDraw  = (stackVertical ? Width : Height) - 2 * pad;
 
+                // Find a uniform scale that fits all components in their allocated slot.
+                // Zero-span (singleton) components do not constrain the scale — they will
+                // be centred within their slot regardless of uniformScale.
                 double uniformScale = double.MaxValue;
                 for (int c = 0; c < numComps; c++)
                 {
                     double spanMain  = stackVertical
-                        ? Math.Max(compMaxY[c] - compMinY[c], 1)
-                        : Math.Max(compMaxX[c] - compMinX[c], 1);
+                        ? compMaxY[c] - compMinY[c]
+                        : compMaxX[c] - compMinX[c];
                     double spanCross = stackVertical
-                        ? Math.Max(compMaxX[c] - compMinX[c], 1)
-                        : Math.Max(compMaxY[c] - compMinY[c], 1);
-                    double s = Math.Min((slotSize - 2 * zoneRadius) / spanMain,
-                                        (crossDraw              ) / spanCross);
-                    uniformScale = Math.Min(uniformScale, s);
+                        ? compMaxX[c] - compMinX[c]
+                        : compMaxY[c] - compMinY[c];
+                    if (spanMain  > 0.001) uniformScale = Math.Min(uniformScale, (slotSize - 2 * zoneRadius) / spanMain);
+                    if (spanCross > 0.001) uniformScale = Math.Min(uniformScale, crossDraw / spanCross);
                 }
+                // All singletons → scale is unconstrained; set to 1 (extent will be 0 either way).
+                if (uniformScale >= double.MaxValue / 2) uniformScale = 1.0;
                 uniformScale = Math.Max(uniformScale, 0.1);
 
                 double cursor = pad;
@@ -502,16 +507,18 @@ namespace Olden_Era___Template_Editor.Services
                 {
                     var comp = components[c];
                     double spanMain  = stackVertical
-                        ? Math.Max(compMaxY[c] - compMinY[c], 1)
-                        : Math.Max(compMaxX[c] - compMinX[c], 1);
+                        ? compMaxY[c] - compMinY[c]
+                        : compMaxX[c] - compMinX[c];
                     double spanCross = stackVertical
-                        ? Math.Max(compMaxX[c] - compMinX[c], 1)
-                        : Math.Max(compMaxY[c] - compMinY[c], 1);
+                        ? compMaxX[c] - compMinX[c]
+                        : compMaxY[c] - compMinY[c];
 
                     double mainExtent  = spanMain  * uniformScale;
                     double crossExtent = spanCross * uniformScale;
 
-                    // Centre within the slot along main axis and within canvas along cross axis
+                    // Centre within the slot along main axis and within canvas along cross axis.
+                    // When span is 0 (singleton), both extents are 0 and the zone lands exactly
+                    // at the slot centre / canvas centre.
                     double mainStart  = cursor + (slotSize - mainExtent)  / 2.0;
                     double crossStart = pad    + (crossDraw - crossExtent) / 2.0;
 
@@ -532,7 +539,7 @@ namespace Olden_Era___Template_Editor.Services
                         positions[zones[comp[i]].Name] = new Point(px2, py2);
                     }
 
-                    cursor += slotSize;
+                    cursor += slotSize + interGap;
                 }
             }
 
