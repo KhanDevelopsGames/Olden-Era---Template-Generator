@@ -40,7 +40,7 @@ public static class ContentPresets
             .Guarded()
             .AddRules([
                 new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 },
-                RulePresets.AtCrossroads(0.15, 0.30)
+                RulePresets.CrossroadsDistance(DistancePresets.Near)
             ])
             .Build();
     /* Basic ore mine, guarded & anchored near the player castle */
@@ -51,50 +51,42 @@ public static class ContentPresets
             .Guarded()
             .AddRules([
                 new ContentPlacementRule { Type = "MainObject", Args = ["0"], TargetMin = 0.15, TargetMax = 0.35, Weight = 1 },
-                RulePresets.AtCrossroads(0.15, 0.30)
+                RulePresets.CrossroadsDistance(DistancePresets.Near)
             ])
             .Build();
     /* Gold mine near crossroads */
-    public static ContentItem MineGold_Crossroads() => 
+    public static ContentItem MineGold_NearCrossroads() => 
         ContentItemBuilder.Create(ContentIds.MineGold)
             .Mine()
             .AddRules([
-                RulePresets.AtCrossroads(0.10, 0.30)
+                RulePresets.CrossroadsDistance(DistancePresets.Near)
             ])
             .Build();
     
     /* Mines near roads */
-    public static ContentItem MineCrystals_Road() =>
+    public static ContentItem MineCrystals_NextToRoad() =>
         ContentItemBuilder.Create(ContentIds.MineCrystals)
             .WithName("name_mine_crystals")
             .Mine()
-            .AddRules([
-                RulePresets.NearRoad(0.05, 0.10)
-            ])
+            .RoadDistance(DistancePresets.NextTo)
             .Build();
-    public static ContentItem MineMercury_Road() =>
+    public static ContentItem MineMercury_NextToRoad() =>
         ContentItemBuilder.Create(ContentIds.MineMercury)
             .WithName("name_mine_mercury")
             .Mine()
-            .AddRules([
-                RulePresets.NearRoad(0.05, 0.10)
-            ])
+            .RoadDistance(DistancePresets.NextTo)
             .Build();
-    public static ContentItem MineGemstones_Road() =>
+    public static ContentItem MineGemstones_NextToRoad() =>
         ContentItemBuilder.Create(ContentIds.MineGemstones)
             .WithName("name_mine_gemstones")
             .Mine()
-            .AddRules([
-                RulePresets.NearRoad(0.05, 0.10)
-            ])
+            .RoadDistance(DistancePresets.NextTo)
             .Build();
-    public static ContentItem AlchemyLab_Road() =>
+    public static ContentItem AlchemyLab_NearRoad() =>
         ContentItemBuilder.Create(ContentIds.AlchemyLab)
             .WithName("name_alchemy_lab")
             .Mine()
-            .AddRules([
-                RulePresets.NearRoad(0.20, 0.30)
-            ])
+            .RoadDistance(DistancePresets.Near)
             .Build();
 
     
