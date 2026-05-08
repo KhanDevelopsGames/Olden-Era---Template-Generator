@@ -225,10 +225,20 @@ namespace Olden_Era___Template_Editor.Services
 
             // ── Zone radius: based on the largest component so circles are readable ─
             int maxCompSize = components.Max(c => c.Count);
-            double ringRadius0 = Width / 2.0 - margin;
-            double chord0      = 2.0 * ringRadius0 * Math.Sin(Math.PI / Math.Max(1, maxCompSize));
-            double zoneRadius  = Math.Min(ZoneRadiusMax, (chord0 - minGap) / 2.0);
-            zoneRadius = Math.Max(zoneRadius, 8.0);
+            double zoneRadius;
+            if (maxCompSize <= 1)
+            {
+                // All components are singletons — sin(π/1) = 0 collapses the chord formula.
+                // Use the maximum radius directly; the tiling logic will space the dots apart.
+                zoneRadius = ZoneRadiusMax;
+            }
+            else
+            {
+                double ringRadius0 = Width / 2.0 - margin;
+                double chord0      = 2.0 * ringRadius0 * Math.Sin(Math.PI / maxCompSize);
+                zoneRadius = Math.Min(ZoneRadiusMax, (chord0 - minGap) / 2.0);
+                zoneRadius = Math.Max(zoneRadius, 8.0);
+            }
             _zoneRadius = zoneRadius;
 
             double idealEdge = zoneRadius * 3.2;
