@@ -1196,6 +1196,7 @@ namespace Olden_Era___Template_Editor.Services
                 connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning, settings.MaxPortalConnections));
 
             if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
+            EnsureFullConnectivity(playerLetters, allLetters, pos, zones, connections, tuning);
             return MakeVariant(playerLetters, allLetters[0], count, zones, connections);
         }
 
@@ -1748,6 +1749,167 @@ namespace Olden_Era___Template_Editor.Services
                         pZone.Roads.Add(PlainRoad(MainObjectEndpoint("0"), ConnectionEndpoint(fallbackName)));
                     }
                 }
+            }
+        }
+
+        // ── Full-graph connectivity failsafe ────────────────────────────────────────
+
+        /// <summary>
+        /// Verifies that every zone is reachable from every other zone via Direct connections
+        /// and, if not, adds minimal bridge connections to join isolated components.
+        /// Uses Euclidean positions (<paramref name="pos"/>) to pick the shortest cross-component
+        /// bridge at each step, keeping added connections as geographically plausible as possible.
+        /// </summary>
+        private static void EnsureFullConnectivity(
+            List<string> playerLetters,
+            List<string> allLetters,
+            List<(double X, double Y)> pos,
+            List<Zone> zones,
+            List<Connection> connections,
+            GenerationTuning tuning)
+        {
+            if (allLetters.Count <= 1) return;
+
+            // Build adjacency from existing Direct connections (Portal connections also traverse).
+            var zoneNameToIndex = allLetters
+                .Select((l, i) => (l, i))
+                .ToDictionary(
+                    t => playerLetters.Contains(t.l) ? $"Spawn-{t.l}" : $"Neutral-{t.l}",
+                    t => t.i,
+                    StringComparer.Ordinal);
+
+            var adj = Enumerable.Range(0, allLetters.Count)
+                .ToDictionary(i => i, _ => new HashSet<int>());
+
+            foreach (var conn in connections)
+            {
+                if (conn.ConnectionType is not ("Direct" or "Portal")) continue;
+                if (conn.From == null || conn.To == null) continue;
+                if (!zoneNameToIndex.TryGetValue(conn.From, out int a)) continue;
+                if (!zoneNameToIndex.TryGetValue(conn.To,   out int b)) continue;
+                adj[a].Add(b);
+                adj[b].Add(a);
+            }
+
+            // BFS to find connected components.
+            static List<List<int>> FindComponents(Dictionary<int, HashSet<int>> graph, int nodeCount)
+            {
+                var visited = new bool[nodeCount];
+                var components = new List<List<int>>();
+                for (int start = 0; start < nodeCount; start++)
+                {
+                    if (visited[start]) continue;
+                    var component = new List<int>();
+                    var queue = new Queue<int>();
+                    queue.Enqueue(start);
+                    visited[start] = true;
+                    while (queue.Count > 0)
+                    {
+                        int cur = queue.Dequeue();
+                        component.Add(cur);
+                        foreach (int nb in graph[cur])
+                        {
+                            if (!visited[nb]) { visited[nb] = true; queue.Enqueue(nb); }
+                        }
+                    }
+                    components.Add(component);
+                }
+                return components;
+            }
+
+            // Iteratively merge the closest pair of components until the graph is connected.
+            var connNameSet = connections
+                .Select(c => c.Name)
+                .Where(n => n != null)
+                .ToHashSet(StringComparer.Ordinal);
+
+            while (true)
+            {
+                var components = FindComponents(adj, allLetters.Count);
+                if (components.Count <= 1) break;
+
+                // Find the pair of nodes (one from component 0, one from any other component)
+                // with the smallest Euclidean distance.
+                var mainComp = new HashSet<int>(components[0]);
+                int bestA = -1, bestB = -1;
+                double bestDist = double.MaxValue;
+
+                foreach (int a in components[0])
+                {
+                    foreach (var otherComp in components.Skip(1))
+                    {
+                        foreach (int b in otherComp)
+                        {
+                            double dx = pos[a].X - pos[b].X;
+                            double dy = pos[a].Y - pos[b].Y;
+                            double dist = dx * dx + dy * dy;
+                            if (dist < bestDist) { bestDist = dist; bestA = a; bestB = b; }
+                        }
+                    }
+                }
+
+                if (bestA < 0 || bestB < 0) break; // should never happen
+
+                string letterA = allLetters[bestA];
+                string letterB = allLetters[bestB];
+                bool aIsPlayer = playerLetters.Contains(letterA);
+                bool bIsPlayer = playerLetters.Contains(letterB);
+                string zoneA = aIsPlayer ? $"Spawn-{letterA}" : $"Neutral-{letterA}";
+                string zoneB = bIsPlayer ? $"Spawn-{letterB}" : $"Neutral-{letterB}";
+
+                string pair = string.Compare(letterA, letterB, StringComparison.Ordinal) < 0
+                    ? $"{letterA}-{letterB}" : $"{letterB}-{letterA}";
+                string bridgeName = $"Bridge-{pair}";
+
+                if (!connNameSet.Contains(bridgeName))
+                {
+                    connections.Add(new Connection
+                    {
+                        Name = bridgeName,
+                        From = zoneA,
+                        To = zoneB,
+                        ConnectionType = "Direct",
+                        GuardZone = zoneA,
+                        GuardEscape = false,
+                        SimTurnSquad = true,
+                        GuardValue = ScaleBorderGuardValue(30000, tuning),
+                        GuardWeeklyIncrement = 0.15,
+                        GuardMatchGroup = $"bridge_guard_{pair}"
+                    });
+                    connNameSet.Add(bridgeName);
+
+                    // Add roads to both zone objects so roads render correctly.
+                    foreach (var (zoneName, isPlayer) in new[] { (zoneA, aIsPlayer), (zoneB, bIsPlayer) })
+                    {
+                        var zone = zones.FirstOrDefault(z => z.Name == zoneName);
+                        if (zone == null) continue;
+                        zone.Roads ??= [];
+                        var endpoint = isPlayer
+                            ? MainObjectEndpoint("0")
+                            : (zone.MainObjects?.Count > 0 ? MainObjectEndpoint("0") : ConnectionEndpoint(bridgeName));
+                        // For zones with a main object, road from object to connection;
+                        // for connector zones, road from the bridge connection to itself (single-conn pattern).
+                        if (isPlayer || zone.MainObjects?.Count > 0)
+                            zone.Roads.Add(PlainRoad(MainObjectEndpoint("0"), ConnectionEndpoint(bridgeName)));
+                        else
+                        {
+                            // Connector-style: link from first existing connection endpoint to this one.
+                            var existingConn = zone.Roads
+                                .Select(r => r.From?.Type == "Connection" ? r.From.Args?[0] : null)
+                                .FirstOrDefault(n => n != null)
+                                ?? zone.Roads.Select(r => r.To?.Type == "Connection" ? r.To.Args?[0] : null)
+                                             .FirstOrDefault(n => n != null);
+                            if (existingConn != null)
+                                zone.Roads.Add(PlainRoad(ConnectionEndpoint(existingConn), ConnectionEndpoint(bridgeName)));
+                            else
+                                zone.Roads.Add(PlainRoad(ConnectionEndpoint(bridgeName), ConnectionEndpoint(bridgeName)));
+                        }
+                    }
+                }
+
+                // Update adjacency so BFS sees the new edge.
+                adj[bestA].Add(bestB);
+                adj[bestB].Add(bestA);
             }
         }
 
