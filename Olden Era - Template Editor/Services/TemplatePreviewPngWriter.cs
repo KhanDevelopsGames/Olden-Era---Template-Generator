@@ -341,12 +341,10 @@ namespace Olden_Era___Template_Editor.Services
                 }
 
                 // Passes A and B run together until both are simultaneously satisfied.
-                // A moving a circle can push it onto a line (triggering B again), and
-                // B moving a circle can create a new overlap (triggering A again).
                 double minDist   = zoneRadius * 3.0;
                 double edgeClear = zoneRadius * 1.1;
 
-                for (int abPass = 0; abPass < 300; abPass++)
+                for (int abPass = 0; abPass < 500; abPass++)
                 {
                     bool anyAB = false;
 
@@ -365,6 +363,9 @@ namespace Olden_Era___Template_Editor.Services
                         }
 
                     // ── B: edge clearance – push nodes off connection lines ───────
+                    // Pick the side (of the edge) that keeps c2 closer to its own
+                    // neighbours.  Only flip if the other side is strictly better —
+                    // this prevents oscillation while correcting wrong-side placements.
                     for (int a = 0; a < cn; a++)
                         foreach (int b in ladj[a])
                         {
@@ -372,6 +373,7 @@ namespace Olden_Era___Template_Editor.Services
                             double ex = lpx[b] - lpx[a], ey = lpy[b] - lpy[a];
                             double elen2 = ex * ex + ey * ey;
                             if (elen2 < 0.001) continue;
+                            double elenInv = 1.0 / Math.Sqrt(elen2);
 
                             for (int c2 = 0; c2 < cn; c2++)
                             {
@@ -387,17 +389,17 @@ namespace Olden_Era___Template_Editor.Services
                                 double dist  = Math.Sqrt(nx2 * nx2 + ny2 * ny2);
                                 if (dist >= edgeClear) continue;
 
-                                double elenInv = 1.0 / Math.Sqrt(elen2);
-                                double perpX, perpY;
-                                if (dist < 0.001)
-                                { perpX = ey * elenInv; perpY = -ex * elenInv; }
-                                else
-                                { perpX = nx2 / dist; perpY = ny2 / dist; }
+                                // Unit perp in current offset direction (or arbitrary if on line)
+                                double perpX = (dist < 0.001) ? ey * elenInv : nx2 / dist;
+                                double perpY = (dist < 0.001) ? -ex * elenInv : ny2 / dist;
 
-                                double pushAmt = edgeClear - dist;
-                                double cx2A = lpx[c2] + perpX * pushAmt, cy2A = lpy[c2] + perpY * pushAmt;
-                                double cx2B = lpx[c2] - perpX * pushAmt, cy2B = lpy[c2] - perpY * pushAmt;
+                                // Both candidate positions at exactly edgeClear from projection
+                                double cx2A = projX + perpX * edgeClear;
+                                double cy2A = projY + perpY * edgeClear;
+                                double cx2B = projX - perpX * edgeClear;
+                                double cy2B = projY - perpY * edgeClear;
 
+                                // Pick whichever side keeps c2 closer to its neighbours
                                 double scoreA = 0, scoreB = 0;
                                 foreach (int nb in ladj[c2])
                                 {
@@ -419,8 +421,76 @@ namespace Olden_Era___Template_Editor.Services
                     if (!anyAB) break;
                 }
 
-                // Pass C (disabled)
-                compPx[c] = lpx;
+                // Final guarantee: hard-snap any node still violating an edge,
+                // using score-based side selection, then re-enforce A.
+                // Repeats until clean so A-corrections cannot re-introduce violations.
+                for (int snapPass = 0; snapPass < 200; snapPass++)
+                {
+                    bool anySnap = false;
+
+                    for (int a = 0; a < cn; a++)
+                        foreach (int b in ladj[a])
+                        {
+                            if (b <= a) continue;
+                            double ex = lpx[b] - lpx[a], ey = lpy[b] - lpy[a];
+                            double elen2 = ex * ex + ey * ey;
+                            if (elen2 < 0.001) continue;
+                            double elenInv = 1.0 / Math.Sqrt(elen2);
+
+                            for (int c2 = 0; c2 < cn; c2++)
+                            {
+                                if (c2 == a || c2 == b) continue;
+
+                                double tProj = ((lpx[c2] - lpx[a]) * ex + (lpy[c2] - lpy[a]) * ey) / elen2;
+                                if (tProj < 0.0 || tProj > 1.0) continue;
+
+                                double projX = lpx[a] + tProj * ex;
+                                double projY = lpy[a] + tProj * ey;
+                                double nx2   = lpx[c2] - projX;
+                                double ny2   = lpy[c2] - projY;
+                                double dist  = Math.Sqrt(nx2 * nx2 + ny2 * ny2);
+                                if (dist >= edgeClear) continue;
+
+                                // Pick the side that keeps c2 closer to its own neighbours
+                                double perpX = (dist < 0.001) ? ey * elenInv : nx2 / dist;
+                                double perpY = (dist < 0.001) ? -ex * elenInv : ny2 / dist;
+
+                                double cx2A = projX + perpX * edgeClear;
+                                double cy2A = projY + perpY * edgeClear;
+                                double cx2B = projX - perpX * edgeClear;
+                                double cy2B = projY - perpY * edgeClear;
+
+                                double scoreA = 0, scoreB = 0;
+                                foreach (int nb in ladj[c2])
+                                {
+                                    double dax = cx2A - lpx[nb], day = cy2A - lpy[nb];
+                                    double dbx = cx2B - lpx[nb], dby = cy2B - lpy[nb];
+                                    scoreA += dax * dax + day * day;
+                                    scoreB += dbx * dbx + dby * dby;
+                                }
+
+                                lpx[c2] = scoreB < scoreA ? cx2B : cx2A;
+                                lpy[c2] = scoreB < scoreA ? cy2B : cy2A;
+                                anySnap = true;
+                            }
+                        }
+
+                    if (!anySnap) break;
+
+                    // Re-enforce A after each snap round
+                    for (int i = 0; i < cn; i++)
+                        for (int j = i + 1; j < cn; j++)
+                        {
+                            double dx = lpx[i] - lpx[j], dy = lpy[i] - lpy[j];
+                            double d  = Math.Sqrt(dx * dx + dy * dy);
+                            if (d >= minDist) continue;
+                            if (d < 0.001) { dx = 1; dy = 0; d = 0.001; }
+                            double push = (minDist - d) / 2.0;
+                            lpx[i] += dx / d * push;  lpy[i] += dy / d * push;
+                            lpx[j] -= dx / d * push;  lpy[j] -= dy / d * push;
+                        }
+                }
+                compPx[c] = lpx;   // ← this line is missing
                 compPy[c] = lpy;
             }
 
