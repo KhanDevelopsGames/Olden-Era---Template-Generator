@@ -340,11 +340,17 @@ namespace Olden_Era___Template_Editor.Services
                     t = Math.Max(t * cool, tMin);
                 }
 
-                // Hard-floor: ensure a minimum gap of 1.5× the circle diameter between centres
-                double minDist = zoneRadius * 3.0;
-                for (int pass = 0; pass < 60; pass++)
+                // Passes A and B run together until both are simultaneously satisfied.
+                // A moving a circle can push it onto a line (triggering B again), and
+                // B moving a circle can create a new overlap (triggering A again).
+                double minDist   = zoneRadius * 3.0;
+                double edgeClear = zoneRadius * 1.1;
+
+                for (int abPass = 0; abPass < 300; abPass++)
                 {
-                    bool any = false;
+                    bool anyAB = false;
+
+                    // ── A: hard floor – minimum centre-to-centre distance ─────────
                     for (int i = 0; i < cn; i++)
                         for (int j = i + 1; j < cn; j++)
                         {
@@ -355,11 +361,65 @@ namespace Olden_Era___Template_Editor.Services
                             double push = (minDist - d) / 2.0;
                             lpx[i] += dx / d * push;  lpy[i] += dy / d * push;
                             lpx[j] -= dx / d * push;  lpy[j] -= dy / d * push;
-                            any = true;
+                            anyAB = true;
                         }
-                    if (!any) break;
+
+                    // ── B: edge clearance – push nodes off connection lines ───────
+                    for (int a = 0; a < cn; a++)
+                        foreach (int b in ladj[a])
+                        {
+                            if (b <= a) continue;
+                            double ex = lpx[b] - lpx[a], ey = lpy[b] - lpy[a];
+                            double elen2 = ex * ex + ey * ey;
+                            if (elen2 < 0.001) continue;
+
+                            for (int c2 = 0; c2 < cn; c2++)
+                            {
+                                if (c2 == a || c2 == b) continue;
+
+                                double tProj = ((lpx[c2] - lpx[a]) * ex + (lpy[c2] - lpy[a]) * ey) / elen2;
+                                if (tProj < 0.0 || tProj > 1.0) continue;
+
+                                double projX = lpx[a] + tProj * ex;
+                                double projY = lpy[a] + tProj * ey;
+                                double nx2   = lpx[c2] - projX;
+                                double ny2   = lpy[c2] - projY;
+                                double dist  = Math.Sqrt(nx2 * nx2 + ny2 * ny2);
+                                if (dist >= edgeClear) continue;
+
+                                double elenInv = 1.0 / Math.Sqrt(elen2);
+                                double perpX, perpY;
+                                if (dist < 0.001)
+                                { perpX = ey * elenInv; perpY = -ex * elenInv; }
+                                else
+                                { perpX = nx2 / dist; perpY = ny2 / dist; }
+
+                                double pushAmt = edgeClear - dist;
+                                double cx2A = lpx[c2] + perpX * pushAmt, cy2A = lpy[c2] + perpY * pushAmt;
+                                double cx2B = lpx[c2] - perpX * pushAmt, cy2B = lpy[c2] - perpY * pushAmt;
+
+                                double scoreA = 0, scoreB = 0;
+                                foreach (int nb in ladj[c2])
+                                {
+                                    double dax = cx2A - lpx[nb], day = cy2A - lpy[nb];
+                                    double dbx = cx2B - lpx[nb], dby = cy2B - lpy[nb];
+                                    scoreA += dax * dax + day * day;
+                                    scoreB += dbx * dbx + dby * dby;
+                                }
+
+                                if (scoreB < scoreA)
+                                { lpx[c2] = cx2B; lpy[c2] = cy2B; }
+                                else
+                                { lpx[c2] = cx2A; lpy[c2] = cy2A; }
+
+                                anyAB = true;
+                            }
+                        }
+
+                    if (!anyAB) break;
                 }
 
+                // Pass C (disabled)
                 compPx[c] = lpx;
                 compPy[c] = lpy;
             }
