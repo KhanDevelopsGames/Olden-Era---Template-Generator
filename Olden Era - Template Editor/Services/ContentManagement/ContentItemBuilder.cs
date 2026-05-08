@@ -60,6 +60,9 @@ public class ContentItemBuilder
         return this;
     }
 
+    // Helper for common rule for content items regarding distance from roads.
+    public ContentItemBuilder RoadDistance(DistanceVariation distance, int weight = 1) => AddRule(RulePresets.RoadDistance(distance, weight));
+
     public ContentItemBuilder AddIncludeList(string list)
     {
         _item.IncludeLists ??= new List<string>();
