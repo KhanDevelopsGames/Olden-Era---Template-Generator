@@ -105,17 +105,17 @@ namespace Olden_Era___Template_Editor
             _zoneContentMines.Add(CreateZoneContentItem(ContentIds.MineGemstones, isGuarded: true, roadDistance: "Next To"));
             _zoneContentMines.Add(CreateZoneContentItem(ContentIds.AlchemyLab, isGuarded: true, roadDistance: "Next To"));
             // ── Loot — epic items + army pandora (Exodus/Blitz pattern). ──
-            _treasureContentItems.Add(CreateZoneContentItem(ContentIds.PandoraBox));
+            _treasureContentItems.Add(CreateZoneContentItem(ContentIds.PandoraBox, isGuarded: true));
             _treasureContentItems.Add(CreateZoneContentItem(ContentIds.RandomItemEpic, isGuarded: true));
 
             // ── Hiring — low-tier × 2 + high-tier × 1 + full pool × 1 (Kerberos + Universe blend). ──
-            _randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier, count: 2, isGroup: true));
-            _randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier, isGroup: true));
-            _randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresAllTier, isGroup: true));
+            _randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier, isGuarded: true, count: 2, isGroup: true));
+            _randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier, isGuarded: true, isGroup: true));
+            _randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresAllTier, isGuarded: true, isGroup: true));
 
             // ── Guarded resource banks — tier 1 × 2 + tier 2 × 1 (Exodus pattern). ──
-            _resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier1, count: 2, isGroup: true));
-            _resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier2, isGroup: true));
+            _resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier1, isGuarded: true, count: 2, isGroup: true));
+            _resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier2, isGuarded: true, isGroup: true));
         }
         private void InitializeZoneContentPresets()
         {
