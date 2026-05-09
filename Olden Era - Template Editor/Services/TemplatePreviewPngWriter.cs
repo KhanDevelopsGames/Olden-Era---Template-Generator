@@ -1030,6 +1030,70 @@ namespace Olden_Era___Template_Editor.Services
                     ctrl = new Point((p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0);
                 }
 
+                // ── Arc-clearance refinement ──────────────────────────────────────
+                // The initial ctrl was computed from the straight chord; the arc can
+                // still clip a *different* zone. Iteratively sample the actual Bézier
+                // and push ctrl away from any zone whose circle the arc still enters.
+                if (hasCurve)
+                {
+                    const int   ArcSamples   = 32;
+                    const int   MaxArcIter   = 20;
+                    const double ArcClearance = 6.0; // gap between arc and circle edge in pixels
+
+                    for (int arcIter = 0; arcIter < MaxArcIter; arcIter++)
+                    {
+                        bool arcClean = true;
+                        Point? worstZone = null;
+                        double worstPenetration = 0;
+                        double worstSample = 0.5;
+
+                        for (int s = 1; s < ArcSamples; s++) // skip s=0 and s=ArcSamples (endpoints)
+                        {
+                            double st = (double)s / ArcSamples;
+                            double mt = 1.0 - st;
+                            double bx = mt * mt * p1.X + 2 * mt * st * ctrl.X + st * st * p2.X;
+                            double by = mt * mt * p1.Y + 2 * mt * st * ctrl.Y + st * st * p2.Y;
+
+                            foreach (var kvp in positions)
+                            {
+                                if (kvp.Key == conn.From || kvp.Key == conn.To) continue;
+                                double ex2 = bx - kvp.Value.X, ey2 = by - kvp.Value.Y;
+                                double d2 = Math.Sqrt(ex2 * ex2 + ey2 * ey2);
+                                double penetration = zoneRadius + ArcClearance - d2;
+                                if (penetration > worstPenetration)
+                                {
+                                    worstPenetration = penetration;
+                                    worstZone = kvp.Value;
+                                    worstSample = st;
+                                    arcClean = false;
+                                }
+                            }
+                        }
+
+                        if (arcClean) break;
+
+                        // Push ctrl further away from the worst-hitting zone.
+                        // Compute the arc point at worstSample and move ctrl so that
+                        // point lands outside the zone circle.
+                        double wmt = 1.0 - worstSample;
+                        double wbx = wmt * wmt * p1.X + 2 * wmt * worstSample * ctrl.X + worstSample * worstSample * p2.X;
+                        double wby = wmt * wmt * p1.Y + 2 * wmt * worstSample * ctrl.Y + worstSample * worstSample * p2.Y;
+
+                        // Direction from zone centre to the arc point
+                        double ex3 = wbx - worstZone!.Value.X, ey3 = wby - worstZone!.Value.Y;
+                        double el3 = Math.Sqrt(ex3 * ex3 + ey3 * ey3);
+                        if (el3 < 0.001) { ex3 = -uy; ey3 = ux; el3 = 1; }
+                        double nx3 = ex3 / el3, ny3 = ey3 / el3;
+
+                        // The quadratic Bézier weight of ctrl at parameter worstSample is 2*wmt*worstSample.
+                        // Move ctrl so the arc point moves by (worstPenetration + 2px) in that direction.
+                        double weight = 2 * wmt * worstSample;
+                        if (weight < 0.01) weight = 0.01;
+                        double nudge = (worstPenetration + 2.0) / weight;
+                        ctrl = new Point(ctrl.X + nx3 * nudge, ctrl.Y + ny3 * nudge);
+                    }
+                }
+
                 drawn.Add((p1, ctrl, p2, isPortal, hasCurve));
             }
 
