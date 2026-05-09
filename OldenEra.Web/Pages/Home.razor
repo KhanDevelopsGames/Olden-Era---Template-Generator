@@ -1,5 +1,8 @@
 @page "/"
 @inject FileDownloader Downloader
+@inject BrowserSettingsStore SettingsStore
+@inject UpdateChecker UpdateChecker
+@implements IDisposable
 
 <PageTitle>Olden Era - Template Generator</PageTitle>
 
@@ -11,6 +14,25 @@
 
     <div class="oe-warning">
         ⚠️ Work in progress — some generated templates may contain game-breaking bugs or issues.
+    </div>
+
+    @if (UpdateAvailable is not null)
+    {
+        <div class="oe-update-banner">
+            🔔 A newer version (<strong>@FormatVersion(UpdateAvailable)</strong>) is available.
+            <a href="@UpdateChecker.ReleasesPageUrl" target="_blank" rel="noopener noreferrer">
+                Open releases page
+            </a>
+            <button class="oe-link-btn" @onclick="DismissUpdateBanner" aria-label="Dismiss">✕</button>
+        </div>
+    }
+
+    <div class="oe-toolbar">
+        <button class="oe-btn" @onclick="OpenSettingsClick">📂 Open settings…</button>
+        <button class="oe-btn" @onclick="SaveSettingsClick">💾 Save settings…</button>
+        <InputFile id="oeOpenSettingsFile" OnChange="OnSettingsFileSelected"
+                   accept=".oetgs,application/json"
+                   style="display:none" />
     </div>
 
     <div class="oe-grid">
@@ -76,8 +98,8 @@
 
         <div class="oe-preview-col">
             <button class="oe-btn primary"
-                    disabled="@(!IsValid)"
-                    @onclick="Generate">
+                    disabled="@(!IsValid || IsGenerating)"
+                    @onclick="OnGenerateClick">
                 ⚔ Generate Template
             </button>
             @if (!string.IsNullOrEmpty(ValidationMessage))
@@ -101,12 +123,44 @@
     </div>
 </div>
 
+@if (ShowLargeMapConfirm)
+{
+    <div class="oe-modal-overlay" @onclick="CancelLargeMapConfirm">
+        <div class="oe-modal" @onclick:stopPropagation="true">
+            <h2>Large map — please confirm</h2>
+            <p>
+                This may take several minutes for large maps.
+                The browser tab will be unresponsive during generation.
+                Continue?
+            </p>
+            <div class="oe-modal-actions">
+                <button class="oe-btn" @onclick="CancelLargeMapConfirm">Cancel</button>
+                <button class="oe-btn primary" @onclick="ConfirmLargeMapAndGenerate">Generate</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (IsGenerating)
+{
+    <div class="oe-modal-overlay">
+        <div class="oe-modal oe-modal-spinner">
+            <div class="oe-spinner" aria-hidden="true"></div>
+            <p>Generating template…</p>
+            <p class="oe-hint">The tab may freeze briefly. Please wait.</p>
+        </div>
+    </div>
+}
+
 @code {
     private static readonly System.Text.Json.JsonSerializerOptions JsonOptions = new()
     {
         WriteIndented = true,
         DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
     };
+
+    private const int LargeMapSizeThreshold = 240;
+    private const int LargeMapZoneThreshold = 16;
 
     private GeneratorSettings Settings { get; set; } = new();
     private bool AdvancedMode { get; set; }
@@ -119,16 +173,57 @@
     private bool IsValid = true;
 
     private string VersionLabel = "v1.0";
+    private Version? CurrentVersion;
+    private Version? UpdateAvailable;
 
-    protected override void OnInitialized()
+    private bool ShowLargeMapConfirm;
+    private bool IsGenerating;
+
+    // Debounced localStorage save state.
+    private System.Threading.CancellationTokenSource? _saveCts;
+    private bool _hasLoadedFromStorage;
+
+    protected override async Task OnInitializedAsync()
     {
-        var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-        if (version is not null)
-            VersionLabel = version.Build > 0
-                ? $"v{version.Major}.{version.Minor}.{version.Build}"
-                : $"v{version.Major}.{version.Minor}";
+        CurrentVersion = typeof(Home).Assembly.GetName().Version;
+        if (CurrentVersion is not null)
+            VersionLabel = FormatVersion(CurrentVersion);
+
+        // Load persisted settings BEFORE first render so the form is populated
+        // immediately. If nothing is stored we just keep the defaults.
+        var stored = await SettingsStore.LoadAsync();
+        if (stored is not null)
+        {
+            var (mapped, advanced, experimental) = SettingsMapper.FromFile(stored);
+            Settings = mapped;
+            AdvancedMode = advanced;
+            ExperimentalMapSizes = experimental;
+        }
+        _hasLoadedFromStorage = true;
+
         Validate();
+
+        // Fire-and-forget update check — never blocks the UI.
+        _ = CheckForUpdatesAsync();
     }
+
+    private async Task CheckForUpdatesAsync()
+    {
+        var newer = await UpdateChecker.GetNewerVersionAsync(CurrentVersion);
+        if (newer is not null)
+        {
+            UpdateAvailable = newer;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void DismissUpdateBanner()
+    {
+        UpdateAvailable = null;
+    }
+
+    private static string FormatVersion(Version v)
+        => v.Build > 0 ? $"v{v.Major}.{v.Minor}.{v.Build}" : $"v{v.Major}.{v.Minor}";
 
     private int MapSize
     {
@@ -147,7 +242,7 @@
     private void OnTemplateNameInput(ChangeEventArgs e)
     {
         Settings.TemplateName = e.Value?.ToString() ?? "";
-        Validate();
+        OnChanged();
     }
 
     private void OnExperimentalToggled(ChangeEventArgs e)
@@ -155,20 +250,48 @@
         ExperimentalMapSizes = (bool)e.Value!;
         if (!ExperimentalMapSizes && KnownValues.IsExperimentalMapSize(Settings.MapSize))
             Settings.MapSize = KnownValues.MaxOfficialMapSize;
-        Validate();
+        OnChanged();
     }
 
     private void OnAdvancedModeChanged(bool advanced)
     {
         AdvancedMode = advanced;
         Settings.ZoneCfg.Advanced.Enabled = advanced;
-        Validate();
+        OnChanged();
     }
 
     private void OnChanged()
     {
         Validate();
+        SchedulePersist();
         StateHasChanged();
+    }
+
+    /// <summary>
+    /// Debounce localStorage writes so we don't hammer it on every keystroke.
+    /// Each change resets a 500 ms timer; only the last change in a burst is saved.
+    /// </summary>
+    private void SchedulePersist()
+    {
+        if (!_hasLoadedFromStorage) return;
+        _saveCts?.Cancel();
+        _saveCts?.Dispose();
+        var cts = new System.Threading.CancellationTokenSource();
+        _saveCts = cts;
+        _ = PersistAfterDelayAsync(cts.Token);
+    }
+
+    private async Task PersistAfterDelayAsync(System.Threading.CancellationToken ct)
+    {
+        try
+        {
+            await Task.Delay(500, ct);
+        }
+        catch (TaskCanceledException) { return; }
+
+        if (ct.IsCancellationRequested) return;
+        var snapshot = SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes);
+        await SettingsStore.SaveAsync(snapshot);
     }
 
     private int TotalNeutralZones()
@@ -230,21 +353,121 @@
         ValidationMessage = msg;
     }
 
-    private void Generate()
-    {
-        if (!IsValid) return;
-        // Make sure advanced flag in payload reflects UI mode.
-        Settings.ZoneCfg.Advanced.Enabled = AdvancedMode;
-        if (!AdvancedMode)
-        {
-            Settings.MinNeutralZonesBetweenPlayers = 0;
-            Settings.ZoneCfg.Advanced.PlayerZoneSize = 1.0;
-            Settings.ZoneCfg.Advanced.NeutralZoneSize = 1.0;
-            Settings.ZoneCfg.Advanced.GuardRandomization = 0.05;
-        }
+    // -- Generate flow -----------------------------------------------------
 
-        GeneratedTemplate = TemplateGenerator.Generate(Settings);
-        PreviewPng = TemplatePreviewRenderer.RenderPng(GeneratedTemplate, Settings.Topology);
+    private bool IsLargeMap()
+    {
+        if (Settings.MapSize >= LargeMapSizeThreshold) return true;
+        int total = Settings.PlayerCount + TotalNeutralZones();
+        return total >= LargeMapZoneThreshold;
+    }
+
+    private async Task OnGenerateClick()
+    {
+        if (!IsValid || IsGenerating) return;
+        if (IsLargeMap())
+        {
+            ShowLargeMapConfirm = true;
+            return;
+        }
+        await RunGenerationAsync();
+    }
+
+    private void CancelLargeMapConfirm()
+    {
+        ShowLargeMapConfirm = false;
+    }
+
+    private async Task ConfirmLargeMapAndGenerate()
+    {
+        ShowLargeMapConfirm = false;
+        await RunGenerationAsync();
+    }
+
+    private async Task RunGenerationAsync()
+    {
+        IsGenerating = true;
+        StateHasChanged();
+        // Yield so the spinner overlay actually paints before we hand the
+        // WASM main thread over to the (synchronous) generator.
+        await Task.Yield();
+        await Task.Delay(1);
+
+        try
+        {
+            // Make sure advanced flag in payload reflects UI mode.
+            Settings.ZoneCfg.Advanced.Enabled = AdvancedMode;
+            if (!AdvancedMode)
+            {
+                Settings.MinNeutralZonesBetweenPlayers = 0;
+                Settings.ZoneCfg.Advanced.PlayerZoneSize = 1.0;
+                Settings.ZoneCfg.Advanced.NeutralZoneSize = 1.0;
+                Settings.ZoneCfg.Advanced.GuardRandomization = 0.05;
+            }
+
+            GeneratedTemplate = TemplateGenerator.Generate(Settings);
+            PreviewPng = TemplatePreviewRenderer.RenderPng(GeneratedTemplate, Settings.Topology);
+        }
+        finally
+        {
+            IsGenerating = false;
+            StateHasChanged();
+        }
+    }
+
+    // -- Import / Export ---------------------------------------------------
+
+    private async Task SaveSettingsClick()
+    {
+        var snapshot = SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes);
+        byte[] bytes = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(snapshot, JsonOptions);
+        string name = string.IsNullOrWhiteSpace(Settings.TemplateName) ? "My Settings" : Settings.TemplateName.Trim();
+        await Downloader.DownloadAsync($"{name}.oetgs", "application/json", bytes);
+    }
+
+    private async Task OpenSettingsClick()
+    {
+        // Trigger the hidden InputFile via JS — Blazor doesn't expose a Click
+        // method, so we forward a click to the underlying <input type=file>.
+        await JsClickAsync("oeOpenSettingsFile");
+    }
+
+    [Inject] private IJSRuntime Js { get; set; } = default!;
+
+    private async Task JsClickAsync(string elementId)
+    {
+        // No need for a custom JS file — eval is fine for a one-liner click.
+        await Js.InvokeVoidAsync("eval", $"document.getElementById('{elementId}')?.click()");
+    }
+
+    private async Task OnSettingsFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file is null) return;
+        try
+        {
+            // Cap at 1 MB — settings files are tiny.
+            using var stream = file.OpenReadStream(maxAllowedSize: 1024 * 1024);
+            using var reader = new StreamReader(stream);
+            string json = await reader.ReadToEndAsync();
+            var s = System.Text.Json.JsonSerializer.Deserialize<SettingsFile>(json);
+            if (s is null) return;
+
+            var (mapped, advanced, experimental) = SettingsMapper.FromFile(s);
+            Settings = mapped;
+            AdvancedMode = advanced;
+            ExperimentalMapSizes = experimental;
+            Validate();
+            // Persist the freshly imported settings so they survive a reload.
+            await SettingsStore.SaveAsync(SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes));
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            ValidationMessage = $"Failed to open settings: {ex.Message}";
+            IsValid = false;
+            StateHasChanged();
+        }
     }
 
     private async Task DownloadJson()
@@ -260,5 +483,11 @@
         if (PreviewPng is null) return;
         string name = string.IsNullOrWhiteSpace(Settings.TemplateName) ? "Custom Template" : Settings.TemplateName.Trim();
         await Downloader.DownloadAsync($"{name}.png", "image/png", PreviewPng);
+    }
+
+    public void Dispose()
+    {
+        _saveCts?.Cancel();
+        _saveCts?.Dispose();
     }
 }

@@ -363,3 +363,88 @@ input[type="range"]::-moz-range-thumb {
     inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
 }
 .loading-progress-text:after { content: var(--blazor-load-percentage-text, "Loading"); }
+
+/* -- Update banner -------------------------------------------------- */
+.oe-update-banner {
+    margin: 8px 0 0 0;
+    padding: 8px 12px;
+    border: 1px solid var(--oe-border);
+    background: var(--oe-bg-3);
+    color: var(--oe-text);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.oe-update-banner a {
+    color: var(--oe-accent);
+    text-decoration: underline;
+}
+.oe-link-btn {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: var(--oe-text-dim);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 6px;
+}
+.oe-link-btn:hover { color: var(--oe-text); }
+
+/* -- Toolbar -------------------------------------------------------- */
+.oe-toolbar {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0 4px 0;
+}
+
+/* -- Modal ---------------------------------------------------------- */
+.oe-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.oe-modal {
+    background: var(--oe-panel);
+    border: 1px solid var(--oe-border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    max-width: 480px;
+    width: 90%;
+    color: var(--oe-text);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+.oe-modal h2 {
+    margin: 0 0 12px 0;
+    color: var(--oe-accent);
+    font-size: 18px;
+}
+.oe-modal p { margin: 8px 0; }
+.oe-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+.oe-modal-spinner {
+    text-align: center;
+    max-width: 360px;
+}
+
+/* -- Spinner -------------------------------------------------------- */
+.oe-spinner {
+    width: 48px;
+    height: 48px;
+    margin: 8px auto 16px auto;
+    border: 4px solid var(--oe-border-dim);
+    border-top-color: var(--oe-accent);
+    border-radius: 50%;
+    animation: oe-spin 1s linear infinite;
+}
+@keyframes oe-spin {
+    to { transform: rotate(360deg); }
+}
