@@ -554,7 +554,7 @@
                                     ValueChanged="Slider_ValueChanged"/>
 
                             <DockPanel Grid.Row="2" Grid.Column="0">
-                                <Label Content="Castles / Player Zone" DockPanel.Dock="Left"/>
+                                <Label Content="Castles in Player Zones" DockPanel.Dock="Left"/>
                                 <TextBlock x:Name="TxtPlayerCastles" Text="1" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
@@ -565,7 +565,7 @@
                                     ValueChanged="Slider_ValueChanged"/>
 
                             <DockPanel Grid.Row="4" Grid.Column="0">
-                                <Label Content="Castles / Neutral Zone" DockPanel.Dock="Left"/>
+                                <Label Content="Castles in Neutral Zones" DockPanel.Dock="Left"/>
                                 <TextBlock x:Name="TxtNeutralCastles" Text="1" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
@@ -576,7 +576,7 @@
                                     ValueChanged="Slider_ValueChanged"/>
 
                             <DockPanel Grid.Row="6" Grid.Column="0">
-                                <Label Content="Resource spawn rate" DockPanel.Dock="Left"/>
+                                <Label Content="Resource pick-ups spawn rate" DockPanel.Dock="Left"/>
                                 <TextBlock x:Name="TxtResourceDensity" Text="100%" DockPanel.Dock="Right"
                                            HorizontalAlignment="Right" VerticalAlignment="Center"
                                            Margin="0,0,10,0" Style="{StaticResource ValueText}"/>
@@ -695,7 +695,7 @@
                                        FontSize="12"
                                        TextWrapping="Wrap"
                                        Margin="0,0,0,6"
-                                       Text="With-castle neutral zones use the Castles / Neutral Zone value. Each advanced slider is capped at 8; total zones are capped at 32 in advanced mode."/>
+                                       Text="With-castle neutral zones use the 'Castles in Neutral Zones' value."/>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="230"/>
