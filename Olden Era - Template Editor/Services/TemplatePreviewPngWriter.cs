@@ -201,13 +201,32 @@ namespace Olden_Era___Template_Editor.Services
                     gAdj[ga].Add(gb); gAdj[gb].Add(ga);
                 }
 
-                // Compute the zone radius the same way the FR path does: based on the
-                // largest connected component so circles remain readable.
-                int gMaxComp = n; // conservative — treat all as one component for radius
+                // Find connected components so we can size circles relative to the
+                // largest single cluster (important for two-cluster tournament layouts).
+                var gComp = new int[n];
+                Array.Fill(gComp, -1);
+                var gComponents = new List<List<int>>();
+                for (int start = 0; start < n; start++)
+                {
+                    if (gComp[start] >= 0) continue;
+                    var comp = new List<int>();
+                    var q = new Queue<int>();
+                    q.Enqueue(start); gComp[start] = gComponents.Count;
+                    while (q.Count > 0)
+                    {
+                        int u = q.Dequeue(); comp.Add(u);
+                        foreach (int v in gAdj[u]) if (gComp[v] < 0) { gComp[v] = gComponents.Count; q.Enqueue(v); }
+                    }
+                    gComponents.Add(comp);
+                }
+                int gMaxCompSize = gComponents.Max(c => c.Count);
+                bool isTwoCluster = gComponents.Count == 2; // tournament: two isolated clusters
+
+                // Compute the zone radius based on the largest cluster size.
                 double gZoneRadius;
                 {
-                    double ringRadius0 = Width / 2.0 - margin;
-                    double chord0      = 2.0 * ringRadius0 * Math.Sin(Math.PI / Math.Max(gMaxComp, 2));
+                    double ringRadius0 = (isTwoCluster ? Width / 4.0 : Width / 2.0) - margin;
+                    double chord0      = 2.0 * ringRadius0 * Math.Sin(Math.PI / Math.Max(gMaxCompSize, 2));
                     gZoneRadius = Math.Min(ZoneRadiusMax, (chord0 - minGap) / 2.0);
                     gZoneRadius = Math.Max(gZoneRadius, 8.0);
                 }
@@ -232,37 +251,78 @@ namespace Olden_Era___Template_Editor.Services
                     ? idealEdge2 / (rawEdgeSum / rawEdgeCount)
                     : Math.Min((Width - 2 * margin) / 1.0, (Height - 2 * margin) / 1.0);
 
-                // Centre of mass in raw space → will map to canvas centre
-                double gCx = zones.Average(z => z.GeneratorPosition!.Value.X);
-                double gCy = zones.Average(z => z.GeneratorPosition!.Value.Y);
-
-                // Compute pixel positions relative to canvas centre, then offset to centre on canvas
                 double canvasCx = Width  / 2.0;
                 double canvasCy = Height / 2.0;
 
-                // First pass: compute pixel coords centred at origin
                 var gPx = new double[n];
                 var gPy = new double[n];
-                for (int i = 0; i < n; i++)
-                {
-                    var gp = zones[i].GeneratorPosition!.Value;
-                    gPx[i] = (gp.X - gCx) * gScale;
-                    gPy[i] = (gp.Y - gCy) * gScale;
-                }
-
-                // Clamp to canvas with padding
                 double gPad = gZoneRadius + margin;
-                double rawMinX = gPx.Min(), rawMaxX = gPx.Max();
-                double rawMinY = gPy.Min(), rawMaxY = gPy.Max();
-                double rawSpanX = rawMaxX - rawMinX, rawSpanY = rawMaxY - rawMinY;
-                double drawW2 = Width  - 2 * gPad;
-                double drawH2 = Height - 2 * gPad;
-                // Only shrink (never stretch) so topology proportions are preserved
-                double fitScale = 1.0;
-                if (rawSpanX > drawW2 && rawSpanX > 0.001) fitScale = Math.Min(fitScale, drawW2 / rawSpanX);
-                if (rawSpanY > drawH2 && rawSpanY > 0.001) fitScale = Math.Min(fitScale, drawH2 / rawSpanY);
 
-                for (int i = 0; i < n; i++) { gPx[i] = canvasCx + gPx[i] * fitScale; gPy[i] = canvasCy + gPy[i] * fitScale; }
+                if (isTwoCluster)
+                {
+                    // Two-cluster tournament layout: map each cluster independently into
+                    // its own canvas half (left / right) so there is always a visible gap.
+                    // The generator already placed cluster 0 in [0.03,0.43] and cluster 1
+                    // in [0.57,0.97] in X, so we just scale those raw [0,1] coords to pixels.
+                    double halfDrawW = Width  / 2.0 - gPad;
+                    double drawH     = Height - 2 * gPad;
+
+                    foreach (var (compIdx, comp) in gComponents.Select((c, ci) => (ci, c)))
+                    {
+                        double cMinX = comp.Min(i => zones[i].GeneratorPosition!.Value.X);
+                        double cMaxX = comp.Max(i => zones[i].GeneratorPosition!.Value.X);
+                        double cMinY = comp.Min(i => zones[i].GeneratorPosition!.Value.Y);
+                        double cMaxY = comp.Max(i => zones[i].GeneratorPosition!.Value.Y);
+                        double cSpanX = Math.Max(cMaxX - cMinX, 0.001);
+                        double cSpanY = Math.Max(cMaxY - cMinY, 0.001);
+
+                        double scaleX = halfDrawW / cSpanX;
+                        double scaleY = drawH     / cSpanY;
+                        // Cap by the edge-length-based scale so small clusters with few zones
+                        // don't get stretched to fill the whole half-canvas.
+                        double localScale = Math.Min(Math.Min(scaleX, scaleY), gScale);
+
+                        // Centre each cluster in its half: cluster 0 → left, cluster 1 → right
+                        double halfCx = compIdx == 0
+                            ? gPad + halfDrawW / 2.0
+                            : Width - gPad - halfDrawW / 2.0;
+                        double halfCy = Height / 2.0;
+
+                        double rawCx = (cMinX + cMaxX) / 2.0;
+                        double rawCy = (cMinY + cMaxY) / 2.0;
+
+                        foreach (int i in comp)
+                        {
+                            var gp = zones[i].GeneratorPosition!.Value;
+                            gPx[i] = halfCx + (gp.X - rawCx) * localScale;
+                            gPy[i] = halfCy + (gp.Y - rawCy) * localScale;
+                        }
+                    }
+                }
+                else
+                {
+                    // Single cluster / regular random layout: centre on canvas.
+                    double gCx = zones.Average(z => z.GeneratorPosition!.Value.X);
+                    double gCy = zones.Average(z => z.GeneratorPosition!.Value.Y);
+
+                    for (int i = 0; i < n; i++)
+                    {
+                        var gp = zones[i].GeneratorPosition!.Value;
+                        gPx[i] = (gp.X - gCx) * gScale;
+                        gPy[i] = (gp.Y - gCy) * gScale;
+                    }
+
+                    // Clamp to canvas with padding (only shrink, never stretch)
+                    double rawMinX = gPx.Min(), rawMaxX = gPx.Max();
+                    double rawMinY = gPy.Min(), rawMaxY = gPy.Max();
+                    double drawW2 = Width  - 2 * gPad;
+                    double drawH2 = Height - 2 * gPad;
+                    double fitScale = 1.0;
+                    if (rawMaxX - rawMinX > drawW2 && rawMaxX - rawMinX > 0.001) fitScale = Math.Min(fitScale, drawW2 / (rawMaxX - rawMinX));
+                    if (rawMaxY - rawMinY > drawH2 && rawMaxY - rawMinY > 0.001) fitScale = Math.Min(fitScale, drawH2 / (rawMaxY - rawMinY));
+
+                    for (int i = 0; i < n; i++) { gPx[i] = canvasCx + gPx[i] * fitScale; gPy[i] = canvasCy + gPy[i] * fitScale; }
+                }
 
                 // ── Pass A+B: same correction passes as the FR path ───────────────
                 double gMinDist   = gZoneRadius * 3.8;

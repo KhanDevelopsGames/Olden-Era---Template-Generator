@@ -843,8 +843,28 @@ namespace Olden_Era___Template_Editor.Services
                     templatePos.Add((rng.NextDouble() * 0.9 + 0.05, rng.NextDouble() * 0.9 + 0.05));
                 var templateEdges = DelaunayEdges(templatePos);
 
+                // Normalise templatePos to [0,1] so we can map each cluster to its own
+                // canvas half for the preview.  Cluster 0 → left, cluster 1 → right,
+                // with a deliberate centre gap so the clusters never touch in the preview.
+                double tMinX = templatePos.Min(p2 => p2.X), tMaxX = templatePos.Max(p2 => p2.X);
+                double tMinY = templatePos.Min(p2 => p2.Y), tMaxY = templatePos.Max(p2 => p2.Y);
+                double tSpanX = Math.Max(tMaxX - tMinX, 0.001), tSpanY = Math.Max(tMaxY - tMinY, 0.001);
+
+                // Each cluster occupies roughly 43 % of the canvas width; the centre 14 % is gap.
+                var previewPositions = new List<(double X, double Y)>[2];
                 for (int p = 0; p < 2; p++)
-                    BuildTournamentRandomCluster(p, playerLetters[p], neutralsForPlayer[p], neutralByLetter, settings, tuning, zones, connections, templateEdges);
+                {
+                    double xMin = p == 0 ? 0.03 : 0.57;
+                    double xMax = p == 0 ? 0.43 : 0.97;
+                    previewPositions[p] = templatePos
+                        .Select(pt => (
+                            X: xMin + (pt.X - tMinX) / tSpanX * (xMax - xMin),
+                            Y: 0.05 + (pt.Y - tMinY) / tSpanY * 0.90))
+                        .ToList();
+                }
+
+                for (int p = 0; p < 2; p++)
+                    BuildTournamentRandomCluster(p, playerLetters[p], neutralsForPlayer[p], neutralByLetter, settings, tuning, zones, connections, templateEdges, previewPositions[p]);
             }
             else
             {
@@ -1020,7 +1040,8 @@ namespace Olden_Era___Template_Editor.Services
             GenerationTuning tuning,
             List<Zone> zones,
             List<Connection> connections,
-            List<(int A, int B)> templateEdges)
+            List<(int A, int B)> templateEdges,
+            List<(double X, double Y)> previewPositions)
         {
             var clusterLetters = new List<string> { playerLetter };
             clusterLetters.AddRange(myNeutrals.Select(n => n.Letter));
@@ -1061,13 +1082,18 @@ namespace Olden_Era___Template_Editor.Services
             {
                 string letter = clusterLetters[i];
                 var myConns = connsByIndex[i].ToArray();
+                Zone zone;
                 if (i == 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIndex + 1}", myConns,
+                    zone = BuildSpawnZone(letter, $"Player{playerIndex + 1}", myConns,
                         settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions,
-                        settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                        settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
                 else
-                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns,
-                        settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                    zone = BuildNeutralZone(neutralByLetter[letter], myConns,
+                        settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
+                // Stamp preview position so the renderer places each cluster in its own canvas half.
+                if (i < previewPositions.Count)
+                    zone.GeneratorPosition = previewPositions[i];
+                zones.Add(zone);
             }
         }
 
