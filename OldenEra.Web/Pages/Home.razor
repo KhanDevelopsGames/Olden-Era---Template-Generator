@@ -47,7 +47,6 @@
                             Section.Topology => "Topology",
                             Section.Zones => "Zones",
                             Section.WinConditions => "Win Conditions",
-                            Section.Advanced => "Advanced",
                             _ => s.ToString()
                         })"
                         ValidationMessage="@(IsValid ? null : ValidationMessage)" />
@@ -73,24 +72,9 @@
                                      AdvancedMode="AdvancedMode"
                                      AdvancedModeChanged="OnAdvancedModeChanged"
                                      OnChanged="OnChanged" />
-                    break;
-                case Section.Advanced:
-                    @if (AdvancedMode)
-                    {
-                        <AdvancedPanel Settings="Settings"
-                                       AdvancedMode="AdvancedMode"
-                                       OnChanged="OnChanged" />
-                    }
-                    else
-                    {
-                        <div class="oe-section">
-                            <div class="oe-section-header">Advanced</div>
-                            <p class="oe-hint">
-                                Enable Advanced Mode in the Zones tab to configure detailed
-                                per-tier zone counts, sizes, and guard randomization.
-                            </p>
-                        </div>
-                    }
+                    <AdvancedPanel Settings="Settings"
+                                   AdvancedMode="AdvancedMode"
+                                   OnChanged="OnChanged" />
                     break;
                 case Section.WinConditions:
                     <WinConditionsPanel Settings="Settings" OnChanged="OnChanged" />
@@ -172,7 +156,7 @@
     private const int LargeMapSizeThreshold = 240;
     private const int LargeMapZoneThreshold = 16;
 
-    private enum Section { Map, Heroes, Topology, Zones, WinConditions, Advanced }
+    private enum Section { Map, Heroes, Topology, Zones, WinConditions }
     private Section ActiveSection { get; set; } = Section.Map;
 
     private GeneratorSettings Settings { get; set; } = new();
