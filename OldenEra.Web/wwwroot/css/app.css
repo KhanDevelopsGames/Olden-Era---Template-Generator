@@ -1,12 +1,8 @@
 /* ============================================================
    Olden Era - Template Generator (Web)
-   Theme ported from MedievalTheme.xaml
-   - background: #1A1510 / #1C1610
-   - border / accent gold: rgb(180, 145, 60) ~ #B4913C
-   - text: warm off-white #E8DCC0
-   - dim text: #A89878
-   - error red: #C04030
-   - warn bg: #3A2A12 with border #B4913C
+   Modern dark theme — see :root tokens below.
+   Restyle in progress: tokens + typography landed; component
+   styles still being modernized (see docs/plans/).
    ============================================================ */
 
 :root {
@@ -204,8 +200,8 @@ input[type="number"]:focus,
 select:focus,
 textarea:focus {
     outline: none;
-    border-color: var(--oe-border);
-    box-shadow: 0 0 0 1px var(--oe-border);
+    border-color: var(--oe-border-strong);
+    box-shadow: 0 0 0 1px var(--oe-border-strong);
 }
 
 select option { background: var(--oe-surface-2); color: var(--oe-text); }
