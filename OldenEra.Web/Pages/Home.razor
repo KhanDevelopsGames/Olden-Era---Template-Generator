@@ -7,10 +7,13 @@
 <PageTitle>Olden Era - Template Generator</PageTitle>
 
 <div class="oe-app">
-    <div class="oe-title-bar">
-        <h1>Olden Era — Simple Template Generator</h1>
-        <span class="oe-version-badge">@VersionLabel</span>
-    </div>
+    <header class="oe-header">
+        <div class="oe-header-left">
+            <h1>Olden Era — Simple Template Generator</h1>
+            <span class="oe-version-badge">@VersionLabel</span>
+        </div>
+        <!-- A9 will move open/save buttons here. For now leave the toolbar in its old spot. -->
+    </header>
 
     <div class="oe-warning">
         ⚠️ Work in progress — some generated templates may contain game-breaking bugs or issues.
@@ -35,8 +38,12 @@
                    style="display:none" />
     </div>
 
-    <div class="oe-grid">
-        <div>
+    <div class="oe-shell">
+        <aside class="oe-nav">
+            <!-- A7 will populate -->
+        </aside>
+
+        <section class="oe-content">
             <div class="oe-columns">
                 <!-- TEMPLATE -->
                 <div class="oe-section">
@@ -94,9 +101,9 @@
                            OnChanged="OnChanged" />
 
             <WinConditionsPanel Settings="Settings" OnChanged="OnChanged" />
-        </div>
+        </section>
 
-        <div class="oe-preview-col">
+        <aside class="oe-preview-col">
             <button class="oe-btn primary"
                     disabled="@(!IsValid || IsGenerating)"
                     @onclick="OnGenerateClick">
@@ -119,7 +126,7 @@
                     @onclick="DownloadPng">
                 🖼 Download Preview PNG
             </button>
-        </div>
+        </aside>
     </div>
 
     <footer class="oe-footer">

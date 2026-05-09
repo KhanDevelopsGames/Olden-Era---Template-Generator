@@ -56,22 +56,31 @@ code { color: #d8a85b; background: var(--oe-surface-2); padding: 0 4px; border-r
 
 /* ── Layout helpers ─────────────────────────────────────── */
 .oe-app {
-    max-width: 1400px;
+    max-width: 1440px;
     margin: 0 auto;
-    padding: 1rem 1.25rem 2.5rem;
+    padding: 16px 20px 40px;
 }
 
-.oe-title-bar {
+.oe-header {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 16px;
     border-bottom: 1px solid var(--oe-border);
-    padding-bottom: 0.6rem;
-    margin-bottom: 0.9rem;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
 }
 
-.oe-title-bar h1 { margin: 0; }
+.oe-header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.oe-header h1 {
+    margin: 0;
+}
+
 .oe-version-badge {
     font-size: 0.85rem;
     color: var(--oe-text-dim);
@@ -99,15 +108,23 @@ code { color: #d8a85b; background: var(--oe-surface-2); padding: 0 4px; border-r
     margin: 8px 0;
 }
 
-.oe-grid {
+.oe-shell {
     display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: 1rem;
+    grid-template-columns: 220px 1fr 360px;
+    gap: 24px;
     align-items: start;
 }
 
-@media (max-width: 900px) {
-    .oe-grid { grid-template-columns: 1fr; }
+.oe-nav {
+    position: sticky;
+    top: 16px;
+    align-self: start;
+    /* Empty placeholder for now; A7 fills with section nav. */
+    min-height: 200px;
+}
+
+.oe-content {
+    min-width: 0; /* let grid item shrink so children can wrap */
 }
 
 .oe-columns {
@@ -471,7 +488,14 @@ input[type="range"]:focus-visible::-moz-range-thumb {
     font-size: 0.85rem;
 }
 
-.oe-preview-col { display: flex; flex-direction: column; gap: 0.6rem; position: sticky; top: 1rem; }
+.oe-preview-col {
+    position: sticky;
+    top: 16px;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
 /* ── Blazor error UI ─────────────────────────────────────── */
 .valid.modified:not([type=checkbox]) { outline: 1px solid #6cb867; }
