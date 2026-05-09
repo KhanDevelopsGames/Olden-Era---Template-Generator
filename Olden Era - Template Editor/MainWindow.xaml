@@ -110,7 +110,7 @@
                            FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0">
                     Prefer the browser?
                     <Hyperlink x:Name="LinkWebVersion"
-                               NavigateUri="https://khandevelopsgames.github.io/Olden-Era---Template-Generator/"
+                               NavigateUri="https://rannes.github.io/Olden-Era---Template-Generator/"
                                RequestNavigate="LinkWebVersion_RequestNavigate">Try the web version</Hyperlink>.
                 </TextBlock>
             </StackPanel>

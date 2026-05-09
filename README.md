@@ -96,7 +96,7 @@ Two ways to use the generator:
 
 ### Web version (any OS, no install)
 
-Open [the web version](https://khandevelopsgames.github.io/Olden-Era---Template-Generator/) in any modern browser. Generation runs entirely on your device — nothing is uploaded. Works on Windows, macOS, Linux, and mobile. After generating, the `.rmg.json` downloads to your usual downloads folder; drop it into the game's `map_templates` folder by hand.
+Open [the web version](https://rannes.github.io/Olden-Era---Template-Generator/) in any modern browser. Generation runs entirely on your device — nothing is uploaded. Works on Windows, macOS, Linux, and mobile. After generating, the `.rmg.json` downloads to your usual downloads folder; drop it into the game's `map_templates` folder by hand.
 
 ### Windows desktop app (Steam auto-detect, save direct to `map_templates`)
 
