@@ -1,4 +1,4 @@
-namespace Olden_Era___Template_Editor.Models
+namespace OldenEra.Generator.Models
 {
     public enum MapTopology
     {

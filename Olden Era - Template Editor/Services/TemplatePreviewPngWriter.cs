@@ -1,5 +1,5 @@
 using OldenEraTemplateEditor.Models;
-using Olden_Era___Template_Editor.Models;
+using OldenEra.Generator.Models;
 using System.Globalization;
 using System.IO;
 using System.Linq;

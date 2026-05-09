@@ -1,7 +1,6 @@
-using OldenEraTemplateEditor.Models;
 using System.Text.Json.Serialization;
 
-namespace Olden_Era___Template_Editor.Models
+namespace OldenEra.Generator.Models
 {
     /// <summary>
     /// Persisted settings file (.oetgs) — all user-configurable UI state.
