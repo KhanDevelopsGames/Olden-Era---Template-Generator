@@ -10,20 +10,21 @@
    ============================================================ */
 
 :root {
-    --oe-bg:        #1A1510;
-    --oe-bg-2:      #221A12;
-    --oe-bg-3:      #2A2118;
-    --oe-panel:     #1F1812;
-    --oe-border:    #B4913C;
-    --oe-border-dim:#5C4A20;
-    --oe-text:      #E8DCC0;
-    --oe-text-dim:  #A89878;
-    --oe-accent:    #D4B060;
-    --oe-error:     #E05A4A;
-    --oe-warn-bg:   #3A2A12;
-    --oe-warn-border:#B4913C;
-    --oe-warn-text: #E8DCC0;
-    --oe-input-bg:  #0F0D09;
+    --oe-bg:            #0B0D10;
+    --oe-surface-1:     #14171C;
+    --oe-surface-2:     #1B1F26;
+    --oe-surface-3:     #232831;
+    --oe-border:        #2A2F39;
+    --oe-border-strong: #3A4150;
+    --oe-text:          #E6E8EB;
+    --oe-text-dim:      #9098A3;
+    --oe-text-mute:     #5F6671;
+    --oe-accent:        #F59E0B;
+    --oe-accent-hi:     #FBBF24;
+    --oe-accent-dim:    #B45309;
+    --oe-success:       #10B981;
+    --oe-error:         #EF4444;
+    --oe-warn-bg:       #2A1F0A;
 }
 
 html, body {
@@ -31,9 +32,10 @@ html, body {
     padding: 0;
     background-color: var(--oe-bg);
     color: var(--oe-text);
-    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.45;
+    font-family: Inter, "Segoe UI Variable", system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    letter-spacing: 0;
     min-height: 100vh;
 }
 
@@ -43,18 +45,18 @@ a, .btn-link {
 a:hover { color: var(--oe-text); }
 
 h1, h2, h3, h4, h5 {
-    color: var(--oe-accent);
+    color: var(--oe-text);
     font-weight: 600;
-    letter-spacing: 0.02em;
+    letter-spacing: 0;
     margin: 0 0 0.5rem 0;
 }
-h1 { font-size: 1.6rem; }
-h2 { font-size: 1.25rem; }
-h3 { font-size: 1.05rem; }
+h1 { font-size: 20px; }
+h2 { font-size: 15px; }
+h3 { font-size: 13px; }
 
 h1:focus { outline: none; }
 
-code { color: #d8a85b; background: var(--oe-bg-2); padding: 0 4px; border-radius: 3px; }
+code { color: #d8a85b; background: var(--oe-surface-2); padding: 0 4px; border-radius: 3px; }
 
 /* ── Layout helpers ─────────────────────────────────────── */
 .oe-app {
@@ -81,10 +83,10 @@ code { color: #d8a85b; background: var(--oe-bg-2); padding: 0 4px; border-radius
 
 .oe-warning {
     background: var(--oe-warn-bg);
-    border: 1px solid var(--oe-warn-border);
+    border: 1px solid var(--oe-accent);
     border-radius: 3px;
     padding: 0.5rem 0.75rem;
-    color: var(--oe-warn-text);
+    color: var(--oe-text);
     font-size: 0.9rem;
     margin-bottom: 0.9rem;
 }
@@ -119,7 +121,7 @@ code { color: #d8a85b; background: var(--oe-bg-2); padding: 0 4px; border-radius
 
 /* ── Section panel ──────────────────────────────────────── */
 .oe-section {
-    background: var(--oe-panel);
+    background: var(--oe-surface-1);
     border: 1px solid var(--oe-border);
     border-radius: 4px;
     padding: 0.85rem 1rem 1rem;
@@ -132,7 +134,7 @@ code { color: #d8a85b; background: var(--oe-bg-2); padding: 0 4px; border-radius
     font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--oe-border-dim);
+    border-bottom: 1px solid var(--oe-border);
     padding-bottom: 0.35rem;
     margin-bottom: 0.7rem;
     display: flex;
@@ -185,9 +187,9 @@ input[type="text"],
 input[type="number"],
 select,
 textarea {
-    background-color: var(--oe-input-bg);
+    background-color: var(--oe-surface-2);
     color: var(--oe-text);
-    border: 1px solid var(--oe-border-dim);
+    border: 1px solid var(--oe-border);
     border-radius: 3px;
     padding: 4px 8px;
     font-family: inherit;
@@ -206,14 +208,14 @@ textarea:focus {
     box-shadow: 0 0 0 1px var(--oe-border);
 }
 
-select option { background: var(--oe-input-bg); color: var(--oe-text); }
+select option { background: var(--oe-surface-2); color: var(--oe-text); }
 
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
     width: 100%;
     height: 4px;
-    background: var(--oe-border-dim);
+    background: var(--oe-border);
     border-radius: 2px;
     outline: none;
 }
@@ -284,7 +286,7 @@ input[type="range"]::-moz-range-thumb {
 
 /* ── Preview pane ───────────────────────────────────────── */
 .oe-preview {
-    background: var(--oe-bg-2);
+    background: var(--oe-surface-1);
     border: 2px solid var(--oe-border);
     border-radius: 4px;
     padding: 0.4rem;
@@ -345,7 +347,7 @@ input[type="range"]::-moz-range-thumb {
 }
 .loading-progress circle {
     fill: none;
-    stroke: var(--oe-border-dim);
+    stroke: var(--oe-border);
     stroke-width: 0.6rem;
     transform-origin: 50% 50%;
     transform: rotate(-90deg);
@@ -369,7 +371,7 @@ input[type="range"]::-moz-range-thumb {
     margin: 8px 0 0 0;
     padding: 8px 12px;
     border: 1px solid var(--oe-border);
-    background: var(--oe-bg-3);
+    background: var(--oe-surface-3);
     color: var(--oe-text);
     border-radius: 4px;
     display: flex;
@@ -409,7 +411,7 @@ input[type="range"]::-moz-range-thumb {
     z-index: 1000;
 }
 .oe-modal {
-    background: var(--oe-panel);
+    background: var(--oe-surface-1);
     border: 1px solid var(--oe-border);
     border-radius: 4px;
     padding: 20px 24px;
@@ -440,7 +442,7 @@ input[type="range"]::-moz-range-thumb {
     width: 48px;
     height: 48px;
     margin: 8px auto 16px auto;
-    border: 4px solid var(--oe-border-dim);
+    border: 4px solid var(--oe-border);
     border-top-color: var(--oe-accent);
     border-radius: 50%;
     animation: oe-spin 1s linear infinite;
