@@ -40,33 +40,64 @@
 
     <div class="oe-shell">
         <aside class="oe-nav">
-            <!-- A7 will populate -->
+            <SectionNav TSection="Section"
+                        Active="ActiveSection"
+                        ActiveChanged="@(s => ActiveSection = s)"
+                        LabelFor="@(s => s switch {
+                            Section.Map => "Map",
+                            Section.Heroes => "Heroes",
+                            Section.Topology => "Topology",
+                            Section.Zones => "Zones",
+                            Section.WinConditions => "Win Conditions",
+                            Section.Advanced => "Advanced",
+                            _ => s.ToString()
+                        })"
+                        ValidationMessage="@(IsValid ? null : ValidationMessage)" />
         </aside>
 
         <section class="oe-content">
-            <div class="oe-columns">
-                <!-- TEMPLATE -->
-                <MapSettingsPanel Settings="Settings"
-                                  ExperimentalMapSizes="ExperimentalMapSizes"
-                                  ExperimentalMapSizesChanged="OnExperimentalToggled"
-                                  OnChanged="OnChanged" />
-
-                <!-- HEROES -->
-                <HeroSettingsPanel Settings="Settings" OnChanged="OnChanged" />
-            </div>
-
-            <TopologyPicker Settings="Settings" OnChanged="OnChanged" />
-
-            <ZoneConfigPanel Settings="Settings"
-                             AdvancedMode="AdvancedMode"
-                             AdvancedModeChanged="OnAdvancedModeChanged"
-                             OnChanged="OnChanged" />
-
-            <AdvancedPanel Settings="Settings"
-                           AdvancedMode="AdvancedMode"
-                           OnChanged="OnChanged" />
-
-            <WinConditionsPanel Settings="Settings" OnChanged="OnChanged" />
+            @switch (ActiveSection)
+            {
+                case Section.Map:
+                    <MapSettingsPanel Settings="Settings"
+                                      ExperimentalMapSizes="ExperimentalMapSizes"
+                                      ExperimentalMapSizesChanged="OnExperimentalToggled"
+                                      OnChanged="OnChanged" />
+                    break;
+                case Section.Heroes:
+                    <HeroSettingsPanel Settings="Settings" OnChanged="OnChanged" />
+                    break;
+                case Section.Topology:
+                    <TopologyPicker Settings="Settings" OnChanged="OnChanged" />
+                    break;
+                case Section.Zones:
+                    <ZoneConfigPanel Settings="Settings"
+                                     AdvancedMode="AdvancedMode"
+                                     AdvancedModeChanged="OnAdvancedModeChanged"
+                                     OnChanged="OnChanged" />
+                    break;
+                case Section.Advanced:
+                    @if (AdvancedMode)
+                    {
+                        <AdvancedPanel Settings="Settings"
+                                       AdvancedMode="AdvancedMode"
+                                       OnChanged="OnChanged" />
+                    }
+                    else
+                    {
+                        <div class="oe-section">
+                            <div class="oe-section-header">Advanced</div>
+                            <p class="oe-hint">
+                                Enable Advanced Mode in the Zones tab to configure detailed
+                                per-tier zone counts, sizes, and guard randomization.
+                            </p>
+                        </div>
+                    }
+                    break;
+                case Section.WinConditions:
+                    <WinConditionsPanel Settings="Settings" OnChanged="OnChanged" />
+                    break;
+            }
         </section>
 
         <aside class="oe-preview-col">
@@ -142,6 +173,9 @@
 
     private const int LargeMapSizeThreshold = 240;
     private const int LargeMapZoneThreshold = 16;
+
+    private enum Section { Map, Heroes, Topology, Zones, WinConditions, Advanced }
+    private Section ActiveSection { get; set; } = Section.Map;
 
     private GeneratorSettings Settings { get; set; } = new();
     private bool AdvancedMode { get; set; }

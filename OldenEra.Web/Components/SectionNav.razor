@@ -1,0 +1,37 @@
+@typeparam TSection where TSection : struct, Enum
+
+<nav class="oe-nav-list">
+    @foreach (var section in Enum.GetValues<TSection>())
+    {
+        var label = SectionLabel(section);
+        var active = EqualityComparer<TSection>.Default.Equals(section, Active);
+        <button type="button"
+                class="oe-nav-item @(active ? "active" : "")"
+                @onclick="() => OnSelect(section)">
+            @label
+        </button>
+    }
+</nav>
+@if (!string.IsNullOrEmpty(ValidationMessage))
+{
+    <div class="oe-nav-footer">
+        <span class="oe-nav-issue-dot" aria-hidden="true"></span>
+        @ValidationMessage
+    </div>
+}
+
+@code {
+    [Parameter] public TSection Active { get; set; } = default!;
+    [Parameter] public EventCallback<TSection> ActiveChanged { get; set; }
+    [Parameter] public Func<TSection, string>? LabelFor { get; set; }
+    [Parameter] public string? ValidationMessage { get; set; }
+
+    private string SectionLabel(TSection s) => LabelFor?.Invoke(s) ?? s.ToString();
+
+    private async Task OnSelect(TSection s)
+    {
+        if (EqualityComparer<TSection>.Default.Equals(s, Active)) return;
+        Active = s;
+        await ActiveChanged.InvokeAsync(s);
+    }
+}
