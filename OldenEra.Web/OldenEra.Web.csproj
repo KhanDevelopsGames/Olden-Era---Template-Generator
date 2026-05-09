@@ -23,10 +23,11 @@
     <PackageReference Include="SkiaSharp.NativeAssets.WebAssembly" Version="3.119.0" />
   </ItemGroup>
 
-  <!-- Only request native WASM linking on publish so regular `dotnet build`
-       works without the wasm-tools workload installed. The deploy workflow
-       installs the workload before `dotnet publish`. -->
-  <PropertyGroup Condition="'$(IsPublishing)' == 'true'">
+  <!-- Statically link the SkiaSharp native binary into the dotnet WASM
+       runtime. Required for SkiaSharp to work in the browser. Needs the
+       `wasm-tools` workload installed (`dotnet workload install wasm-tools`).
+       The deploy workflow installs it on every CI run. -->
+  <PropertyGroup>
     <WasmBuildNative>true</WasmBuildNative>
   </PropertyGroup>
 
