@@ -1,4 +1,4 @@
-using OldenEraTemplateEditor.Models;
+using OldenEra.Generator.Models.Unfrozen;
 using OldenEra.Generator.Models;
 using System.Globalization;
 using System.IO;

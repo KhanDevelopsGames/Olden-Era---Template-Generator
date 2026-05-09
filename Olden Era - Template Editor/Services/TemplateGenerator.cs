@@ -1,5 +1,5 @@
 using OldenEra.Generator.Models;
-using OldenEraTemplateEditor.Models;
+using OldenEra.Generator.Models.Unfrozen;
 using System.Collections.Generic;
 using System.Linq;
 

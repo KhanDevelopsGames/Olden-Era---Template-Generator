@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using OldenEra.Generator.Models;
 using Olden_Era___Template_Editor.Services;
-using OldenEraTemplateEditor.Models;
+using OldenEra.Generator.Models.Unfrozen;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;

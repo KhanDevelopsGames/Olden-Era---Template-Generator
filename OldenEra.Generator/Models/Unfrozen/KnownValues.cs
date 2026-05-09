@@ -1,4 +1,4 @@
-namespace OldenEraTemplateEditor.Models
+namespace OldenEra.Generator.Models.Unfrozen
 {
     /// <summary>
     /// Known string constants collected from all example templates.

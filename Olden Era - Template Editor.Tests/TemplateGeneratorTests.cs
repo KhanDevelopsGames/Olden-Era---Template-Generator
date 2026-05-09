@@ -1,6 +1,6 @@
 using OldenEra.Generator.Models;
 using Olden_Era___Template_Editor.Services;
-using OldenEraTemplateEditor.Models;
+using OldenEra.Generator.Models.Unfrozen;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Windows;

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace OldenEraTemplateEditor.Models
+namespace OldenEra.Generator.Models.Unfrozen
 {
     public class RmgTemplate
     {
