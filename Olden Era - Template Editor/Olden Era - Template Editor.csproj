@@ -27,4 +27,8 @@
     <Resource Include="favicon.ico" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\OldenEra.Generator\OldenEra.Generator.csproj" />
+  </ItemGroup>
+
 </Project>
