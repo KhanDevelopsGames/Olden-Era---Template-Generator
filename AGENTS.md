@@ -4,7 +4,17 @@ Guidance for agents working on this repository.
 
 ## Project Overview
 
-This is a C# WPF desktop app for generating `.rmg.json` random map template files for Heroes of Might and Magic: Olden Era.
+This solution generates `.rmg.json` random map template files for Heroes of Might and Magic: Olden Era. It ships in two forms backed by a shared library:
+
+```text
+OldenEra.Generator/                     net10.0 class library
+  Models/, Services/                    generator + SkiaSharp PNG renderer
+OldenEra.Web/                           net10.0 Blazor WebAssembly host
+  Pages/, Components/, Services/        deployed to GitHub Pages
+Olden Era - Template Editor/            net10.0-windows WPF host
+  MainWindow.xaml(.cs), Themes/         Steam auto-detect, .oetgs file dialogs
+Olden Era - Template Editor.Tests/      net10.0-windows xUnit tests
+```
 
 The main solution is:
 
@@ -12,27 +22,24 @@ The main solution is:
 dotnet build "Olden Era - Template Editor.slnx"
 ```
 
-The app project is:
-
-```text
-Olden Era - Template Editor/Olden Era - Template Editor.csproj
-```
-
-The unit test project is:
-
-```text
-Olden Era - Template Editor.Tests/Olden Era - Template Editor.Tests.csproj
-```
-
-The test project uses xUnit and targets the generator/model layer without requiring WPF UI automation.
+The test project uses xUnit and targets the generator/model layer plus the SkiaSharp renderer. It currently targets `net10.0-windows` because some pixel-sampling tests use `System.Windows.Media.Imaging.PngBitmapDecoder`.
 
 Example templates are stored in:
 
 ```text
-Olden Era - Template Editor/ExampleTemplates
+Olden Era - Template Editor/GameData/ExampleTemplates
 ```
 
 Use those examples as the primary local reference for the `.rmg.json` shape and expected naming style.
+
+### Where each kind of code lives
+
+- **Generator logic, DTOs, preview rendering** → `OldenEra.Generator/`. Pure C#, no UI dependencies. Both hosts call into this.
+- **Steam install detection, file-save dialogs, .oetgs file I/O, custom title bar** → `Olden Era - Template Editor/`. Anything that requires WPF, the Windows registry, or local file system access stays here.
+- **Browser settings persistence (localStorage), file download via JS interop, update banner** → `OldenEra.Web/`. Anything sandbox-bound to the browser stays here.
+- **Generation tests, JSON-shape tests, renderer structural tests** → `Olden Era - Template Editor.Tests/`.
+
+When porting a new feature: implement the core in the library, expose it through public API, then wire up each host.
 
 ## Discovering Olden Era `.rmg.json` Files
 
@@ -132,3 +139,42 @@ At minimum, verify that the configured options can create a `.rmg.json` file. Ge
 - When saving generated files during testing, use a temporary location unless the user explicitly wants files written into their game install.
 - Be careful with paths containing spaces, especially the solution name, project directory, Steam install path, and template filenames.
 - Assume other individuals or agents may be working elsewhere in the repository at the same time. Ignore and preserve changes you did not specifically make; do not revert, overwrite, or include them in your work unless the user explicitly asks.
+
+## Cross-platform development
+
+The repo's `Directory.Build.props` sets `<EnableWindowsTargeting>true</EnableWindowsTargeting>` so the WPF and test projects compile on macOS and Linux. This is a compile-only fix, not a runtime one:
+
+- ✅ `dotnet build "Olden Era - Template Editor.slnx"` works on macOS/Linux/Windows.
+- ✅ `dotnet run --project OldenEra.Web` works on macOS/Linux/Windows. Serves at `http://localhost:5230/`.
+- ❌ `dotnet run --project "Olden Era - Template Editor"` works only on Windows (`Microsoft.WindowsDesktop.App` runtime is Windows-only).
+- ❌ `dotnet test` works only on Windows for the same reason — the testhost requires `Microsoft.WindowsDesktop.App`. CI runs tests on `windows-latest` via `.github/workflows/tests.yml`.
+
+When working on macOS or Linux: treat `dotnet build` as the local validation gate. Trust CI for actual test execution. Don't try to drop the test project's `-windows` target without first removing every `System.Windows.*` reference in the test code — pixel-sampling tests in `TemplatePreviewRenderer_EncodesNeutralQualityAndCastleCounts` (and similar) use `PngBitmapDecoder`.
+
+## Blazor WebAssembly: required wasm-tools workload
+
+`OldenEra.Web` uses SkiaSharp via `SkiaSharp.NativeAssets.WebAssembly`. The csproj sets `<WasmBuildNative>true</WasmBuildNative>`, which **requires** the `wasm-tools` SDK workload:
+
+```bash
+dotnet workload install wasm-tools
+```
+
+This is a one-time install (~500 MB toolchain). Without it, `dotnet build OldenEra.Web` fails with `NETSDK1147`. The CI workflow runs this install before each publish.
+
+If you ever see `System.DllNotFoundException: libSkiaSharp` at runtime in the browser, the cause is one of:
+
+1. `<WasmBuildNative>true</WasmBuildNative>` is missing or conditional.
+2. The `wasm-tools` workload wasn't installed when the build ran.
+3. The deploy didn't actually upload the new `dotnet.native.*.wasm` (which should be ~8 MB Release / ~23 MB Debug — the size jump confirms native linking succeeded).
+
+A managed-only build will still produce a deployable site, but every Skia API call throws on first use. Always exercise the actual native call path before declaring web changes done.
+
+## Debugging Blazor errors
+
+The web app's "An unhandled error has occurred. Reload" banner is a generic placeholder. The actual exception is logged to the **browser DevTools console**, not the `dotnet run` terminal. When users report errors:
+
+1. Have them open DevTools (Cmd/Ctrl + Shift + I) → Console tab.
+2. Reproduce the error.
+3. Copy the red `crit:` line and the inner exception(s) underneath.
+
+Server-side `dotnet run` logs only show server-side errors. WASM exceptions never appear there.
