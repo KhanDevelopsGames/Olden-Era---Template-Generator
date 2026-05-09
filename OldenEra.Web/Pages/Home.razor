@@ -12,7 +12,13 @@
             <h1>Olden Era — Simple Template Generator</h1>
             <span class="oe-version-badge">@VersionLabel</span>
         </div>
-        <!-- A9 will move open/save buttons here. For now leave the toolbar in its old spot. -->
+        <div class="oe-header-actions">
+            <button class="oe-btn ghost" @onclick="OpenSettingsClick">Open settings…</button>
+            <button class="oe-btn ghost" @onclick="SaveSettingsClick">Save settings…</button>
+            <InputFile id="oeOpenSettingsFile" OnChange="OnSettingsFileSelected"
+                       accept=".oetgs,application/json"
+                       style="display:none" />
+        </div>
     </header>
 
     <div class="oe-warning">
@@ -29,14 +35,6 @@
             <button class="oe-link-btn" @onclick="DismissUpdateBanner" aria-label="Dismiss">✕</button>
         </div>
     }
-
-    <div class="oe-toolbar">
-        <button class="oe-btn" @onclick="OpenSettingsClick">📂 Open settings…</button>
-        <button class="oe-btn" @onclick="SaveSettingsClick">💾 Save settings…</button>
-        <InputFile id="oeOpenSettingsFile" OnChange="OnSettingsFileSelected"
-                   accept=".oetgs,application/json"
-                   style="display:none" />
-    </div>
 
     <div class="oe-shell">
         <aside class="oe-nav">

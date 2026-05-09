@@ -77,6 +77,12 @@ code { color: #d8a85b; background: var(--oe-surface-2); padding: 0 4px; border-r
     gap: 12px;
 }
 
+.oe-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
 .oe-header h1 {
     margin: 0;
 }
@@ -644,13 +650,6 @@ input[type="range"]:focus-visible::-moz-range-thumb {
 .oe-link-btn:hover {
     color: var(--oe-text);
     background: var(--oe-surface-3);
-}
-
-/* -- Toolbar -------------------------------------------------------- */
-.oe-toolbar {
-    display: flex;
-    gap: 8px;
-    margin: 10px 0 4px 0;
 }
 
 /* -- Modal ---------------------------------------------------------- */
