@@ -768,17 +768,15 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
-    public void TemplatePreviewPngWriter_UsesOfficialSidecarNaming()
+    public void WpfPreviewAdapter_UsesOfficialSidecarNaming()
     {
-        Assert.Equal(@"C:\maps\My Template.png", TemplatePreviewPngWriter.GetSidecarPath(@"C:\maps\My Template.rmg.json"));
-        Assert.Equal(@"C:\maps\Other.png", TemplatePreviewPngWriter.GetSidecarPath(@"C:\maps\Other.json"));
+        Assert.Equal(@"C:\maps\My Template.png", WpfPreviewAdapter.GetSidecarPath(@"C:\maps\My Template.rmg.json"));
+        Assert.Equal(@"C:\maps\Other.png", WpfPreviewAdapter.GetSidecarPath(@"C:\maps\Other.json"));
     }
 
     [Fact]
-    public void TemplatePreviewPngWriter_Save_EncodesNeutralQualityAndCastleCounts()
+    public void TemplatePreviewRenderer_EncodesNeutralQualityAndCastleCounts()
     {
-        string directory = Path.Combine(Path.GetTempPath(), $"olden-preview-test-{Guid.NewGuid():N}");
-        string previewPath = Path.Combine(directory, "Preview.png");
         var template = new RmgTemplate
         {
             Name = "Preview Test",
@@ -797,20 +795,17 @@ public class TemplateGeneratorTests
             ]
         };
 
-        try
         {
-            Directory.CreateDirectory(directory);
-            RunOnStaThread(() => TemplatePreviewPngWriter.Save(template, previewPath));
-            BitmapSource bitmap = LoadBitmap(previewPath);
+            byte[] pngBytes = TemplatePreviewRenderer.RenderPng(template);
+            BitmapSource bitmap = null!;
+            RunOnStaThread(() => bitmap = LoadBitmapFromBytes(pngBytes));
 
             // Use ComputeLayout to find the actual rendered positions (layout is graph-driven, not hardcoded)
-            Dictionary<string, Point> layout = null!;
-            double zoneRadius = 0;
-            RunOnStaThread(() =>
-            {
-                layout = TemplatePreviewPngWriter.ComputeLayout(template);
-                zoneRadius = TemplatePreviewPngWriter.GetLastZoneRadius();
-            });
+            var rawLayout = TemplatePreviewRenderer.ComputeLayout(template);
+            double zoneRadius = TemplatePreviewRenderer.GetLastZoneRadius();
+            Dictionary<string, Point> layout = rawLayout.ToDictionary(
+                kv => kv.Key,
+                kv => new Point(kv.Value.X, kv.Value.Y));
 
             Point pA = layout["Neutral-A"]; // Bronze (sides)
             Point pB = layout["Neutral-B"]; // Silver (treasure) — 3 castles
@@ -837,11 +832,6 @@ public class TemplateGeneratorTests
             int lowLabelPixels    = CountBrightPixels(bitmap, bgRect);
             int castleLabelPixels = CountBrightPixels(bitmap, labelRect);
             Assert.True(castleLabelPixels > lowLabelPixels + 10);
-        }
-        finally
-        {
-            if (Directory.Exists(directory))
-                Directory.Delete(directory, recursive: true);
         }
     }
 
@@ -940,6 +930,18 @@ public class TemplateGeneratorTests
     private static BitmapSource LoadBitmap(string path)
     {
         using var stream = File.OpenRead(path);
+        BitmapSource source = BitmapDecoder
+            .Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad)
+            .Frames[0];
+
+        var converted = new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
+        converted.Freeze();
+        return converted;
+    }
+
+    private static BitmapSource LoadBitmapFromBytes(byte[] pngBytes)
+    {
+        using var stream = new MemoryStream(pngBytes);
         BitmapSource source = BitmapDecoder
             .Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad)
             .Frames[0];

@@ -891,7 +891,8 @@ namespace Olden_Era___Template_Editor
             _generatedTemplate = TemplateGenerator.Generate(settings);
             _generatedTopology = settings.Topology;
             _templateOutdated = false;
-            ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
+            byte[] previewPng = TemplatePreviewRenderer.RenderPng(_generatedTemplate, _generatedTopology);
+            ImgPreview.Source = WpfPreviewAdapter.ToBitmapImage(previewPng);
             BtnSaveGenerated.Visibility = Visibility.Visible;
             UpdateOutdatedWarning();
             Validate(); // refresh warnings now that template is up to date
@@ -945,13 +946,19 @@ namespace Olden_Era___Template_Editor
             string json = JsonSerializer.Serialize(_generatedTemplate, JsonOptions);
             File.WriteAllText(dlg.FileName, json);
 
-            string previewPath = TemplatePreviewPngWriter.GetSidecarPath(dlg.FileName);
+            string previewPath = WpfPreviewAdapter.GetSidecarPath(dlg.FileName);
             string? previewError = null;
             if (ChkSavePreviewImage.IsChecked == true)
             {
                 try
                 {
-                    TemplatePreviewPngWriter.Save(_generatedTemplate, previewPath, _generatedTopology);
+                    byte[] sidecarPng = TemplatePreviewRenderer.RenderPng(_generatedTemplate, _generatedTopology);
+                    string? sidecarDir = Path.GetDirectoryName(previewPath);
+                    if (!string.IsNullOrEmpty(sidecarDir))
+                        Directory.CreateDirectory(sidecarDir);
+                    string tempPath = $"{previewPath}.{Guid.NewGuid():N}.tmp";
+                    File.WriteAllBytes(tempPath, sidecarPng);
+                    File.Move(tempPath, previewPath, overwrite: true);
                 }
                 catch (Exception ex)
                 {
