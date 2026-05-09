@@ -1,0 +1,48 @@
+@* Reusable slider row: label / range input / value text.
+   For int sliders set IsInt=true. *@
+
+<div class="oe-row @(WideLabel ? "wide-label" : null)">
+    <label class="oe-label">@Label</label>
+    <input type="range"
+           min="@Min.ToString(CultureInfo.InvariantCulture)"
+           max="@Max.ToString(CultureInfo.InvariantCulture)"
+           step="@Step.ToString(CultureInfo.InvariantCulture)"
+           value="@Value.ToString(CultureInfo.InvariantCulture)"
+           @oninput="OnInput" />
+    <span class="oe-value">@Display</span>
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public double Value { get; set; }
+    [Parameter] public EventCallback<double> ValueChanged { get; set; }
+    [Parameter] public double Min { get; set; } = 0;
+    [Parameter] public double Max { get; set; } = 100;
+    [Parameter] public double Step { get; set; } = 1;
+    [Parameter] public bool IsInt { get; set; } = true;
+    [Parameter] public string Suffix { get; set; } = "";
+    [Parameter] public string DisplayFormat { get; set; } = "";
+    [Parameter] public bool WideLabel { get; set; } = false;
+
+    private string Display
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(DisplayFormat))
+                return Value.ToString(DisplayFormat, CultureInfo.InvariantCulture) + Suffix;
+            if (IsInt)
+                return ((int)Value).ToString(CultureInfo.InvariantCulture) + Suffix;
+            return Value.ToString("F2", CultureInfo.InvariantCulture) + Suffix;
+        }
+    }
+
+    private async Task OnInput(ChangeEventArgs e)
+    {
+        if (e.Value is null) return;
+        if (double.TryParse(e.Value.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out double v))
+        {
+            Value = v;
+            await ValueChanged.InvokeAsync(v);
+        }
+    }
+}

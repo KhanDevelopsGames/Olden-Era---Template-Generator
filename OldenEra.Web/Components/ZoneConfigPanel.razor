@@ -1,0 +1,157 @@
+@* Zone configuration: simple-mode neutral count, castles, densities, strengths,
+   plus connection toggles. Advanced sub-panel is rendered separately. *@
+
+<div class="oe-section">
+    <div class="oe-section-header">
+        <span>◆ Zone Configuration</span>
+        <label class="oe-check inline" style="margin:0;">
+            <input type="checkbox" checked="@AdvancedMode" @onchange="OnAdvancedToggled" />
+            <span class="oe-inline-toggle">Advanced settings</span>
+        </label>
+    </div>
+
+    @if (!AdvancedMode)
+    {
+        <SliderRow Label="Additional Neutral Zones" WideLabel="true"
+                   Min="0" Max="30" Step="1"
+                   Value="Settings.ZoneCfg.NeutralZoneCount"
+                   ValueChanged="@(v => { Settings.ZoneCfg.NeutralZoneCount = (int)v; NotifyChanged(); })" />
+    }
+
+    <SliderRow Label="Castles / Player Zone" WideLabel="true"
+               Min="1" Max="4" Step="1"
+               Value="Settings.ZoneCfg.PlayerZoneCastles"
+               ValueChanged="@(v => { Settings.ZoneCfg.PlayerZoneCastles = (int)v; NotifyChanged(); })" />
+
+    <SliderRow Label="Castles / Neutral Zone" WideLabel="true"
+               Min="0" Max="4" Step="1"
+               Value="Settings.ZoneCfg.NeutralZoneCastles"
+               ValueChanged="@(v => { Settings.ZoneCfg.NeutralZoneCastles = (int)v; NotifyChanged(); })" />
+
+    <SliderRow Label="Resource spawn rate" WideLabel="true"
+               Min="20" Max="400" Step="10" Suffix="%"
+               Value="Settings.ZoneCfg.ResourceDensityPercent"
+               ValueChanged="@(v => { Settings.ZoneCfg.ResourceDensityPercent = (int)v; NotifyChanged(); })" />
+
+    <SliderRow Label="Structure spawn rate" WideLabel="true"
+               Min="20" Max="200" Step="10" Suffix="%"
+               Value="Settings.ZoneCfg.StructureDensityPercent"
+               ValueChanged="@(v => { Settings.ZoneCfg.StructureDensityPercent = (int)v; NotifyChanged(); })" />
+
+    <SliderRow Label="Zone neutral strength" WideLabel="true"
+               Min="25" Max="300" Step="5" Suffix="%"
+               Value="Settings.ZoneCfg.NeutralStackStrengthPercent"
+               ValueChanged="@(v => { Settings.ZoneCfg.NeutralStackStrengthPercent = (int)v; NotifyChanged(); })" />
+
+    <SliderRow Label="Border/portal strength" WideLabel="true"
+               Min="25" Max="300" Step="5" Suffix="%"
+               Value="Settings.ZoneCfg.BorderGuardStrengthPercent"
+               ValueChanged="@(v => { Settings.ZoneCfg.BorderGuardStrengthPercent = (int)v; NotifyChanged(); })" />
+
+    @if (Settings.ZoneCfg.PlayerZoneCastles > 1)
+    {
+        <label class="oe-check">
+            <input type="checkbox" checked="@Settings.MatchPlayerCastleFactions"
+                   @onchange="@(e => { Settings.MatchPlayerCastleFactions = (bool)e.Value!; NotifyChanged(); })" />
+            <span>Use one faction for all castles in each player zone</span>
+        </label>
+    }
+
+    <label class="oe-check">
+        <input type="checkbox" checked="@Settings.GenerateRoads"
+               @onchange="@(e => { Settings.GenerateRoads = (bool)e.Value!; NotifyChanged(); })" />
+        <span>Generate roads</span>
+    </label>
+    @if (Settings.GenerateRoads && Settings.ZoneCfg.NeutralZoneCastles == 0)
+    {
+        <div class="oe-hint" style="margin-left:1.5rem;">
+            Note: Roads are only generated within zones that have at least one castle.
+            Neutral zones with 0 castles will not have roads, even if this option is enabled.
+        </div>
+    }
+
+    <label class="oe-check">
+        <input type="checkbox" checked="@Settings.SpawnRemoteFootholds"
+               @onchange="@(e => { Settings.SpawnRemoteFootholds = (bool)e.Value!; NotifyChanged(); })" />
+        <span>Spawn remote footholds</span>
+    </label>
+
+    <label class="oe-check">
+        <input type="checkbox" checked="@Settings.RandomPortals"
+               @onchange="@(e => { Settings.RandomPortals = (bool)e.Value!; NotifyChanged(); })" />
+        <span>Always spawn portals</span>
+    </label>
+    @if (Settings.RandomPortals)
+    {
+        <div style="margin-left: 1.5rem;">
+            <SliderRow Label="Max portal connections" WideLabel="true"
+                       Min="1" Max="32" Step="1"
+                       Value="Settings.MaxPortalConnections"
+                       ValueChanged="@(v => { Settings.MaxPortalConnections = (int)v; NotifyChanged(); })" />
+        </div>
+    }
+
+    <label class="oe-check">
+        <input type="checkbox" checked="@Settings.ExperimentalBalancedZonePlacement"
+               @onchange="@(e => { Settings.ExperimentalBalancedZonePlacement = (bool)e.Value!; NotifyChanged(); })" />
+        <span>Balance zone placement [RECOMMENDED]</span>
+    </label>
+    @if (Settings.ExperimentalBalancedZonePlacement)
+    {
+        <div class="oe-hint" style="margin-left:1.5rem;">
+            Spreads players and neutral zone tiers more evenly across structured layouts.
+            Random layout uses balanced seed positions before building borders.
+        </div>
+    }
+
+    @if (Settings.Topology == MapTopology.Random)
+    {
+        <label class="oe-check">
+            <input type="checkbox" checked="@Settings.NoDirectPlayerConnections"
+                   @onchange="@(e => { Settings.NoDirectPlayerConnections = (bool)e.Value!; NotifyChanged(); })" />
+            <span>Connect via neutral zones only, if possible</span>
+        </label>
+        @if (Settings.NoDirectPlayerConnections)
+        {
+            <div class="oe-hint" style="margin-left:1.5rem;">
+                The game tries to connect player zones to neutral zones only.
+                If no neutral zone borders a player zone, it will fall back to connecting directly.
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
+    [Parameter] public bool AdvancedMode { get; set; }
+    [Parameter] public EventCallback<bool> AdvancedModeChanged { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private async Task OnAdvancedToggled(ChangeEventArgs e)
+    {
+        bool advanced = (bool)e.Value!;
+        AdvancedMode = advanced;
+        Settings.ZoneCfg.Advanced.Enabled = advanced;
+        // Seed advanced sliders from simple value when enabling.
+        if (advanced)
+        {
+            int total = Settings.ZoneCfg.Advanced.NeutralLowNoCastleCount
+                      + Settings.ZoneCfg.Advanced.NeutralLowCastleCount
+                      + Settings.ZoneCfg.Advanced.NeutralMediumNoCastleCount
+                      + Settings.ZoneCfg.Advanced.NeutralMediumCastleCount
+                      + Settings.ZoneCfg.Advanced.NeutralHighNoCastleCount
+                      + Settings.ZoneCfg.Advanced.NeutralHighCastleCount;
+            if (total == 0 && Settings.ZoneCfg.NeutralZoneCount > 0)
+            {
+                if (Settings.ZoneCfg.NeutralZoneCastles > 0)
+                    Settings.ZoneCfg.Advanced.NeutralMediumCastleCount = Settings.ZoneCfg.NeutralZoneCount;
+                else
+                    Settings.ZoneCfg.Advanced.NeutralMediumNoCastleCount = Settings.ZoneCfg.NeutralZoneCount;
+            }
+        }
+        await AdvancedModeChanged.InvokeAsync(advanced);
+        await NotifyChanged();
+    }
+
+    private Task NotifyChanged() => OnChanged.InvokeAsync();
+}

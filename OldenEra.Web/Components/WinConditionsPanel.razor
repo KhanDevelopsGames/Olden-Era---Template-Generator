@@ -1,0 +1,165 @@
+@* Game rules: faction-laws / astrology XP, victory condition selector,
+   conditional sub-panels for lost-start-city, city hold, gladiator arena, tournament. *@
+
+<div class="oe-section">
+    <div class="oe-section-header">◆ Game Rules</div>
+
+    <SliderRow Label="Faction laws XP" WideLabel="true"
+               Min="25" Max="200" Step="25" Suffix="%"
+               Value="Settings.FactionLawsExpPercent"
+               ValueChanged="@(v => { Settings.FactionLawsExpPercent = (int)v; NotifyChanged(); })" />
+    <SliderRow Label="Astrology XP" WideLabel="true"
+               Min="25" Max="200" Step="25" Suffix="%"
+               Value="Settings.AstrologyExpPercent"
+               ValueChanged="@(v => { Settings.AstrologyExpPercent = (int)v; NotifyChanged(); })" />
+
+    <div class="oe-row wide-label">
+        <label class="oe-label">Primary win condition</label>
+        <select @bind="VictoryCondition" @bind:after="OnVictoryChanged">
+            @for (int i = 0; i < KnownValues.VictoryConditionIds.Length; i++)
+            {
+                var id = KnownValues.VictoryConditionIds[i];
+                var label = KnownValues.VictoryConditionLabels[i];
+                <option value="@id">@label</option>
+            }
+        </select>
+        <span></span>
+    </div>
+
+    @{
+        bool isTournament = Settings.GameEndConditions.VictoryCondition == "win_condition_6";
+        bool isLostCityWin = Settings.GameEndConditions.VictoryCondition == "win_condition_3";
+        bool isCityHoldWin = Settings.GameEndConditions.VictoryCondition == "win_condition_5";
+    }
+
+    <label class="oe-check">
+        <input type="checkbox"
+               checked="@Settings.GameEndConditions.LostStartCity"
+               disabled="@(isTournament || isLostCityWin)"
+               @onchange="@(e => { Settings.GameEndConditions.LostStartCity = (bool)e.Value!; NotifyChanged(); })" />
+        <span>Lose when starting city is lost</span>
+    </label>
+    @if (Settings.GameEndConditions.LostStartCity)
+    {
+        <div style="margin-left:1.5rem;">
+            <SliderRow Label="Lost city day" WideLabel="true"
+                       Min="1" Max="30" Step="1"
+                       Value="Settings.GameEndConditions.LostStartCityDay"
+                       ValueChanged="@(v => { Settings.GameEndConditions.LostStartCityDay = (int)v; NotifyChanged(); })" />
+        </div>
+    }
+
+    <label class="oe-check">
+        <input type="checkbox"
+               checked="@Settings.GameEndConditions.LostStartHero"
+               disabled="@isTournament"
+               @onchange="@(e => { Settings.GameEndConditions.LostStartHero = (bool)e.Value!; NotifyChanged(); })" />
+        <span>Lose when starting hero is lost</span>
+    </label>
+
+    <label class="oe-check">
+        <input type="checkbox"
+               checked="@Settings.GameEndConditions.CityHold"
+               disabled="@(isTournament || isCityHoldWin)"
+               @onchange="@(e => { Settings.GameEndConditions.CityHold = (bool)e.Value!; NotifyChanged(); })" />
+        <span>Win by holding a neutral city</span>
+    </label>
+    @if (Settings.GameEndConditions.CityHold)
+    {
+        <div style="margin-left:1.5rem;">
+            <SliderRow Label="Hold days" WideLabel="true"
+                       Min="1" Max="30" Step="1"
+                       Value="Settings.GameEndConditions.CityHoldDays"
+                       ValueChanged="@(v => { Settings.GameEndConditions.CityHoldDays = (int)v; NotifyChanged(); })" />
+        </div>
+    }
+
+    <label class="oe-check">
+        <input type="checkbox" checked="@Settings.GladiatorArenaRules.Enabled"
+               disabled="@isTournament"
+               @onchange="@(e => { Settings.GladiatorArenaRules.Enabled = (bool)e.Value!; NotifyChanged(); })"
+               style="display:none;" />
+    </label>
+
+    @if (Settings.GladiatorArenaRules.Enabled)
+    {
+        <div style="margin-left:1.5rem;">
+            <SliderRow Label="Arena delay" WideLabel="true"
+                       Min="1" Max="60" Step="1"
+                       Value="Settings.GladiatorArenaRules.DaysDelayStart"
+                       ValueChanged="@(v => { Settings.GladiatorArenaRules.DaysDelayStart = (int)v; NotifyChanged(); })" />
+            <SliderRow Label="Arena count day" WideLabel="true"
+                       Min="1" Max="30" Step="1"
+                       Value="Settings.GladiatorArenaRules.CountDay"
+                       ValueChanged="@(v => { Settings.GladiatorArenaRules.CountDay = (int)v; NotifyChanged(); })" />
+        </div>
+    }
+
+    @if (isTournament)
+    {
+        <div style="margin-top:0.5rem;">
+            <div class="oe-section-header" style="font-size:0.85rem; padding-bottom:0.2rem;">Tournament</div>
+            <SliderRow Label="Points to win" WideLabel="true"
+                       Min="1" Max="10" Step="1"
+                       Value="Settings.TournamentRules.PointsToWin"
+                       ValueChanged="@(v => { Settings.TournamentRules.PointsToWin = (int)v; NotifyChanged(); })" />
+            <SliderRow Label="First battle on day" WideLabel="true"
+                       Min="3" Max="30" Step="1"
+                       Value="Settings.TournamentRules.FirstTournamentDay"
+                       ValueChanged="@(v => { Settings.TournamentRules.FirstTournamentDay = (int)v; NotifyChanged(); })" />
+            <SliderRow Label="Days between battles" WideLabel="true"
+                       Min="3" Max="30" Step="1"
+                       Value="Settings.TournamentRules.Interval"
+                       ValueChanged="@(v => { Settings.TournamentRules.Interval = (int)v; NotifyChanged(); })" />
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private string VictoryCondition
+    {
+        get => Settings.GameEndConditions.VictoryCondition;
+        set => Settings.GameEndConditions.VictoryCondition = value;
+    }
+
+    private async Task OnVictoryChanged()
+    {
+        // Mirror the WPF ApplyVictoryPreset() shape.
+        var ge = Settings.GameEndConditions;
+        ge.LostStartCity = false;
+        ge.LostStartHero = false;
+        ge.CityHold = false;
+        ge.LostStartCityDay = 3;
+        ge.CityHoldDays = 6;
+        Settings.GladiatorArenaRules.Enabled = false;
+        Settings.GladiatorArenaRules.DaysDelayStart = 30;
+        Settings.GladiatorArenaRules.CountDay = 3;
+        Settings.TournamentRules.Enabled = false;
+        Settings.TournamentRules.PointsToWin = 2;
+        Settings.TournamentRules.Interval = 7;
+        Settings.TournamentRules.FirstTournamentDay = 14;
+        Settings.TournamentRules.SaveArmy = true;
+
+        switch (Settings.GameEndConditions.VictoryCondition)
+        {
+            case "win_condition_3": ge.LostStartCity = true; break;
+            case "win_condition_4":
+                ge.LostStartHero = true;
+                Settings.GladiatorArenaRules.Enabled = true;
+                break;
+            case "win_condition_5": ge.CityHold = true; break;
+            case "win_condition_6":
+                ge.LostStartHero = true;
+                Settings.TournamentRules.Enabled = true;
+                Settings.GladiatorArenaRules.DaysDelayStart = 21;
+                Settings.GladiatorArenaRules.CountDay = 8;
+                break;
+        }
+        await NotifyChanged();
+    }
+
+    private Task NotifyChanged() => OnChanged.InvokeAsync();
+}

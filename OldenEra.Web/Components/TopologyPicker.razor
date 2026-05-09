@@ -1,0 +1,56 @@
+@* Map topology selection + per-topology details (hub size + castles). *@
+
+<div class="oe-section">
+    <div class="oe-section-header">◆ Layout</div>
+
+    <div class="oe-row">
+        <label class="oe-label">Map Layout</label>
+        <select @bind="SelectedTopology" @bind:after="NotifyChanged">
+            @foreach (var opt in Options)
+            {
+                <option value="@opt.Topology">@opt.Label</option>
+            }
+        </select>
+        <span></span>
+    </div>
+
+    <div class="oe-hint">@CurrentDescription</div>
+
+    @if (Settings.Topology == MapTopology.HubAndSpoke)
+    {
+        <SliderRow Label="Hub zone size"
+                   Min="0.25" Max="3" Step="0.05" IsInt="false" Suffix="x"
+                   Value="Settings.ZoneCfg.HubZoneSize"
+                   ValueChanged="@(v => { Settings.ZoneCfg.HubZoneSize = v; NotifyChanged(); })" />
+        <SliderRow Label="Castles in hub"
+                   Min="0" Max="4" Step="1"
+                   Value="Settings.ZoneCfg.HubZoneCastles"
+                   ValueChanged="@(v => { Settings.ZoneCfg.HubZoneCastles = (int)v; NotifyChanged(); })" />
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    public record TopologyOption(MapTopology Topology, string Label, string Description);
+
+    private static readonly TopologyOption[] Options =
+    [
+        new(MapTopology.Random,      "Random", "Zones are placed at random positions. Each zone connects to all zones that border it — no fixed structure."),
+        new(MapTopology.Default,     "Ring",   "All zones are arranged in a circle. Each zone connects to the two zones next to it."),
+        new(MapTopology.HubAndSpoke, "Hub",    "All zones connect to a shared central hub. Players never border each other directly."),
+        new(MapTopology.Chain,       "Chain",  "Zones are connected in a straight line from one end to the other, with no wrap-around."),
+    ];
+
+    private MapTopology SelectedTopology
+    {
+        get => Settings.Topology;
+        set => Settings.Topology = value;
+    }
+
+    private string CurrentDescription =>
+        Options.FirstOrDefault(o => o.Topology == Settings.Topology)?.Description ?? "";
+
+    private Task NotifyChanged() => OnChanged.InvokeAsync();
+}

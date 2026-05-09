@@ -1,0 +1,16 @@
+@* Renders the preview PNG (or a placeholder) and exposes Generate/Download buttons. *@
+
+<div class="oe-preview">
+    @if (PngBytes is { Length: > 0 })
+    {
+        <img src="@($"data:image/png;base64,{Convert.ToBase64String(PngBytes)}")" alt="Map preview" />
+    }
+    else
+    {
+        <span class="placeholder">Preview will appear after Generate.</span>
+    }
+</div>
+
+@code {
+    [Parameter] public byte[]? PngBytes { get; set; }
+}

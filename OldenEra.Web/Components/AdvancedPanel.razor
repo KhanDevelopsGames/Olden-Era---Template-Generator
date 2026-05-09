@@ -1,0 +1,73 @@
+@* Advanced zone tuning: per-quality neutral zone counts, sizes, randomization,
+   minimum neutral separation. Only rendered when AdvancedMode == true. *@
+
+@if (AdvancedMode)
+{
+    <div class="oe-section">
+        <div class="oe-section-header">Advanced zone tuning [EXPERIMENTAL]</div>
+        <div class="oe-hint">
+            Relative region weights and guard variance used by the game layout.
+        </div>
+
+        <SliderRow Label="Player zone size" WideLabel="true"
+                   Min="0.5" Max="2" Step="0.05" IsInt="false" Suffix="x"
+                   Value="Settings.ZoneCfg.Advanced.PlayerZoneSize"
+                   ValueChanged="@(v => { Settings.ZoneCfg.Advanced.PlayerZoneSize = v; NotifyChanged(); })" />
+        <SliderRow Label="Neutral zone size" WideLabel="true"
+                   Min="0.5" Max="2" Step="0.05" IsInt="false" Suffix="x"
+                   Value="Settings.ZoneCfg.Advanced.NeutralZoneSize"
+                   ValueChanged="@(v => { Settings.ZoneCfg.Advanced.NeutralZoneSize = v; NotifyChanged(); })" />
+        <SliderRow Label="Guard strength randomization" WideLabel="true"
+                   Min="0" Max="50" Step="1" Suffix="%"
+                   Value="@(Settings.ZoneCfg.Advanced.GuardRandomization * 100.0)"
+                   ValueChanged="@(v => { Settings.ZoneCfg.Advanced.GuardRandomization = v / 100.0; NotifyChanged(); })" />
+    </div>
+
+    <div class="oe-section">
+        <div class="oe-section-header">Advanced neutral zones</div>
+        <div class="oe-hint">
+            With-castle neutral zones use the Castles / Neutral Zone value. Each advanced slider is capped at 30; total zones are capped at 32 in advanced mode.
+        </div>
+
+        <SliderRow Label="Low neutral, no castle" WideLabel="true"
+                   Min="0" Max="30" Step="1"
+                   Value="Settings.ZoneCfg.Advanced.NeutralLowNoCastleCount"
+                   ValueChanged="@(v => { Settings.ZoneCfg.Advanced.NeutralLowNoCastleCount = (int)v; NotifyChanged(); })" />
+        <SliderRow Label="Low neutral, castle" WideLabel="true"
+                   Min="0" Max="30" Step="1"
+                   Value="Settings.ZoneCfg.Advanced.NeutralLowCastleCount"
+                   ValueChanged="@(v => { Settings.ZoneCfg.Advanced.NeutralLowCastleCount = (int)v; NotifyChanged(); })" />
+        <SliderRow Label="Medium neutral, no castle" WideLabel="true"
+                   Min="0" Max="30" Step="1"
+                   Value="Settings.ZoneCfg.Advanced.NeutralMediumNoCastleCount"
+                   ValueChanged="@(v => { Settings.ZoneCfg.Advanced.NeutralMediumNoCastleCount = (int)v; NotifyChanged(); })" />
+        <SliderRow Label="Medium neutral, castle" WideLabel="true"
+                   Min="0" Max="30" Step="1"
+                   Value="Settings.ZoneCfg.Advanced.NeutralMediumCastleCount"
+                   ValueChanged="@(v => { Settings.ZoneCfg.Advanced.NeutralMediumCastleCount = (int)v; NotifyChanged(); })" />
+        <SliderRow Label="High neutral, no castle" WideLabel="true"
+                   Min="0" Max="30" Step="1"
+                   Value="Settings.ZoneCfg.Advanced.NeutralHighNoCastleCount"
+                   ValueChanged="@(v => { Settings.ZoneCfg.Advanced.NeutralHighNoCastleCount = (int)v; NotifyChanged(); })" />
+        <SliderRow Label="High neutral, castle" WideLabel="true"
+                   Min="0" Max="30" Step="1"
+                   Value="Settings.ZoneCfg.Advanced.NeutralHighCastleCount"
+                   ValueChanged="@(v => { Settings.ZoneCfg.Advanced.NeutralHighCastleCount = (int)v; NotifyChanged(); })" />
+
+        <SliderRow Label="Min neutrals between players" WideLabel="true"
+                   Min="0" Max="8" Step="1"
+                   Value="Settings.MinNeutralZonesBetweenPlayers"
+                   ValueChanged="@(v => { Settings.MinNeutralZonesBetweenPlayers = (int)v; NotifyChanged(); })" />
+        <div class="oe-hint">
+            Honored only when the selected layout, neutral zone total, and portal settings can support it; otherwise generation uses the normal connection layout.
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
+    [Parameter] public bool AdvancedMode { get; set; }
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private Task NotifyChanged() => OnChanged.InvokeAsync();
+}

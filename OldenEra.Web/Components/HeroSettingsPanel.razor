@@ -1,0 +1,27 @@
+@* Hero count min / max / increment. *@
+
+<div class="oe-section">
+    <div class="oe-section-header">◆ Heroes</div>
+
+    <SliderRow Label="Initial hero cap"
+               Min="1" Max="12" Step="1"
+               Value="Settings.HeroSettings.HeroCountMin"
+               ValueChanged="@(v => { Settings.HeroSettings.HeroCountMin = (int)v; NotifyChanged(); })" />
+
+    <SliderRow Label="Max hero cap"
+               Min="1" Max="12" Step="1"
+               Value="Settings.HeroSettings.HeroCountMax"
+               ValueChanged="@(v => { Settings.HeroSettings.HeroCountMax = (int)v; NotifyChanged(); })" />
+
+    <SliderRow Label="Increase cap / castle"
+               Min="0" Max="10" Step="1"
+               Value="Settings.HeroSettings.HeroCountIncrement"
+               ValueChanged="@(v => { Settings.HeroSettings.HeroCountIncrement = (int)v; NotifyChanged(); })" />
+</div>
+
+@code {
+    [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private Task NotifyChanged() => OnChanged.InvokeAsync();
+}
