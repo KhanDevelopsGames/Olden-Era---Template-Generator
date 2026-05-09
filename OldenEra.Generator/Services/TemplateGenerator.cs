@@ -3,7 +3,7 @@ using OldenEra.Generator.Models.Unfrozen;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Olden_Era___Template_Editor.Services
+namespace OldenEra.Generator.Services
 {
     /// <summary>
     /// Generates an RmgTemplate based on <see cref="GeneratorSettings"/>,
