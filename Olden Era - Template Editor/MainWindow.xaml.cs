@@ -122,6 +122,12 @@ namespace Olden_Era___Template_Editor
         private static string FormatVersion(Version v)
             => v.Build > 0 ? $"v{v.Major}.{v.Minor}.{v.Build}" : $"v{v.Major}.{v.Minor}";
 
+        private void LinkWebVersion_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
+        }
+
         // Minimal model for GitHub releases API response.
         private sealed class GitHubRelease
         {

@@ -448,3 +448,22 @@ input[type="range"]::-moz-range-thumb {
 @keyframes oe-spin {
     to { transform: rotate(360deg); }
 }
+
+.oe-footer {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-top: 1px solid rgba(180, 145, 60, 0.3);
+    color: rgba(255, 240, 220, 0.6);
+    font-size: 0.85rem;
+    text-align: center;
+}
+.oe-footer a {
+    color: #b4913c;
+    text-decoration: underline;
+}
+.oe-footer code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-size: 0.85em;
+}

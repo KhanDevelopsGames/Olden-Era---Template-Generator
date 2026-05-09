@@ -92,6 +92,14 @@ A special competitive mode designed for 1v1 play with an isolated preparation ph
 
 ## Installation
 
+Two ways to use the generator:
+
+### Web version (any OS, no install)
+
+Open [the web version](https://khandevelopsgames.github.io/Olden-Era---Template-Generator/) in any modern browser. Generation runs entirely on your device — nothing is uploaded. Works on Windows, macOS, Linux, and mobile. After generating, the `.rmg.json` downloads to your usual downloads folder; drop it into the game's `map_templates` folder by hand.
+
+### Windows desktop app (Steam auto-detect, save direct to `map_templates`)
+
 1. Download the latest release from the [Releases page](https://github.com/KhanDevelopsGames/Olden-Era---Template-Generator/releases)
 2. Extract and run `Olden Era - Template Editor.exe`
 3. No installation required — it's a single self-contained executable
@@ -122,13 +130,32 @@ A special competitive mode designed for 1v1 play with an isolated preparation ph
 
 ## Building from source
 
-Requirements: Visual Studio 2022+ or the .NET 10 SDK
+Requirements: the .NET 10 SDK. Visual Studio 2022+ or any editor with C# tooling works.
 
-```powershell
+```bash
 git clone https://github.com/KhanDevelopsGames/Olden-Era---Template-Generator.git
-cd "Olden Era - Template Editor"
-dotnet build
+cd "Olden-Era---Template-Generator"
+dotnet build "Olden Era - Template Editor.slnx"
 ```
+
+The solution contains four projects:
+
+- `OldenEra.Generator/` — `net10.0` class library with the generator and SkiaSharp PNG renderer. Builds on any OS.
+- `OldenEra.Web/` — Blazor WebAssembly frontend. Run with `dotnet run --project OldenEra.Web`. Builds on any OS.
+- `Olden Era - Template Editor/` — WPF desktop app. Builds and runs on Windows. (`Directory.Build.props` enables `EnableWindowsTargeting=true` so the project compiles on macOS/Linux for cross-checking; tests still need Windows to execute.)
+- `Olden Era - Template Editor.Tests/` — xUnit tests. Currently `net10.0-windows`; runs on Windows only.
+
+---
+
+## Deployment
+
+The web version auto-deploys to GitHub Pages on every push to `main` via `.github/workflows/deploy-web.yml`. To enable Pages on a fresh fork:
+
+1. Push a commit to `main`. The Actions workflow runs `dotnet publish` and pushes the build to a `gh-pages` branch.
+2. **One-time:** in the repo's GitHub UI, go to **Settings → Pages**. Under "Build and deployment", set **Source** to *Deploy from a branch* and pick the `gh-pages` branch (root). Save.
+3. Subsequent pushes to `main` redeploy automatically.
+
+The deployed URL is `https://<owner>.github.io/Olden-Era---Template-Generator/`.
 
 ---
 

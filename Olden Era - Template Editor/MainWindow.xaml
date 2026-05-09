@@ -102,9 +102,18 @@
                 BorderBrush="{StaticResource BrushWarnBorder}"
                 BorderThickness="1" CornerRadius="3"
                 Padding="10,7">
-            <TextBlock x:Name="TxtWipWarning"
-                       Foreground="{StaticResource BrushWarnText}"
-                       FontSize="11" TextWrapping="Wrap"/>
+            <StackPanel Orientation="Vertical">
+                <TextBlock x:Name="TxtWipWarning"
+                           Foreground="{StaticResource BrushWarnText}"
+                           FontSize="11" TextWrapping="Wrap"/>
+                <TextBlock Foreground="{StaticResource BrushWarnText}"
+                           FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0">
+                    Prefer the browser?
+                    <Hyperlink x:Name="LinkWebVersion"
+                               NavigateUri="https://khandevelopsgames.github.io/Olden-Era---Template-Generator/"
+                               RequestNavigate="LinkWebVersion_RequestNavigate">Try the web version</Hyperlink>.
+                </TextBlock>
+            </StackPanel>
         </Border>
         <!-- ════════ HEADER ════════════════════════════════════════════ -->
         <Rectangle Grid.Row="4" Height="1" Fill="{StaticResource BrushBorder}" VerticalAlignment="Bottom"/>
