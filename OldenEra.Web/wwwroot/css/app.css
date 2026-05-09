@@ -165,12 +165,6 @@ code { color: #d8a85b; background: var(--oe-surface-2); padding: 0 4px; border-r
 .oe-row.wide-label { grid-template-columns: 230px 1fr 56px; }
 
 .oe-row label.oe-label { color: var(--oe-text); font-size: 0.88rem; }
-.oe-row .oe-value {
-    color: var(--oe-accent);
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    font-size: 0.85rem;
-}
 
 .oe-stacked {
     display: flex;
@@ -321,7 +315,6 @@ input[type="range"]:focus-visible::-moz-range-thumb {
     outline-offset: 2px;
 }
 
-.oe-row .oe-slider-value,
 .oe-slider-value {
     color: var(--oe-text-dim);
     font-variant-numeric: tabular-nums;
