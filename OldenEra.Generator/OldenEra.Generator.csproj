@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="3.119.0" />
+  </ItemGroup>
 </Project>
