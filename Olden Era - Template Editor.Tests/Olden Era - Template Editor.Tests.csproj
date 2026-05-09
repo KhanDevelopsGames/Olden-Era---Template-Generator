@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Olden Era - Template Editor\Olden Era - Template Editor.csproj" />
+    <ProjectReference Include="..\OldenEra.Generator\OldenEra.Generator.csproj" />
   </ItemGroup>
 
   <ItemGroup>
