@@ -8,8 +8,9 @@
            max="@Max.ToString(CultureInfo.InvariantCulture)"
            step="@Step.ToString(CultureInfo.InvariantCulture)"
            value="@Value.ToString(CultureInfo.InvariantCulture)"
+           style="--value-pct: @Pct.ToString(CultureInfo.InvariantCulture)%"
            @oninput="OnInput" />
-    <span class="oe-value">@Display</span>
+    <span class="oe-value oe-slider-value">@Display</span>
 </div>
 
 @code {
@@ -23,6 +24,9 @@
     [Parameter] public string Suffix { get; set; } = "";
     [Parameter] public string DisplayFormat { get; set; } = "";
     [Parameter] public bool WideLabel { get; set; } = false;
+
+    private double Pct =>
+        Max > Min ? Math.Round((Value - Min) / (Max - Min) * 100, 2) : 0;
 
     private string Display
     {
