@@ -974,32 +974,361 @@ namespace Olden_Era___Template_Editor.Services
 
         private static void DrawConnections(DrawingContext dc, List<Connection> connections, Dictionary<string, Point> positions, double zoneRadius)
         {
+            double r                   = 0;
+            double curveThreshold      = zoneRadius * 1.3;  // zone within this of the line → add curve
+            double curveOffset         = zoneRadius * 2.0;  // how far the control point is pushed away
+
+            // ── Build path data for every connection ──────────────────────────────
+            var drawn = new List<(Point P1, Point Ctrl, Point P2, bool IsPortal, bool HasCurve)>();
+
             foreach (Connection conn in connections)
             {
+                if (string.Equals(conn.ConnectionType, "Proximity", StringComparison.Ordinal)) continue;
                 if (!positions.TryGetValue(conn.From, out Point from)) continue;
                 if (!positions.TryGetValue(conn.To,   out Point to))   continue;
 
                 bool isPortal = string.Equals(conn.ConnectionType, "Portal", StringComparison.Ordinal);
 
-                // Skip Proximity lines entirely — only Direct/Default/Portal are meaningful visually
-                if (string.Equals(conn.ConnectionType, "Proximity", StringComparison.Ordinal)) continue;
-
-                Pen pen = isPortal
-                    ? new Pen(new SolidColorBrush(PortalLineColor), 2)
-                    : new Pen(new SolidColorBrush(DirectLineColor), 3);
-
-                // Shorten the line so it starts/ends at the zone circle edges, never hidden under a circle.
-                double dx = to.X - from.X;
-                double dy = to.Y - from.Y;
+                double dx = to.X - from.X, dy = to.Y - from.Y;
                 double dist = Math.Sqrt(dx * dx + dy * dy);
                 if (dist < 1) continue;
-                double ux = dx / dist;
-                double uy = dy / dist;
-                double r = zoneRadius;
+                double ux = dx / dist, uy = dy / dist;
+
                 Point p1 = new Point(from.X + ux * r, from.Y + uy * r);
                 Point p2 = new Point(to.X   - ux * r, to.Y   - uy * r);
-                dc.DrawLine(pen, p1, p2);
+
+                // Find the zone sitting closest to the straight segment (excluding endpoints).
+                // If it is within curveThreshold, curve the line away from it.
+                double bestPerp  = curveThreshold;
+                double bestT     = 0.5;
+                Point? blockZone = null;
+
+                foreach (var kvp in positions)
+                {
+                    if (kvp.Key == conn.From || kvp.Key == conn.To) continue;
+                    var c = kvp.Value;
+                    double t = ((c.X - from.X) * dx + (c.Y - from.Y) * dy) / (dist * dist);
+                    if (t <= 0.05 || t >= 0.95) continue;
+                    double projX = from.X + t * dx, projY = from.Y + t * dy;
+                    double pd = Math.Sqrt((c.X - projX) * (c.X - projX) + (c.Y - projY) * (c.Y - projY));
+                    if (pd < bestPerp) { bestPerp = pd; bestT = t; blockZone = c; }
+                }
+
+                bool  hasCurve = blockZone.HasValue;
+                Point ctrl;
+                if (hasCurve)
+                {
+                    Point mid  = new Point(from.X + bestT * dx, from.Y + bestT * dy);
+                    double px  = mid.X - blockZone!.Value.X;
+                    double py  = mid.Y - blockZone!.Value.Y;
+                    double pl  = Math.Sqrt(px * px + py * py);
+                    if (pl < 0.001) { px = -uy; py = ux; pl = 1; }
+                    ctrl = new Point(mid.X + px / pl * curveOffset, mid.Y + py / pl * curveOffset);
+                }
+                else
+                {
+                    ctrl = new Point((p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0);
+                }
+
+                drawn.Add((p1, ctrl, p2, isPortal, hasCurve));
             }
+
+            // ── Find pairwise crossings ───────────────────────────────────────────
+            // Sample each path into a polyline so curves are tested accurately.
+            const int CurveSamples = 32;
+            var polylines = drawn.Select(d => SamplePath(d.P1, d.Ctrl, d.P2, d.HasCurve, CurveSamples)).ToList();
+
+            var crossings = new List<(int I, int J, Point At, int SegI, int SegJ)>();
+            for (int i = 0; i < drawn.Count; i++)
+                for (int j = i + 1; j < drawn.Count; j++)
+                    if (PolylinesIntersect(polylines[i], polylines[j], out Point pt, out int si, out int sj))
+                        crossings.Add((i, j, pt, si, sj));
+
+            // ── Determine over/under per crossing and build gap intervals ────────
+            // "over" = shorter path (drawn on top). A path may be "over" in one crossing
+            // and "under" in another, so we track draw-order separately from gaps.
+            // overSet  = paths that are "over" in at least one crossing → drawn in second pass
+            //            so they visually appear on top of any under-path they cross.
+            // gapsByPath = gaps accumulated only for crossings where that path is "under".
+            const double GapHalfPx = 7.0;
+            var overSet    = new HashSet<int>();
+            var gapsByPath = new Dictionary<int, List<(double Lo, double Hi)>>();
+
+            foreach (var (i, j, at, si, sj) in crossings)
+            {
+                double lenI   = PolylineLength(polylines[i]);
+                double lenJ   = PolylineLength(polylines[j]);
+                bool   iIsOver = lenI <= lenJ;
+                int    overIdx  = iIsOver ? i : j;
+                int    underIdx = iIsOver ? j : i;
+                int    segUnder = iIsOver ? sj : si;
+
+                overSet.Add(overIdx); // remember for draw ordering
+
+                if (!gapsByPath.TryGetValue(underIdx, out var gaps))
+                    gapsByPath[underIdx] = gaps = [];
+
+                var poly = polylines[underIdx];
+                double arcTotal = PolylineLength(poly);
+                if (arcTotal < 0.001) continue;
+
+                // Arc length up to the crossing segment
+                double arcBefore = 0;
+                for (int s = 0; s < segUnder; s++)
+                    arcBefore += PointDist(poly[s], poly[s + 1]);
+
+                // Fraction along that segment via dot-product projection
+                double segLen = PointDist(poly[segUnder], poly[segUnder + 1]);
+                double fracOnSeg = 0;
+                if (segLen > 0.001)
+                {
+                    double dx = poly[segUnder + 1].X - poly[segUnder].X;
+                    double dy = poly[segUnder + 1].Y - poly[segUnder].Y;
+                    double t  = ((at.X - poly[segUnder].X) * dx + (at.Y - poly[segUnder].Y) * dy) / (segLen * segLen);
+                    fracOnSeg = Math.Clamp(t, 0, 1);
+                }
+
+                double arcAt = arcBefore + fracOnSeg * segLen;
+                double tAt   = arcAt / arcTotal;
+                double tGap  = GapHalfPx / arcTotal;
+                gaps.Add((Math.Max(0, tAt - tGap), Math.Min(1, tAt + tGap)));
+            }
+
+            // ── Draw: paths never "over" first, then paths that are "over" in at least one
+            //    crossing second (so they paint on top). Both passes respect each path's own
+            //    gap list — a path that is "over" here but "under" elsewhere still gets its gap.
+            for (int k = 0; k < drawn.Count; k++)
+            {
+                if (overSet.Contains(k)) continue; // handled in second pass
+                var (p1, ctrl, p2, isPortal, hasCurve) = drawn[k];
+                if (gapsByPath.TryGetValue(k, out var gaps2))
+                    DrawConnectionPathWithGaps(dc, polylines[k], gaps2, isPortal);
+                else
+                    DrawConnectionPath(dc, p1, ctrl, p2, hasCurve, isPortal);
+            }
+
+            for (int k = 0; k < drawn.Count; k++)
+            {
+                if (!overSet.Contains(k)) continue;
+                var (p1, ctrl, p2, isPortal, hasCurve) = drawn[k];
+                if (gapsByPath.TryGetValue(k, out var gaps2))
+                    DrawConnectionPathWithGaps(dc, polylines[k], gaps2, isPortal);
+                else
+                    DrawConnectionPath(dc, p1, ctrl, p2, hasCurve, isPortal);
+            }
+        }
+
+        /// <summary>
+        /// Draws a polyline path with a smooth fade-out/fade-in around each crossing gap.
+        /// Outside gaps the line is drawn at full opacity; within the fade ramp the alpha
+        /// is blended from full → 0 (fade out) then 0 → full (fade in).
+        /// </summary>
+        private static void DrawConnectionPathWithGaps(DrawingContext dc, Point[] poly, List<(double Lo, double Hi)> gaps, bool isPortal)
+        {
+            Color baseColor = isPortal ? PortalLineColor : DirectLineColor;
+            double strokeW  = isPortal ? 2.0 : 3.0;
+
+            double totalLen = PolylineLength(poly);
+            if (totalLen < 0.001) return;
+
+            const double FadeExtraPx  = 8.0;   // fade ramp length on each side of the gap
+            const int    FadeSteps    = 20;     // micro-segments per fade ramp
+
+            // Expand each gap into (fadeStart, gapLo, gapHi, fadeEnd) in arc-t space
+            var zones = gaps.Select(g => (
+                FadeStart : Math.Max(0, g.Lo - FadeExtraPx / totalLen),
+                GapLo     : g.Lo,
+                GapHi     : g.Hi,
+                FadeEnd   : Math.Min(1, g.Hi + FadeExtraPx / totalLen)
+            )).ToList();
+
+            // Alpha at arc parameter t: 1 outside fades, 0 inside gap, smooth ramp in between
+            double AlphaAt(double t)
+            {
+                double alpha = 1.0;
+                foreach (var z in zones)
+                {
+                    if (t <= z.FadeStart || t >= z.FadeEnd) continue;
+                    if (t >= z.GapLo && t <= z.GapHi) return 0.0;
+                    // Fade-out ramp: FadeStart → GapLo
+                    if (t < z.GapLo)
+                    {
+                        double ramp = (z.FadeStart < z.GapLo)
+                            ? 1.0 - (t - z.FadeStart) / (z.GapLo - z.FadeStart)
+                            : 0.0;
+                        alpha = Math.Min(alpha, ramp);
+                    }
+                    // Fade-in ramp: GapHi → FadeEnd
+                    else
+                    {
+                        double ramp = (z.GapHi < z.FadeEnd)
+                            ? (t - z.GapHi) / (z.FadeEnd - z.GapHi)
+                            : 1.0;
+                        alpha = Math.Min(alpha, ramp);
+                    }
+                }
+                return Math.Clamp(alpha, 0.0, 1.0);
+            }
+
+            Point EvalPoly(double t)
+            {
+                double target = t * totalLen;
+                double arc = 0;
+                for (int s = 0; s < poly.Length - 1; s++)
+                {
+                    double len = PointDist(poly[s], poly[s + 1]);
+                    if (arc + len >= target || s == poly.Length - 2)
+                    {
+                        double frac = len > 0.001 ? (target - arc) / len : 0;
+                        frac = Math.Clamp(frac, 0, 1);
+                        return new Point(
+                            poly[s].X + frac * (poly[s + 1].X - poly[s].X),
+                            poly[s].Y + frac * (poly[s + 1].Y - poly[s].Y));
+                    }
+                    arc += len;
+                }
+                return poly[^1];
+            }
+
+            // Collect all t-events: path ends + fade zone boundaries + every polyline knot
+            // The knot t-values ensure full-opacity sections are drawn segment-by-segment
+            // along the actual sampled curve, not as a single flattened straight line.
+            var tEvents = new SortedSet<double> { 0.0, 1.0 };
+            foreach (var z in zones)
+            {
+                tEvents.Add(z.FadeStart); tEvents.Add(z.GapLo);
+                tEvents.Add(z.GapHi);    tEvents.Add(z.FadeEnd);
+            }
+            // Add the arc-parameter of each polyline knot
+            {
+                double arc2 = 0;
+                for (int s = 0; s < poly.Length - 1; s++)
+                {
+                    tEvents.Add(arc2 / totalLen);
+                    arc2 += PointDist(poly[s], poly[s + 1]);
+                }
+                tEvents.Add(1.0);
+            }
+
+            var tList = tEvents.ToList();
+            for (int seg = 0; seg < tList.Count - 1; seg++)
+            {
+                double tA = tList[seg], tB = tList[seg + 1];
+                if (tB - tA < 1e-6) continue;
+
+                double tMid = (tA + tB) / 2.0;
+                double aMid = AlphaAt(tMid);
+                if (aMid < 0.01) continue; // fully inside a gap — skip
+
+                bool needsFade = zones.Any(z =>
+                    tA < z.FadeEnd && tB > z.FadeStart); // segment overlaps any fade zone
+
+                if (!needsFade)
+                {
+                    // Full-opacity segment — draw as one line
+                    Color c = Color.FromArgb((byte)Math.Round(baseColor.A * aMid), baseColor.R, baseColor.G, baseColor.B);
+                    dc.DrawLine(new Pen(new SolidColorBrush(c), strokeW), EvalPoly(tA), EvalPoly(tB));
+                }
+                else
+                {
+                    // Fade ramp — draw as micro-segments with per-step alpha
+                    for (int step = 0; step < FadeSteps; step++)
+                    {
+                        double t0 = tA + (tB - tA) * step       / FadeSteps;
+                        double t1 = tA + (tB - tA) * (step + 1) / FadeSteps;
+                        double a  = AlphaAt((t0 + t1) / 2.0);
+                        if (a < 0.01) continue;
+                        Color c = Color.FromArgb((byte)Math.Round(baseColor.A * a), baseColor.R, baseColor.G, baseColor.B);
+                        dc.DrawLine(new Pen(new SolidColorBrush(c), strokeW), EvalPoly(t0), EvalPoly(t1));
+                    }
+                }
+            }
+        }
+
+        private static void DrawConnectionPath(DrawingContext dc, Point p1, Point ctrl, Point p2, bool hasCurve, bool isPortal)
+        {
+            Pen pen = isPortal
+                ? new Pen(new SolidColorBrush(PortalLineColor), 2)
+                : new Pen(new SolidColorBrush(DirectLineColor), 3);
+
+            if (!hasCurve)
+            {
+                dc.DrawLine(pen, p1, p2);
+                return;
+            }
+
+            var geo = new StreamGeometry();
+            using (var ctx = geo.Open())
+            {
+                ctx.BeginFigure(p1, false, false);
+                ctx.QuadraticBezierTo(ctrl, p2, true, false);
+            }
+            geo.Freeze();
+            dc.DrawGeometry(null, pen, geo);
+        }
+
+        /// <summary>Samples a straight or quadratic-Bézier path into a polyline.</summary>
+        private static Point[] SamplePath(Point p1, Point ctrl, Point p2, bool hasCurve, int steps)
+        {
+            var pts = new Point[steps + 1];
+            for (int s = 0; s <= steps; s++)
+            {
+                double t = (double)s / steps;
+                if (hasCurve)
+                {
+                    // Quadratic Bézier: B(t) = (1-t)²·P1 + 2(1-t)t·Ctrl + t²·P2
+                    double mt = 1.0 - t;
+                    pts[s] = new Point(
+                        mt * mt * p1.X + 2 * mt * t * ctrl.X + t * t * p2.X,
+                        mt * mt * p1.Y + 2 * mt * t * ctrl.Y + t * t * p2.Y);
+                }
+                else
+                {
+                    pts[s] = new Point(p1.X + t * (p2.X - p1.X), p1.Y + t * (p2.Y - p1.Y));
+                }
+            }
+            return pts;
+        }
+
+        /// <summary>Returns true if two polylines have any intersecting segment pair, and sets the intersection point and the segment index on each polyline.</summary>
+        private static bool PolylinesIntersect(Point[] a, Point[] b, out Point intersection, out int segA, out int segB)
+        {
+            intersection = default; segA = 0; segB = 0;
+            for (int i = 0; i < a.Length - 1; i++)
+                for (int j = 0; j < b.Length - 1; j++)
+                    if (SegmentsIntersect(a[i], a[i + 1], b[j], b[j + 1], out intersection))
+                    { segA = i; segB = j; return true; }
+            return false;
+        }
+
+        private static double PolylineLength(Point[] pts)
+        {
+            double len = 0;
+            for (int i = 0; i < pts.Length - 1; i++) len += PointDist(pts[i], pts[i + 1]);
+            return len;
+        }
+
+        /// <summary>Returns true if segment p1→p2 intersects p3→p4, and sets <paramref name="intersection"/>.</summary>
+        private static bool SegmentsIntersect(Point p1, Point p2, Point p3, Point p4, out Point intersection)
+        {
+            intersection = default;
+            double d1x = p2.X - p1.X, d1y = p2.Y - p1.Y;
+            double d2x = p4.X - p3.X, d2y = p4.Y - p3.Y;
+            double cross = d1x * d2y - d1y * d2x;
+            if (Math.Abs(cross) < 1e-8) return false; // parallel / collinear
+            double t = ((p3.X - p1.X) * d2y - (p3.Y - p1.Y) * d2x) / cross;
+            double u = ((p3.X - p1.X) * d1y - (p3.Y - p1.Y) * d1x) / cross;
+            // Exclude only exact endpoints (≤0 or ≥1) so crossings near segment junctions
+            // are not silently dropped by an over-aggressive epsilon guard.
+            if (t <= 0.0 || t >= 1.0 || u <= 0.0 || u >= 1.0) return false;
+            intersection = new Point(p1.X + t * d1x, p1.Y + t * d1y);
+            return true;
+        }
+
+        private static double PointDist(Point a, Point b)
+        {
+            double dx = a.X - b.X, dy = a.Y - b.Y;
+            return Math.Sqrt(dx * dx + dy * dy);
         }
 
         // ── Zone drawing ─────────────────────────────────────────────────────────
