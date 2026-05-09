@@ -73,7 +73,7 @@ namespace Olden_Era___Template_Editor.Services
                 Variants = [BuildVariant(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter, useCityHold && settings.Topology == MapTopology.HubAndSpoke)],
                 ZoneLayouts = BuildZoneLayouts(),
                 MandatoryContent = BuildAllMandatoryContent(playerLetters, neutralZones, settings),
-                ContentCountLimits = BuildAllContentCountLimits(),
+                ContentCountLimits = ZoneContentManager.BuildAllContentCountLimits(settings),
                 ContentPools = [],
                 ContentLists = []
             };
@@ -2530,7 +2530,7 @@ namespace Olden_Era___Template_Editor.Services
             var groups = new List<MandatoryContentGroup>();
 
             foreach (var letter in playerLetters)
-                groups.Add(BuildSpawnMandatoryContent(letter, settings.ZoneCfg.PlayerZoneCastles, settings.SpawnRemoteFootholds));
+                groups.Add(BuildSpawnMandatoryContent(letter, settings));
 
             foreach (var neutralZone in neutralZones)
                 groups.Add(BuildNeutralMandatoryContent(neutralZone.Letter, neutralZone.CastleCount, settings.SpawnRemoteFootholds, neutralZone.Quality));
@@ -2538,12 +2538,12 @@ namespace Olden_Era___Template_Editor.Services
             return groups;
         }
 
-        private static MandatoryContentGroup BuildSpawnMandatoryContent(string letter, int castleCount, bool spawnFootholds)
+        private static MandatoryContentGroup BuildSpawnMandatoryContent(string letter, GeneratorSettings settings)
         {
             return new MandatoryContentGroup
             {
                 Name = $"mandatory_content_side_{letter}",
-                Content = ZoneContentManager.BuildPlayerZoneMandatoryContent(castleCount, spawnFootholds)
+                Content = ZoneContentManager.BuildPlayerZoneMandatoryContent(settings)
             };
         }
 
@@ -2559,88 +2559,6 @@ namespace Olden_Era___Template_Editor.Services
                     _                         => ZoneContentManager.BuildMediumNeutralMandatoryContent(castleCount, spawnFootholds),
                 }
             };
-        }
-
-        // ── Content count limits ─────────────────────────────────────────────────
-
-        /// <summary>
-        /// Builds the full set of contentCountLimits derived from all example templates.
-        /// Counts reflect the typical maximum values observed across templates.
-        /// </summary>
-        private static List<ContentCountLimit> BuildAllContentCountLimits()
-        {
-            var sidLimits = new List<ContentSidLimit>
-            {
-                // ── Banned in generated zones ────────────────────────────────────
-                // black_tower sid is missing from the known values content list. To be investigated...
-                new() { Sid = "black_tower",          MaxCount = 0 }, // tier-1 resource bank; too weak/out-of-place in neutral zones
-                // ── Utility / buff buildings ─────────────────────────────────────
-                new() { Sid = ContentIds.Fountain,             MaxCount = 2 },
-                new() { Sid = ContentIds.Fountain2,           MaxCount = 2 },
-                new() { Sid = ContentIds.ManaWell,            MaxCount = 2 },
-                new() { Sid = ContentIds.BeerFountain,        MaxCount = 2 },
-                new() { Sid = ContentIds.Market,               MaxCount = 1 },
-                new() { Sid = ContentIds.Forge,                MaxCount = 2 },
-                new() { Sid = ContentIds.Stables,              MaxCount = 1 },
-                new() { Sid = ContentIds.Watchtower,           MaxCount = 2 },
-                new() { Sid = ContentIds.WindRose,            MaxCount = 1 },
-                new() { Sid = ContentIds.QuixsPath,           MaxCount = 2 },
-                new() { Sid = ContentIds.CrystalTrail,        MaxCount = 3 },
-                new() { Sid = ContentIds.MysteriousStone,     MaxCount = 2 },
-
-                // ── Learning / XP buildings ──────────────────────────────────────
-                new() { Sid = ContentIds.University,           MaxCount = 2 },
-                new() { Sid = ContentIds.WiseOwl,             MaxCount = 4 },
-                new() { Sid = ContentIds.CelestialSphere,     MaxCount = 2 },
-                new() { Sid = ContentIds.PileOfBooks,        MaxCount = 2 },
-                new() { Sid = ContentIds.InsarasEye,          MaxCount = 2 },
-                new() { Sid = ContentIds.TearOfTruth,        MaxCount = 3 },
-                new() { Sid = ContentIds.TreeOfAbundance,    MaxCount = 2 },
-
-                // ── Hire buildings ───────────────────────────────────────────────
-                new() { Sid = ContentIds.HuntsmansCamp,       MaxCount = 2 },
-                new() { Sid = ContentIds.ShadyDen,            MaxCount = 2 },
-                new() { Sid = ContentIds.RandomHire1,        MaxCount = 6 },
-                new() { Sid = ContentIds.RandomHire2,        MaxCount = 6 },
-                new() { Sid = ContentIds.RandomHire3,        MaxCount = 6 },
-                new() { Sid = ContentIds.RandomHire4,        MaxCount = 6 },
-                new() { Sid = ContentIds.RandomHire5,        MaxCount = 6 },
-                new() { Sid = ContentIds.RandomHire6,        MaxCount = 6 },
-                new() { Sid = ContentIds.RandomHire7,        MaxCount = 6 },
-
-                // ── Combat / encounter buildings ─────────────────────────────────
-                new() { Sid = ContentIds.Arena,                MaxCount = 2 },
-                new() { Sid = ContentIds.SacrificialShrine,   MaxCount = 2 },
-                new() { Sid = ContentIds.Chimerologist,        MaxCount = 2 },
-                new() { Sid = ContentIds.Circus,               MaxCount = 2 },
-                new() { Sid = ContentIds.InfernalCirque,      MaxCount = 2 },
-                new() { Sid = ContentIds.FlatteringMirror,    MaxCount = 2 },
-                new() { Sid = ContentIds.FickleShrine,        MaxCount = 1 },
-                new() { Sid = ContentIds.PointOfBalance,     MaxCount = 3 },
-
-                // ── Special / loot ───────────────────────────────────────────────
-                new() { Sid = ContentIds.PandoraBox,          MaxCount = 4 },
-
-                // ── Map-feature objects (typically 0 = disabled, 99 = unlimited;
-                //    we cap at a sensible value so they can occasionally appear) ──
-                new() { Sid = ContentIds.RitualPyre,          MaxCount = 3 },
-                new() { Sid = ContentIds.BorealCall,          MaxCount = 3 },
-                new() { Sid = ContentIds.JoustingRange,       MaxCount = 1 },
-                new() { Sid = ContentIds.UnforgottenGrave,    MaxCount = 1 },
-                new() { Sid = ContentIds.PetrifiedMemorial,   MaxCount = 1 },
-                new() { Sid = ContentIds.TheGorge,            MaxCount = 1 },
-            };
-
-            var limits = new List<ContentCountLimit>();
-
-            limits.Add(new ContentCountLimit { Name = "content_limits_side", Limits = sidLimits });
-            limits.Add(new ContentCountLimit { Name = "content_limits_side_0_0", PlayerMin = 0, PlayerMax = 0, Limits = sidLimits });
-
-            for (int a = 1; a <= 5; a++)
-                for (int b = a + 1; b <= 6; b++)
-                    limits.Add(new ContentCountLimit { Name = $"content_limits_side_{a}_{b}", PlayerMin = a, PlayerMax = b, Limits = sidLimits });
-
-            return limits;
         }
     }
 }

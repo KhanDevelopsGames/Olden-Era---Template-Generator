@@ -1,4 +1,5 @@
 using OldenEraTemplateEditor.Models;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Olden_Era___Template_Editor.Models
@@ -59,6 +60,7 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("tournamentInterval")] public int TournamentInterval    { get; set; } = 7;
         [JsonPropertyName("tournamentPointsToWin")] public int TournamentPointsToWin        { get; set; } = 2;
         [JsonPropertyName("tournamentSaveArmy")] public bool TournamentSaveArmy             { get; set; } = true;
+        [JsonPropertyName("playerZoneMandatoryContent")] public List<ContentItem>? PlayerZoneMandatoryContent { get; set; }
 
         // Legacy setting from v0.2 and earlier; when present, it seeds both split density sliders.
         [JsonPropertyName("contentDensity")]    public int?    ContentDensityPercent        { get; set; }
