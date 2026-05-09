@@ -135,13 +135,16 @@ Requirements: the .NET 10 SDK. Visual Studio 2022+ or any editor with C# tooling
 ```bash
 git clone https://github.com/KhanDevelopsGames/Olden-Era---Template-Generator.git
 cd "Olden-Era---Template-Generator"
+dotnet workload install wasm-tools   # one-time, needed for the web project
 dotnet build "Olden Era - Template Editor.slnx"
 ```
+
+The `wasm-tools` workload provides the Emscripten toolchain that statically links SkiaSharp's native binary into the WebAssembly bundle. Without it, the web project builds but Generate fails at runtime with `DllNotFoundException: libSkiaSharp`.
 
 The solution contains four projects:
 
 - `OldenEra.Generator/` — `net10.0` class library with the generator and SkiaSharp PNG renderer. Builds on any OS.
-- `OldenEra.Web/` — Blazor WebAssembly frontend. Run with `dotnet run --project OldenEra.Web`. Builds on any OS.
+- `OldenEra.Web/` — Blazor WebAssembly frontend. Run with `dotnet run --project OldenEra.Web`. Builds on any OS but requires the `wasm-tools` workload (see above).
 - `Olden Era - Template Editor/` — WPF desktop app. Builds and runs on Windows. (`Directory.Build.props` enables `EnableWindowsTargeting=true` so the project compiles on macOS/Linux for cross-checking; tests still need Windows to execute.)
 - `Olden Era - Template Editor.Tests/` — xUnit tests. Currently `net10.0-windows`; runs on Windows only.
 
