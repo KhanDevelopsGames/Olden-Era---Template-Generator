@@ -1981,7 +1981,7 @@ namespace Olden_Era___Template_Editor.Services
                     Type = "Spawn",
                     Spawn = player,
                     RemoveGuardIfHasOwner = true,
-                    GuardChance = 0.5,
+                    GuardChance = 1,
                     GuardValue = ScaleNeutralGuardValue(5000, tuning),
                     GuardWeeklyIncrement = 0.10,
                     BuildingsConstructionSid = "default_buildings_construction",
@@ -1998,7 +1998,7 @@ namespace Olden_Era___Template_Editor.Services
                     Faction = matchCastleFactions
                         ? new TypedSelector { Type = "Match", Args = ["0"] }
                         : new TypedSelector { Type = "Random", Args = [] },
-                    GuardChance = 0.5,
+                    GuardChance = 1,
                     GuardValue = ScaleNeutralGuardValue(2500, tuning),
                     GuardWeeklyIncrement = 0.10,
                     BuildingsConstructionSid = "poor_buildings_construction",
@@ -2055,7 +2055,7 @@ namespace Olden_Era___Template_Editor.Services
                 mainObjects.Add(new MainObject
                 {
                     Type = "City",
-                    GuardChance = isHoldCity ? 1.0 : 0.5,
+                    GuardChance = isHoldCity ? 1.0 : 1.0,
                     GuardValue = ScaleNeutralGuardValue(isHoldCity ? Math.Max(profile.PrimaryCityGuardValue, 20000) : profile.PrimaryCityGuardValue, tuning),
                     GuardWeeklyIncrement = 0.10,
                     BuildingsConstructionSid = isHoldCity ? "ultra_rich_buildings_construction" : profile.PrimaryBuildingsConstructionSid,
@@ -2071,7 +2071,7 @@ namespace Olden_Era___Template_Editor.Services
                 mainObjects.Add(new MainObject
                 {
                     Type = "City",
-                    GuardChance = 0.5,
+                    GuardChance = 1.0,
                     GuardValue = ScaleNeutralGuardValue(profile.ExtraCityGuardValue, tuning),
                     GuardWeeklyIncrement = 0.10,
                     BuildingsConstructionSid = profile.ExtraBuildingsConstructionSid,
