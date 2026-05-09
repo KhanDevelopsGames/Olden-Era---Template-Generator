@@ -194,59 +194,57 @@ code { color: var(--oe-accent); background: var(--oe-surface-2); padding: 0 4px;
 
 /* ── Section panel ──────────────────────────────────────── */
 .oe-section {
-    background: var(--oe-surface-1);
-    border: 1px solid var(--oe-border);
-    border-radius: 4px;
-    padding: 0.85rem 1rem 1rem;
-    margin-bottom: 0.9rem;
+    margin-bottom: 24px;
+}
+.oe-section + .oe-section {
+    border-top: 1px solid var(--oe-border);
+    padding-top: 20px;
 }
 
 .oe-section-header {
-    color: var(--oe-accent);
+    color: var(--oe-text);
     font-weight: 600;
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--oe-border);
-    padding-bottom: 0.35rem;
-    margin-bottom: 0.7rem;
+    font-size: 15px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem;
+    gap: 12px;
 }
 
 .oe-section-header .oe-inline-toggle {
-    font-size: 0.75rem;
+    font-size: 12px;
     color: var(--oe-text-dim);
-    text-transform: none;
-    letter-spacing: 0;
-    font-weight: normal;
+    font-weight: 400;
 }
 
 .oe-hint {
     color: var(--oe-text-dim);
     font-size: 12px;
+    line-height: 1.5;
+    margin: 4px 0 8px;
 }
 
 /* ── Form controls ──────────────────────────────────────── */
 .oe-row {
     display: grid;
-    grid-template-columns: 195px 1fr 48px;
+    grid-template-columns: 200px 1fr 56px;
     align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 0.45rem;
+    gap: 12px;
+    margin-bottom: 8px;
 }
-.oe-row.wide-label { grid-template-columns: 230px 1fr 56px; }
+.oe-row.wide-label { grid-template-columns: 230px 1fr 64px; }
 
-.oe-row label.oe-label { color: var(--oe-text); font-size: 0.88rem; }
+.oe-row label.oe-label { color: var(--oe-text-dim); font-size: 13px; }
 
 .oe-stacked {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    margin-bottom: 0.5rem;
+    gap: 6px;
+    margin-bottom: 12px;
 }
+
+.oe-stacked label.oe-label { color: var(--oe-text-dim); font-size: 13px; }
 
 input[type="text"],
 input[type="number"],
