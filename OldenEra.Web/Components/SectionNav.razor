@@ -12,6 +12,16 @@
         </button>
     }
 </nav>
+
+<select class="oe-nav-select"
+        value="@ActiveString"
+        @onchange="OnSelectChange">
+    @foreach (var section in Enum.GetValues<TSection>())
+    {
+        <option value="@(section.ToString())">@SectionLabel(section)</option>
+    }
+</select>
+
 @if (!string.IsNullOrEmpty(ValidationMessage))
 {
     <div class="oe-nav-footer">
@@ -28,10 +38,22 @@
 
     private string SectionLabel(TSection s) => LabelFor?.Invoke(s) ?? s.ToString();
 
+    private string ActiveString => Active.ToString();
+
     private async Task OnSelect(TSection s)
     {
         if (EqualityComparer<TSection>.Default.Equals(s, Active)) return;
         Active = s;
         await ActiveChanged.InvokeAsync(s);
+    }
+
+    private async Task OnSelectChange(ChangeEventArgs e)
+    {
+        if (e.Value is not string s) return;
+        if (Enum.TryParse<TSection>(s, out var parsed))
+        {
+            Active = parsed;
+            await ActiveChanged.InvokeAsync(parsed);
+        }
     }
 }

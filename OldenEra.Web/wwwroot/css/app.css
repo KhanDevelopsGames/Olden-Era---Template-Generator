@@ -184,6 +184,10 @@ code { color: var(--oe-accent); background: var(--oe-surface-2); padding: 0 4px;
     margin-top: 5px;
 }
 
+.oe-nav-select {
+    display: none;
+}
+
 .oe-content {
     min-width: 0; /* let grid item shrink so children can wrap */
 }
@@ -784,4 +788,56 @@ input[type="range"]:focus-visible::-moz-range-thumb {
 .oe-topo-label {
     font-size: 12px;
     font-weight: 500;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 900px) {
+    .oe-shell {
+        grid-template-columns: 1fr;
+    }
+    .oe-nav, .oe-preview-col {
+        position: static;
+        top: auto;
+    }
+    .oe-nav-list {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 4px;
+        padding: 4px 0 8px;
+        border-bottom: 1px solid var(--oe-border);
+    }
+    .oe-nav-item {
+        border-left: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+    .oe-nav-item.active {
+        background: var(--oe-surface-3);
+        color: var(--oe-text);
+        border-left: none;
+    }
+    .oe-nav-footer {
+        margin-top: 8px;
+    }
+    .oe-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .oe-header-actions {
+        align-self: stretch;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 600px) {
+    .oe-nav-list {
+        display: none;
+    }
+    .oe-nav-select {
+        display: block;
+        width: 100%;
+    }
 }
