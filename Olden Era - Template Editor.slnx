@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="Olden Era - Template Editor/Olden Era - Template Editor.csproj" />
   <Project Path="Olden Era - Template Editor.Tests/Olden Era - Template Editor.Tests.csproj" />
+  <Project Path="OldenEra.Generator/OldenEra.Generator.csproj" />
 </Solution>
