@@ -978,8 +978,71 @@ namespace Olden_Era___Template_Editor.Services
             double curveThreshold      = zoneRadius * 1.3;  // zone within this of the line → add curve
             double curveOffset         = zoneRadius * 2.0;  // how far the control point is pushed away
 
+            // ── Arc-clearance helper: push ctrl away from any zone circle the arc clips ──
+            const int    ArcSamples   = 32;
+            const int    MaxArcIter   = 20;
+            const double ArcClearance = 6.0;
+
+            Point RefineCtrl(Point p1, Point ctrl, Point p2, string fromName, string toName)
+            {
+                for (int arcIter = 0; arcIter < MaxArcIter; arcIter++)
+                {
+                    bool arcClean = true;
+                    Point? worstZone = null;
+                    double worstPenetration = 0;
+                    double worstSample = 0.5;
+
+                    for (int s = 1; s < ArcSamples; s++)
+                    {
+                        double st = (double)s / ArcSamples;
+                        double mt = 1.0 - st;
+                        double bx = mt * mt * p1.X + 2 * mt * st * ctrl.X + st * st * p2.X;
+                        double by = mt * mt * p1.Y + 2 * mt * st * ctrl.Y + st * st * p2.Y;
+
+                        foreach (var kvp in positions)
+                        {
+                            if (kvp.Key == fromName || kvp.Key == toName) continue;
+                            double ex2 = bx - kvp.Value.X, ey2 = by - kvp.Value.Y;
+                            double d2 = Math.Sqrt(ex2 * ex2 + ey2 * ey2);
+                            double penetration = zoneRadius + ArcClearance - d2;
+                            if (penetration > worstPenetration)
+                            {
+                                worstPenetration = penetration;
+                                worstZone = kvp.Value;
+                                worstSample = st;
+                                arcClean = false;
+                            }
+                        }
+                    }
+
+                    if (arcClean) break;
+
+                    double wmt = 1.0 - worstSample;
+                    double wbx = wmt * wmt * p1.X + 2 * wmt * worstSample * ctrl.X + worstSample * worstSample * p2.X;
+                    double wby = wmt * wmt * p1.Y + 2 * wmt * worstSample * ctrl.Y + worstSample * worstSample * p2.Y;
+
+                    double ex3 = wbx - worstZone!.Value.X, ey3 = wby - worstZone!.Value.Y;
+                    double el3 = Math.Sqrt(ex3 * ex3 + ey3 * ey3);
+                    // fallback perpendicular to chord if on top of zone centre
+                    if (el3 < 0.001)
+                    {
+                        double chx2 = p2.X - p1.X, chy2 = p2.Y - p1.Y;
+                        double cl2 = Math.Sqrt(chx2 * chx2 + chy2 * chy2);
+                        ex3 = cl2 > 0.001 ? -chy2 / cl2 : 1; ey3 = cl2 > 0.001 ? chx2 / cl2 : 0; el3 = 1;
+                    }
+                    double nx3 = ex3 / el3, ny3 = ey3 / el3;
+
+                    double weight = 2 * wmt * worstSample;
+                    if (weight < 0.01) weight = 0.01;
+                    double nudge = (worstPenetration + 2.0) / weight;
+                    ctrl = new Point(ctrl.X + nx3 * nudge, ctrl.Y + ny3 * nudge);
+                }
+                return ctrl;
+            }
+
             // ── Build path data for every connection ──────────────────────────────
-            var drawn = new List<(Point P1, Point Ctrl, Point P2, bool IsPortal, bool HasCurve)>();
+            // Keep from/to names alongside each entry so RefineCtrl can exclude them.
+            var drawnRaw = new List<(Point P1, Point Ctrl, Point P2, bool IsPortal, bool HasCurve, string From, string To)>();
 
             foreach (Connection conn in connections)
             {
@@ -997,8 +1060,7 @@ namespace Olden_Era___Template_Editor.Services
                 Point p1 = new Point(from.X + ux * r, from.Y + uy * r);
                 Point p2 = new Point(to.X   - ux * r, to.Y   - uy * r);
 
-                // Find the zone sitting closest to the straight segment (excluding endpoints).
-                // If it is within curveThreshold, curve the line away from it.
+                // Find zone closest to the straight chord — if within curveThreshold, add curve.
                 double bestPerp  = curveThreshold;
                 double bestT     = 0.5;
                 Point? blockZone = null;
@@ -1024,78 +1086,78 @@ namespace Olden_Era___Template_Editor.Services
                     double pl  = Math.Sqrt(px * px + py * py);
                     if (pl < 0.001) { px = -uy; py = ux; pl = 1; }
                     ctrl = new Point(mid.X + px / pl * curveOffset, mid.Y + py / pl * curveOffset);
+                    ctrl = RefineCtrl(p1, ctrl, p2, conn.From, conn.To);
                 }
                 else
                 {
                     ctrl = new Point((p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0);
                 }
 
-                // ── Arc-clearance refinement ──────────────────────────────────────
-                // The initial ctrl was computed from the straight chord; the arc can
-                // still clip a *different* zone. Iteratively sample the actual Bézier
-                // and push ctrl away from any zone whose circle the arc still enters.
-                if (hasCurve)
+                drawnRaw.Add((p1, ctrl, p2, isPortal, hasCurve, conn.From, conn.To));
+            }
+
+            // ── Shared-endpoint curve untangling ─────────────────────────────────
+            // Two curved connections sharing a zone can have arcs that cross near
+            // the shared endpoint. Detect and fix by mirroring the more-deflected
+            // ctrl across its chord, then re-run arc-clearance on the flipped curve.
+            {
+                bool anyFlipped = true;
+                for (int untanglePass = 0; untanglePass < 20 && anyFlipped; untanglePass++)
                 {
-                    const int   ArcSamples   = 32;
-                    const int   MaxArcIter   = 20;
-                    const double ArcClearance = 6.0; // gap between arc and circle edge in pixels
-
-                    for (int arcIter = 0; arcIter < MaxArcIter; arcIter++)
+                    anyFlipped = false;
+                    for (int i = 0; i < drawnRaw.Count; i++)
                     {
-                        bool arcClean = true;
-                        Point? worstZone = null;
-                        double worstPenetration = 0;
-                        double worstSample = 0.5;
-
-                        for (int s = 1; s < ArcSamples; s++) // skip s=0 and s=ArcSamples (endpoints)
+                        if (!drawnRaw[i].HasCurve) continue;
+                        for (int j = i + 1; j < drawnRaw.Count; j++)
                         {
-                            double st = (double)s / ArcSamples;
-                            double mt = 1.0 - st;
-                            double bx = mt * mt * p1.X + 2 * mt * st * ctrl.X + st * st * p2.X;
-                            double by = mt * mt * p1.Y + 2 * mt * st * ctrl.Y + st * st * p2.Y;
+                            if (!drawnRaw[j].HasCurve) continue;
 
-                            foreach (var kvp in positions)
+                            var (p1i, ctrli, p2i, isPortalI, hasCurveI, fromI, toI) = drawnRaw[i];
+                            var (p1j, ctrlj, p2j, isPortalJ, hasCurveJ, fromJ, toJ) = drawnRaw[j];
+
+                            bool shareStart = (p1i.X == p1j.X && p1i.Y == p1j.Y) || (p1i.X == p2j.X && p1i.Y == p2j.Y);
+                            bool shareEnd   = (p2i.X == p1j.X && p2i.Y == p1j.Y) || (p2i.X == p2j.X && p2i.Y == p2j.Y);
+                            if (!shareStart && !shareEnd) continue;
+
+                            const int UntangleSamples = 24;
+                            var piPoly = SamplePath(p1i, ctrli, p2i, hasCurveI, UntangleSamples);
+                            var pjPoly = SamplePath(p1j, ctrlj, p2j, hasCurveJ, UntangleSamples);
+                            if (!PolylinesIntersect(piPoly, pjPoly, out _, out _, out _)) continue;
+
+                            double DeflectionSq(Point a, Point ctrl0, Point b)
                             {
-                                if (kvp.Key == conn.From || kvp.Key == conn.To) continue;
-                                double ex2 = bx - kvp.Value.X, ey2 = by - kvp.Value.Y;
-                                double d2 = Math.Sqrt(ex2 * ex2 + ey2 * ey2);
-                                double penetration = zoneRadius + ArcClearance - d2;
-                                if (penetration > worstPenetration)
-                                {
-                                    worstPenetration = penetration;
-                                    worstZone = kvp.Value;
-                                    worstSample = st;
-                                    arcClean = false;
-                                }
+                                double mx = (a.X + b.X) / 2, my = (a.Y + b.Y) / 2;
+                                double ox = ctrl0.X - mx, oy = ctrl0.Y - my;
+                                return ox * ox + oy * oy;
                             }
+
+                            Point FlipCtrl(Point a, Point ctrl0, Point b)
+                            {
+                                double chx = b.X - a.X, chy = b.Y - a.Y;
+                                double len2 = chx * chx + chy * chy;
+                                if (len2 < 0.001) return ctrl0;
+                                double t2 = ((ctrl0.X - a.X) * chx + (ctrl0.Y - a.Y) * chy) / len2;
+                                double footX = a.X + t2 * chx, footY = a.Y + t2 * chy;
+                                return new Point(2 * footX - ctrl0.X, 2 * footY - ctrl0.Y);
+                            }
+
+                            if (DeflectionSq(p1i, ctrli, p2i) >= DeflectionSq(p1j, ctrlj, p2j))
+                            {
+                                var newCtrl = RefineCtrl(p1i, FlipCtrl(p1i, ctrli, p2i), p2i, fromI, toI);
+                                drawnRaw[i] = (p1i, newCtrl, p2i, isPortalI, hasCurveI, fromI, toI);
+                            }
+                            else
+                            {
+                                var newCtrl = RefineCtrl(p1j, FlipCtrl(p1j, ctrlj, p2j), p2j, fromJ, toJ);
+                                drawnRaw[j] = (p1j, newCtrl, p2j, isPortalJ, hasCurveJ, fromJ, toJ);
+                            }
+                            anyFlipped = true;
                         }
-
-                        if (arcClean) break;
-
-                        // Push ctrl further away from the worst-hitting zone.
-                        // Compute the arc point at worstSample and move ctrl so that
-                        // point lands outside the zone circle.
-                        double wmt = 1.0 - worstSample;
-                        double wbx = wmt * wmt * p1.X + 2 * wmt * worstSample * ctrl.X + worstSample * worstSample * p2.X;
-                        double wby = wmt * wmt * p1.Y + 2 * wmt * worstSample * ctrl.Y + worstSample * worstSample * p2.Y;
-
-                        // Direction from zone centre to the arc point
-                        double ex3 = wbx - worstZone!.Value.X, ey3 = wby - worstZone!.Value.Y;
-                        double el3 = Math.Sqrt(ex3 * ex3 + ey3 * ey3);
-                        if (el3 < 0.001) { ex3 = -uy; ey3 = ux; el3 = 1; }
-                        double nx3 = ex3 / el3, ny3 = ey3 / el3;
-
-                        // The quadratic Bézier weight of ctrl at parameter worstSample is 2*wmt*worstSample.
-                        // Move ctrl so the arc point moves by (worstPenetration + 2px) in that direction.
-                        double weight = 2 * wmt * worstSample;
-                        if (weight < 0.01) weight = 0.01;
-                        double nudge = (worstPenetration + 2.0) / weight;
-                        ctrl = new Point(ctrl.X + nx3 * nudge, ctrl.Y + ny3 * nudge);
                     }
                 }
-
-                drawn.Add((p1, ctrl, p2, isPortal, hasCurve));
             }
+
+            var drawn = drawnRaw.Select(d => (d.P1, d.Ctrl, d.P2, d.IsPortal, d.HasCurve)).ToList();
 
             // ── Find pairwise crossings ───────────────────────────────────────────
             // Sample each path into a polyline so curves are tested accurately.
