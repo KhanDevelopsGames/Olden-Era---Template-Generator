@@ -2,8 +2,10 @@
 using Olden_Era___Template_Editor.Models;
 using Olden_Era___Template_Editor.Services;
 using OldenEraTemplateEditor.Models;
+using OldenEraTemplateEditor.Services.ContentManagement;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
+using System.IO;    
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -35,6 +37,10 @@ namespace Olden_Era___Template_Editor
         private bool _isDirty = false;
         private bool _isRefreshingMapSizes = false;
         private string _baseTitle = string.Empty;
+        private readonly ObservableCollection<ZoneContentItemUI> _zoneContentMines = new();
+        private readonly ObservableCollection<ZoneContentItemUI> _treasureContentItems = new();
+        private readonly ObservableCollection<ZoneContentItemUI> _randomHires = new();
+        private readonly ObservableCollection<ZoneContentItemUI> _resourceBanks = new();
 
         private static readonly (MapTopology Topology, string Label, string Description)[] TopologyOptions =
         [
@@ -72,13 +78,84 @@ namespace Olden_Era___Template_Editor
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
             UpdateBalancedZonePlacementDescVisibility();
-
+            InitializeZoneContentPresets();
+            InitializeDefaultPlayerZoneContents();
+            DataContext = new
+            {
+                MineContentItems = _zoneContentMines,
+                TreasureContentItems = _treasureContentItems,
+                RandomHireContentItems = _randomHires,
+                ResourceBankContentItems = _resourceBanks
+            };
             // Fire-and-forget background update check — never blocks the UI.
             _ = CheckForUpdateAsync(version);
 
             TxtTemplateName.TextChanged += (_, _) => { MarkDirtyNameOnly(); Validate(); };
             UpdateTitle();
             TxtWindowTitle.Text = Title;
+        }
+        private void InitializeDefaultPlayerZoneContents()
+        {
+            // ── Basic mines — guarded, anchored near the player castle (every template). ──
+            _zoneContentMines.Add(CreateZoneContentItem(ContentIds.MineWood, isGuarded: true, nearCastle: true, roadDistance: "Near"));
+            _zoneContentMines.Add(CreateZoneContentItem(ContentIds.MineOre, isGuarded: true, nearCastle: true, roadDistance: "Near"));
+            // ── Gold mine (Exodus/Staircase/Yin Yang pattern). ──
+            _zoneContentMines.Add(CreateZoneContentItem(ContentIds.MineGold, isGuarded: true, roadDistance: "Near"));
+            // ── Rare mines spread along roads (Exodus/Staircase/Yin Yang pattern). ──
+            _zoneContentMines.Add(CreateZoneContentItem(ContentIds.MineCrystals, isGuarded: true, roadDistance: "Next To"));
+            _zoneContentMines.Add(CreateZoneContentItem(ContentIds.MineMercury, isGuarded: true, roadDistance: "Next To"));
+            _zoneContentMines.Add(CreateZoneContentItem(ContentIds.MineGemstones, isGuarded: true, roadDistance: "Next To"));
+            _zoneContentMines.Add(CreateZoneContentItem(ContentIds.AlchemyLab, isGuarded: true, roadDistance: "Next To"));
+            // ── Loot — epic items + army pandora (Exodus/Blitz pattern). ──
+            _treasureContentItems.Add(CreateZoneContentItem(ContentIds.PandoraBox));
+            _treasureContentItems.Add(CreateZoneContentItem(ContentIds.RandomItemEpic, isGuarded: true));
+
+            // ── Hiring — low-tier × 2 + high-tier × 1 + full pool × 1 (Kerberos + Universe blend). ──
+            _randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier, count: 2, isGroup: true));
+            _randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier, isGroup: true));
+            _randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresAllTier, isGroup: true));
+
+            // ── Guarded resource banks — tier 1 × 2 + tier 2 × 1 (Exodus pattern). ──
+            _resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier1, count: 2, isGroup: true));
+            _resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier2, isGroup: true));
+        }
+        private void InitializeZoneContentPresets()
+        {
+            /* Populate the Mines dropdown menu */
+            var mineNames = new List<string>();
+            foreach (SidMapping sidMapping in ContentItemGroup.Mines)
+            {
+                mineNames.Add(sidMapping.Name);
+            }
+            CmbZoneContentPreset.ItemsSource = mineNames;
+            CmbZoneContentPreset.SelectedIndex = 0;
+
+            /* Populate the Treasures dropdown menu */
+            var treasurePresetNames = new List<string>();
+            foreach (SidMapping sidMapping in ContentItemGroup.Treasures)
+            {
+                treasurePresetNames.Add(sidMapping.Name);
+            }
+            CmbTreasureContentPreset.ItemsSource = treasurePresetNames;
+            CmbTreasureContentPreset.SelectedIndex = 0;
+
+            /* Populate the Random Hires dropdown menu */
+            var randomHirePresetNames = new List<string>();
+            foreach (SidMapping sidMapping in ContentItemGroup.HireBuildings)
+            {
+                randomHirePresetNames.Add(sidMapping.Name);
+            }
+            CmbRandomHireContentPreset.ItemsSource = randomHirePresetNames;
+            CmbRandomHireContentPreset.SelectedIndex = 0;
+
+             /* Populate the Resource Banks dropdown menu */
+            var resourceBankPresetNames = new List<string>();
+            foreach (SidMapping sidMapping in ContentItemGroup.ResourceBanks)
+            {
+                resourceBankPresetNames.Add(sidMapping.Name);
+            }
+            CmbResourceBankContentPreset.ItemsSource = resourceBankPresetNames;
+            CmbResourceBankContentPreset.SelectedIndex = 0;
         }
 
         private async Task CheckForUpdateAsync(Version? currentVersion)
@@ -669,6 +746,115 @@ namespace Olden_Era___Template_Editor
                 : Visibility.Collapsed;
         }
 
+        private void BtnAddMineContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+
+            string name = CmbZoneContentPreset.SelectedItem as string ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(name))
+                return;
+
+            SidMapping? preset = GlobalContent.GetByName(name);
+            if (preset == null)
+                return;
+            _zoneContentMines.Add(CreateZoneContentItem(preset));
+            MarkDirty();
+        }
+
+        private void BtnAddTreasureContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+
+            string name = CmbTreasureContentPreset.SelectedItem as string ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(name))
+                return;
+
+            SidMapping? preset = GlobalContent.GetByName(name);
+            if (preset == null)
+                return;
+            _treasureContentItems.Add(CreateZoneContentItem(preset));
+            MarkDirty();
+        }
+
+        private void BtnAddRandomHireContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+
+            string name = (FindName("CmbRandomHireContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(name))
+                return;
+
+            SidMapping? preset = GlobalContent.GetByName(name);
+            if (preset == null)
+                return;
+
+            if(preset.Sid.ToLower().Contains("content")) 
+            {
+                _randomHires.Add(CreateZoneContentItem(preset, isGroup: true));
+            }
+            else
+            {
+                _randomHires.Add(CreateZoneContentItem(preset, isGroup: false));
+            }
+            MarkDirty();
+        }
+
+        private void BtnAddResourceBankContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+
+            string name = (FindName("CmbResourceBankContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(name))
+                return;
+
+            SidMapping? preset = GlobalContent.GetByName(name);
+            if (preset == null)
+                return;
+
+            _resourceBanks.Add(CreateZoneContentItem(preset, isGroup: true));
+            MarkDirty();
+        }
+
+        private void BtnRemoveZoneContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+
+            if (sender is not Button button || button.DataContext is not ZoneContentItemUI item)
+                return;
+
+            if (_zoneContentMines.Remove(item)
+                || _treasureContentItems.Remove(item)
+                || _randomHires.Remove(item)
+                || _resourceBanks.Remove(item))
+                MarkDirty();
+        }
+
+        private void BtnResetPlayerZoneContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+
+            _zoneContentMines.Clear();
+            _treasureContentItems.Clear();
+            _randomHires.Clear();
+            _resourceBanks.Clear();
+
+            InitializeDefaultPlayerZoneContents();
+            MarkDirty();
+        }
+
+        private static ZoneContentItemUI CreateZoneContentItem(SidMapping preset, int count = 1, bool isGuarded = false, bool nearCastle = false, string roadDistance = "Any", bool isGroup = false)
+        {
+            return new ZoneContentItemUI
+            {
+                SidMapping = preset,
+                Count = count,
+                IsGuarded = isGuarded,
+                NearCastle = nearCastle,
+                RoadDistance = roadDistance,
+                IsGroup = isGroup
+            };
+        }
+
         // -- Settings persistence -----------------------------------------------
 
         private SettingsFile GatherSettings() => new()
@@ -725,6 +911,8 @@ namespace Olden_Era___Template_Editor
             TournamentFirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
             TournamentInterval = (int)SldTournamentInterval.Value,
             TournamentPointsToWin = (int)SldTournamentPointsToWin.Value,
+            TournamentSaveArmy = ChkTournamentSaveArmy.IsChecked == true,
+            PlayerZoneMandatoryContent = BuildPlayerZoneMandatoryContentFromUi(),
         };
 
         private void ApplySettings(SettingsFile s)
@@ -785,6 +973,7 @@ namespace Olden_Era___Template_Editor
             SldTournamentInterval.Value = Math.Clamp(s.TournamentInterval, 1, 30);
             SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 10);
             ChkTournamentSaveArmy.IsChecked = s.TournamentSaveArmy;
+            ApplyPlayerZoneMandatoryContentFromSettings(s.PlayerZoneMandatoryContent);
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
@@ -1013,6 +1202,7 @@ namespace Olden_Era___Template_Editor
                     GuardRandomization = _advancedZoneSettings ? SldGuardRandomization.Value / 100.0 : 0.05,
                 }
             },
+            PlayerZoneMandatoryContent = BuildPlayerZoneMandatoryContentFromUi(),
             // Neutral zones between players can be influenced by advanced zone settings, but is functionally independent.
             MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)SldMinNeutralBetweenPlayers.Value : 0,
             MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
@@ -1040,6 +1230,205 @@ namespace Olden_Era___Template_Editor
                 SaveArmy = ChkTournamentSaveArmy.IsChecked == true
             }
         };
+        
+        /* Creates list of ContentItems for the player zone mandatory content, according to the UI settings. */
+        private List<ContentItem> BuildPlayerZoneMandatoryContentFromUi()
+        {
+            var result = new List<ContentItem>();
+
+            foreach (var item in _zoneContentMines
+                         .Concat(_treasureContentItems)
+                         .Concat(_randomHires)
+                         .Concat(_resourceBanks))
+            {
+                /* Some initial sanity checks*/
+                if (item.Count <= 0) continue;
+                if(item.SidMapping == null) continue;
+
+                /* Parse the road distance from the UI setting. "Any" is handled separately. */
+                var distance = item.RoadDistance switch
+                {
+                    "Next To" => DistancePresets.NextTo,
+                    "Near" => DistancePresets.Near,
+                    "Far" => DistancePresets.Far,
+                    "Very Far" => DistancePresets.VeryFar,
+                    _ => DistancePresets.Medium
+                };
+
+                for (int i = 0; i < item.Count; i++)
+                {
+                    if (item.IsGroup)
+                    {
+                        var groupItem = new ContentItem
+                        {
+                            IncludeLists = new List<string> { item.SidMapping.Sid },
+                            IsGuarded = item.IsGuarded
+                        };
+
+                        if (item.RoadDistance != "Any")
+                        {
+                            groupItem.Rules = new List<ContentPlacementRule>
+                            {
+                                RulePresets.RoadDistance(distance)
+                            };
+                        }
+
+                        result.Add(groupItem);
+                        continue;
+                    }
+
+                    var builder = ContentItemBuilder
+                        .Create(item.SidMapping.Sid)
+                        .Guarded(item.IsGuarded);
+                    
+                    if(_zoneContentMines.Contains(item))
+                        builder.Mine();
+                    
+                    if (item.NearCastle)
+                        builder.AddRule(RulePresets.NearCastle());
+
+                    /* Do not include road placement for "Any" distance */
+                    if(item.RoadDistance != "Any")
+                        builder.RoadDistance(distance);
+                    
+                    result.Add(builder.Build());
+                }
+            }
+
+            return result;
+        }
+
+        private void ApplyPlayerZoneMandatoryContentFromSettings(List<ContentItem>? contentItems)
+        {
+            _zoneContentMines.Clear();
+            _treasureContentItems.Clear();
+            _randomHires.Clear();
+            _resourceBanks.Clear();
+
+            if (contentItems is null || contentItems.Count == 0)
+            {
+                InitializeDefaultPlayerZoneContents();
+                return;
+            }
+
+            var groupedItems = new Dictionary<PlayerZoneContentKey, int>();
+
+            foreach (var contentItem in contentItems)
+            {
+                bool isGroup = contentItem.IncludeLists is { Count: > 0 };
+                string? sid = isGroup
+                    ? contentItem.IncludeLists![0]
+                    : contentItem.Sid;
+
+                if (string.IsNullOrWhiteSpace(sid))
+                    continue;
+
+                SidMapping? sidMapping = GlobalContent.GetBySid(sid);
+                if (sidMapping is null)
+                    continue;
+
+                bool isMine = contentItem.IsMine == true;
+                bool isGuarded = contentItem.IsGuarded == true;
+                bool nearCastle = HasNearCastleRule(contentItem.Rules);
+                string roadDistance = GetRoadDistanceLabel(contentItem.Rules);
+
+                var key = new PlayerZoneContentKey(
+                    sidMapping.Sid,
+                    isGroup,
+                    isMine,
+                    isGuarded,
+                    nearCastle,
+                    roadDistance);
+
+                if (groupedItems.TryGetValue(key, out int currentCount))
+                {
+                    groupedItems[key] = currentCount + 1;
+                }
+                else
+                {
+                    groupedItems[key] = 1;
+                }
+            }
+
+            foreach (var kvp in groupedItems)
+            {
+                SidMapping? sidMapping = GlobalContent.GetBySid(kvp.Key.Sid);
+                if (sidMapping is null)
+                    continue;
+
+                var uiItem = CreateZoneContentItem(
+                    sidMapping,
+                    count: kvp.Value,
+                    isGuarded: kvp.Key.IsGuarded,
+                    nearCastle: kvp.Key.NearCastle,
+                    roadDistance: kvp.Key.RoadDistance,
+                    isGroup: kvp.Key.IsGroup);
+
+                if (kvp.Key.IsMine)
+                {
+                    _zoneContentMines.Add(uiItem);
+                }
+                else if (IsRandomHireSid(kvp.Key.Sid))
+                {
+                    _randomHires.Add(uiItem);
+                }
+                else if (IsResourceBankSid(kvp.Key.Sid))
+                {
+                    _resourceBanks.Add(uiItem);
+                }
+                else
+                {
+                    _treasureContentItems.Add(uiItem);
+                }
+            }
+        }
+
+        private static bool HasNearCastleRule(List<ContentPlacementRule>? rules)
+            => rules?.Any(rule =>
+                string.Equals(rule.Type, "MainObject", StringComparison.OrdinalIgnoreCase) &&
+                rule.Args?.Any(arg => arg == "0") == true) == true;
+
+        private static string GetRoadDistanceLabel(List<ContentPlacementRule>? rules)
+        {
+            ContentPlacementRule? roadRule = rules?.FirstOrDefault(rule =>
+                string.Equals(rule.Type, "Road", StringComparison.OrdinalIgnoreCase));
+
+            if (roadRule is null || roadRule.TargetMin is null || roadRule.TargetMax is null)
+                return "Any";
+
+            double min = roadRule.TargetMin.Value;
+            double max = roadRule.TargetMax.Value;
+
+            if (IsDistance(min, max, DistancePresets.NextTo)) return "Next To";
+            if (IsDistance(min, max, DistancePresets.Near)) return "Near";
+            if (IsDistance(min, max, DistancePresets.Far)) return "Far";
+            if (IsDistance(min, max, DistancePresets.VeryFar)) return "Very Far";
+            if (IsDistance(min, max, DistancePresets.Medium)) return "Medium";
+
+            return "Medium";
+        }
+
+        private static bool IsDistance(double min, double max, DistanceVariation preset)
+            => Math.Abs(min - preset.Min) < 0.0001 && Math.Abs(max - preset.Max) < 0.0001;
+
+        private static bool IsRandomHireSid(string sid)
+            => ContentItemGroup.HireBuildings.Any(item => string.Equals(item.Sid, sid, StringComparison.OrdinalIgnoreCase))
+                || string.Equals(IncludeListIds.RandomHiresLowTier.Sid, sid, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(IncludeListIds.RandomHiresHighTier.Sid, sid, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(IncludeListIds.RandomHiresAllTier.Sid, sid, StringComparison.OrdinalIgnoreCase);
+
+        private static bool IsResourceBankSid(string sid)
+            => ContentItemGroup.ResourceBanks.Any(item => string.Equals(item.Sid, sid, StringComparison.OrdinalIgnoreCase))
+                || string.Equals(IncludeListIds.ResourceBanksTier1.Sid, sid, StringComparison.OrdinalIgnoreCase)
+                || string.Equals(IncludeListIds.ResourceBanksTier2.Sid, sid, StringComparison.OrdinalIgnoreCase);
+
+        private readonly record struct PlayerZoneContentKey(
+            string Sid,
+            bool IsGroup,
+            bool IsMine,
+            bool IsGuarded,
+            bool NearCastle,
+            string RoadDistance);
 
         /// <summary>
         /// Returns true when <paramref name="filePath"/> is inside the expected game templates folder
