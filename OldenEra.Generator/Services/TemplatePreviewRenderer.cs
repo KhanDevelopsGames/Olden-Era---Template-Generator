@@ -3,6 +3,7 @@ using OldenEra.Generator.Models.Unfrozen;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace OldenEra.Generator.Services
@@ -25,16 +26,776 @@ namespace OldenEra.Generator.Services
         // Per-layout computed zone radius (set by LayoutZones)
         [ThreadStatic] private static double _zoneRadius;
 
+        // ── Colours (mirrors WPF TemplatePreviewPngWriter) ───────────────────────
+        private static readonly SKColor BackgroundColor = new SKColor(28, 22, 16);
+        private static readonly SKColor FrameColor      = new SKColor(143, 115, 63);
+
+        // Bronze / Silver / Gold (neutrals)
+        private static readonly SKColor BronzeFill   = new SKColor(101, 67, 33);
+        private static readonly SKColor BronzeBorder = new SKColor(205, 127, 50);
+        private static readonly SKColor SilverFill   = new SKColor(72, 76, 80);
+        private static readonly SKColor SilverBorder = new SKColor(192, 192, 192);
+        private static readonly SKColor GoldFill     = new SKColor(120, 90, 20);
+        private static readonly SKColor GoldBorder   = new SKColor(255, 210, 50);
+
+        // Spawn (player)
+        private static readonly SKColor SpawnFill   = new SKColor(42, 90, 50);
+        private static readonly SKColor SpawnBorder = new SKColor(100, 200, 120);
+
+        // Hub
+        private static readonly SKColor HubFill   = new SKColor(55, 80, 95);
+        private static readonly SKColor HubBorder = new SKColor(130, 180, 200);
+
+        // Connection lines
+        private static readonly SKColor DirectLineColor = new SKColor(180, 145, 60);
+        // Portal: SKColor uses (r,g,b,a) — original WPF Color.FromArgb(180,90,170,210)
+        private static readonly SKColor PortalLineColor = new SKColor(90, 170, 210, 180);
+
+        // Highlight golden colour for hold-city
+        private static readonly SKColor HoldCityGold = new SKColor(255, 215, 0);
+
         /// <summary>
         /// Renders a 700x700 PNG preview of the template. Returns the encoded PNG bytes.
-        /// (Stub: returns a 1x1 transparent PNG until the full Skia renderer lands.)
         /// </summary>
         public static byte[] RenderPng(RmgTemplate template, MapTopology topology = MapTopology.Default)
         {
-            using var bitmap = new SKBitmap(1, 1);
-            using var image = SKImage.FromBitmap(bitmap);
+            var info = new SKImageInfo(Width, Height, SKColorType.Bgra8888, SKAlphaType.Premul);
+            using var surface = SKSurface.Create(info);
+            var canvas = surface.Canvas;
+            canvas.Clear(SKColors.Transparent);
+            DrawPreview(canvas, template, topology);
+            canvas.Flush();
+            using var image = surface.Snapshot();
             using var data = image.Encode(SKEncodedImageFormat.Png, 100);
             return data.ToArray();
+        }
+
+        // ── Main draw ────────────────────────────────────────────────────────────
+        private static void DrawPreview(SKCanvas canvas, RmgTemplate template, MapTopology topology)
+        {
+            // Background
+            using (var bgPaint = new SKPaint { Color = BackgroundColor, IsAntialias = true, Style = SKPaintStyle.Fill })
+                canvas.DrawRect(new SKRect(0, 0, Width, Height), bgPaint);
+
+            // Frame (rounded rectangle stroke)
+            using (var framePaint = new SKPaint
+            {
+                Color = FrameColor, IsAntialias = true,
+                Style = SKPaintStyle.Stroke, StrokeWidth = 3
+            })
+                canvas.DrawRoundRect(new SKRect(8, 8, Width - 8, Height - 8), 8, 8, framePaint);
+
+            Variant? variant = template.Variants?.FirstOrDefault();
+            List<Zone> zones = variant?.Zones ?? new List<Zone>();
+            if (zones.Count == 0)
+            {
+                using var font = new SKFont(SKTypeface.Default, 24f) { Edging = SKFontEdging.Antialias, Subpixel = true };
+                using var paint = new SKPaint { Color = SKColors.White, IsAntialias = true };
+                DrawText(canvas, template.Name ?? string.Empty, Width / 2f, Height / 2f, font, paint, centered: true);
+                return;
+            }
+
+            var orderedZones = OrderZones(zones, variant?.Orientation?.ZeroAngleZone);
+            var connections = variant?.Connections ?? new List<Connection>();
+            var positions = LayoutZones(orderedZones, connections, topology);
+
+            // Connections (under zones)
+            DrawConnections(canvas, connections, positions, _zoneRadius);
+
+            // Non-spawn zones first, spawn on top
+            foreach (Zone zone in orderedZones.Where(z => !z.Name.StartsWith("Spawn-", StringComparison.Ordinal)))
+                DrawZone(canvas, zone, positions[zone.Name]);
+            foreach (Zone zone in orderedZones.Where(z => z.Name.StartsWith("Spawn-", StringComparison.Ordinal)))
+                DrawZone(canvas, zone, positions[zone.Name]);
+        }
+
+        // ── Connections ──────────────────────────────────────────────────────────
+
+        private static void DrawConnections(SKCanvas canvas, List<Connection> connections,
+            Dictionary<string, SKPoint> positions, double zoneRadius)
+        {
+            double r = 0;
+            double curveThreshold = zoneRadius * 1.3;
+            double curveOffset    = zoneRadius * 2.0;
+
+            const int    ArcSamples   = 32;
+            const int    MaxArcIter   = 20;
+            const double ArcClearance = 6.0;
+
+            SKPoint RefineCtrl(SKPoint p1, SKPoint ctrl, SKPoint p2, string fromName, string toName)
+            {
+                for (int arcIter = 0; arcIter < MaxArcIter; arcIter++)
+                {
+                    bool arcClean = true;
+                    SKPoint? worstZone = null;
+                    double worstPenetration = 0;
+                    double worstSample = 0.5;
+
+                    for (int s = 1; s < ArcSamples; s++)
+                    {
+                        double st = (double)s / ArcSamples;
+                        double mt = 1.0 - st;
+                        double bx = mt * mt * p1.X + 2 * mt * st * ctrl.X + st * st * p2.X;
+                        double by = mt * mt * p1.Y + 2 * mt * st * ctrl.Y + st * st * p2.Y;
+
+                        foreach (var kvp in positions)
+                        {
+                            if (kvp.Key == fromName || kvp.Key == toName) continue;
+                            double ex2 = bx - kvp.Value.X, ey2 = by - kvp.Value.Y;
+                            double d2 = Math.Sqrt(ex2 * ex2 + ey2 * ey2);
+                            double penetration = zoneRadius + ArcClearance - d2;
+                            if (penetration > worstPenetration)
+                            {
+                                worstPenetration = penetration;
+                                worstZone = kvp.Value;
+                                worstSample = st;
+                                arcClean = false;
+                            }
+                        }
+                    }
+
+                    if (arcClean) break;
+
+                    double wmt = 1.0 - worstSample;
+                    double wbx = wmt * wmt * p1.X + 2 * wmt * worstSample * ctrl.X + worstSample * worstSample * p2.X;
+                    double wby = wmt * wmt * p1.Y + 2 * wmt * worstSample * ctrl.Y + worstSample * worstSample * p2.Y;
+
+                    double ex3 = wbx - worstZone!.Value.X, ey3 = wby - worstZone!.Value.Y;
+                    double el3 = Math.Sqrt(ex3 * ex3 + ey3 * ey3);
+                    if (el3 < 0.001)
+                    {
+                        double chx2 = p2.X - p1.X, chy2 = p2.Y - p1.Y;
+                        double cl2 = Math.Sqrt(chx2 * chx2 + chy2 * chy2);
+                        ex3 = cl2 > 0.001 ? -chy2 / cl2 : 1; ey3 = cl2 > 0.001 ? chx2 / cl2 : 0; el3 = 1;
+                    }
+                    double nx3 = ex3 / el3, ny3 = ey3 / el3;
+
+                    double weight = 2 * wmt * worstSample;
+                    if (weight < 0.01) weight = 0.01;
+                    double nudge = (worstPenetration + 2.0) / weight;
+                    ctrl = new SKPoint((float)(ctrl.X + nx3 * nudge), (float)(ctrl.Y + ny3 * nudge));
+                }
+                return ctrl;
+            }
+
+            var drawnRaw = new List<(SKPoint P1, SKPoint Ctrl, SKPoint P2, bool IsPortal, bool HasCurve, string From, string To)>();
+
+            foreach (Connection conn in connections)
+            {
+                if (string.Equals(conn.ConnectionType, "Proximity", StringComparison.Ordinal)) continue;
+                if (!positions.TryGetValue(conn.From, out SKPoint from)) continue;
+                if (!positions.TryGetValue(conn.To,   out SKPoint to))   continue;
+
+                bool isPortal = string.Equals(conn.ConnectionType, "Portal", StringComparison.Ordinal);
+
+                double dx = to.X - from.X, dy = to.Y - from.Y;
+                double dist = Math.Sqrt(dx * dx + dy * dy);
+                if (dist < 1) continue;
+                double ux = dx / dist, uy = dy / dist;
+
+                SKPoint p1 = new SKPoint((float)(from.X + ux * r), (float)(from.Y + uy * r));
+                SKPoint p2 = new SKPoint((float)(to.X   - ux * r), (float)(to.Y   - uy * r));
+
+                double bestPerp  = curveThreshold;
+                double bestT     = 0.5;
+                SKPoint? blockZone = null;
+
+                foreach (var kvp in positions)
+                {
+                    if (kvp.Key == conn.From || kvp.Key == conn.To) continue;
+                    var c = kvp.Value;
+                    double t = ((c.X - from.X) * dx + (c.Y - from.Y) * dy) / (dist * dist);
+                    if (t <= 0.05 || t >= 0.95) continue;
+                    double projX = from.X + t * dx, projY = from.Y + t * dy;
+                    double pd = Math.Sqrt((c.X - projX) * (c.X - projX) + (c.Y - projY) * (c.Y - projY));
+                    if (pd < bestPerp) { bestPerp = pd; bestT = t; blockZone = c; }
+                }
+
+                bool hasCurve = blockZone.HasValue;
+                SKPoint ctrl;
+                if (hasCurve)
+                {
+                    SKPoint mid = new SKPoint((float)(from.X + bestT * dx), (float)(from.Y + bestT * dy));
+                    double px = mid.X - blockZone!.Value.X;
+                    double py = mid.Y - blockZone!.Value.Y;
+                    double pl = Math.Sqrt(px * px + py * py);
+                    if (pl < 0.001) { px = -uy; py = ux; pl = 1; }
+                    ctrl = new SKPoint((float)(mid.X + px / pl * curveOffset), (float)(mid.Y + py / pl * curveOffset));
+                    ctrl = RefineCtrl(p1, ctrl, p2, conn.From, conn.To);
+                }
+                else
+                {
+                    ctrl = new SKPoint((p1.X + p2.X) / 2f, (p1.Y + p2.Y) / 2f);
+                }
+
+                drawnRaw.Add((p1, ctrl, p2, isPortal, hasCurve, conn.From, conn.To));
+            }
+
+            // Shared-endpoint untangling
+            {
+                bool anyFlipped = true;
+                for (int untanglePass = 0; untanglePass < 20 && anyFlipped; untanglePass++)
+                {
+                    anyFlipped = false;
+                    for (int i = 0; i < drawnRaw.Count; i++)
+                    {
+                        if (!drawnRaw[i].HasCurve) continue;
+                        for (int j = i + 1; j < drawnRaw.Count; j++)
+                        {
+                            if (!drawnRaw[j].HasCurve) continue;
+
+                            var (p1i, ctrli, p2i, isPortalI, hasCurveI, fromI, toI) = drawnRaw[i];
+                            var (p1j, ctrlj, p2j, isPortalJ, hasCurveJ, fromJ, toJ) = drawnRaw[j];
+
+                            bool shareStart = (p1i.X == p1j.X && p1i.Y == p1j.Y) || (p1i.X == p2j.X && p1i.Y == p2j.Y);
+                            bool shareEnd   = (p2i.X == p1j.X && p2i.Y == p1j.Y) || (p2i.X == p2j.X && p2i.Y == p2j.Y);
+                            if (!shareStart && !shareEnd) continue;
+
+                            const int UntangleSamples = 24;
+                            var piPoly = SamplePath(p1i, ctrli, p2i, hasCurveI, UntangleSamples);
+                            var pjPoly = SamplePath(p1j, ctrlj, p2j, hasCurveJ, UntangleSamples);
+                            if (!PolylinesIntersect(piPoly, pjPoly, out _, out _, out _)) continue;
+
+                            double DeflectionSq(SKPoint a, SKPoint ctrl0, SKPoint b)
+                            {
+                                double mx = (a.X + b.X) / 2, my = (a.Y + b.Y) / 2;
+                                double ox = ctrl0.X - mx, oy = ctrl0.Y - my;
+                                return ox * ox + oy * oy;
+                            }
+
+                            SKPoint FlipCtrl(SKPoint a, SKPoint ctrl0, SKPoint b)
+                            {
+                                double chx = b.X - a.X, chy = b.Y - a.Y;
+                                double len2 = chx * chx + chy * chy;
+                                if (len2 < 0.001) return ctrl0;
+                                double t2 = ((ctrl0.X - a.X) * chx + (ctrl0.Y - a.Y) * chy) / len2;
+                                double footX = a.X + t2 * chx, footY = a.Y + t2 * chy;
+                                return new SKPoint((float)(2 * footX - ctrl0.X), (float)(2 * footY - ctrl0.Y));
+                            }
+
+                            if (DeflectionSq(p1i, ctrli, p2i) >= DeflectionSq(p1j, ctrlj, p2j))
+                            {
+                                var newCtrl = RefineCtrl(p1i, FlipCtrl(p1i, ctrli, p2i), p2i, fromI, toI);
+                                drawnRaw[i] = (p1i, newCtrl, p2i, isPortalI, hasCurveI, fromI, toI);
+                            }
+                            else
+                            {
+                                var newCtrl = RefineCtrl(p1j, FlipCtrl(p1j, ctrlj, p2j), p2j, fromJ, toJ);
+                                drawnRaw[j] = (p1j, newCtrl, p2j, isPortalJ, hasCurveJ, fromJ, toJ);
+                            }
+                            anyFlipped = true;
+                        }
+                    }
+                }
+            }
+
+            var drawn = drawnRaw.Select(d => (d.P1, d.Ctrl, d.P2, d.IsPortal, d.HasCurve)).ToList();
+
+            const int CurveSamples = 32;
+            var polylines = drawn.Select(d => SamplePath(d.P1, d.Ctrl, d.P2, d.HasCurve, CurveSamples)).ToList();
+
+            var crossings = new List<(int I, int J, SKPoint At, int SegI, int SegJ)>();
+            for (int i = 0; i < drawn.Count; i++)
+                for (int j = i + 1; j < drawn.Count; j++)
+                    if (PolylinesIntersect(polylines[i], polylines[j], out SKPoint pt, out int si, out int sj))
+                        crossings.Add((i, j, pt, si, sj));
+
+            const double GapHalfPx = 7.0;
+            var overSet    = new HashSet<int>();
+            var gapsByPath = new Dictionary<int, List<(double Lo, double Hi)>>();
+
+            foreach (var (i, j, at, si, sj) in crossings)
+            {
+                double lenI = PolylineLength(polylines[i]);
+                double lenJ = PolylineLength(polylines[j]);
+                bool iIsOver = lenI <= lenJ;
+                int overIdx  = iIsOver ? i : j;
+                int underIdx = iIsOver ? j : i;
+                int segUnder = iIsOver ? sj : si;
+
+                overSet.Add(overIdx);
+
+                if (!gapsByPath.TryGetValue(underIdx, out var gaps))
+                    gapsByPath[underIdx] = gaps = new List<(double, double)>();
+
+                var poly = polylines[underIdx];
+                double arcTotal = PolylineLength(poly);
+                if (arcTotal < 0.001) continue;
+
+                double arcBefore = 0;
+                for (int s = 0; s < segUnder; s++)
+                    arcBefore += PointDist(poly[s], poly[s + 1]);
+
+                double segLen = PointDist(poly[segUnder], poly[segUnder + 1]);
+                double fracOnSeg = 0;
+                if (segLen > 0.001)
+                {
+                    double dx = poly[segUnder + 1].X - poly[segUnder].X;
+                    double dy = poly[segUnder + 1].Y - poly[segUnder].Y;
+                    double t = ((at.X - poly[segUnder].X) * dx + (at.Y - poly[segUnder].Y) * dy) / (segLen * segLen);
+                    fracOnSeg = Math.Clamp(t, 0, 1);
+                }
+
+                double arcAt = arcBefore + fracOnSeg * segLen;
+                double tAt   = arcAt / arcTotal;
+                double tGap  = GapHalfPx / arcTotal;
+                gaps.Add((Math.Max(0, tAt - tGap), Math.Min(1, tAt + tGap)));
+            }
+
+            // First pass: paths never "over"
+            for (int k = 0; k < drawn.Count; k++)
+            {
+                if (overSet.Contains(k)) continue;
+                var (p1, ctrl, p2, isPortal, hasCurve) = drawn[k];
+                if (gapsByPath.TryGetValue(k, out var gaps2))
+                    DrawConnectionPathWithGaps(canvas, polylines[k], gaps2, isPortal);
+                else
+                    DrawConnectionPath(canvas, p1, ctrl, p2, hasCurve, isPortal);
+            }
+
+            // Second pass: "over" paths
+            for (int k = 0; k < drawn.Count; k++)
+            {
+                if (!overSet.Contains(k)) continue;
+                var (p1, ctrl, p2, isPortal, hasCurve) = drawn[k];
+                if (gapsByPath.TryGetValue(k, out var gaps2))
+                    DrawConnectionPathWithGaps(canvas, polylines[k], gaps2, isPortal);
+                else
+                    DrawConnectionPath(canvas, p1, ctrl, p2, hasCurve, isPortal);
+            }
+        }
+
+        private static void DrawConnectionPathWithGaps(SKCanvas canvas, SKPoint[] poly,
+            List<(double Lo, double Hi)> gaps, bool isPortal)
+        {
+            SKColor baseColor = isPortal ? PortalLineColor : DirectLineColor;
+            float strokeW     = isPortal ? 2.0f : 3.0f;
+
+            double totalLen = PolylineLength(poly);
+            if (totalLen < 0.001) return;
+
+            const double FadeExtraPx = 18.0;
+            const int    FadeSteps   = 20;
+
+            var zones = gaps.Select(g => (
+                FadeStart: Math.Max(0, g.Lo - FadeExtraPx / totalLen),
+                GapLo:     g.Lo,
+                GapHi:     g.Hi,
+                FadeEnd:   Math.Min(1, g.Hi + FadeExtraPx / totalLen)
+            )).ToList();
+
+            double AlphaAt(double t)
+            {
+                double alpha = 1.0;
+                foreach (var z in zones)
+                {
+                    if (t <= z.FadeStart || t >= z.FadeEnd) continue;
+                    if (t >= z.GapLo && t <= z.GapHi) return 0.0;
+                    if (t < z.GapLo)
+                    {
+                        double ramp = (z.FadeStart < z.GapLo)
+                            ? 1.0 - (t - z.FadeStart) / (z.GapLo - z.FadeStart)
+                            : 0.0;
+                        alpha = Math.Min(alpha, ramp);
+                    }
+                    else
+                    {
+                        double ramp = (z.GapHi < z.FadeEnd)
+                            ? (t - z.GapHi) / (z.FadeEnd - z.GapHi)
+                            : 1.0;
+                        alpha = Math.Min(alpha, ramp);
+                    }
+                }
+                return Math.Clamp(alpha, 0.0, 1.0);
+            }
+
+            SKPoint EvalPoly(double t)
+            {
+                double target = t * totalLen;
+                double arc = 0;
+                for (int s = 0; s < poly.Length - 1; s++)
+                {
+                    double len = PointDist(poly[s], poly[s + 1]);
+                    if (arc + len >= target || s == poly.Length - 2)
+                    {
+                        double frac = len > 0.001 ? (target - arc) / len : 0;
+                        frac = Math.Clamp(frac, 0, 1);
+                        return new SKPoint(
+                            (float)(poly[s].X + frac * (poly[s + 1].X - poly[s].X)),
+                            (float)(poly[s].Y + frac * (poly[s + 1].Y - poly[s].Y)));
+                    }
+                    arc += len;
+                }
+                return poly[^1];
+            }
+
+            var tEvents = new SortedSet<double> { 0.0, 1.0 };
+            foreach (var z in zones)
+            {
+                tEvents.Add(z.FadeStart); tEvents.Add(z.GapLo);
+                tEvents.Add(z.GapHi);     tEvents.Add(z.FadeEnd);
+            }
+            {
+                double arc2 = 0;
+                for (int s = 0; s < poly.Length - 1; s++)
+                {
+                    tEvents.Add(arc2 / totalLen);
+                    arc2 += PointDist(poly[s], poly[s + 1]);
+                }
+                tEvents.Add(1.0);
+            }
+
+            using var paint = new SKPaint
+            {
+                IsAntialias = true,
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = strokeW,
+                StrokeCap = SKStrokeCap.Butt,
+            };
+
+            var tList = tEvents.ToList();
+            for (int seg = 0; seg < tList.Count - 1; seg++)
+            {
+                double tA = tList[seg], tB = tList[seg + 1];
+                if (tB - tA < 1e-6) continue;
+
+                double tMid = (tA + tB) / 2.0;
+                double aMid = AlphaAt(tMid);
+                if (aMid < 0.01) continue;
+
+                bool needsFade = zones.Any(z => tA < z.FadeEnd && tB > z.FadeStart);
+
+                if (!needsFade)
+                {
+                    byte a = (byte)Math.Round(baseColor.Alpha * aMid);
+                    paint.Color = new SKColor(baseColor.Red, baseColor.Green, baseColor.Blue, a);
+                    var pa = EvalPoly(tA); var pb = EvalPoly(tB);
+                    canvas.DrawLine(pa.X, pa.Y, pb.X, pb.Y, paint);
+                }
+                else
+                {
+                    for (int step = 0; step < FadeSteps; step++)
+                    {
+                        double t0 = tA + (tB - tA) * step       / FadeSteps;
+                        double t1 = tA + (tB - tA) * (step + 1) / FadeSteps;
+                        double a  = AlphaAt((t0 + t1) / 2.0);
+                        if (a < 0.01) continue;
+                        byte ab = (byte)Math.Round(baseColor.Alpha * a);
+                        paint.Color = new SKColor(baseColor.Red, baseColor.Green, baseColor.Blue, ab);
+                        var pa = EvalPoly(t0); var pb = EvalPoly(t1);
+                        canvas.DrawLine(pa.X, pa.Y, pb.X, pb.Y, paint);
+                    }
+                }
+            }
+        }
+
+        private static void DrawConnectionPath(SKCanvas canvas, SKPoint p1, SKPoint ctrl, SKPoint p2,
+            bool hasCurve, bool isPortal)
+        {
+            using var paint = new SKPaint
+            {
+                IsAntialias = true,
+                Style = SKPaintStyle.Stroke,
+                Color = isPortal ? PortalLineColor : DirectLineColor,
+                StrokeWidth = isPortal ? 2f : 3f,
+            };
+
+            if (!hasCurve)
+            {
+                canvas.DrawLine(p1.X, p1.Y, p2.X, p2.Y, paint);
+                return;
+            }
+
+            using var path = new SKPath();
+            path.MoveTo(p1);
+            path.QuadTo(ctrl, p2);
+            canvas.DrawPath(path, paint);
+        }
+
+        private static SKPoint[] SamplePath(SKPoint p1, SKPoint ctrl, SKPoint p2, bool hasCurve, int steps)
+        {
+            var pts = new SKPoint[steps + 1];
+            for (int s = 0; s <= steps; s++)
+            {
+                double t = (double)s / steps;
+                if (hasCurve)
+                {
+                    double mt = 1.0 - t;
+                    pts[s] = new SKPoint(
+                        (float)(mt * mt * p1.X + 2 * mt * t * ctrl.X + t * t * p2.X),
+                        (float)(mt * mt * p1.Y + 2 * mt * t * ctrl.Y + t * t * p2.Y));
+                }
+                else
+                {
+                    pts[s] = new SKPoint(
+                        (float)(p1.X + t * (p2.X - p1.X)),
+                        (float)(p1.Y + t * (p2.Y - p1.Y)));
+                }
+            }
+            return pts;
+        }
+
+        private static bool PolylinesIntersect(SKPoint[] a, SKPoint[] b, out SKPoint intersection, out int segA, out int segB)
+        {
+            intersection = default; segA = 0; segB = 0;
+            for (int i = 0; i < a.Length - 1; i++)
+                for (int j = 0; j < b.Length - 1; j++)
+                    if (SegmentsIntersect(a[i], a[i + 1], b[j], b[j + 1], out intersection))
+                    { segA = i; segB = j; return true; }
+            return false;
+        }
+
+        private static double PolylineLength(SKPoint[] pts)
+        {
+            double len = 0;
+            for (int i = 0; i < pts.Length - 1; i++) len += PointDist(pts[i], pts[i + 1]);
+            return len;
+        }
+
+        private static bool SegmentsIntersect(SKPoint p1, SKPoint p2, SKPoint p3, SKPoint p4, out SKPoint intersection)
+        {
+            intersection = default;
+            double d1x = p2.X - p1.X, d1y = p2.Y - p1.Y;
+            double d2x = p4.X - p3.X, d2y = p4.Y - p3.Y;
+            double cross = d1x * d2y - d1y * d2x;
+            if (Math.Abs(cross) < 1e-8) return false;
+            double t = ((p3.X - p1.X) * d2y - (p3.Y - p1.Y) * d2x) / cross;
+            double u = ((p3.X - p1.X) * d1y - (p3.Y - p1.Y) * d1x) / cross;
+            if (t <= 0.0 || t >= 1.0 || u <= 0.0 || u >= 1.0) return false;
+            intersection = new SKPoint((float)(p1.X + t * d1x), (float)(p1.Y + t * d1y));
+            return true;
+        }
+
+        private static double PointDist(SKPoint a, SKPoint b)
+        {
+            double dx = a.X - b.X, dy = a.Y - b.Y;
+            return Math.Sqrt(dx * dx + dy * dy);
+        }
+
+        // ── Zone drawing ─────────────────────────────────────────────────────────
+
+        private static void DrawZone(SKCanvas canvas, Zone zone, SKPoint pt)
+        {
+            bool isSpawn    = zone.Name.StartsWith("Spawn-",   StringComparison.Ordinal);
+            bool isHub      = string.Equals(zone.Name, "Hub", StringComparison.Ordinal)
+                           || zone.Name.StartsWith("Hub-",    StringComparison.Ordinal);
+            bool isNeutral  = zone.Name.StartsWith("Neutral-", StringComparison.Ordinal);
+            bool isHoldCity = IsHoldCityZone(zone);
+            int  castles    = CastleCount(zone);
+
+            SKColor fillColor;
+            SKColor outlineColor;
+            float   outlineWidth;
+
+            if (isNeutral)
+            {
+                (fillColor, outlineColor, outlineWidth) = NeutralTierStyle(zone);
+            }
+            else if (isHub)
+            {
+                fillColor = HubFill; outlineColor = HubBorder; outlineWidth = 2f;
+            }
+            else // spawn
+            {
+                fillColor = SpawnFill; outlineColor = SpawnBorder; outlineWidth = 2.5f;
+            }
+
+            if (isHoldCity)
+            {
+                outlineColor = HoldCityGold;
+                outlineWidth = 3.5f;
+            }
+
+            double drawRadius = isHub ? Math.Max(_zoneRadius, HubRadiusMin) : _zoneRadius;
+
+            using (var fillPaint = new SKPaint { Color = fillColor, IsAntialias = true, Style = SKPaintStyle.Fill })
+                canvas.DrawCircle(pt.X, pt.Y, (float)drawRadius, fillPaint);
+            using (var outPaint = new SKPaint { Color = outlineColor, IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = outlineWidth })
+                canvas.DrawCircle(pt.X, pt.Y, (float)drawRadius, outPaint);
+
+            if (isHoldCity)
+            {
+                DrawHoldCityIcon(canvas, pt, drawRadius);
+            }
+            else if (isSpawn)
+            {
+                DrawPlayerNumber(canvas, zone, pt, drawRadius);
+                if (castles > 1)
+                    DrawCastleBadge(canvas, pt, drawRadius, castles);
+            }
+            else if (isNeutral)
+            {
+                if (castles > 0)
+                    DrawNeutralCastleContent(canvas, pt, castles);
+            }
+            else if (isHub)
+            {
+                using var font = new SKFont(SKTypeface.Default, (float)(drawRadius * 1.1)) { Edging = SKFontEdging.Antialias, Subpixel = true };
+                using var paint = new SKPaint { Color = SKColors.White, IsAntialias = true };
+                DrawText(canvas, "Hub", pt.X, pt.Y, font, paint, centered: true);
+            }
+        }
+
+        private static bool IsHoldCityZone(Zone zone) =>
+            zone.MainObjects?.Any(o => o.HoldCityWinCon == true) == true;
+
+        private static void DrawHoldCityIcon(SKCanvas canvas, SKPoint centre, double r)
+        {
+            double iconSize = r * 1.35;
+            DrawHouseIcon(canvas, centre, iconSize, HoldCityGold);
+
+            // Star badge top-right
+            float bx = (float)(centre.X + r * 0.62);
+            float by = (float)(centre.Y - r * 0.62);
+            float br = (float)(r * 0.30);
+
+            using (var bgPaint = new SKPaint { Color = new SKColor(80, 60, 0), IsAntialias = true, Style = SKPaintStyle.Fill })
+                canvas.DrawCircle(bx, by, br, bgPaint);
+            using (var bord = new SKPaint { Color = HoldCityGold, IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = 1.2f })
+                canvas.DrawCircle(bx, by, br, bord);
+
+            // Star path (5-pointed) — explicit geometry so we don't depend on glyph fonts.
+            using var starPath = BuildStarPath(bx, by, br * 0.95f, br * 0.42f, 5);
+            using var starPaint = new SKPaint { Color = HoldCityGold, IsAntialias = true, Style = SKPaintStyle.Fill };
+            canvas.DrawPath(starPath, starPaint);
+        }
+
+        private static SKPath BuildStarPath(float cx, float cy, float outerR, float innerR, int points)
+        {
+            var p = new SKPath();
+            double step = Math.PI / points;
+            double angle = -Math.PI / 2.0;
+            for (int i = 0; i < points * 2; i++)
+            {
+                double r = (i % 2 == 0) ? outerR : innerR;
+                float x = (float)(cx + Math.Cos(angle) * r);
+                float y = (float)(cy + Math.Sin(angle) * r);
+                if (i == 0) p.MoveTo(x, y);
+                else        p.LineTo(x, y);
+                angle += step;
+            }
+            p.Close();
+            return p;
+        }
+
+        private static void DrawCastleBadge(SKCanvas canvas, SKPoint zoneCentre, double r, int castles)
+        {
+            float bx = (float)(zoneCentre.X + r * 0.72);
+            float by = (float)(zoneCentre.Y + r * 0.72);
+            float br = (float)(r * 0.70);
+
+            using (var bg = new SKPaint { Color = new SKColor(28, 60, 35), IsAntialias = true, Style = SKPaintStyle.Fill })
+                canvas.DrawCircle(bx, by, br, bg);
+            using (var bord = new SKPaint { Color = SpawnBorder, IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = 1.5f })
+                canvas.DrawCircle(bx, by, br, bord);
+
+            float iconSize = br * 0.60f;
+            float fontSize = br * 1.05f;
+
+            DrawHouseIcon(canvas, new SKPoint(bx - br * 0.32f, by + 0.5f), iconSize, new SKColor(160, 230, 170));
+
+            using var font = new SKFont(SKTypeface.Default, fontSize) { Edging = SKFontEdging.Antialias, Subpixel = true, Embolden = true };
+            using var paint = new SKPaint { Color = new SKColor(200, 245, 210), IsAntialias = true };
+            DrawText(canvas, castles.ToString(CultureInfo.InvariantCulture), bx + br * 0.40f, by + 0.5f, font, paint, centered: true);
+        }
+
+        private static void DrawNeutralCastleContent(SKCanvas canvas, SKPoint pt, int castles)
+        {
+            string countStr = castles.ToString(CultureInfo.InvariantCulture);
+
+            float iconW   = (float)(_zoneRadius * 0.55);
+            float fontSize = (float)(_zoneRadius * 0.62);
+            float gap     = (float)(_zoneRadius * 0.12);
+
+            using var font = new SKFont(SKTypeface.Default, fontSize) { Edging = SKFontEdging.Antialias, Subpixel = true, Embolden = true };
+            float textW  = font.MeasureText(countStr);
+            float totalW = iconW + gap + textW;
+
+            float startX = pt.X - totalW / 2f;
+
+            DrawHouseIcon(canvas, new SKPoint(startX + iconW / 2f, pt.Y + 0.5f), iconW, new SKColor(220, 220, 200));
+
+            using var paint = new SKPaint { Color = SKColors.White, IsAntialias = true };
+            DrawText(canvas, countStr, startX + iconW + gap + textW / 2f, pt.Y + 0.5f, font, paint, centered: true);
+        }
+
+        private static void DrawHouseIcon(SKCanvas canvas, SKPoint centre, double size, SKColor color)
+        {
+            double w  = size * 0.9;
+            double h  = size;
+            double rh = h * 0.45;
+            double bh = h - rh;
+
+            float left   = (float)(centre.X - w / 2);
+            float right  = (float)(centre.X + w / 2);
+            float top    = (float)(centre.Y - h / 2);
+            float roofBt = (float)(top + rh);
+            float bottom = (float)(top + h);
+
+            using var paint = new SKPaint { Color = color, IsAntialias = true, Style = SKPaintStyle.Fill };
+
+            // Roof triangle
+            using (var roof = new SKPath())
+            {
+                roof.MoveTo((float)centre.X, top);
+                roof.LineTo((float)(right + w * 0.1), roofBt);
+                roof.LineTo((float)(left  - w * 0.1), roofBt);
+                roof.Close();
+                canvas.DrawPath(roof, paint);
+            }
+
+            // Body rectangle
+            canvas.DrawRect(new SKRect(left, roofBt, right, bottom), paint);
+        }
+
+        private static (SKColor Fill, SKColor Outline, float OutlineWidth) NeutralTierStyle(Zone zone)
+        {
+            var pool = zone.GuardedContentPool?.FirstOrDefault() ?? string.Empty;
+            if (pool.Contains("_t4_") || pool.Contains("_t5_"))
+                return (GoldFill, GoldBorder, 2.5f);
+            if (pool.Contains("_t2_") || pool.Contains("_t1_"))
+                return (BronzeFill, BronzeBorder, 2.5f);
+            return (SilverFill, SilverBorder, 2.5f);
+        }
+
+        private static void DrawPlayerNumber(SKCanvas canvas, Zone zone, SKPoint centre, double r)
+        {
+            string label = "?";
+            string? spawnValue = zone.MainObjects?
+                .FirstOrDefault(o => o.Type == "Spawn")?.Spawn;
+            if (spawnValue is not null && spawnValue.StartsWith("Player", StringComparison.Ordinal))
+            {
+                string number = spawnValue["Player".Length..];
+                if (int.TryParse(number, out _))
+                    label = number;
+            }
+
+            using var font = new SKFont(SKTypeface.Default, (float)(r * 1.05)) { Edging = SKFontEdging.Antialias, Subpixel = true, Embolden = true };
+            using var paint = new SKPaint { Color = new SKColor(160, 230, 170), IsAntialias = true };
+            DrawText(canvas, label, centre.X, centre.Y, font, paint, centered: true);
+        }
+
+        private static int CastleCount(Zone zone)
+        {
+            int count = 0;
+            foreach (MainObject obj in zone.MainObjects ?? new List<MainObject>())
+                if (obj.Type is "City" or "Spawn")
+                    count++;
+            return count;
+        }
+
+        // Centred text drawing helper using SKFont metrics.
+        private static void DrawText(SKCanvas canvas, string text, float x, float y, SKFont font, SKPaint paint, bool centered)
+        {
+            if (!centered)
+            {
+                canvas.DrawText(text, x, y, font, paint);
+                return;
+            }
+            font.MeasureText(text, out SKRect bounds);
+            float baselineX = x - bounds.MidX;
+            float baselineY = y - bounds.MidY;
+            canvas.DrawText(text, baselineX, baselineY, font, paint);
         }
 
         /// <summary>
