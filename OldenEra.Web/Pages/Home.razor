@@ -28,7 +28,7 @@
     @if (UpdateAvailable is not null)
     {
         <div class="oe-update-banner">
-            🔔 A newer version (<strong>@FormatVersion(UpdateAvailable)</strong>) is available.
+            A newer version (<strong>@FormatVersion(UpdateAvailable)</strong>) is available.
             <a href="@UpdateChecker.ReleasesPageUrl" target="_blank" rel="noopener noreferrer">
                 Open releases page
             </a>
@@ -102,7 +102,7 @@
             <button class="oe-btn primary"
                     disabled="@(!IsValid || IsGenerating)"
                     @onclick="OnGenerateClick">
-                ⚔ Generate Template
+                Generate Template
             </button>
             @if (!string.IsNullOrEmpty(ValidationMessage))
             {
@@ -114,12 +114,12 @@
             <button class="oe-btn"
                     disabled="@(GeneratedTemplate is null)"
                     @onclick="DownloadJson">
-                💾 Download .rmg.json
+                Download .rmg.json
             </button>
             <button class="oe-btn"
                     disabled="@(PreviewPng is null)"
                     @onclick="DownloadPng">
-                🖼 Download Preview PNG
+                Download Preview PNG
             </button>
         </aside>
     </div>

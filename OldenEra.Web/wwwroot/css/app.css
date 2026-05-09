@@ -52,7 +52,7 @@ h3 { font-size: 13px; }
 
 h1:focus { outline: none; }
 
-code { color: #d8a85b; background: var(--oe-surface-2); padding: 0 4px; border-radius: 3px; }
+code { color: var(--oe-accent); background: var(--oe-surface-2); padding: 0 4px; border-radius: 3px; }
 
 /* ── Layout helpers ─────────────────────────────────────── */
 .oe-app {
@@ -186,16 +186,6 @@ code { color: #d8a85b; background: var(--oe-surface-2); padding: 0 4px; border-r
 
 .oe-content {
     min-width: 0; /* let grid item shrink so children can wrap */
-}
-
-.oe-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
-
-@media (max-width: 720px) {
-    .oe-columns { grid-template-columns: 1fr; }
 }
 
 /* ── Section panel ──────────────────────────────────────── */
@@ -565,8 +555,9 @@ input[type="range"]:focus-visible::-moz-range-thumb {
 
 #blazor-error-ui {
     color-scheme: dark only;
-    background: #3A2A12;
+    background: var(--oe-warn-bg);
     color: var(--oe-text);
+    border-top: 2px solid var(--oe-accent);
     bottom: 0;
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.4);
     box-sizing: border-box;
@@ -580,9 +571,10 @@ input[type="range"]:focus-visible::-moz-range-thumb {
 #blazor-error-ui .dismiss { cursor: pointer; position: absolute; right: 0.75rem; top: 0.5rem; }
 
 .blazor-error-boundary {
-    background: #6A2018;
+    background: rgba(239, 68, 68, 0.15);
     padding: 1rem;
-    color: white;
+    color: var(--oe-text);
+    border: 1px solid var(--oe-error);
     border-radius: 3px;
 }
 .blazor-error-boundary::after { content: "An error has occurred."; }
@@ -723,17 +715,17 @@ input[type="range"]:focus-visible::-moz-range-thumb {
 .oe-footer {
     margin-top: 2rem;
     padding: 1rem;
-    border-top: 1px solid rgba(180, 145, 60, 0.3);
-    color: rgba(255, 240, 220, 0.6);
+    border-top: 1px solid var(--oe-border);
+    color: var(--oe-text-dim);
     font-size: 0.85rem;
     text-align: center;
 }
 .oe-footer a {
-    color: #b4913c;
+    color: var(--oe-accent);
     text-decoration: underline;
 }
 .oe-footer code {
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--oe-surface-2);
     padding: 0.1rem 0.3rem;
     border-radius: 3px;
     font-size: 0.85em;
