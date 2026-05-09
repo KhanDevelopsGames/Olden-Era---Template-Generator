@@ -16,4 +16,18 @@
     <ProjectReference Include="..\OldenEra.Generator\OldenEra.Generator.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Required for SkiaSharp to work in Blazor WebAssembly. Provides the
+         libSkiaSharp browser-wasm native binary; needs the wasm-tools
+         workload during publish so the binary actually links in. -->
+    <PackageReference Include="SkiaSharp.NativeAssets.WebAssembly" Version="3.119.0" />
+  </ItemGroup>
+
+  <!-- Only request native WASM linking on publish so regular `dotnet build`
+       works without the wasm-tools workload installed. The deploy workflow
+       installs the workload before `dotnet publish`. -->
+  <PropertyGroup Condition="'$(IsPublishing)' == 'true'">
+    <WasmBuildNative>true</WasmBuildNative>
+  </PropertyGroup>
+
 </Project>
