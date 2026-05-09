@@ -329,6 +329,8 @@ namespace Olden_Era___Template_Editor
                 if (!TemplateGenerator.CanHonorNeutralSeparation(separationSettings, neutral))
                     warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
             }
+            if(selectedTopology == MapTopology.Random && ChkBalancedZonePlacement.IsChecked == true && totalZones >= 24)
+                warnings.Add("Balanced zone placement may produce unexpected results with the random map layout and more than 24 total zones.");
 
             bool cityHoldActive = ChkCityHold.IsChecked == true;
             if (cityHoldActive)
@@ -891,6 +893,7 @@ namespace Olden_Era___Template_Editor
             _generatedTopology = settings.Topology;
             _templateOutdated = false;
             ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
+            lblNoPreview.Content = "?";
             BtnSaveGenerated.Visibility = Visibility.Visible;
             UpdateOutdatedWarning();
             Validate(); // refresh warnings now that template is up to date
@@ -1121,6 +1124,19 @@ namespace Olden_Era___Template_Editor
             }
             return null;
         }
-        
+        private void ChkSavePreviewImage_Click(object sender, RoutedEventArgs e)
+        {
+            if (ChkSavePreviewImage.IsChecked == true)
+            {
+                ImgPreview.Visibility = Visibility.Visible;
+                lblNoPreview.Visibility = Visibility.Collapsed;
+
+            }
+            else
+            {
+                ImgPreview.Visibility = Visibility.Collapsed;
+                lblNoPreview.Visibility = Visibility.Visible;
+            }
+        }
     }
 }

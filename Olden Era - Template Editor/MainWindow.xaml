@@ -893,26 +893,31 @@
                            FontSize="12" TextWrapping="Wrap"
                            Visibility="Collapsed"
                            HorizontalAlignment="Stretch" TextAlignment="Center"/>
-
-                <Border Grid.Row="4"
+                        
+                        <Border Grid.Row="4"
                         BorderThickness="2"
                         CornerRadius="4"
                         BorderBrush="{StaticResource BrushBorder}"
                         Background="#1A1410">
-                    <Image x:Name="ImgPreview"
-                           Stretch="Uniform"
-                           RenderOptions.BitmapScalingMode="HighQuality"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"/>
-                </Border>
+                            <StackPanel VerticalAlignment="Center"
+                            HorizontalAlignment="Center"> 
+                                <Label x:Name="lblNoPreview" Visibility="Collapsed" FontSize="172"></Label>
+                                <Image x:Name="ImgPreview"
+                                Stretch="Uniform"
+                                RenderOptions.BitmapScalingMode="HighQuality"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"/>
+                            </StackPanel>
+                            
+                        </Border>
 
                 <CheckBox Grid.Row="8"
                           x:Name="ChkSavePreviewImage"
-                          Content="Show preview in-game"
+                          Content="Show preview"
                           IsChecked="True"
                           Visibility="Visible"
                           Foreground="{StaticResource BrushText}"
-                          HorizontalAlignment="Left"/>
+                          HorizontalAlignment="Left" Click="ChkSavePreviewImage_Click" />
 
                 <TextBlock Grid.Row="6"
                            x:Name="TxtOutdatedWarning"
