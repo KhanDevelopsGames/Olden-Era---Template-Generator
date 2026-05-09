@@ -46,44 +46,10 @@
         <section class="oe-content">
             <div class="oe-columns">
                 <!-- TEMPLATE -->
-                <div class="oe-section">
-                    <div class="oe-section-header">◆ Template</div>
-
-                    <div class="oe-stacked">
-                        <label class="oe-label" for="tplname">Template Name</label>
-                        <input id="tplname" type="text"
-                               value="@Settings.TemplateName"
-                               @oninput="OnTemplateNameInput" />
-                    </div>
-
-                    <div class="oe-stacked">
-                        <label class="oe-label" for="mapsize">Map Size</label>
-                        <select id="mapsize" @bind="MapSize" @bind:after="OnChanged">
-                            @foreach (int size in AvailableMapSizes)
-                            {
-                                <option value="@size">@FormatMapSize(size)</option>
-                            }
-                        </select>
-                    </div>
-
-                    <label class="oe-check">
-                        <input type="checkbox" checked="@ExperimentalMapSizes"
-                               @onchange="OnExperimentalToggled" />
-                        <span>Experimental large map sizes</span>
-                    </label>
-                    @if (ExperimentalMapSizes)
-                    {
-                        <div class="oe-hint">
-                            Adds 256x256 through 512x512. Official templates top out at 240x240,
-                            so larger maps may fail, freeze, or behave unpredictably in game.
-                        </div>
-                    }
-
-                    <SliderRow Label="Players"
-                               Min="2" Max="8" Step="1"
-                               Value="Settings.PlayerCount"
-                               ValueChanged="@(v => { Settings.PlayerCount = (int)v; OnChanged(); })" />
-                </div>
+                <MapSettingsPanel Settings="Settings"
+                                  ExperimentalMapSizes="ExperimentalMapSizes"
+                                  ExperimentalMapSizesChanged="OnExperimentalToggled"
+                                  OnChanged="OnChanged" />
 
                 <!-- HEROES -->
                 <HeroSettingsPanel Settings="Settings" OnChanged="OnChanged" />
@@ -240,29 +206,9 @@
     private static string FormatVersion(Version v)
         => v.Build > 0 ? $"v{v.Major}.{v.Minor}.{v.Build}" : $"v{v.Major}.{v.Minor}";
 
-    private int MapSize
+    private void OnExperimentalToggled(bool value)
     {
-        get => Settings.MapSize;
-        set => Settings.MapSize = value;
-    }
-
-    private IEnumerable<int> AvailableMapSizes =>
-        ExperimentalMapSizes ? KnownValues.AllMapSizes : KnownValues.MapSizes;
-
-    private static string FormatMapSize(int size) =>
-        KnownValues.IsExperimentalMapSize(size)
-            ? $"{size}x{size} ({KnownValues.MapSizeLabel(size)}) (Experimental)"
-            : $"{size}x{size} ({KnownValues.MapSizeLabel(size)})";
-
-    private void OnTemplateNameInput(ChangeEventArgs e)
-    {
-        Settings.TemplateName = e.Value?.ToString() ?? "";
-        OnChanged();
-    }
-
-    private void OnExperimentalToggled(ChangeEventArgs e)
-    {
-        ExperimentalMapSizes = (bool)e.Value!;
+        ExperimentalMapSizes = value;
         if (!ExperimentalMapSizes && KnownValues.IsExperimentalMapSize(Settings.MapSize))
             Settings.MapSize = KnownValues.MaxOfficialMapSize;
         OnChanged();
