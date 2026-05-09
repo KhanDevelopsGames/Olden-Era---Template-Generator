@@ -91,6 +91,7 @@ public class HostParityTests
         Assert.Equal(template.SizeZ, roundTripped.SizeZ);
         Assert.Equal(template.GameMode, roundTripped.GameMode);
         Assert.Equal(template.Variants?.Count ?? 0, roundTripped.Variants?.Count ?? 0);
+        Assert.NotNull(label);
     }
 
     [Fact]
