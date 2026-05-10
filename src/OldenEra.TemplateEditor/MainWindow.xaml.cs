@@ -378,117 +378,20 @@ namespace OldenEra.TemplateEditor
 
         private bool Validate()
         {
-            int heroMin = (int)PnlHeroes.SldHeroMin.Value;
-            int heroMax = (int)PnlHeroes.SldHeroMax.Value;
-            int players = (int)PnlMap.SldPlayers.Value;
-            int neutral = TotalNeutralZonesFromUi();
-
-            if (heroMin > heroMax)
-            {
-                SetValidationText("Min Heroes cannot be greater than Max Heroes.");
-                BtnPreview.IsEnabled = false;
-                return false;
-            }
-
+            var settings = BuildSettings();
             int maxZones = _advancedZoneSettings ? AdvancedModeMaxZones : SimpleModeMaxZones;
-            if (players + neutral > maxZones)
+            var result = SettingsValidator.Validate(settings, maxZones);
+
+            if (!result.IsValid)
             {
-                SetValidationText($"Total zones (players + neutral) cannot exceed {maxZones}.");
+                SetValidationText(result.Blockers[0]);
                 BtnPreview.IsEnabled = false;
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(PnlMap.TxtTemplateName.Text))
-            {
-                SetValidationText("Template name cannot be empty.");
-                BtnPreview.IsEnabled = false;
-                return false;
-            }
-
-            var warnings = new System.Collections.Generic.List<string>();
-
-            if (PnlMap.TxtTemplateName.Text.Trim().Equals("Custom Template", StringComparison.OrdinalIgnoreCase))
-                warnings.Add("⚠️ The template is still using the default name \"Custom Template\". Consider renaming it before saving.");
-
-            int selectedMapSize = SelectedMapSize();
-            int totalZones = players + neutral;
-            var selectedTopology = PnlTopology.CmbTopology.SelectedIndex >= 0 ? TopologyOptions[PnlTopology.CmbTopology.SelectedIndex].Topology : MapTopology.Default;
-            // Hub layout has an extra central zone that also occupies map area.
-            int totalZonesIncludingHub = selectedTopology == MapTopology.HubAndSpoke ? totalZones + 1 : totalZones;
-            if (totalZonesIncludingHub > 0 && (selectedMapSize * selectedMapSize) / totalZonesIncludingHub < 1024)
-                warnings.Add($"⚠️ Estimated zone size is too small. The game may freeze when loading the map. Increase the map size or reduce the number of zones.");
-
-            if (selectedMapSize > KnownValues.MaxOfficialMapSize)
-                warnings.Add("Experimental map sizes above 240x240 are not confirmed by official templates; generated maps may fail, freeze, or behave unpredictably in game.");
-
-            if (totalZones > 10)
-            {
-                int playerCastles = (int)PnlZones.SldPlayerCastles.Value;
-                int neutralCastles = _advancedZoneSettings ? 0 : (int)PnlZones.SldNeutralCastles.Value;
-                if (playerCastles > 1 || neutralCastles > 1)
-                    warnings.Add("⚠️ Using more than 1 castle per zone with more than 10 total zones may cause the game to freeze when generating the map. Consider reducing the number of castles.");
-            }
-
-            int minNeutralBetweenPlayers = (int)PnlZones.SldMinNeutralBetweenPlayers.Value;
-            if (_advancedZoneSettings && minNeutralBetweenPlayers > 0)
-            {
-                var separationSettings = new GeneratorSettings
-                {
-                    PlayerCount = players,
-                    Topology = selectedTopology,
-                    RandomPortals = PnlZones.ChkRandomPortals.IsChecked == true,
-                    MinNeutralZonesBetweenPlayers = minNeutralBetweenPlayers
-                };
-
-                if (!TemplateGenerator.CanHonorNeutralSeparation(separationSettings, neutral))
-                    warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
-            }
-
-            bool cityHoldActive = PnlGameRules.ChkCityHold.IsChecked == true;
-            if (cityHoldActive)
-            {
-                if (selectedTopology != MapTopology.HubAndSpoke && neutral == 0)
-                {
-                    SetValidationText("City Hold requires at least one neutral zone to place the hold city. Add a neutral zone or switch to the Hub layout.");
-                    BtnPreview.IsEnabled = false;
-                    return false;
-                }
-            }
-
-            if (PnlZones.ChkNoDirectPlayerConn.IsChecked == true && neutral == 0)
-            {
-                SetValidationText("\"Connect via neutral zones only\" requires at least one neutral zone. Add a neutral zone or disable this option.");
-                BtnPreview.IsEnabled = false;
-                return false;
-            }
-
-            string selectedVictoryCondition = PnlGameRules.CmbVictory.SelectedIndex >= 0 && PnlGameRules.CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
-                ? KnownValues.VictoryConditionIds[PnlGameRules.CmbVictory.SelectedIndex]
-                : "win_condition_1";
-            if (selectedVictoryCondition == "win_condition_6" && players != 2)
-            {
-                SetValidationText("Tournament mode only supports exactly 2 players.");
-                BtnPreview.IsEnabled = false;
-                return false;
-            }
-
-            SetValidationText(string.Join("\n\n", warnings));
-
+            SetValidationText(string.Join("\n\n", result.Warnings));
             BtnPreview.IsEnabled = true;
             return true;
-        }
-
-        private int TotalNeutralZonesFromUi()
-        {
-            if (!_advancedZoneSettings)
-                return (int)PnlZones.SldNeutral.Value;
-
-            return (int)PnlZones.SldNeutralLowNoCastle.Value
-                + (int)PnlZones.SldNeutralLowCastle.Value
-                + (int)PnlZones.SldNeutralMediumNoCastle.Value
-                + (int)PnlZones.SldNeutralMediumCastle.Value
-                + (int)PnlZones.SldNeutralHighNoCastle.Value
-                + (int)PnlZones.SldNeutralHighCastle.Value;
         }
 
         private int SelectedMapSize() =>

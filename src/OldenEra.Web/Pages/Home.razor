@@ -361,61 +361,25 @@
 
     private int TotalNeutralZones()
     {
-        if (!AdvancedMode) return Settings.ZoneCfg.NeutralZoneCount;
-        var a = Settings.ZoneCfg.Advanced;
-        return a.NeutralLowNoCastleCount + a.NeutralLowCastleCount
-             + a.NeutralMediumNoCastleCount + a.NeutralMediumCastleCount
-             + a.NeutralHighNoCastleCount + a.NeutralHighCastleCount;
+        // Mirror the validator's view: when AdvancedMode is on, the bucket counts
+        // override the simple slider regardless of what's persisted on Settings.
+        Settings.ZoneCfg.Advanced.Enabled = AdvancedMode;
+        return SettingsValidator.TotalNeutralZones(Settings);
     }
 
-    /// <summary>Hard-blocker validation. Mirrors the early returns from MainWindow.Validate().</summary>
+    /// <summary>Delegates to the shared <see cref="SettingsValidator"/>.</summary>
     private void Validate()
     {
-        const int MaxZones = 32;
-
-        var hero = Settings.HeroSettings;
-        if (hero.HeroCountMin > hero.HeroCountMax)
+        Settings.ZoneCfg.Advanced.Enabled = AdvancedMode;
+        var result = SettingsValidator.Validate(Settings);
+        if (!result.IsValid)
         {
-            Fail("Min Heroes cannot be greater than Max Heroes."); return;
+            IsValid = false;
+            ValidationMessage = result.Blockers[0];
+            return;
         }
-
-        int neutral = TotalNeutralZones();
-        if (Settings.PlayerCount + neutral > MaxZones)
-        {
-            Fail($"Total zones (players + neutral) cannot exceed {MaxZones}."); return;
-        }
-
-        if (string.IsNullOrWhiteSpace(Settings.TemplateName))
-        {
-            Fail("Template name cannot be empty."); return;
-        }
-
-        if (Settings.GameEndConditions.CityHold
-            && Settings.Topology != MapTopology.HubAndSpoke
-            && neutral == 0)
-        {
-            Fail("City Hold requires at least one neutral zone. Add a neutral zone or switch to the Hub layout."); return;
-        }
-
-        if (Settings.NoDirectPlayerConnections && neutral == 0)
-        {
-            Fail("\"Connect via neutral zones only\" requires at least one neutral zone."); return;
-        }
-
-        if (Settings.GameEndConditions.VictoryCondition == "win_condition_6"
-            && Settings.PlayerCount != 2)
-        {
-            Fail("Tournament mode only supports exactly 2 players."); return;
-        }
-
         IsValid = true;
-        ValidationMessage = "";
-    }
-
-    private void Fail(string msg)
-    {
-        IsValid = false;
-        ValidationMessage = msg;
+        ValidationMessage = result.Warnings.Count > 0 ? string.Join("\n\n", result.Warnings) : "";
     }
 
     // -- Generate flow -----------------------------------------------------
