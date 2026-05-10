@@ -525,6 +525,39 @@
         </Setter>
     </Style>
 
+    <!-- ToolTip: dark surface with hairline border, matches the rest of the UI. -->
+    <Style TargetType="{x:Type ToolTip}">
+        <Setter Property="Background" Value="{StaticResource OeSurface3Brush}"/>
+        <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource OeBorderStrongBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FontFamily" Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Padding" Value="8,6"/>
+        <Setter Property="HasDropShadow" Value="False"/>
+        <Setter Property="MaxWidth" Value="360"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToolTip}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="3"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter>
+                            <ContentPresenter.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- TabControl: transparent body, no decorative border. -->
     <Style TargetType="{x:Type TabControl}">
         <Setter Property="Background" Value="Transparent"/>
