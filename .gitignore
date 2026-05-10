@@ -407,6 +407,12 @@ FodyWeavers.xsd
 # Git worktrees
 .worktrees/
 
+# Claude Code agent worktrees + caches
+.claude/
+
+# macOS
+.DS_Store
+
 # Playwright e2e
 tests/e2e/node_modules/
 tests/e2e/test-results/
