@@ -630,8 +630,11 @@ namespace Olden_Era___Template_Editor
             bool advanced = _advancedZoneSettings;
             PnlZones.PnlAdvancedNeutralZones.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
             PnlZones.PnlAdvancedZoneSizes.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
-            PnlZones.PnlSimpleNeutralCountLabel.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
-            PnlZones.SldNeutral.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
+            // Mirror web UX: keep the simple neutral-zones slider visible but
+            // disabled in advanced mode rather than hiding it. Avoids the
+            // "controls disappeared" feeling when toggling the Advanced switch.
+            PnlZones.SldNeutral.IsEnabled = !advanced;
+            PnlZones.PnlSimpleNeutralCountLabel.IsEnabled = !advanced;
             if (PnlZones.ChkAdvancedZoneSettings != null)
                 PnlZones.ChkAdvancedZoneSettings.IsChecked = advanced;
         }
