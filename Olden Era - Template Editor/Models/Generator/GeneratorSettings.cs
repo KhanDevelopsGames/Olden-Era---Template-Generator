@@ -82,6 +82,7 @@ namespace Olden_Era___Template_Editor.Models
         public string BannedItems { get; set; } = "";
         public string BannedMagics { get; set; } = "";
         public string ValueOverridesText { get; set; } = "";
+        public System.Collections.Generic.List<OldenEraTemplateEditor.Models.BonusEntry> Bonuses { get; set; } = [];
         public GameEndConditions GameEndConditions { get; set; } = new GameEndConditions();
         public GladiatorArenaRules GladiatorArenaRules { get; set; } = new GladiatorArenaRules();
         public TournamentRules TournamentRules { get; set; } = new TournamentRules();

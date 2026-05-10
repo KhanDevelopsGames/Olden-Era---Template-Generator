@@ -583,6 +583,76 @@
                     </Grid>
                 </TabItem>
 
+            <!-- ── BONUSES TAB ─────────────────────────────────────────────── -->
+            <TabItem Header="Bonuses">
+                <DockPanel Margin="0,8,0,0">
+                    <Border DockPanel.Dock="Top" Style="{StaticResource SectionBorder}">
+                        <StackPanel>
+                            <DockPanel Margin="0,0,0,6">
+                                <TextBlock DockPanel.Dock="Left"
+                                           Text="◆  GAME START BONUSES"
+                                           Style="{StaticResource SectionHeader}"
+                                           VerticalAlignment="Center"/>
+                                <Button DockPanel.Dock="Right" x:Name="BtnAddBonus"
+                                        Content="+ Add" Width="54" Height="22"
+                                        Click="BtnAddBonus_Click"
+                                        VerticalAlignment="Center"/>
+                            </DockPanel>
+                            <TextBlock Text="Bonuses are granted to all players equally at game start."
+                                       Foreground="#9A8A6A" FontSize="11"
+                                       Margin="0,0,0,8" TextWrapping="Wrap"/>
+                            <ListBox x:Name="LbBonuses"
+                                     MinHeight="32"
+                                     Background="#2C2619"
+                                     BorderBrush="#5A4A28" BorderThickness="1"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Padding"    Value="0"/>
+                                        <Setter Property="Margin"     Value="0"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <ContentPresenter/>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="4,2">
+                                            <Button DockPanel.Dock="Right"
+                                                    Content="×" Width="20" Height="18"
+                                                    FontSize="13" Padding="0"
+                                                    Tag="{Binding}"
+                                                    Click="RemoveBonus_Click"
+                                                    ToolTip="Remove"
+                                                    Background="#3A2820"
+                                                    BorderBrush="#5A4A28"
+                                                    Foreground="#E8D5A3"/>
+                                            <Ellipse Width="8" Height="8"
+                                                     Fill="{Binding DotBrush}"
+                                                     VerticalAlignment="Center"
+                                                     Margin="0,0,6,0"/>
+                                            <TextBlock Text="{Binding DisplayName}"
+                                                       Foreground="#E8D5A3" FontSize="12"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding ReceiverLabel}"
+                                                       Foreground="#9A8A6A" FontSize="11"
+                                                       VerticalAlignment="Center"
+                                                       FontStyle="Italic"/>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </Border>
+                </DockPanel>
+            </TabItem>
+
             <TabItem Header="Layout &amp; Zones">
             <Grid Margin="0,8,0,0">
                 <Grid.RowDefinitions>

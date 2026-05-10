@@ -357,21 +357,21 @@ namespace Olden_Era___Template_Editor.Services
             EncounterHoles = false,
             FactionLawsExpModifier = PercentToModifier(settings.FactionLawsExpPercent),
             AstrologyExpModifier = PercentToModifier(settings.AstrologyExpPercent),
-            Bonuses =
-            [
-                new Bonus
-                {
-                    Sid = "add_bonus_hero_stat",
-                    ReceiverSide = -1,
-                    ReceiverFilter = "all_heroes",
-                    Parameters = ["movementBonus", "0"]
-                }
-            ],
+            Bonuses = BuildBonuses(settings.Bonuses),
             WinConditions = BuildAdvancedWinConditions(settings, effectiveVictoryCondition)
         };
 
         private static double PercentToModifier(int percent) =>
             Math.Round(Math.Clamp(percent, 25, 200) / 100.0, 2, MidpointRounding.AwayFromZero);
+
+        private static List<Bonus>? BuildBonuses(List<OldenEraTemplateEditor.Models.BonusEntry> entries)
+        {
+            if (entries.Count == 0) return null;
+            var result = new List<Bonus>();
+            foreach (var entry in entries)
+                result.AddRange(entry.ToBonuses());
+            return result.Count > 0 ? result : null;
+        }
 
         /// <summary>
         /// Parses newline-separated "sid=guardValue" lines into a ValueOverride list.

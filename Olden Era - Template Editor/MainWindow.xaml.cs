@@ -37,8 +37,9 @@ namespace Olden_Era___Template_Editor
         private bool _isDirty = false;
 
         // Ban lists
-        private readonly ObservableCollection<BanEntry> _bannedItems  = [];
-        private readonly ObservableCollection<BanEntry> _bannedMagics = [];
+        private readonly ObservableCollection<BanEntry>   _bannedItems  = [];
+        private readonly ObservableCollection<BanEntry>   _bannedMagics = [];
+        private readonly ObservableCollection<BonusEntry> _bonuses      = [];
         private bool _isRefreshingMapSizes = false;
         private string _baseTitle = string.Empty;
 
@@ -82,6 +83,7 @@ namespace Olden_Era___Template_Editor
             // Wire ban-list ObservableCollections to the ListBoxes.
             LbBannedItems.ItemsSource  = _bannedItems;
             LbBannedMagics.ItemsSource = _bannedMagics;
+            LbBonuses.ItemsSource      = _bonuses;
 
             // Fire-and-forget background update check — never blocks the UI.
             _ = CheckForUpdateAsync(version);
@@ -546,6 +548,38 @@ namespace Olden_Era___Template_Editor
             }
         }
 
+        // ── Bonus list handlers ───────────────────────────────────────────────────
+
+        private void BtnAddBonus_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new BonusPickerWindow { Owner = this };
+            if (picker.ShowDialog() == true && picker.Result is { } entry)
+            {
+                _bonuses.Add(entry);
+                MarkDirty();
+            }
+        }
+
+        private void RemoveBonus_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement { Tag: BonusEntry entry })
+            {
+                _bonuses.Remove(entry);
+                MarkDirty();
+            }
+        }
+
+        private void LoadBonusList(string raw)
+        {
+            _bonuses.Clear();
+            if (string.IsNullOrWhiteSpace(raw)) return;
+            foreach (var line in raw.Split('\n'))
+            {
+                var entry = BonusEntry.FromString(line.Trim());
+                if (entry != null) _bonuses.Add(entry);
+            }
+        }
+
         private void CmbMapSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsInitialized || _isRefreshingMapSizes) return;
@@ -827,6 +861,7 @@ namespace Olden_Era___Template_Editor
             BannedItems        = string.Join("\n", _bannedItems.Select(e => e.Id)),
             BannedMagics       = string.Join("\n", _bannedMagics.Select(e => e.Id)),
             ValueOverridesText = TxtValueOverrides.Text,
+            BonusesJson        = string.Join("\n", _bonuses.Select(b => b.ToString())),
         };
 
         private void ApplySettings(SettingsFile s)
@@ -889,6 +924,7 @@ namespace Olden_Era___Template_Editor
             ChkTournamentSaveArmy.IsChecked = s.TournamentSaveArmy;
             LoadBanList(_bannedItems,  s.BannedItems,  isMagics: false);
             LoadBanList(_bannedMagics, s.BannedMagics, isMagics: true);
+            LoadBonusList(s.BonusesJson);
             TxtValueOverrides.Text = s.ValueOverridesText;
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
@@ -1147,6 +1183,7 @@ namespace Olden_Era___Template_Editor
             BannedItems        = string.Join("\n", _bannedItems.Select(e => e.Id)),
             BannedMagics       = string.Join("\n", _bannedMagics.Select(e => e.Id)),
             ValueOverridesText = TxtValueOverrides.Text,
+            Bonuses            = [.. _bonuses],
         };
 
         /// <summary>
