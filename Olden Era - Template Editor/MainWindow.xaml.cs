@@ -70,7 +70,6 @@ namespace Olden_Era___Template_Editor
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
-            UpdateRoadsHintVisibility();
             UpdateBalancedZonePlacementDescVisibility();
 
             // Fire-and-forget background update check — never blocks the UI.
@@ -217,7 +216,6 @@ namespace Olden_Era___Template_Editor
             UpdateValueLabels();
             UpdatePlayerCastleFactionVisibility();
             UpdateAdvancedZoneSettingsVisibility();
-            UpdateRoadsHintVisibility();
             MarkDirty();
             Validate();
         }
@@ -461,7 +459,6 @@ namespace Olden_Era___Template_Editor
         {
             if (!IsInitialized) return;
             UpdateIsolateDescVisibility();
-            UpdateRoadsHintVisibility();
             UpdateBalancedZonePlacementDescVisibility();
             UpdatePlayerCastleFactionVisibility();
             UpdateWinConditionDetailVisibility();
@@ -508,7 +505,6 @@ namespace Olden_Era___Template_Editor
 
             UpdateAdvancedZoneSettingsVisibility();
             UpdateValueLabels();
-            UpdateRoadsHintVisibility();
             MarkDirty();
             Validate();
         }
@@ -664,14 +660,6 @@ namespace Olden_Era___Template_Editor
                 : Visibility.Collapsed;
         }
 
-        private void UpdateRoadsHintVisibility()
-        {
-            if (TxtRoadsHint == null || ChkGenerateRoads == null || SldNeutralCastles == null) return;
-            TxtRoadsHint.Visibility = ChkGenerateRoads.IsChecked == true && (int)SldNeutralCastles.Value == 0
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-        }
-
         private void UpdateBalancedZonePlacementDescVisibility()
         {
             if (TxtBalancedZonePlacementDesc == null || ChkBalancedZonePlacement == null) return;
@@ -799,7 +787,6 @@ namespace Olden_Era___Template_Editor
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
-            UpdateRoadsHintVisibility();
             UpdateBalancedZonePlacementDescVisibility();
             UpdateWinConditionDetailVisibility();
         }
