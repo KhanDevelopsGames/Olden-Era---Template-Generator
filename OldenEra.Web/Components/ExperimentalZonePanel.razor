@@ -1,0 +1,157 @@
+@* Experimental zone-level capabilities, each in its own collapsible card. *@
+
+<ExperimentalCard Key="terrain" Title="Terrain density">
+    <div class="oe-hint">
+        0 % = generator default. Higher values create more chokepoints.
+    </div>
+    <SliderRow Label="Obstacles fill" WideLabel="true"
+               Min="0" Max="80" Step="5" Suffix="%"
+               Value="(int)Math.Round(Settings.Terrain.ObstaclesFill * 100)"
+               ValueChanged="@(v => { Settings.Terrain.ObstaclesFill = v / 100.0; NotifyChanged(); })" />
+    <SliderRow Label="Lakes fill" WideLabel="true"
+               Min="0" Max="80" Step="5" Suffix="%"
+               Value="(int)Math.Round(Settings.Terrain.LakesFill * 100)"
+               ValueChanged="@(v => { Settings.Terrain.LakesFill = v / 100.0; NotifyChanged(); })" />
+</ExperimentalCard>
+
+<ExperimentalCard Key="building-presets" Title="Building presets">
+    <div class="oe-hint">
+        Force a specific build path. Default = let the generator pick.
+    </div>
+    <div class="oe-stacked">
+        <label class="oe-label">Player-zone preset</label>
+        <select @bind="Settings.BuildingPresets.PlayerZonePreset" @bind:after="NotifyChanged">
+            <option value="">Default (generator picks)</option>
+            @foreach (var sid in KnownValues.BuildingsConstructionSids)
+            {
+                <option value="@sid">@FriendlyPreset(sid)</option>
+            }
+        </select>
+    </div>
+    <div class="oe-stacked">
+        <label class="oe-label">Neutral-zone preset</label>
+        <select @bind="Settings.BuildingPresets.NeutralZonePreset" @bind:after="NotifyChanged">
+            <option value="">Default (generator picks)</option>
+            @foreach (var sid in KnownValues.BuildingsConstructionSids)
+            {
+                <option value="@sid">@FriendlyPreset(sid)</option>
+            }
+        </select>
+    </div>
+</ExperimentalCard>
+
+<ExperimentalCard Key="guard-progression" Title="Guard progression">
+    <div class="oe-hint">
+        Weekly guard growth. 0 % = use the generator's defaults
+        (15 % per zone, 15–20 % per connection).
+    </div>
+    <SliderRow Label="Zone guard / week" WideLabel="true"
+               Min="0" Max="50" Step="1" Suffix="%"
+               Value="(int)Math.Round(Settings.GuardProgression.ZoneGuardWeeklyIncrement * 100)"
+               ValueChanged="@(v => { Settings.GuardProgression.ZoneGuardWeeklyIncrement = v / 100.0; NotifyChanged(); })" />
+    <SliderRow Label="Connection guard / week" WideLabel="true"
+               Min="0" Max="50" Step="1" Suffix="%"
+               Value="(int)Math.Round(Settings.GuardProgression.ConnectionGuardWeeklyIncrement * 100)"
+               ValueChanged="@(v => { Settings.GuardProgression.ConnectionGuardWeeklyIncrement = v / 100.0; NotifyChanged(); })" />
+</ExperimentalCard>
+
+<ExperimentalCard Key="neutral-cities" Title="Neutral cities">
+    <SliderRow Label="Guard chance" WideLabel="true"
+               Min="0" Max="100" Step="5" Suffix="%"
+               Value="(int)Math.Round(Settings.NeutralCities.GuardChance * 100)"
+               ValueChanged="@(v => { Settings.NeutralCities.GuardChance = v / 100.0; NotifyChanged(); })" />
+    <SliderRow Label="Guard value" WideLabel="true"
+               Min="25" Max="300" Step="5" Suffix="%"
+               Value="Settings.NeutralCities.GuardValuePercent"
+               ValueChanged="@(v => { Settings.NeutralCities.GuardValuePercent = (int)v; NotifyChanged(); })" />
+</ExperimentalCard>
+
+<ExperimentalCard Key="content-control" Title="Content control">
+    <div class="oe-hint">
+        Ban specific objects, or cap how many of an object each player can have.
+    </div>
+    <div class="oe-stacked">
+        <label class="oe-label">Banned objects (@Settings.Content.GlobalBans.Count selected)</label>
+        <div class="oe-ban-chips">
+            @foreach (var sid in KnownValues.ObjectSids)
+            {
+                bool banned = Settings.Content.GlobalBans.Contains(sid);
+                <button type="button"
+                        class="@($"oe-ban-chip{(banned ? " selected" : "")}")"
+                        @onclick="@(() => ToggleBan(sid))">
+                    @sid
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="oe-stacked">
+        <label class="oe-label">Per-player count limits</label>
+        @foreach (var (limit, idx) in Settings.Content.ContentCountLimits.Select((l, i) => (l, i)))
+        {
+            <div class="oe-row" style="grid-template-columns: 1fr 80px 32px;">
+                <select value="@limit.Sid" @onchange="@(e => OnLimitSidChanged(idx, e))">
+                    <option value="">Pick object…</option>
+                    @foreach (var sid in KnownValues.ObjectSids)
+                    {
+                        <option value="@sid">@sid</option>
+                    }
+                </select>
+                <input type="number" min="0" max="20" step="1"
+                       value="@limit.MaxPerPlayer"
+                       @onchange="@(e => OnLimitMaxChanged(idx, e))" />
+                <button type="button" class="oe-link-btn"
+                        @onclick="@(() => RemoveLimit(idx))" aria-label="Remove">✕</button>
+            </div>
+        }
+        <button type="button" class="oe-btn ghost" @onclick="AddLimit">+ Add count limit</button>
+    </div>
+</ExperimentalCard>
+
+@code {
+    [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private Task NotifyChanged() => OnChanged.InvokeAsync();
+
+    private async Task ToggleBan(string sid)
+    {
+        if (!Settings.Content.GlobalBans.Remove(sid))
+            Settings.Content.GlobalBans.Add(sid);
+        await NotifyChanged();
+    }
+
+    private async Task AddLimit()
+    {
+        Settings.Content.ContentCountLimits.Add(new ContentLimit { Sid = "", MaxPerPlayer = 1 });
+        await NotifyChanged();
+    }
+
+    private async Task RemoveLimit(int idx)
+    {
+        if (idx >= 0 && idx < Settings.Content.ContentCountLimits.Count)
+            Settings.Content.ContentCountLimits.RemoveAt(idx);
+        await NotifyChanged();
+    }
+
+    private async Task OnLimitSidChanged(int idx, ChangeEventArgs e)
+    {
+        Settings.Content.ContentCountLimits[idx].Sid = e.Value?.ToString() ?? "";
+        await NotifyChanged();
+    }
+
+    private async Task OnLimitMaxChanged(int idx, ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int v))
+        {
+            Settings.Content.ContentCountLimits[idx].MaxPerPlayer = Math.Max(0, v);
+            await NotifyChanged();
+        }
+    }
+
+    private static string FriendlyPreset(string sid)
+    {
+        const string suffix = "_buildings_construction";
+        return sid.EndsWith(suffix) ? sid[..^suffix.Length] : sid;
+    }
+}

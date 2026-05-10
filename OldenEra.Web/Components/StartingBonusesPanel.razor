@@ -1,0 +1,104 @@
+@* Starting bonuses applied to every player (or every player's start hero,
+   depending on the per-bonus toggle). 0 = unset. *@
+
+<ExperimentalCard Key="starting-bonuses" Title="Starting bonuses">
+    <div class="oe-hint">
+        Same bonuses apply to every player. 0 / empty = no bonus.
+    </div>
+
+    <div class="oe-section-header" style="font-size:13px;margin-top:4px;">Resources</div>
+    @foreach (var sid in ResourceSids)
+    {
+        var current = Settings.Bonuses.Resources.TryGetValue(sid, out var v) ? v : 0;
+        <SliderRow Label="@FriendlyResource(sid)" WideLabel="true"
+                   Min="0" Max="100" Step="1"
+                   Value="current"
+                   ValueChanged="@(nv => SetResource(sid, (int)nv))" />
+    }
+
+    <div class="oe-section-header" style="font-size:13px;margin-top:8px;">
+        Hero stats
+        <label class="oe-check inline" style="margin:0;">
+            <input type="checkbox" checked="@Settings.Bonuses.HeroStatStartHeroOnly"
+                   @onchange="@(e => { Settings.Bonuses.HeroStatStartHeroOnly = (bool)e.Value!; NotifyChanged(); })" />
+            <span class="oe-inline-toggle">Start hero only</span>
+        </label>
+    </div>
+    <SliderRow Label="Attack" WideLabel="true"
+               Min="0" Max="20" Step="1"
+               Value="Settings.Bonuses.HeroAttack"
+               ValueChanged="@(v => { Settings.Bonuses.HeroAttack = (int)v; NotifyChanged(); })" />
+    <SliderRow Label="Defense" WideLabel="true"
+               Min="0" Max="20" Step="1"
+               Value="Settings.Bonuses.HeroDefense"
+               ValueChanged="@(v => { Settings.Bonuses.HeroDefense = (int)v; NotifyChanged(); })" />
+    <SliderRow Label="Spellpower" WideLabel="true"
+               Min="0" Max="20" Step="1"
+               Value="Settings.Bonuses.HeroSpellpower"
+               ValueChanged="@(v => { Settings.Bonuses.HeroSpellpower = (int)v; NotifyChanged(); })" />
+    <SliderRow Label="Knowledge" WideLabel="true"
+               Min="0" Max="20" Step="1"
+               Value="Settings.Bonuses.HeroKnowledge"
+               ValueChanged="@(v => { Settings.Bonuses.HeroKnowledge = (int)v; NotifyChanged(); })" />
+
+    <div class="oe-section-header" style="font-size:13px;margin-top:8px;">Item / Spell / Units</div>
+
+    <div class="oe-stacked">
+        <label class="oe-label">Bonus item SID</label>
+        <input type="text" placeholder="(empty = no bonus item)"
+               value="@Settings.Bonuses.ItemSid"
+               @oninput="@(e => { Settings.Bonuses.ItemSid = e.Value?.ToString() ?? ""; NotifyChanged(); })" />
+        <label class="oe-check">
+            <input type="checkbox" checked="@Settings.Bonuses.ItemStartHeroOnly"
+                   @onchange="@(e => { Settings.Bonuses.ItemStartHeroOnly = (bool)e.Value!; NotifyChanged(); })" />
+            <span>Apply to start hero only</span>
+        </label>
+    </div>
+
+    <div class="oe-stacked">
+        <label class="oe-label">Bonus spell SID</label>
+        <input type="text" placeholder="(empty = no bonus spell)"
+               value="@Settings.Bonuses.SpellSid"
+               @oninput="@(e => { Settings.Bonuses.SpellSid = e.Value?.ToString() ?? ""; NotifyChanged(); })" />
+        <label class="oe-check">
+            <input type="checkbox" checked="@Settings.Bonuses.SpellStartHeroOnly"
+                   @onchange="@(e => { Settings.Bonuses.SpellStartHeroOnly = (bool)e.Value!; NotifyChanged(); })" />
+            <span>Apply to start hero only</span>
+        </label>
+    </div>
+
+    <SliderRow Label="Unit multiplier" WideLabel="true"
+               Min="0" Max="500" Step="5" Suffix="%"
+               Value="(int)Math.Round(Settings.Bonuses.UnitMultiplier * 100)"
+               ValueChanged="@(v => { Settings.Bonuses.UnitMultiplier = v / 100.0; NotifyChanged(); })" />
+    <label class="oe-check">
+        <input type="checkbox" checked="@Settings.Bonuses.UnitMultiplierStartHeroOnly"
+               @onchange="@(e => { Settings.Bonuses.UnitMultiplierStartHeroOnly = (bool)e.Value!; NotifyChanged(); })" />
+        <span>Unit multiplier: start hero only</span>
+    </label>
+</ExperimentalCard>
+
+@code {
+    [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private Task NotifyChanged() => OnChanged.InvokeAsync();
+
+    private static readonly string[] ResourceSids =
+        ["gold", "wood", "ore", "mercury", "crystals", "gemstones"];
+
+    private async Task SetResource(string sid, int value)
+    {
+        if (value == 0)
+            Settings.Bonuses.Resources.Remove(sid);
+        else
+            Settings.Bonuses.Resources[sid] = value;
+        await NotifyChanged();
+    }
+
+    private static string FriendlyResource(string sid) => sid switch
+    {
+        "gold" => "Gold (×1000)",
+        _ => char.ToUpper(sid[0]) + sid[1..],
+    };
+}

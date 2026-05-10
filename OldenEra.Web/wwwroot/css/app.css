@@ -193,6 +193,112 @@ code { color: var(--oe-accent); background: var(--oe-surface-2); padding: 0 4px;
     min-width: 0; /* let grid item shrink so children can wrap */
 }
 
+/* ── Experimental badge ─────────────────────────────────── */
+.oe-exp-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 1px 7px 2px;
+    border-radius: 9px;
+    background: linear-gradient(180deg, #c47e2c 0%, #9a5e1c 100%);
+    color: #1c1208;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    border: 1px solid #6b3f10;
+    box-shadow: inset 0 1px 0 rgba(255, 220, 160, 0.35);
+    cursor: help;
+    user-select: none;
+    vertical-align: middle;
+}
+.oe-exp-badge-glyph {
+    font-size: 11px;
+    line-height: 1;
+}
+
+/* ── Experimental card ──────────────────────────────────── */
+.oe-exp-card {
+    border: 1px solid var(--oe-border);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: rgba(0, 0, 0, 0.12);
+}
+.oe-exp-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 8px 12px;
+    color: var(--oe-text);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+.oe-exp-card-header:hover { background: rgba(255,255,255,0.04); }
+.oe-exp-card.open .oe-exp-card-header { border-bottom: 1px solid var(--oe-border); }
+.oe-exp-card-chevron {
+    color: var(--oe-text-dim);
+    font-size: 11px;
+    width: 12px;
+}
+.oe-exp-card-title { flex: 1; }
+.oe-exp-card-body { padding: 10px 14px 12px; }
+
+/* ── Tier tabs ──────────────────────────────────────────── */
+.oe-tier-tabs {
+    display: flex;
+    gap: 4px;
+    margin: 6px 0 10px;
+}
+.oe-tier-tab {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--oe-border);
+    color: var(--oe-text-dim);
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+.oe-tier-tab:hover { color: var(--oe-text); }
+.oe-tier-tab.active {
+    background: rgba(196, 126, 44, 0.18);
+    border-color: #c47e2c;
+    color: var(--oe-text);
+}
+
+/* ── Ban chips ──────────────────────────────────────────── */
+.oe-ban-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+}
+.oe-ban-chip {
+    background: transparent;
+    color: var(--oe-text-dim);
+    border: 1px solid var(--oe-border);
+    border-radius: 12px;
+    padding: 2px 9px;
+    font-size: 11px;
+    cursor: pointer;
+    line-height: 1.4;
+}
+.oe-ban-chip:hover {
+    color: var(--oe-text);
+    border-color: var(--oe-text-dim);
+}
+.oe-ban-chip.selected {
+    background: #4a1c1c;
+    border-color: #8a3030;
+    color: #ffd9d9;
+    text-decoration: line-through;
+}
+
 /* ── Section panel ──────────────────────────────────────── */
 .oe-section {
     margin-bottom: 24px;

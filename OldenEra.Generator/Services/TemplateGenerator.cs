@@ -77,7 +77,230 @@ namespace OldenEra.Generator.Services
                 ContentLists = []
             };
 
+            var tierByLetter = neutralZones.ToDictionary(p => p.Letter, p => p.Quality);
+            ApplyExperimentalSettings(template, settings, tierByLetter);
             return template;
+        }
+
+        // ── Experimental settings post-processor ────────────────────────────────
+        // Walks the generated template after all builders have run and overlays
+        // the user's experimental settings. Each branch is gated on a non-default
+        // value, so a fresh GeneratorSettings produces byte-identical output.
+        private static void ApplyExperimentalSettings(
+            RmgTemplate template,
+            GeneratorSettings settings,
+            Dictionary<string, NeutralZoneQuality> tierByLetter)
+        {
+            // Hero hire ban + desertion overrides
+            if (settings.HeroHireBan && template.GameRules is not null)
+                template.GameRules.HeroHireBan = true;
+
+            if (template.GameRules?.WinConditions is { } wc)
+            {
+                if (settings.DesertionDay > 0) wc.DesertionDay = settings.DesertionDay;
+                if (settings.DesertionValue > 0) wc.DesertionValue = settings.DesertionValue;
+            }
+
+            // SingleHero mode forces hero count to 1.
+            if (settings.GameMode == "SingleHero" && template.GameRules is not null)
+            {
+                template.GameRules.HeroCountMin = 1;
+                template.GameRules.HeroCountMax = 1;
+                template.GameRules.HeroCountIncrement = 1;
+            }
+
+            // Starting bonuses — appended to the generator's default movementBonus entry.
+            template.GameRules?.Bonuses?.AddRange(BuildExperimentalBonuses(settings.Bonuses));
+
+            // Global bans
+            if (settings.Content.GlobalBans.Count > 0)
+            {
+                template.GlobalBans ??= new GlobalBans();
+                template.GlobalBans.Items ??= new List<string>();
+                foreach (var sid in settings.Content.GlobalBans)
+                    if (!template.GlobalBans.Items.Contains(sid))
+                        template.GlobalBans.Items.Add(sid);
+            }
+
+            // Extra content count limits — appended as extra entries.
+            if (settings.Content.ContentCountLimits.Count > 0)
+            {
+                template.ContentCountLimits ??= new List<ContentCountLimit>();
+                foreach (var l in settings.Content.ContentCountLimits)
+                {
+                    if (string.IsNullOrWhiteSpace(l.Sid)) continue;
+                    template.ContentCountLimits.Add(new ContentCountLimit
+                    {
+                        Name = $"user_limit_{l.Sid}",
+                        Limits = new List<ContentSidLimit>
+                        {
+                            new ContentSidLimit { Sid = l.Sid, MaxCount = l.MaxPerPlayer }
+                        }
+                    });
+                }
+            }
+
+            // Per-zone overlays.
+            if (template.Variants is not null)
+            {
+                foreach (var variant in template.Variants)
+                {
+                    if (variant.Zones is not null)
+                    {
+                        foreach (var zone in variant.Zones)
+                            ApplyExperimentalToZone(zone, settings, tierByLetter);
+                    }
+                    if (variant.Connections is not null && settings.GuardProgression.ConnectionGuardWeeklyIncrement > 0)
+                    {
+                        foreach (var c in variant.Connections)
+                            c.GuardWeeklyIncrement = settings.GuardProgression.ConnectionGuardWeeklyIncrement;
+                    }
+                }
+            }
+
+            // Terrain density overrides — applied to every zone layout.
+            if (settings.Terrain.ObstaclesFill > 0 || settings.Terrain.LakesFill > 0)
+            {
+                if (template.ZoneLayouts is not null)
+                {
+                    foreach (var layout in template.ZoneLayouts)
+                    {
+                        if (settings.Terrain.ObstaclesFill > 0)
+                            layout.ObstaclesFill = settings.Terrain.ObstaclesFill;
+                        if (settings.Terrain.LakesFill > 0)
+                            layout.LakesFill = settings.Terrain.LakesFill;
+                    }
+                }
+            }
+        }
+
+        private static void ApplyExperimentalToZone(
+            Zone zone,
+            GeneratorSettings settings,
+            Dictionary<string, NeutralZoneQuality> tierByLetter)
+        {
+            // Tier override only applies to neutral zones; player zones use the global setting.
+            TierOverrides? tier = tierByLetter.TryGetValue(zone.Name, out var q) ? GetTierOverrides(settings, q) : null;
+
+            // Zone guard weekly increment: tier wins, then global.
+            double tierZoneInc = tier?.GuardWeeklyIncrement ?? 0;
+            if (tierZoneInc > 0)
+                zone.GuardWeeklyIncrement = tierZoneInc;
+            else if (settings.GuardProgression.ZoneGuardWeeklyIncrement > 0)
+                zone.GuardWeeklyIncrement = settings.GuardProgression.ZoneGuardWeeklyIncrement;
+
+            if (zone.MainObjects is null) return;
+            bool isPlayerZone = zone.MainObjects.Exists(o => o.Type == "Spawn");
+            string playerPreset = settings.BuildingPresets.PlayerZonePreset;
+            string neutralPreset = settings.BuildingPresets.NeutralZonePreset;
+            string tierPreset = tier?.BuildingPreset ?? "";
+            double neutralChance = settings.NeutralCities.GuardChance;
+            int neutralPct = settings.NeutralCities.GuardValuePercent;
+
+            foreach (var mo in zone.MainObjects)
+            {
+                bool isCity = mo.Type == "City" || mo.Type == "AbandonedOutpost";
+                if (!isCity) continue;
+                bool isSpawnCity = mo.Type == "City" && mo.Spawn is { Length: > 0 };
+
+                if (isPlayerZone || isSpawnCity)
+                {
+                    if (!string.IsNullOrEmpty(playerPreset))
+                        mo.BuildingsConstructionSid = playerPreset;
+                }
+                else
+                {
+                    // Tier override wins over global neutral preset.
+                    if (!string.IsNullOrEmpty(tierPreset))
+                        mo.BuildingsConstructionSid = tierPreset;
+                    else if (!string.IsNullOrEmpty(neutralPreset))
+                        mo.BuildingsConstructionSid = neutralPreset;
+                    if (neutralChance > 0)
+                        mo.GuardChance = neutralChance;
+                    if (neutralPct != 100 && mo.GuardValue is int gv)
+                        mo.GuardValue = (int)System.Math.Round(gv * (neutralPct / 100.0));
+                }
+            }
+        }
+
+        private static TierOverrides GetTierOverrides(GeneratorSettings settings, NeutralZoneQuality q) => q switch
+        {
+            NeutralZoneQuality.Low => settings.ZoneCfg.Advanced.LowTier,
+            NeutralZoneQuality.High => settings.ZoneCfg.Advanced.HighTier,
+            _ => settings.ZoneCfg.Advanced.MediumTier,
+        };
+
+        private static IEnumerable<Bonus> BuildExperimentalBonuses(StartingBonusSettings b)
+        {
+            var list = new List<Bonus>();
+
+            // Resources
+            foreach (var (sid, amount) in b.Resources)
+            {
+                if (amount == 0 || string.IsNullOrWhiteSpace(sid)) continue;
+                list.Add(new Bonus
+                {
+                    Sid = "add_bonus_res",
+                    ReceiverSide = -1,
+                    ReceiverFilter = "all_heroes",
+                    Parameters = new List<string> { sid, amount.ToString(System.Globalization.CultureInfo.InvariantCulture) },
+                });
+            }
+
+            // Hero stats
+            void AddStat(string statName, int value)
+            {
+                if (value == 0) return;
+                list.Add(new Bonus
+                {
+                    Sid = "add_bonus_hero_stat",
+                    ReceiverSide = -1,
+                    ReceiverFilter = b.HeroStatStartHeroOnly ? "start_hero" : "all_heroes",
+                    Parameters = new List<string> { statName, value.ToString(System.Globalization.CultureInfo.InvariantCulture) },
+                });
+            }
+            AddStat("attack", b.HeroAttack);
+            AddStat("defense", b.HeroDefense);
+            AddStat("spellpower", b.HeroSpellpower);
+            AddStat("knowledge", b.HeroKnowledge);
+
+            if (!string.IsNullOrWhiteSpace(b.ItemSid))
+            {
+                list.Add(new Bonus
+                {
+                    Sid = "add_bonus_hero_item",
+                    ReceiverSide = -1,
+                    ReceiverFilter = b.ItemStartHeroOnly ? "start_hero" : "all_heroes",
+                    Parameters = new List<string> { b.ItemSid },
+                });
+            }
+
+            if (!string.IsNullOrWhiteSpace(b.SpellSid))
+            {
+                list.Add(new Bonus
+                {
+                    Sid = "add_bonus_hero_spell",
+                    ReceiverSide = -1,
+                    ReceiverFilter = b.SpellStartHeroOnly ? "start_hero" : "all_heroes",
+                    Parameters = new List<string> { b.SpellSid },
+                });
+            }
+
+            if (b.UnitMultiplier > 0)
+            {
+                list.Add(new Bonus
+                {
+                    Sid = "add_bonus_hero_unit_multipler",
+                    ReceiverSide = -1,
+                    ReceiverFilter = b.UnitMultiplierStartHeroOnly ? "start_hero" : "all_heroes",
+                    Parameters = new List<string>
+                    {
+                        b.UnitMultiplier.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture)
+                    },
+                });
+            }
+
+            return list;
         }
 
         private static string BuildTemplateDescription(GeneratorSettings settings, int neutralZoneCount)

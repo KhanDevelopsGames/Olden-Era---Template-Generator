@@ -4,7 +4,9 @@ using OldenEra.Generator.Models;
 using OldenEra.Generator.Services;
 using OldenEra.Generator.Models.Unfrozen;
 using Olden_Era___Template_Editor.Services;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -257,15 +259,27 @@ namespace Olden_Era___Template_Editor
         private void LstNav_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (PnlMap is null || PnlHeroes is null || PnlTopology is null
-                || PnlZones is null || PnlGameRules is null) return;
+                || PnlZones is null || PnlGameRules is null || PnlExperimental is null) return;
             if (LstNav.SelectedItem is not ListBoxItem item) return;
 
             var tag = item.Tag as string;
-            PnlMap.Visibility        = tag == "Map"           ? Visibility.Visible : Visibility.Collapsed;
-            PnlHeroes.Visibility     = tag == "Heroes"        ? Visibility.Visible : Visibility.Collapsed;
-            PnlTopology.Visibility   = tag == "Topology"      ? Visibility.Visible : Visibility.Collapsed;
-            PnlZones.Visibility      = tag == "Zones"         ? Visibility.Visible : Visibility.Collapsed;
-            PnlGameRules.Visibility  = tag == "WinConditions" ? Visibility.Visible : Visibility.Collapsed;
+            PnlMap.Visibility          = tag == "Map"           ? Visibility.Visible : Visibility.Collapsed;
+            PnlHeroes.Visibility       = tag == "Heroes"        ? Visibility.Visible : Visibility.Collapsed;
+            PnlTopology.Visibility     = tag == "Topology"      ? Visibility.Visible : Visibility.Collapsed;
+            PnlZones.Visibility        = tag == "Zones"         ? Visibility.Visible : Visibility.Collapsed;
+            PnlGameRules.Visibility    = tag == "WinConditions" ? Visibility.Visible : Visibility.Collapsed;
+            PnlExperimental.Visibility = tag == "Experimental"  ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ChkExperimentalEnabled_Changed(object sender, RoutedEventArgs e)
+        {
+            if (LstNavExperimental is null) return;
+            bool on = ChkExperimentalEnabled.IsChecked == true;
+            LstNavExperimental.Visibility = on ? Visibility.Visible : Visibility.Collapsed;
+            // If the user just turned it off while sitting on the Experimental
+            // tab, bounce them back to Map.
+            if (!on && LstNav.SelectedItem is ListBoxItem item && (item.Tag as string) == "Experimental")
+                LstNav.SelectedIndex = 0;
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -835,7 +849,78 @@ namespace Olden_Era___Template_Editor
             TournamentFirstTournamentDay = (int)PnlGameRules.SldTournamentFirstTournamentDay.Value,
             TournamentInterval = (int)PnlGameRules.SldTournamentInterval.Value,
             TournamentPointsToWin = (int)PnlGameRules.SldTournamentPointsToWin.Value,
+
+            // ── Experimental ─────────────────────────────────────────────────
+            ExperimentalEnabled = ChkExperimentalEnabled.IsChecked == true,
+            GameMode            = PnlExperimental.ChkSingleHero.IsChecked == true ? "SingleHero" : "Classic",
+            HeroHireBan         = PnlExperimental.ChkHeroHireBan.IsChecked == true,
+            DesertionDay        = ParseInt(PnlExperimental.TxtDesertionDay.Text),
+            DesertionValue      = ParseInt(PnlExperimental.TxtDesertionValue.Text),
+            TerrainObstaclesFill = PnlExperimental.SldTerrainObstacles.Value / 100.0,
+            TerrainLakesFill     = PnlExperimental.SldTerrainLakes.Value / 100.0,
+            BuildingPresetPlayer = PresetFromCombo(PnlExperimental.CmbPlayerPreset),
+            BuildingPresetNeutral = PresetFromCombo(PnlExperimental.CmbNeutralPreset),
+            ZoneGuardWeeklyIncrement = PnlExperimental.SldZoneGuardWeekly.Value / 100.0,
+            ConnectionGuardWeeklyIncrement = PnlExperimental.SldConnectionGuardWeekly.Value / 100.0,
+            NeutralCityGuardChance = PnlExperimental.SldNeutralGuardChance.Value / 100.0,
+            NeutralCityGuardValuePercent = (int)PnlExperimental.SldNeutralGuardValue.Value,
+            GlobalBans = ParseBansCsv(PnlExperimental.TxtGlobalBans.Text),
+            ContentCountLimits = ParseLimits(PnlExperimental.TxtCountLimits.Text),
+            BonusResources = BuildBonusResourcesDict(),
+            BonusHeroAttack     = (int)PnlExperimental.SldBonusAttack.Value,
+            BonusHeroDefense    = (int)PnlExperimental.SldBonusDefense.Value,
+            BonusHeroSpellpower = (int)PnlExperimental.SldBonusSpellpower.Value,
+            BonusHeroKnowledge  = (int)PnlExperimental.SldBonusKnowledge.Value,
+            BonusHeroStatStartHeroOnly = PnlExperimental.ChkBonusHeroStatStartHeroOnly.IsChecked == true,
+            BonusItemSid               = PnlExperimental.TxtBonusItemSid.Text.Trim(),
+            BonusItemStartHeroOnly     = PnlExperimental.ChkBonusItemStartHeroOnly.IsChecked == true,
+            BonusSpellSid              = PnlExperimental.TxtBonusSpellSid.Text.Trim(),
+            BonusSpellStartHeroOnly    = PnlExperimental.ChkBonusSpellStartHeroOnly.IsChecked == true,
+            BonusUnitMultiplier        = PnlExperimental.SldBonusUnitMultiplier.Value / 100.0,
+            BonusUnitMultiplierStartHeroOnly = PnlExperimental.ChkBonusUnitMultiplierStartHeroOnly.IsChecked == true,
+            TierLow    = new TierOverrideFile { BuildingPreset = PresetFromCombo(PnlExperimental.CmbLowTierPreset),    GuardWeeklyIncrement = PnlExperimental.SldLowTierGuardWeekly.Value / 100.0 },
+            TierMedium = new TierOverrideFile { BuildingPreset = PresetFromCombo(PnlExperimental.CmbMediumTierPreset), GuardWeeklyIncrement = PnlExperimental.SldMediumTierGuardWeekly.Value / 100.0 },
+            TierHigh   = new TierOverrideFile { BuildingPreset = PresetFromCombo(PnlExperimental.CmbHighTierPreset),   GuardWeeklyIncrement = PnlExperimental.SldHighTierGuardWeekly.Value / 100.0 },
         };
+
+        private static int ParseInt(string s) => int.TryParse(s, out int v) && v >= 0 ? v : 0;
+        private static string PresetFromCombo(System.Windows.Controls.ComboBox c)
+        {
+            if (c.SelectedIndex <= 0) return "";
+            return c.SelectedItem as string ?? "";
+        }
+        private static List<string> ParseBansCsv(string raw) =>
+            raw.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+               .Where(s => s.Length > 0).ToList();
+        private static List<ContentLimitFile> ParseLimits(string raw)
+        {
+            var list = new List<ContentLimitFile>();
+            foreach (var line in raw.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                int eq = line.IndexOf('=');
+                if (eq <= 0) continue;
+                string sid = line[..eq].Trim();
+                if (!int.TryParse(line[(eq + 1)..].Trim(), out int max) || max < 0) continue;
+                list.Add(new ContentLimitFile { Sid = sid, MaxPerPlayer = max });
+            }
+            return list;
+        }
+        private Dictionary<string, int> BuildBonusResourcesDict()
+        {
+            var d = new Dictionary<string, int>();
+            void Add(string sid, double val)
+            {
+                int v = (int)val;
+                if (v > 0) d[sid] = v;
+            }
+            Add("gold",      PnlExperimental.SldBonusGold.Value);
+            Add("wood",      PnlExperimental.SldBonusWood.Value);
+            Add("ore",       PnlExperimental.SldBonusOre.Value);
+            Add("mercury",   PnlExperimental.SldBonusMercury.Value);
+            Add("crystals",  PnlExperimental.SldBonusCrystals.Value);
+            Add("gemstones", PnlExperimental.SldBonusGemstones.Value);
+            return d;
+        }
 
         private void ApplySettings(SettingsFile s)
         {
@@ -901,6 +986,64 @@ namespace Olden_Era___Template_Editor
             UpdateRoadsHintVisibility();
             UpdateBalancedZonePlacementDescVisibility();
             UpdateWinConditionDetailVisibility();
+
+            // ── Experimental ─────────────────────────────────────────────────
+            ChkExperimentalEnabled.IsChecked = s.ExperimentalEnabled;
+            LstNavExperimental.Visibility = s.ExperimentalEnabled ? Visibility.Visible : Visibility.Collapsed;
+            PnlExperimental.ChkSingleHero.IsChecked = s.GameMode == "SingleHero";
+            PnlExperimental.ChkHeroHireBan.IsChecked = s.HeroHireBan;
+            PnlExperimental.ChkHeroHireBan.IsEnabled = s.GameMode != "SingleHero";
+            PnlExperimental.TxtDesertionDay.Text = s.DesertionDay.ToString();
+            PnlExperimental.TxtDesertionValue.Text = s.DesertionValue.ToString();
+            PnlExperimental.SldTerrainObstacles.Value = Math.Clamp(s.TerrainObstaclesFill * 100.0, 0, 80);
+            PnlExperimental.SldTerrainLakes.Value = Math.Clamp(s.TerrainLakesFill * 100.0, 0, 80);
+            SetPresetCombo(PnlExperimental.CmbPlayerPreset, s.BuildingPresetPlayer);
+            SetPresetCombo(PnlExperimental.CmbNeutralPreset, s.BuildingPresetNeutral);
+            PnlExperimental.SldZoneGuardWeekly.Value = Math.Clamp(s.ZoneGuardWeeklyIncrement * 100.0, 0, 50);
+            PnlExperimental.SldConnectionGuardWeekly.Value = Math.Clamp(s.ConnectionGuardWeeklyIncrement * 100.0, 0, 50);
+            PnlExperimental.SldNeutralGuardChance.Value = Math.Clamp(s.NeutralCityGuardChance * 100.0, 0, 100);
+            PnlExperimental.SldNeutralGuardValue.Value = Math.Clamp(s.NeutralCityGuardValuePercent <= 0 ? 100 : s.NeutralCityGuardValuePercent, 25, 300);
+            PnlExperimental.TxtGlobalBans.Text = string.Join(", ", s.GlobalBans ?? new List<string>());
+            PnlExperimental.TxtCountLimits.Text = string.Join("\n",
+                (s.ContentCountLimits ?? new List<ContentLimitFile>())
+                .Select(l => $"{l.Sid}={l.MaxPerPlayer}"));
+            PnlExperimental.SldBonusGold.Value      = ResourceValue(s, "gold");
+            PnlExperimental.SldBonusWood.Value      = ResourceValue(s, "wood");
+            PnlExperimental.SldBonusOre.Value       = ResourceValue(s, "ore");
+            PnlExperimental.SldBonusMercury.Value   = ResourceValue(s, "mercury");
+            PnlExperimental.SldBonusCrystals.Value  = ResourceValue(s, "crystals");
+            PnlExperimental.SldBonusGemstones.Value = ResourceValue(s, "gemstones");
+            PnlExperimental.SldBonusAttack.Value     = Math.Clamp(s.BonusHeroAttack, 0, 20);
+            PnlExperimental.SldBonusDefense.Value    = Math.Clamp(s.BonusHeroDefense, 0, 20);
+            PnlExperimental.SldBonusSpellpower.Value = Math.Clamp(s.BonusHeroSpellpower, 0, 20);
+            PnlExperimental.SldBonusKnowledge.Value  = Math.Clamp(s.BonusHeroKnowledge, 0, 20);
+            PnlExperimental.ChkBonusHeroStatStartHeroOnly.IsChecked = s.BonusHeroStatStartHeroOnly;
+            PnlExperimental.TxtBonusItemSid.Text = s.BonusItemSid ?? "";
+            PnlExperimental.ChkBonusItemStartHeroOnly.IsChecked = s.BonusItemStartHeroOnly;
+            PnlExperimental.TxtBonusSpellSid.Text = s.BonusSpellSid ?? "";
+            PnlExperimental.ChkBonusSpellStartHeroOnly.IsChecked = s.BonusSpellStartHeroOnly;
+            PnlExperimental.SldBonusUnitMultiplier.Value = Math.Clamp(s.BonusUnitMultiplier * 100.0, 0, 500);
+            PnlExperimental.ChkBonusUnitMultiplierStartHeroOnly.IsChecked = s.BonusUnitMultiplierStartHeroOnly;
+            SetPresetCombo(PnlExperimental.CmbLowTierPreset,    s.TierLow?.BuildingPreset ?? "");
+            SetPresetCombo(PnlExperimental.CmbMediumTierPreset, s.TierMedium?.BuildingPreset ?? "");
+            SetPresetCombo(PnlExperimental.CmbHighTierPreset,   s.TierHigh?.BuildingPreset ?? "");
+            PnlExperimental.SldLowTierGuardWeekly.Value    = Math.Clamp((s.TierLow?.GuardWeeklyIncrement    ?? 0) * 100.0, 0, 50);
+            PnlExperimental.SldMediumTierGuardWeekly.Value = Math.Clamp((s.TierMedium?.GuardWeeklyIncrement ?? 0) * 100.0, 0, 50);
+            PnlExperimental.SldHighTierGuardWeekly.Value   = Math.Clamp((s.TierHigh?.GuardWeeklyIncrement   ?? 0) * 100.0, 0, 50);
+        }
+
+        private static int ResourceValue(SettingsFile s, string sid) =>
+            s.BonusResources is { } d && d.TryGetValue(sid, out int v) ? Math.Clamp(v, 0, 100) : 0;
+
+        private static void SetPresetCombo(System.Windows.Controls.ComboBox c, string sid)
+        {
+            if (string.IsNullOrEmpty(sid)) { c.SelectedIndex = 0; return; }
+            int idx = -1;
+            for (int i = 0; i < c.Items.Count; i++)
+            {
+                if ((c.Items[i] as string) == sid) { idx = i; break; }
+            }
+            c.SelectedIndex = idx >= 0 ? idx : 0;
         }
 
         private bool SaveToPath(string path)
@@ -990,6 +1133,7 @@ namespace Olden_Era___Template_Editor
         {
             if (!Validate()) return;
             var settings = BuildSettings();
+            ApplyExperimentalTierOverrides(settings);
             _generatedTemplate = TemplateGenerator.Generate(settings);
             _generatedTopology = settings.Topology;
             _templateOutdated = false;
@@ -1155,8 +1299,74 @@ namespace Olden_Era___Template_Editor
                 Interval = (int)PnlGameRules.SldTournamentInterval.Value,
                 PointsToWin = (int)PnlGameRules.SldTournamentPointsToWin.Value,
                 SaveArmy = PnlGameRules.ChkTournamentSaveArmy.IsChecked == true
-            }
+            },
+
+            // ── Experimental ─────────────────────────────────────────────────
+            HeroHireBan    = PnlExperimental.ChkHeroHireBan.IsChecked == true,
+            DesertionDay   = ParseInt(PnlExperimental.TxtDesertionDay.Text),
+            DesertionValue = ParseInt(PnlExperimental.TxtDesertionValue.Text),
+            Terrain = new TerrainSettings
+            {
+                ObstaclesFill = PnlExperimental.SldTerrainObstacles.Value / 100.0,
+                LakesFill = PnlExperimental.SldTerrainLakes.Value / 100.0,
+            },
+            BuildingPresets = new BuildingPresetSettings
+            {
+                PlayerZonePreset = PresetFromCombo(PnlExperimental.CmbPlayerPreset),
+                NeutralZonePreset = PresetFromCombo(PnlExperimental.CmbNeutralPreset),
+            },
+            GuardProgression = new GuardProgressionSettings
+            {
+                ZoneGuardWeeklyIncrement = PnlExperimental.SldZoneGuardWeekly.Value / 100.0,
+                ConnectionGuardWeeklyIncrement = PnlExperimental.SldConnectionGuardWeekly.Value / 100.0,
+            },
+            NeutralCities = new NeutralCitySettings
+            {
+                GuardChance = PnlExperimental.SldNeutralGuardChance.Value / 100.0,
+                GuardValuePercent = (int)PnlExperimental.SldNeutralGuardValue.Value,
+            },
+            Content = new ContentControlSettings
+            {
+                GlobalBans = ParseBansCsv(PnlExperimental.TxtGlobalBans.Text),
+                ContentCountLimits = ParseLimits(PnlExperimental.TxtCountLimits.Text)
+                    .ConvertAll(l => new ContentLimit { Sid = l.Sid, MaxPerPlayer = l.MaxPerPlayer }),
+            },
+            Bonuses = new StartingBonusSettings
+            {
+                Resources = BuildBonusResourcesDict(),
+                HeroAttack = (int)PnlExperimental.SldBonusAttack.Value,
+                HeroDefense = (int)PnlExperimental.SldBonusDefense.Value,
+                HeroSpellpower = (int)PnlExperimental.SldBonusSpellpower.Value,
+                HeroKnowledge = (int)PnlExperimental.SldBonusKnowledge.Value,
+                HeroStatStartHeroOnly = PnlExperimental.ChkBonusHeroStatStartHeroOnly.IsChecked == true,
+                ItemSid = PnlExperimental.TxtBonusItemSid.Text.Trim(),
+                ItemStartHeroOnly = PnlExperimental.ChkBonusItemStartHeroOnly.IsChecked == true,
+                SpellSid = PnlExperimental.TxtBonusSpellSid.Text.Trim(),
+                SpellStartHeroOnly = PnlExperimental.ChkBonusSpellStartHeroOnly.IsChecked == true,
+                UnitMultiplier = PnlExperimental.SldBonusUnitMultiplier.Value / 100.0,
+                UnitMultiplierStartHeroOnly = PnlExperimental.ChkBonusUnitMultiplierStartHeroOnly.IsChecked == true,
+            },
         };
+
+        // Apply per-tier overrides after object init since AdvancedSettings.LowTier/MediumTier/HighTier are not in the initializer above.
+        private void ApplyExperimentalTierOverrides(GeneratorSettings settings)
+        {
+            settings.ZoneCfg.Advanced.LowTier = new TierOverrides
+            {
+                BuildingPreset = PresetFromCombo(PnlExperimental.CmbLowTierPreset),
+                GuardWeeklyIncrement = PnlExperimental.SldLowTierGuardWeekly.Value / 100.0,
+            };
+            settings.ZoneCfg.Advanced.MediumTier = new TierOverrides
+            {
+                BuildingPreset = PresetFromCombo(PnlExperimental.CmbMediumTierPreset),
+                GuardWeeklyIncrement = PnlExperimental.SldMediumTierGuardWeekly.Value / 100.0,
+            };
+            settings.ZoneCfg.Advanced.HighTier = new TierOverrides
+            {
+                BuildingPreset = PresetFromCombo(PnlExperimental.CmbHighTierPreset),
+                GuardWeeklyIncrement = PnlExperimental.SldHighTierGuardWeekly.Value / 100.0,
+            };
+        }
 
         /// <summary>
         /// Returns true when <paramref name="filePath"/> is inside the expected game templates folder

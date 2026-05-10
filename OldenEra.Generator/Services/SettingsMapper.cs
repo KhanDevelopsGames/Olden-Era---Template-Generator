@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using OldenEra.Generator.Models;
 using OldenEra.Generator.Models.Unfrozen;
 
@@ -15,7 +16,7 @@ public static class SettingsMapper
     /// Build a fresh <see cref="GeneratorSettings"/> from a loaded file.
     /// Returns the new settings and the reconstructed advanced/experimental flags.
     /// </summary>
-    public static (GeneratorSettings Settings, bool AdvancedMode, bool ExperimentalMapSizes) FromFile(SettingsFile s)
+    public static (GeneratorSettings Settings, bool AdvancedMode, bool ExperimentalMapSizes, bool ExperimentalEnabled) FromFile(SettingsFile s)
     {
         bool hasCustomZoneSizes = Math.Abs(s.PlayerZoneSize - 1.0) > 0.0001
                                 || Math.Abs(s.NeutralZoneSize - 1.0) > 0.0001;
@@ -25,8 +26,54 @@ public static class SettingsMapper
         var settings = new GeneratorSettings
         {
             TemplateName = string.IsNullOrEmpty(s.TemplateName) ? "Custom Template" : s.TemplateName,
+            GameMode = string.IsNullOrEmpty(s.GameMode) ? "Classic" : s.GameMode,
             MapSize = s.MapSize,
             PlayerCount = s.PlayerCount,
+            HeroHireBan = s.HeroHireBan,
+            DesertionDay = s.DesertionDay,
+            DesertionValue = s.DesertionValue,
+            Terrain = new TerrainSettings
+            {
+                ObstaclesFill = s.TerrainObstaclesFill,
+                LakesFill = s.TerrainLakesFill,
+            },
+            BuildingPresets = new BuildingPresetSettings
+            {
+                PlayerZonePreset = s.BuildingPresetPlayer ?? "",
+                NeutralZonePreset = s.BuildingPresetNeutral ?? "",
+            },
+            GuardProgression = new GuardProgressionSettings
+            {
+                ZoneGuardWeeklyIncrement = s.ZoneGuardWeeklyIncrement,
+                ConnectionGuardWeeklyIncrement = s.ConnectionGuardWeeklyIncrement,
+            },
+            NeutralCities = new NeutralCitySettings
+            {
+                GuardChance = s.NeutralCityGuardChance,
+                GuardValuePercent = s.NeutralCityGuardValuePercent <= 0 ? 100 : s.NeutralCityGuardValuePercent,
+            },
+            Content = new ContentControlSettings
+            {
+                GlobalBans = s.GlobalBans is null ? new() : new List<string>(s.GlobalBans),
+                ContentCountLimits = s.ContentCountLimits is null
+                    ? new()
+                    : s.ContentCountLimits.ConvertAll(l => new ContentLimit { Sid = l.Sid, MaxPerPlayer = l.MaxPerPlayer }),
+            },
+            Bonuses = new StartingBonusSettings
+            {
+                Resources = s.BonusResources is null ? new() : new Dictionary<string,int>(s.BonusResources),
+                HeroAttack = s.BonusHeroAttack,
+                HeroDefense = s.BonusHeroDefense,
+                HeroSpellpower = s.BonusHeroSpellpower,
+                HeroKnowledge = s.BonusHeroKnowledge,
+                HeroStatStartHeroOnly = s.BonusHeroStatStartHeroOnly,
+                ItemSid = s.BonusItemSid ?? "",
+                ItemStartHeroOnly = s.BonusItemStartHeroOnly,
+                SpellSid = s.BonusSpellSid ?? "",
+                SpellStartHeroOnly = s.BonusSpellStartHeroOnly,
+                UnitMultiplier = s.BonusUnitMultiplier,
+                UnitMultiplierStartHeroOnly = s.BonusUnitMultiplierStartHeroOnly,
+            },
             HeroSettings = new HeroSettings
             {
                 HeroCountMin = s.HeroCountMin,
@@ -67,6 +114,9 @@ public static class SettingsMapper
                     PlayerZoneSize = Math.Clamp(s.PlayerZoneSize, 0.1, 2.0),
                     NeutralZoneSize = Math.Clamp(s.NeutralZoneSize, 0.1, 2.0),
                     GuardRandomization = s.GuardRandomization,
+                    LowTier = TierFromFile(s.TierLow),
+                    MediumTier = TierFromFile(s.TierMedium),
+                    HighTier = TierFromFile(s.TierHigh),
                 },
             },
             GameEndConditions = new GameEndConditions
@@ -94,14 +144,14 @@ public static class SettingsMapper
             },
         };
 
-        return (settings, advanced, needsExperimentalMapSizes);
+        return (settings, advanced, needsExperimentalMapSizes, s.ExperimentalEnabled);
     }
 
     /// <summary>
     /// Capture the current in-memory state into a <see cref="SettingsFile"/>
     /// so it can be JSON-serialized.
     /// </summary>
-    public static SettingsFile ToFile(GeneratorSettings g, bool advancedMode, bool experimentalMapSizes)
+    public static SettingsFile ToFile(GeneratorSettings g, bool advancedMode, bool experimentalMapSizes, bool experimentalEnabled = false)
     {
         var a = g.ZoneCfg.Advanced;
         return new SettingsFile
@@ -157,6 +207,54 @@ public static class SettingsMapper
             TournamentInterval = g.TournamentRules.Interval,
             TournamentPointsToWin = g.TournamentRules.PointsToWin,
             TournamentSaveArmy = g.TournamentRules.SaveArmy,
+            ExperimentalEnabled = experimentalEnabled,
+            GameMode = g.GameMode,
+            HeroHireBan = g.HeroHireBan,
+            DesertionDay = g.DesertionDay,
+            DesertionValue = g.DesertionValue,
+            TerrainObstaclesFill = g.Terrain.ObstaclesFill,
+            TerrainLakesFill = g.Terrain.LakesFill,
+            BuildingPresetPlayer = g.BuildingPresets.PlayerZonePreset,
+            BuildingPresetNeutral = g.BuildingPresets.NeutralZonePreset,
+            ZoneGuardWeeklyIncrement = g.GuardProgression.ZoneGuardWeeklyIncrement,
+            ConnectionGuardWeeklyIncrement = g.GuardProgression.ConnectionGuardWeeklyIncrement,
+            NeutralCityGuardChance = g.NeutralCities.GuardChance,
+            NeutralCityGuardValuePercent = g.NeutralCities.GuardValuePercent,
+            GlobalBans = new List<string>(g.Content.GlobalBans),
+            ContentCountLimits = g.Content.ContentCountLimits.ConvertAll(
+                l => new ContentLimitFile { Sid = l.Sid, MaxPerPlayer = l.MaxPerPlayer }),
+            BonusResources = new Dictionary<string,int>(g.Bonuses.Resources),
+            BonusHeroAttack = g.Bonuses.HeroAttack,
+            BonusHeroDefense = g.Bonuses.HeroDefense,
+            BonusHeroSpellpower = g.Bonuses.HeroSpellpower,
+            BonusHeroKnowledge = g.Bonuses.HeroKnowledge,
+            BonusHeroStatStartHeroOnly = g.Bonuses.HeroStatStartHeroOnly,
+            BonusItemSid = g.Bonuses.ItemSid,
+            BonusItemStartHeroOnly = g.Bonuses.ItemStartHeroOnly,
+            BonusSpellSid = g.Bonuses.SpellSid,
+            BonusSpellStartHeroOnly = g.Bonuses.SpellStartHeroOnly,
+            BonusUnitMultiplier = g.Bonuses.UnitMultiplier,
+            BonusUnitMultiplierStartHeroOnly = g.Bonuses.UnitMultiplierStartHeroOnly,
+            TierLow = TierToFile(a.LowTier),
+            TierMedium = TierToFile(a.MediumTier),
+            TierHigh = TierToFile(a.HighTier),
         };
     }
+
+    private static TierOverrides TierFromFile(TierOverrideFile? f) =>
+        f is null ? new TierOverrides() : new TierOverrides
+        {
+            ObstaclesFill = f.ObstaclesFill,
+            LakesFill = f.LakesFill,
+            BuildingPreset = f.BuildingPreset ?? "",
+            GuardWeeklyIncrement = f.GuardWeeklyIncrement,
+        };
+
+    private static TierOverrideFile TierToFile(TierOverrides t) => new()
+    {
+        ObstaclesFill = t.ObstaclesFill,
+        LakesFill = t.LakesFill,
+        BuildingPreset = t.BuildingPreset,
+        GuardWeeklyIncrement = t.GuardWeeklyIncrement,
+    };
 }

@@ -102,7 +102,7 @@ public class SettingsShareCodecTests
         var decoded = SettingsShareCodec.TryDecode(encoded, out _);
         Assert.NotNull(decoded);
 
-        var (mapped, advanced, _) = SettingsMapper.FromFile(decoded!);
+        var (mapped, advanced, _, _) = SettingsMapper.FromFile(decoded!);
         Assert.Equal("Full Loop", mapped.TemplateName);
         Assert.Equal(192, mapped.MapSize);
         Assert.Equal(6, mapped.PlayerCount);

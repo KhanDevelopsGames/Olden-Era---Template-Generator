@@ -1,0 +1,78 @@
+@* Game mode + softer rule levers (Single Hero, hire ban, desertion overrides).
+   Lives in the Experimental nav section. *@
+
+<ExperimentalCard Key="game-mode" Title="Game mode">
+    <label class="oe-check">
+        <input type="checkbox" checked="@(Settings.GameMode == "SingleHero")"
+               @onchange="OnSingleHeroChanged" />
+        <span>Single Hero mode</span>
+    </label>
+    <div class="oe-hint">
+        Forces every player to play with exactly one hero. Hero count
+        sliders are ignored when active.
+    </div>
+
+    <label class="oe-check">
+        <input type="checkbox" checked="@Settings.HeroHireBan"
+               disabled="@(Settings.GameMode == "SingleHero")"
+               @onchange="OnHireBanChanged" />
+        <span>Hero hire ban</span>
+    </label>
+    <div class="oe-hint">
+        Disables hero hiring at taverns. Softer alternative to
+        Single Hero mode.
+    </div>
+
+    <div class="oe-stacked">
+        <label class="oe-label">Desertion day override</label>
+        <input type="number" min="0" max="60" step="1"
+               value="@Settings.DesertionDay"
+               @oninput="OnDesertionDayInput" />
+        <div class="oe-hint">0 = use generator default (3).</div>
+    </div>
+
+    <div class="oe-stacked">
+        <label class="oe-label">Desertion value override</label>
+        <input type="number" min="0" max="100000" step="100"
+               value="@Settings.DesertionValue"
+               @oninput="OnDesertionValueInput" />
+        <div class="oe-hint">0 = use generator default (3000).</div>
+    </div>
+</ExperimentalCard>
+
+@code {
+    [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private async Task OnSingleHeroChanged(ChangeEventArgs e)
+    {
+        bool on = (bool)e.Value!;
+        Settings.GameMode = on ? "SingleHero" : "Classic";
+        if (on) Settings.HeroHireBan = false;
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task OnHireBanChanged(ChangeEventArgs e)
+    {
+        Settings.HeroHireBan = (bool)e.Value!;
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task OnDesertionDayInput(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int v))
+        {
+            Settings.DesertionDay = Math.Max(0, v);
+            await OnChanged.InvokeAsync();
+        }
+    }
+
+    private async Task OnDesertionValueInput(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out int v))
+        {
+            Settings.DesertionValue = Math.Max(0, v);
+            await OnChanged.InvokeAsync();
+        }
+    }
+}

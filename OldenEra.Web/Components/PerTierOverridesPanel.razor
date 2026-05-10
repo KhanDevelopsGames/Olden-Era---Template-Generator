@@ -1,0 +1,75 @@
+@* Per-tier overrides for building preset and weekly guard growth.
+   Tabbed (Low / Medium / High) so only one tier's controls show at a time. *@
+
+<ExperimentalCard Key="per-tier-overrides" Title="Per-tier overrides">
+    <div class="oe-hint">
+        Override per neutral tier. Empty / 0 = fall through to the global value.
+        Tiers correspond to the neutral-zone counts in the Advanced panel.
+    </div>
+
+    <div class="oe-tier-tabs" role="tablist">
+        @foreach (var t in Tiers)
+        {
+            <button type="button"
+                    class="@($"oe-tier-tab{(ActiveTier == t.Key ? " active" : "")}")"
+                    role="tab"
+                    aria-selected="@(ActiveTier == t.Key ? "true" : "false")"
+                    @onclick="@(() => ActiveTier = t.Key)">
+                @t.Label
+            </button>
+        }
+    </div>
+
+    @{
+        var current = TierFor(ActiveTier);
+    }
+
+    <div class="oe-stacked">
+        <label class="oe-label">Building preset</label>
+        <select value="@current.BuildingPreset"
+                @onchange="@(e => OnPresetChanged(current, e))">
+            <option value="">Use global / generator default</option>
+            @foreach (var sid in KnownValues.BuildingsConstructionSids)
+            {
+                <option value="@sid">@FriendlyPreset(sid)</option>
+            }
+        </select>
+    </div>
+
+    <SliderRow Label="Guard / week" WideLabel="true"
+               Min="0" Max="50" Step="1" Suffix="%"
+               Value="(int)Math.Round(current.GuardWeeklyIncrement * 100)"
+               ValueChanged="@(v => { current.GuardWeeklyIncrement = v / 100.0; NotifyChanged(); })" />
+</ExperimentalCard>
+
+@code {
+    [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private enum TierKey { Low, Medium, High }
+    private TierKey ActiveTier { get; set; } = TierKey.Medium;
+
+    private static readonly (TierKey Key, string Label)[] Tiers =
+        [(TierKey.Low, "Low"), (TierKey.Medium, "Medium"), (TierKey.High, "High")];
+
+    private TierOverrides TierFor(TierKey k) => k switch
+    {
+        TierKey.Low => Settings.ZoneCfg.Advanced.LowTier,
+        TierKey.High => Settings.ZoneCfg.Advanced.HighTier,
+        _ => Settings.ZoneCfg.Advanced.MediumTier,
+    };
+
+    private async Task OnPresetChanged(TierOverrides target, ChangeEventArgs e)
+    {
+        target.BuildingPreset = e.Value?.ToString() ?? "";
+        await NotifyChanged();
+    }
+
+    private Task NotifyChanged() => OnChanged.InvokeAsync();
+
+    private static string FriendlyPreset(string sid)
+    {
+        const string suffix = "_buildings_construction";
+        return sid.EndsWith(suffix) ? sid[..^suffix.Length] : sid;
+    }
+}

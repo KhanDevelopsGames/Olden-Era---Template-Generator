@@ -4,10 +4,6 @@
 <div class="oe-section">
     <div class="oe-section-header">
         <span>Zone Configuration</span>
-        <label class="oe-check inline" style="margin:0;">
-            <input type="checkbox" checked="@AdvancedMode" @onchange="OnAdvancedToggled" />
-            <span class="oe-inline-toggle">Advanced settings</span>
-        </label>
     </div>
 
     <SliderRow Label="Additional Neutral Zones" WideLabel="true"
@@ -97,6 +93,7 @@
         <input type="checkbox" checked="@Settings.ExperimentalBalancedZonePlacement"
                @onchange="@(e => { Settings.ExperimentalBalancedZonePlacement = (bool)e.Value!; NotifyChanged(); })" />
         <span>Balance zone placement [RECOMMENDED]</span>
+        <ExperimentalBadge />
     </label>
     @if (Settings.ExperimentalBalancedZonePlacement)
     {
@@ -128,32 +125,6 @@
     [Parameter] public bool AdvancedMode { get; set; }
     [Parameter] public EventCallback<bool> AdvancedModeChanged { get; set; }
     [Parameter] public EventCallback OnChanged { get; set; }
-
-    private async Task OnAdvancedToggled(ChangeEventArgs e)
-    {
-        bool advanced = (bool)e.Value!;
-        AdvancedMode = advanced;
-        Settings.ZoneCfg.Advanced.Enabled = advanced;
-        // Seed advanced sliders from simple value when enabling.
-        if (advanced)
-        {
-            int total = Settings.ZoneCfg.Advanced.NeutralLowNoCastleCount
-                      + Settings.ZoneCfg.Advanced.NeutralLowCastleCount
-                      + Settings.ZoneCfg.Advanced.NeutralMediumNoCastleCount
-                      + Settings.ZoneCfg.Advanced.NeutralMediumCastleCount
-                      + Settings.ZoneCfg.Advanced.NeutralHighNoCastleCount
-                      + Settings.ZoneCfg.Advanced.NeutralHighCastleCount;
-            if (total == 0 && Settings.ZoneCfg.NeutralZoneCount > 0)
-            {
-                if (Settings.ZoneCfg.NeutralZoneCastles > 0)
-                    Settings.ZoneCfg.Advanced.NeutralMediumCastleCount = Settings.ZoneCfg.NeutralZoneCount;
-                else
-                    Settings.ZoneCfg.Advanced.NeutralMediumNoCastleCount = Settings.ZoneCfg.NeutralZoneCount;
-            }
-        }
-        await AdvancedModeChanged.InvokeAsync(advanced);
-        await NotifyChanged();
-    }
 
     private Task NotifyChanged() => OnChanged.InvokeAsync();
 }

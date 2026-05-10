@@ -1,7 +1,22 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace OldenEra.Generator.Models
 {
+    public sealed class ContentLimitFile
+    {
+        [JsonPropertyName("sid")] public string Sid { get; set; } = "";
+        [JsonPropertyName("maxPerPlayer")] public int MaxPerPlayer { get; set; } = 1;
+    }
+
+    public sealed class TierOverrideFile
+    {
+        [JsonPropertyName("obstaclesFill")] public double ObstaclesFill { get; set; } = 0.0;
+        [JsonPropertyName("lakesFill")] public double LakesFill { get; set; } = 0.0;
+        [JsonPropertyName("buildingPreset")] public string BuildingPreset { get; set; } = "";
+        [JsonPropertyName("guardWeeklyIncrement")] public double GuardWeeklyIncrement { get; set; } = 0.0;
+    }
+
     /// <summary>
     /// Persisted settings file (.oetgs) — all user-configurable UI state.
     /// </summary>
@@ -58,6 +73,46 @@ namespace OldenEra.Generator.Models
         [JsonPropertyName("tournamentInterval")] public int TournamentInterval    { get; set; } = 7;
         [JsonPropertyName("tournamentPointsToWin")] public int TournamentPointsToWin        { get; set; } = 2;
         [JsonPropertyName("tournamentSaveArmy")] public bool TournamentSaveArmy             { get; set; } = true;
+
+        // ── Experimental ────────────────────────────────────────────────────────
+        /// <summary>Master toggle. When false, the UI hides every experimental control.</summary>
+        [JsonPropertyName("experimentalEnabled")] public bool  ExperimentalEnabled          { get; set; } = false;
+        [JsonPropertyName("gameMode")]          public string  GameMode                     { get; set; } = "Classic";
+        [JsonPropertyName("heroHireBan")]       public bool    HeroHireBan                  { get; set; } = false;
+        [JsonPropertyName("desertionDay")]      public int     DesertionDay                 { get; set; } = 0;
+        [JsonPropertyName("desertionValue")]    public int     DesertionValue               { get; set; } = 0;
+
+        [JsonPropertyName("terrainObstaclesFill")] public double TerrainObstaclesFill       { get; set; } = 0.0;
+        [JsonPropertyName("terrainLakesFill")]     public double TerrainLakesFill           { get; set; } = 0.0;
+
+        [JsonPropertyName("buildingPresetPlayer")]  public string BuildingPresetPlayer      { get; set; } = "";
+        [JsonPropertyName("buildingPresetNeutral")] public string BuildingPresetNeutral     { get; set; } = "";
+
+        [JsonPropertyName("zoneGuardWeeklyIncrement")]       public double ZoneGuardWeeklyIncrement       { get; set; } = 0.0;
+        [JsonPropertyName("connectionGuardWeeklyIncrement")] public double ConnectionGuardWeeklyIncrement { get; set; } = 0.0;
+
+        [JsonPropertyName("neutralCityGuardChance")]        public double NeutralCityGuardChance        { get; set; } = 0.0;
+        [JsonPropertyName("neutralCityGuardValuePercent")]  public int    NeutralCityGuardValuePercent  { get; set; } = 100;
+
+        [JsonPropertyName("globalBans")]            public List<string> GlobalBans                = new();
+        [JsonPropertyName("contentCountLimits")]    public List<ContentLimitFile> ContentCountLimits = new();
+
+        [JsonPropertyName("bonusResources")]        public Dictionary<string,int> BonusResources = new();
+        [JsonPropertyName("bonusHeroAttack")]       public int BonusHeroAttack       { get; set; } = 0;
+        [JsonPropertyName("bonusHeroDefense")]      public int BonusHeroDefense      { get; set; } = 0;
+        [JsonPropertyName("bonusHeroSpellpower")]   public int BonusHeroSpellpower   { get; set; } = 0;
+        [JsonPropertyName("bonusHeroKnowledge")]    public int BonusHeroKnowledge    { get; set; } = 0;
+        [JsonPropertyName("bonusHeroStatStartHeroOnly")] public bool BonusHeroStatStartHeroOnly { get; set; } = false;
+        [JsonPropertyName("bonusItemSid")]          public string BonusItemSid       { get; set; } = "";
+        [JsonPropertyName("bonusItemStartHeroOnly")] public bool BonusItemStartHeroOnly { get; set; } = false;
+        [JsonPropertyName("bonusSpellSid")]         public string BonusSpellSid      { get; set; } = "";
+        [JsonPropertyName("bonusSpellStartHeroOnly")] public bool BonusSpellStartHeroOnly { get; set; } = false;
+        [JsonPropertyName("bonusUnitMultiplier")]   public double BonusUnitMultiplier { get; set; } = 0.0;
+        [JsonPropertyName("bonusUnitMultiplierStartHeroOnly")] public bool BonusUnitMultiplierStartHeroOnly { get; set; } = false;
+
+        [JsonPropertyName("tierLow")]    public TierOverrideFile TierLow    { get; set; } = new();
+        [JsonPropertyName("tierMedium")] public TierOverrideFile TierMedium { get; set; } = new();
+        [JsonPropertyName("tierHigh")]   public TierOverrideFile TierHigh   { get; set; } = new();
 
         // Legacy setting from v0.2 and earlier; when present, it seeds both split density sliders.
         [JsonPropertyName("contentDensity")]    public int?    ContentDensityPercent        { get; set; }

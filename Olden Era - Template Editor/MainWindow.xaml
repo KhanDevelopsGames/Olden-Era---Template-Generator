@@ -67,6 +67,12 @@
 
                 <!-- Header actions: ghost-styled Open/Save buttons + caption buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
+                    <CheckBox x:Name="ChkExperimentalEnabled"
+                              Content="Experimental ⚗"
+                              VerticalAlignment="Center" Margin="0,0,12,0"
+                              ToolTip="Show experimental features. Generated templates may behave unpredictably."
+                              Checked="ChkExperimentalEnabled_Changed"
+                              Unchecked="ChkExperimentalEnabled_Changed"/>
                     <Button Content="New" Click="BtnNew_Click" Style="{StaticResource OeGhostButton}" ToolTip="Reset settings (Ctrl+N)"/>
                     <Button Content="Open…" Click="BtnOpen_Click" Style="{StaticResource OeGhostButton}" ToolTip="Open settings (Ctrl+O)"/>
                     <Button Content="Save" Click="BtnSave_Click" Style="{StaticResource OeGhostButton}" ToolTip="Save settings (Ctrl+S)"/>
@@ -168,6 +174,7 @@
                         <ListBoxItem Content="Topology"       Tag="Topology"/>
                         <ListBoxItem Content="Zones"          Tag="Zones"/>
                         <ListBoxItem Content="Win Conditions" Tag="WinConditions"/>
+                        <ListBoxItem x:Name="LstNavExperimental" Content="Experimental ⚗" Tag="Experimental" Visibility="Collapsed"/>
                     </ListBox>
 
                     <!-- Content column: each panel always exists for code-behind compatibility,
@@ -178,6 +185,7 @@
                         <views:TopologyPanel        x:Name="PnlTopology"   Visibility="Collapsed"/>
                         <views:ZonesPanel           x:Name="PnlZones"      Visibility="Collapsed"/>
                         <views:WinConditionsPanel   x:Name="PnlGameRules"  Visibility="Collapsed"/>
+                        <views:ExperimentalPanel    x:Name="PnlExperimental" Visibility="Collapsed"/>
                     </Grid>
 
                     <!-- Preview column. -->

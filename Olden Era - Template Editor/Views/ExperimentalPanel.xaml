@@ -1,0 +1,365 @@
+<UserControl x:Class="Olden_Era___Template_Editor.Views.ExperimentalPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <!-- Lightweight badge style. Lives only in this panel. -->
+        <Style x:Key="ExpBadge" TargetType="Border">
+            <Setter Property="Background" Value="#9A5E1C"/>
+            <Setter Property="BorderBrush" Value="#6B3F10"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="6,1"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="8,0,0,0"/>
+        </Style>
+        <Style x:Key="ExpBadgeText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#1c1208"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Text" Value="⚗ EXPERIMENTAL"/>
+        </Style>
+        <Style x:Key="HintText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource OeTextDimBrush}"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+        <Style x:Key="GroupHeader" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+            <Setter Property="Margin" Value="0,8,0,4"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource SectionBorder}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <DockPanel LastChildFill="False">
+                    <TextBlock Text="Experimental features" Style="{StaticResource SectionHeader}" DockPanel.Dock="Left"/>
+                    <Border Style="{StaticResource ExpBadge}" DockPanel.Dock="Left">
+                        <TextBlock Style="{StaticResource ExpBadgeText}"/>
+                    </Border>
+                </DockPanel>
+                <TextBlock Style="{StaticResource HintText}">
+                    These features change template fields the game has not been
+                    extensively tested against. Generated maps may behave
+                    unpredictably. Each card is collapsed by default.
+                </TextBlock>
+
+                <!-- ── Game mode ────────────────────────────────────────────── -->
+                <Expander Header="Game mode" Margin="0,4,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <CheckBox x:Name="ChkSingleHero" Content="Single Hero mode"
+                                  Checked="ChkSingleHero_Changed" Unchecked="ChkSingleHero_Changed"/>
+                        <TextBlock Style="{StaticResource HintText}">
+                            Forces every player to play with exactly one hero.
+                        </TextBlock>
+                        <CheckBox x:Name="ChkHeroHireBan" Content="Hero hire ban"/>
+                        <TextBlock Style="{StaticResource HintText}">
+                            Disables hero hiring at taverns. Softer alternative to Single Hero.
+                        </TextBlock>
+                        <Grid Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="185"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="4"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Grid.Column="0" Content="Desertion day override" Padding="5,2"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtDesertionDay" Text="0"/>
+                            <Label Grid.Row="2" Grid.Column="0" Content="Desertion value override" Padding="5,2"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="TxtDesertionValue" Text="0"/>
+                        </Grid>
+                        <TextBlock Style="{StaticResource HintText}" Margin="0,4,0,0">
+                            0 = generator defaults (3 day / 3000 value).
+                        </TextBlock>
+                    </StackPanel>
+                </Expander>
+
+                <!-- ── Starting bonuses ────────────────────────────────────── -->
+                <Expander Header="Starting bonuses" Margin="0,4,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <TextBlock Style="{StaticResource HintText}">
+                            Same bonuses apply to every player. 0 / empty = no bonus.
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource GroupHeader}" Text="Resources"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="185"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="40"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Label    Grid.Row="0" Grid.Column="0" Content="Gold (×1000)" Padding="5,2"/>
+                            <Slider   Grid.Row="0" Grid.Column="1" x:Name="SldBonusGold"     Minimum="0" Maximum="100" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" x:Name="TxtBonusGold"    Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+
+                            <Label    Grid.Row="1" Grid.Column="0" Content="Wood" Padding="5,2"/>
+                            <Slider   Grid.Row="1" Grid.Column="1" x:Name="SldBonusWood"     Minimum="0" Maximum="100" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" x:Name="TxtBonusWood"    Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+
+                            <Label    Grid.Row="2" Grid.Column="0" Content="Ore" Padding="5,2"/>
+                            <Slider   Grid.Row="2" Grid.Column="1" x:Name="SldBonusOre"      Minimum="0" Maximum="100" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="2" Grid.Column="2" x:Name="TxtBonusOre"     Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+
+                            <Label    Grid.Row="3" Grid.Column="0" Content="Mercury" Padding="5,2"/>
+                            <Slider   Grid.Row="3" Grid.Column="1" x:Name="SldBonusMercury"  Minimum="0" Maximum="100" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="3" Grid.Column="2" x:Name="TxtBonusMercury" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+
+                            <Label    Grid.Row="4" Grid.Column="0" Content="Crystals" Padding="5,2"/>
+                            <Slider   Grid.Row="4" Grid.Column="1" x:Name="SldBonusCrystals" Minimum="0" Maximum="100" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="4" Grid.Column="2" x:Name="TxtBonusCrystals" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+
+                            <Label    Grid.Row="5" Grid.Column="0" Content="Gemstones" Padding="5,2"/>
+                            <Slider   Grid.Row="5" Grid.Column="1" x:Name="SldBonusGemstones" Minimum="0" Maximum="100" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="5" Grid.Column="2" x:Name="TxtBonusGemstones" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                        </Grid>
+
+                        <DockPanel LastChildFill="False" Margin="0,8,0,0">
+                            <TextBlock Style="{StaticResource GroupHeader}" Text="Hero stats" DockPanel.Dock="Left"/>
+                            <CheckBox x:Name="ChkBonusHeroStatStartHeroOnly" Content="Start hero only" DockPanel.Dock="Right" VerticalAlignment="Center"/>
+                        </DockPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="185"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="40"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label    Grid.Row="0" Grid.Column="0" Content="Attack" Padding="5,2"/>
+                            <Slider   Grid.Row="0" Grid.Column="1" x:Name="SldBonusAttack"     Minimum="0" Maximum="20" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" x:Name="TxtBonusAttack"     Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                            <Label    Grid.Row="1" Grid.Column="0" Content="Defense" Padding="5,2"/>
+                            <Slider   Grid.Row="1" Grid.Column="1" x:Name="SldBonusDefense"    Minimum="0" Maximum="20" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" x:Name="TxtBonusDefense"   Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                            <Label    Grid.Row="2" Grid.Column="0" Content="Spellpower" Padding="5,2"/>
+                            <Slider   Grid.Row="2" Grid.Column="1" x:Name="SldBonusSpellpower" Minimum="0" Maximum="20" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="2" Grid.Column="2" x:Name="TxtBonusSpellpower" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                            <Label    Grid.Row="3" Grid.Column="0" Content="Knowledge" Padding="5,2"/>
+                            <Slider   Grid.Row="3" Grid.Column="1" x:Name="SldBonusKnowledge"  Minimum="0" Maximum="20" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="3" Grid.Column="2" x:Name="TxtBonusKnowledge" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                        </Grid>
+
+                        <TextBlock Style="{StaticResource GroupHeader}" Text="Item / Spell / Units"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="185"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label   Grid.Row="0" Grid.Column="0" Content="Bonus item SID" Padding="5,2"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtBonusItemSid"/>
+                            <CheckBox Grid.Row="1" Grid.Column="1" x:Name="ChkBonusItemStartHeroOnly" Content="Apply to start hero only" Margin="0,2,0,4"/>
+                            <Label   Grid.Row="2" Grid.Column="0" Content="Bonus spell SID" Padding="5,2"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="TxtBonusSpellSid"/>
+                            <CheckBox Grid.Row="3" Grid.Column="1" x:Name="ChkBonusSpellStartHeroOnly" Content="Apply to start hero only" Margin="0,2,0,4"/>
+                            <Label   Grid.Row="4" Grid.Column="0" Content="Unit multiplier (%)" Padding="5,2"/>
+                            <DockPanel Grid.Row="4" Grid.Column="1">
+                                <TextBlock x:Name="TxtBonusUnitMultiplier" Text="0" DockPanel.Dock="Right" Style="{StaticResource ValueText}" Margin="0,0,4,0"/>
+                                <Slider x:Name="SldBonusUnitMultiplier" Minimum="0" Maximum="500" Value="0" TickFrequency="5" IsSnapToTickEnabled="True"/>
+                            </DockPanel>
+                            <CheckBox Grid.Row="5" Grid.Column="1" x:Name="ChkBonusUnitMultiplierStartHeroOnly" Content="Apply to start hero only" Margin="0,2,0,0"/>
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+                <!-- ── Terrain density ─────────────────────────────────────── -->
+                <Expander Header="Terrain density" Margin="0,4,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <TextBlock Style="{StaticResource HintText}">
+                            0 % = generator default. Higher values create more chokepoints.
+                        </TextBlock>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="185"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="40"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label   Grid.Row="0" Grid.Column="0" Content="Obstacles fill (%)" Padding="5,2"/>
+                            <Slider  Grid.Row="0" Grid.Column="1" x:Name="SldTerrainObstacles" Minimum="0" Maximum="80" Value="0" TickFrequency="5" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" x:Name="TxtTerrainObstacles" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                            <Label   Grid.Row="1" Grid.Column="0" Content="Lakes fill (%)" Padding="5,2"/>
+                            <Slider  Grid.Row="1" Grid.Column="1" x:Name="SldTerrainLakes"     Minimum="0" Maximum="80" Value="0" TickFrequency="5" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" x:Name="TxtTerrainLakes"   Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+                <!-- ── Building presets ────────────────────────────────────── -->
+                <Expander Header="Building presets" Margin="0,4,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <TextBlock Style="{StaticResource HintText}">
+                            Force a specific build path. Default = let the generator pick.
+                        </TextBlock>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="185"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label   Grid.Row="0" Grid.Column="0" Content="Player-zone preset" Padding="5,2"/>
+                            <ComboBox Grid.Row="0" Grid.Column="1" x:Name="CmbPlayerPreset"/>
+                            <Label   Grid.Row="1" Grid.Column="0" Content="Neutral-zone preset" Padding="5,2"/>
+                            <ComboBox Grid.Row="1" Grid.Column="1" x:Name="CmbNeutralPreset"/>
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+                <!-- ── Guard progression ───────────────────────────────────── -->
+                <Expander Header="Guard progression" Margin="0,4,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <TextBlock Style="{StaticResource HintText}">
+                            Weekly guard growth. 0 % = generator defaults (15 % zone, 15–20 % connection).
+                        </TextBlock>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="185"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="40"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label   Grid.Row="0" Grid.Column="0" Content="Zone guard / week (%)" Padding="5,2"/>
+                            <Slider  Grid.Row="0" Grid.Column="1" x:Name="SldZoneGuardWeekly"       Minimum="0" Maximum="50" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" x:Name="TxtZoneGuardWeekly"     Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                            <Label   Grid.Row="1" Grid.Column="0" Content="Connection guard / week (%)" Padding="5,2"/>
+                            <Slider  Grid.Row="1" Grid.Column="1" x:Name="SldConnectionGuardWeekly" Minimum="0" Maximum="50" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" x:Name="TxtConnectionGuardWeekly" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+                <!-- ── Neutral cities ──────────────────────────────────────── -->
+                <Expander Header="Neutral cities" Margin="0,4,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="185"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="40"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label   Grid.Row="0" Grid.Column="0" Content="Guard chance (%)" Padding="5,2"/>
+                            <Slider  Grid.Row="0" Grid.Column="1" x:Name="SldNeutralGuardChance" Minimum="0" Maximum="100" Value="0" TickFrequency="5" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" x:Name="TxtNeutralGuardChance" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                            <Label   Grid.Row="1" Grid.Column="0" Content="Guard value (%)" Padding="5,2"/>
+                            <Slider  Grid.Row="1" Grid.Column="1" x:Name="SldNeutralGuardValue"  Minimum="25" Maximum="300" Value="100" TickFrequency="5" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" x:Name="TxtNeutralGuardValue" Text="100" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
+                <!-- ── Content control ────────────────────────────────────── -->
+                <Expander Header="Content control" Margin="0,4,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <TextBlock Style="{StaticResource HintText}">
+                            Ban specific objects. SIDs can be edited as a comma-separated list.
+                        </TextBlock>
+                        <Label Content="Banned object SIDs (comma-separated)" Padding="5,2"/>
+                        <TextBox x:Name="TxtGlobalBans" AcceptsReturn="False" TextWrapping="Wrap" MinHeight="60" />
+                        <TextBlock Style="{StaticResource HintText}" Margin="0,8,0,0">
+                            Per-player count limits: one entry per line in the form
+                            <TextBlock FontFamily="Consolas">sid=max</TextBlock>
+                            (e.g. <TextBlock FontFamily="Consolas">mine_gold=2</TextBlock>).
+                        </TextBlock>
+                        <TextBox x:Name="TxtCountLimits" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="60"/>
+                    </StackPanel>
+                </Expander>
+
+                <!-- ── Per-tier overrides ─────────────────────────────────── -->
+                <Expander Header="Per-tier overrides" Margin="0,4,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <TextBlock Style="{StaticResource HintText}">
+                            Override per neutral tier. Empty / 0 = fall through to global.
+                        </TextBlock>
+                        <TabControl x:Name="TcTiers" Margin="0,4,0,0">
+                            <TabItem Header="Low">
+                                <StackPanel Margin="6">
+                                    <Label Content="Building preset" Padding="5,2"/>
+                                    <ComboBox x:Name="CmbLowTierPreset"/>
+                                    <Grid Margin="0,6,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="185"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="40"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Column="0" Content="Guard / week (%)" Padding="5,2"/>
+                                        <Slider Grid.Column="1" x:Name="SldLowTierGuardWeekly" Minimum="0" Maximum="50" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                        <TextBlock Grid.Column="2" x:Name="TxtLowTierGuardWeekly" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </TabItem>
+                            <TabItem Header="Medium" IsSelected="True">
+                                <StackPanel Margin="6">
+                                    <Label Content="Building preset" Padding="5,2"/>
+                                    <ComboBox x:Name="CmbMediumTierPreset"/>
+                                    <Grid Margin="0,6,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="185"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="40"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Column="0" Content="Guard / week (%)" Padding="5,2"/>
+                                        <Slider Grid.Column="1" x:Name="SldMediumTierGuardWeekly" Minimum="0" Maximum="50" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                        <TextBlock Grid.Column="2" x:Name="TxtMediumTierGuardWeekly" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </TabItem>
+                            <TabItem Header="High">
+                                <StackPanel Margin="6">
+                                    <Label Content="Building preset" Padding="5,2"/>
+                                    <ComboBox x:Name="CmbHighTierPreset"/>
+                                    <Grid Margin="0,6,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="185"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="40"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Column="0" Content="Guard / week (%)" Padding="5,2"/>
+                                        <Slider Grid.Column="1" x:Name="SldHighTierGuardWeekly" Minimum="0" Maximum="50" Value="0" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                        <TextBlock Grid.Column="2" x:Name="TxtHighTierGuardWeekly" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </TabItem>
+                        </TabControl>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
+</UserControl>

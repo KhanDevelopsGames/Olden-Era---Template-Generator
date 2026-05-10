@@ -13,6 +13,15 @@
             <span class="oe-version-badge">@VersionLabel</span>
         </div>
         <div class="oe-header-actions">
+            <label class="oe-check inline" style="margin-right:8px;">
+                <input type="checkbox" checked="@AdvancedMode" @onchange="OnAdvancedHeaderToggled" />
+                <span>Advanced</span>
+            </label>
+            <label class="oe-check inline" style="margin-right:8px;">
+                <input type="checkbox" checked="@ExperimentalEnabled" @onchange="OnExperimentalEnabledChanged" />
+                <span>Experimental</span>
+                <ExperimentalBadge />
+            </label>
             <button class="oe-btn ghost" @onclick="OpenSettingsClick">Open settings…</button>
             <button class="oe-btn ghost" @onclick="SaveSettingsClick">Save settings…</button>
             <button class="oe-btn ghost" @onclick="ShareSettingsClick">Share link</button>
@@ -52,8 +61,10 @@
                             Section.Topology => "Topology",
                             Section.Zones => "Zones",
                             Section.WinConditions => "Win Conditions",
+                            Section.Experimental => "Experimental ⚗",
                             _ => s.ToString()
                         })"
+                        Visible="@(s => s != Section.Experimental || ExperimentalEnabled)"
                         ValidationMessage="@(IsValid ? null : ValidationMessage)" />
         </aside>
 
@@ -83,6 +94,23 @@
                     break;
                 case Section.WinConditions:
                     <WinConditionsPanel Settings="Settings" OnChanged="OnChanged" />
+                    break;
+                case Section.Experimental:
+                    <div class="oe-section">
+                        <div class="oe-section-header">
+                            <span>Experimental features <ExperimentalBadge /></span>
+                        </div>
+                        <div class="oe-hint">
+                            These features change template fields the game has not been
+                            extensively tested against. Generated maps may behave
+                            unpredictably. Each card is collapsed by default — open the
+                            ones you want to use.
+                        </div>
+                    </div>
+                    <GameModePanel Settings="Settings" OnChanged="OnChanged" />
+                    <StartingBonusesPanel Settings="Settings" OnChanged="OnChanged" />
+                    <ExperimentalZonePanel Settings="Settings" OnChanged="OnChanged" />
+                    <PerTierOverridesPanel Settings="Settings" OnChanged="OnChanged" />
                     break;
             }
         </section>
@@ -161,12 +189,13 @@
     private const int LargeMapSizeThreshold = 240;
     private const int LargeMapZoneThreshold = 16;
 
-    private enum Section { Map, Heroes, Topology, Zones, WinConditions }
+    private enum Section { Map, Heroes, Topology, Zones, WinConditions, Experimental }
     private Section ActiveSection { get; set; } = Section.Map;
 
     private GeneratorSettings Settings { get; set; } = new();
     private bool AdvancedMode { get; set; }
     private bool ExperimentalMapSizes { get; set; }
+    private bool ExperimentalEnabled { get; set; }
 
     private OldenEra.Generator.Models.Unfrozen.RmgTemplate? GeneratedTemplate;
     private byte[]? PreviewPng;
@@ -213,10 +242,11 @@
 
         if (sourceOfTruth is not null)
         {
-            var (mapped, advanced, experimental) = SettingsMapper.FromFile(sourceOfTruth);
+            var (mapped, advanced, experimental, expEnabled) = SettingsMapper.FromFile(sourceOfTruth);
             Settings = mapped;
             AdvancedMode = advanced;
             ExperimentalMapSizes = experimental;
+            ExperimentalEnabled = expEnabled;
         }
         _hasLoadedFromStorage = true;
 
@@ -242,6 +272,17 @@
     private static string FormatVersion(Version v)
         => v.Build > 0 ? $"v{v.Major}.{v.Minor}.{v.Build}" : $"v{v.Major}.{v.Minor}";
 
+    private void OnExperimentalEnabledChanged(ChangeEventArgs e)
+    {
+        ExperimentalEnabled = (bool)e.Value!;
+        // If user just disabled experimental mode and was sitting on that
+        // section, bounce them back to Map so the empty content area doesn't
+        // linger. Their experimental settings stay intact in memory.
+        if (!ExperimentalEnabled && ActiveSection == Section.Experimental)
+            ActiveSection = Section.Map;
+        OnChanged();
+    }
+
     private void OnExperimentalToggled(bool value)
     {
         ExperimentalMapSizes = value;
@@ -254,6 +295,33 @@
     {
         AdvancedMode = advanced;
         Settings.ZoneCfg.Advanced.Enabled = advanced;
+        OnChanged();
+    }
+
+    private void OnAdvancedHeaderToggled(ChangeEventArgs e)
+    {
+        bool advanced = (bool)e.Value!;
+        AdvancedMode = advanced;
+        Settings.ZoneCfg.Advanced.Enabled = advanced;
+
+        // Seed per-tier sliders from the simple-mode values when transitioning
+        // off → on, so the Advanced panel doesn't show all-zero counts.
+        if (advanced)
+        {
+            int total = Settings.ZoneCfg.Advanced.NeutralLowNoCastleCount
+                      + Settings.ZoneCfg.Advanced.NeutralLowCastleCount
+                      + Settings.ZoneCfg.Advanced.NeutralMediumNoCastleCount
+                      + Settings.ZoneCfg.Advanced.NeutralMediumCastleCount
+                      + Settings.ZoneCfg.Advanced.NeutralHighNoCastleCount
+                      + Settings.ZoneCfg.Advanced.NeutralHighCastleCount;
+            if (total == 0 && Settings.ZoneCfg.NeutralZoneCount > 0)
+            {
+                if (Settings.ZoneCfg.NeutralZoneCastles > 0)
+                    Settings.ZoneCfg.Advanced.NeutralMediumCastleCount = Settings.ZoneCfg.NeutralZoneCount;
+                else
+                    Settings.ZoneCfg.Advanced.NeutralMediumNoCastleCount = Settings.ZoneCfg.NeutralZoneCount;
+            }
+        }
         OnChanged();
     }
 
@@ -287,7 +355,7 @@
         catch (TaskCanceledException) { return; }
 
         if (ct.IsCancellationRequested) return;
-        var snapshot = SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes);
+        var snapshot = SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes, ExperimentalEnabled);
         await SettingsStore.SaveAsync(snapshot);
     }
 
@@ -416,7 +484,7 @@
 
     private async Task SaveSettingsClick()
     {
-        var snapshot = SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes);
+        var snapshot = SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes, ExperimentalEnabled);
         byte[] bytes = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(snapshot, JsonOptions);
         string name = string.IsNullOrWhiteSpace(Settings.TemplateName) ? "My Settings" : Settings.TemplateName.Trim();
         await Downloader.DownloadAsync($"{name}.oetgs", "application/json", bytes);
@@ -450,13 +518,14 @@
             var s = System.Text.Json.JsonSerializer.Deserialize<SettingsFile>(json);
             if (s is null) return;
 
-            var (mapped, advanced, experimental) = SettingsMapper.FromFile(s);
+            var (mapped, advanced, experimental, expEnabled) = SettingsMapper.FromFile(s);
             Settings = mapped;
             AdvancedMode = advanced;
             ExperimentalMapSizes = experimental;
+            ExperimentalEnabled = expEnabled;
             Validate();
             // Persist the freshly imported settings so they survive a reload.
-            await SettingsStore.SaveAsync(SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes));
+            await SettingsStore.SaveAsync(SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes, ExperimentalEnabled));
             StateHasChanged();
         }
         catch (Exception ex)
@@ -495,7 +564,7 @@
 
     private async Task ShareSettingsClick()
     {
-        var snapshot = SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes);
+        var snapshot = SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes, ExperimentalEnabled);
         string encoded = SettingsShareCodec.Encode(snapshot);
         if (encoded.Length > SettingsShareCodec.MaxEncodedLength)
         {

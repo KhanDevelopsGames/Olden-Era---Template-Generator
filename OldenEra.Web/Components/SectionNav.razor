@@ -1,7 +1,7 @@
 @typeparam TSection where TSection : struct, Enum
 
 <nav class="oe-nav-list">
-    @foreach (var section in Enum.GetValues<TSection>())
+    @foreach (var section in VisibleSections)
     {
         var label = SectionLabel(section);
         var active = EqualityComparer<TSection>.Default.Equals(section, Active);
@@ -16,7 +16,7 @@
 <select class="oe-nav-select"
         value="@ActiveString"
         @onchange="OnSelectChange">
-    @foreach (var section in Enum.GetValues<TSection>())
+    @foreach (var section in VisibleSections)
     {
         <option value="@(section.ToString())">@SectionLabel(section)</option>
     }
@@ -34,7 +34,11 @@
     [Parameter] public TSection Active { get; set; } = default!;
     [Parameter] public EventCallback<TSection> ActiveChanged { get; set; }
     [Parameter] public Func<TSection, string>? LabelFor { get; set; }
+    [Parameter] public Func<TSection, bool>? Visible { get; set; }
     [Parameter] public string? ValidationMessage { get; set; }
+
+    private IEnumerable<TSection> VisibleSections =>
+        Visible is null ? Enum.GetValues<TSection>() : Enum.GetValues<TSection>().Where(Visible);
 
     private string SectionLabel(TSection s) => LabelFor?.Invoke(s) ?? s.ToString();
 

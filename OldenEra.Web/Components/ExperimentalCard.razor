@@ -1,0 +1,62 @@
+@* Collapsible card that wraps a single experimental capability.
+   - The header carries the title and the [EXPERIMENTAL] badge.
+   - Open/closed state persists in localStorage under "oeExpCard:{Key}".
+   - Closed by default. *@
+
+@inject IJSRuntime Js
+
+<div class="oe-exp-card @(IsOpen ? "open" : "")">
+    <button type="button"
+            class="oe-exp-card-header"
+            @onclick="Toggle"
+            aria-expanded="@(IsOpen ? "true" : "false")">
+        <span class="oe-exp-card-chevron" aria-hidden="true">@(IsOpen ? "▾" : "▸")</span>
+        <span class="oe-exp-card-title">@Title</span>
+        <ExperimentalBadge />
+    </button>
+    @if (IsOpen)
+    {
+        <div class="oe-exp-card-body">
+            @ChildContent
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Key { get; set; } = "";
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private bool IsOpen;
+    private bool _loaded;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_loaded)
+        {
+            _loaded = true;
+            try
+            {
+                string? raw = await Js.InvokeAsync<string?>("localStorage.getItem", StorageKey);
+                if (raw == "1")
+                {
+                    IsOpen = true;
+                    StateHasChanged();
+                }
+            }
+            catch { /* localStorage unavailable — silently keep default */ }
+        }
+    }
+
+    private async Task Toggle()
+    {
+        IsOpen = !IsOpen;
+        try
+        {
+            await Js.InvokeVoidAsync("localStorage.setItem", StorageKey, IsOpen ? "1" : "0");
+        }
+        catch { /* ignore */ }
+    }
+
+    private string StorageKey => $"oeExpCard:{Key}";
+}
