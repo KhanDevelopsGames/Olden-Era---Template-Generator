@@ -64,7 +64,7 @@ None. The setting type doesn't change. Saved `.oetgs` files load unchanged.
 
 ### Out of scope
 
-Item picker. Items aren't in the datamine yet (the agent confirmed). When/if `items.json` ships upstream, mirror this component as `ItemPicker` and wire to `Settings.Bonuses.ItemSid` the same way. Spells are doing 80% of the cleanup value alone.
+Item picker. The 2026-05 follow-up investigation confirmed items exist in `DB/items/items/*.json` (Core.zip dump in `randys006/HeroesOETool1`) but **no locale strings are publicly available** — names are keys like `beelzebubs_blessing_heartbeat_artifact_name`. A picker would have to show raw IDs, which the existing free-text input already supports. Decision: keep `Settings.Bonuses.ItemSid` as free text until item names ship upstream. If a user wants UX parity with the spell picker badly enough, see the alternate path below.
 
 ---
 
@@ -207,7 +207,7 @@ Not yet.  Treat F5 as a placeholder; promote individual items to their own secti
 
 ## Items intentionally NOT in this plan
 
-- **Item picker for `Settings.Bonuses.ItemSid`**: blocked on `items.json` not shipping in the datamine. Add when upstream covers it.
+- **Item picker for `Settings.Bonuses.ItemSid`**: items DB ships in the Core.zip dump (13 slot files: armor, boots, belt, ring, etc.) but the locale strings that turn `beelzebubs_blessing_heartbeat_artifact_name` into a readable label are NOT public. Until upstream ships an items+names bundle, the field stays free-text. **Alternate path**: a fetch script that extracts `Lang/english/texts/items.json` from a user's local game install — ship the schema, not the data. Out of scope for now.
 - **Spell-pool tier balancing**: the generator's pool selection is mechanical (T0..T5 pools with fixed multipliers). Letting users tilt that balance is a deeper refactor than F1–F4.
 - **Per-zone hero placement**: requires the user to think in zones, not factions. Not commonly requested.
 - **Generation algorithm changes**: the catalog only feeds inputs/outputs; it doesn't change the core algorithm. Anything that touches `BuildVariant*` is out of scope here.
