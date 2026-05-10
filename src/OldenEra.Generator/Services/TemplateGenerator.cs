@@ -2847,24 +2847,24 @@ namespace OldenEra.Generator.Services
 
                 // ── Hero training — tier-2 stat building (fort/university/orb_observatory) ──
                 //    + uncommon hero bank (university/wise_owl/tree_of_knowledge) (Blitz/Exodus pattern).
-                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
-                new() { IncludeLists = ["content_list_building_uncommon_hero_banks"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingHeroStatsAndSkillsTier2] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingUncommonHeroBanks] },
 
                 // ── Hiring — low-tier × 2 + high-tier × 1 + full pool × 1 (Kerberos + Universe blend). ──
-                new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
-                new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
-                new() { IncludeLists = ["content_list_building_random_hires_high_tier"] },
-                new() { IncludeLists = ["basic_content_list_building_random_hires"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingRandomHiresLowTier] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingRandomHiresLowTier] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingRandomHiresHighTier] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingRandomHires] },
 
                 // ── Guarded resource banks — tier 1 × 2 + tier 2 × 1 (Exodus pattern). ──
-                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_1"] },
-                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_1"] },
-                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_2"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingGuardedResourceBanksTier1] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingGuardedResourceBanksTier1] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingGuardedResourceBanksTier2] },
 
                 // ── Loot — epic items + army pandora (Exodus/Blitz pattern). ──
                 new() { Sid = "random_item_epic", SoloEncounter = true },
                 new() { Sid = "pandora_box", SoloEncounter = true },
-                new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"] },
+                new() { IncludeLists = [KnownIds.ContentLists.PickupPandoraBoxArmyLowTier] },
             ]);
 
             return content;
@@ -2888,25 +2888,25 @@ namespace OldenEra.Generator.Services
 
             content.AddRange([
                 // Mines — biome-based rare mine + one fixed rare mine (Blitz Side-1 pattern).
-                new() { Name = "name_mine_by_biome_1", IncludeLists = ["basic_content_list_rare_mines_by_biome"], IsMine = true },
-                new() { IncludeLists = ["basic_content_list_rare_mines"], IsMine = true },
+                new() { Name = "name_mine_by_biome_1", IncludeLists = [KnownIds.ContentLists.RareMinesByBiome], IsMine = true },
+                new() { IncludeLists = [KnownIds.ContentLists.RareMines], IsMine = true },
                 // Utility — one guarded market near crossroads, one vision building.
                 new() { Sid = "market", IsGuarded = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.15, TargetMax = 0.20, Weight = 1 }] },
-                new() { IncludeLists = ["basic_content_list_vision_buildings_tier_1"] },
+                new() { IncludeLists = [KnownIds.ContentLists.VisionBuildingsTier1] },
                 // Buff buildings — picked from the real hero-buff pool (mana_well, fountain, stables, etc.).
-                new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
-                new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingHeroBuffTier1] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingHeroBuffTier1] },
                 // Common hero stat building (stinging_sword, armory_automaton, magic_wheel, knowledge_garden).
-                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_1"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingHeroStatsAndSkillsTier1] },
                 // Hiring — low-tier random hires (hires 1–4, confirmed content_list name).
-                new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
-                new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingRandomHiresLowTier] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingRandomHiresLowTier] },
                 // Loot — solo pandora box + low-tier army pandora (variants 8–11).
                 new() { Sid = "pandora_box", SoloEncounter = true },
-                new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"] },
+                new() { IncludeLists = [KnownIds.ContentLists.PickupPandoraBoxArmyLowTier] },
                 // Pickup — random item + common magic pickup.
-                new() { IncludeLists = ["basic_content_list_pickup_random_items"] },
-                new() { IncludeLists = ["basic_content_list_building_magic_tier_1"] },
+                new() { IncludeLists = [KnownIds.ContentLists.PickupRandomItems] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingMagicTier1] },
             ]);
 
             return content;
@@ -2936,28 +2936,28 @@ namespace OldenEra.Generator.Services
                 // Utility — watchtower (guarded) + vision building (tier 1 only: flattering_mirror/watchtower).
                 // wind_rose (full map reveal) lives in tier_2 and belongs exclusively in high zones.
                 new() { Sid = "watchtower", IsGuarded = true },
-                new() { IncludeLists = ["basic_content_list_vision_buildings_tier_1"] },
+                new() { IncludeLists = [KnownIds.ContentLists.VisionBuildingsTier1] },
                 // Buff buildings.
-                new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingHeroBuffTier1] },
                 // Hero stats — tier 1 common + tier 2 uncommon picks.
-                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_1"] },
-                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingHeroStatsAndSkillsTier1] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingHeroStatsAndSkillsTier2] },
                 // Magic buildings — tier 1 + tier 2.
-                new() { IncludeLists = ["basic_content_list_building_magic_tier_1"] },
-                new() { IncludeLists = ["basic_content_list_building_magic_tier_2"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingMagicTier1] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingMagicTier2] },
                 // Hiring — low-tier + high-tier random hires (confirmed generator list names).
-                new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
-                new() { IncludeLists = ["content_list_building_random_hires_high_tier"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingRandomHiresLowTier] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingRandomHiresHighTier] },
                 // Unit banks — biome-restricted (Blitz Treasure-2 pattern).
-                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_only_biome_restriction"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingGuardedUnitsBanksOnlyBiome] },
                 // Guarded resource banks — tier 2 (no black tower / tier-1 banks).
-                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_2"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingGuardedResourceBanksTier2] },
                 // Loot — epic items + pandora boxes with army variants.
                 new() { Sid = "random_item_epic", SoloEncounter = true },
                 new() { Sid = "random_item_epic" },
                 new() { Sid = "pandora_box", SoloEncounter = true },
                 new() { Sid = "pandora_box" },
-                new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"] },
+                new() { IncludeLists = [KnownIds.ContentLists.PickupPandoraBoxArmyLowTier] },
             ]);
 
             return content;
@@ -2981,42 +2981,42 @@ namespace OldenEra.Generator.Services
 
             content.AddRange([
                 // Epic encounters — exclusive to high zones.
-                new() { IncludeLists = ["content_list_building_utopia"] },
-                new() { IncludeLists = ["content_list_building_utopia"] },
-                new() { IncludeLists = ["content_list_building_epic_guarded_resource_banks"] },
-                new() { IncludeLists = ["content_list_building_epic_guarded_resource_banks"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingUtopia] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingUtopia] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingEpicGuardedResourceBanks] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingEpicGuardedResourceBanks] },
                 // Utility — vision + buff buildings.
-                new() { IncludeLists = ["basic_content_list_vision_buildings_tier_1"] },
-                new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
+                new() { IncludeLists = [KnownIds.ContentLists.VisionBuildingsTier1] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingHeroBuffTier1] },
                 // Hero stats — tier 2 + tier 3 (fort/university/maze/college_of_wonder).
-                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
-                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_3"] },
-                new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_3"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingHeroStatsAndSkillsTier2] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingHeroStatsAndSkillsTier3] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingHeroStatsAndSkillsTier3] },
                 // Magic buildings — tier 2 (magic amplifiers).
-                new() { IncludeLists = ["basic_content_list_building_magic_tier_2"] },
-                new() { IncludeLists = ["basic_content_list_building_magic_tier_2"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingMagicTier2] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingMagicTier2] },
                 // Hiring — high-tier hires (hires 5–7) + all hires pool.
-                new() { IncludeLists = ["content_list_building_random_hires_high_tier"] },
-                new() { IncludeLists = ["content_list_building_random_hires_high_tier"] },
-                new() { IncludeLists = ["basic_content_list_building_random_hires"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingRandomHiresHighTier] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingRandomHiresHighTier] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingRandomHires] },
                 // Unit banks — biome-restricted + no-restriction variants.
-                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_only_biome_restriction"] },
-                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"] },
-                new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingGuardedUnitsBanksOnlyBiome] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingGuardedUnitsBanksNoBiome] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingGuardedUnitsBanksNoBiome] },
                 // Guarded resource banks — tier 2 + tier 3.
-                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_2"] },
-                new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_3"] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingGuardedResourceBanksTier2] },
+                new() { IncludeLists = [KnownIds.ContentLists.BuildingGuardedResourceBanksTier3] },
                 // Loot — mythic scrolls, legendary items, pandora boxes with high-tier armies.
-                new() { IncludeLists = ["basic_content_list_pickup_mythic_scroll_box"] },
-                new() { IncludeLists = ["basic_content_list_pickup_mythic_scroll_box"] },
+                new() { IncludeLists = [KnownIds.ContentLists.PickupMythicScrollBox] },
+                new() { IncludeLists = [KnownIds.ContentLists.PickupMythicScrollBox] },
                 new() { Sid = "random_item_legendary", SoloEncounter = true },
                 new() { Sid = "random_item_legendary" },
                 new() { Sid = "random_item_epic" },
                 new() { Sid = "pandora_box", SoloEncounter = true },
                 new() { Sid = "pandora_box" },
                 new() { Sid = "pandora_box" },
-                new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
-                new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
+                new() { IncludeLists = [KnownIds.ContentLists.PickupPandoraBoxArmyHighTier] },
+                new() { IncludeLists = [KnownIds.ContentLists.PickupPandoraBoxArmyHighTier] },
                 // Mines — gold-heavy with full rare set.
                 new() { Sid = "mine_gold",      IsMine = true, Rules = [new ContentPlacementRule { Type = "Crossroads", Args = [], TargetMin = 0.1, TargetMax = 0.3, Weight = 1 }] },
                 new() { Sid = "mine_gold",      IsMine = true },
