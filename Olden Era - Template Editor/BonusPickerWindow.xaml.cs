@@ -1,4 +1,5 @@
 using OldenEraTemplateEditor.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,7 +8,8 @@ namespace Olden_Era___Template_Editor
 {
     public partial class BonusPickerWindow : Window
     {
-        public BonusEntry? Result { get; private set; }
+        public BonusEntry?       Result  { get; private set; }
+        public List<BonusEntry>  Results { get; private set; } = [];
 
         public BonusPickerWindow()
         {
@@ -68,8 +70,26 @@ namespace Olden_Era___Template_Editor
             var entries = KnownValues.BannableItems
                 .Select(b => new BanEntry { Id = b.Id, DisplayName = b.DisplayName, Category = b.Category });
             var picker = new ItemPickerWindow(entries, [], "Pick Starting Item") { Owner = this };
-            if (picker.ShowDialog() == true && picker.SelectedId is { } id)
-                TxtItem.Text = id;
+            if (picker.ShowDialog() != true) return;
+
+            if (picker.SelectedIds.Count > 1)
+            {
+                // Multi-selection: build one StartingItem bonus per artifact and close immediately
+                var receiver = SelectedReceiver;
+                Results = picker.SelectedIds
+                    .Select(id => new BonusEntry
+                    {
+                        PresetType     = BonusPresetType.StartingItem,
+                        ReceiverFilter = receiver,
+                        Param          = id,
+                    })
+                    .ToList();
+                DialogResult = true;
+            }
+            else if (picker.SelectedIds.Count == 1)
+            {
+                TxtItem.Text = picker.SelectedIds[0];
+            }
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
@@ -127,6 +147,7 @@ namespace Olden_Era___Template_Editor
                 Param          = param,
                 Param2         = param2,
             };
+            Results      = [Result];
             DialogResult = true;
         }
 

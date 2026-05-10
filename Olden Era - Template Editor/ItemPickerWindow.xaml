@@ -20,14 +20,13 @@
                      BorderBrush="#5A4A28" BorderThickness="1"
                      CaretBrush="#C9A84C" SelectionBrush="#8A6E30"
                      Padding="6,0"/>
-            <!-- placeholder via triggers: not needed, WPF ≥ 4.5 has no native placeholder -->
         </StackPanel>
 
         <!-- Buttons -->
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
                     HorizontalAlignment="Right" Margin="0,8,0,0">
             <Button x:Name="BtnAdd" Content="Add Selected"
-                    Width="110" Height="28" Margin="0,0,8,0"
+                    Width="120" Height="28" Margin="0,0,8,0"
                     IsDefault="True"
                     Click="BtnAdd_Click"/>
             <Button Content="Cancel"
@@ -60,13 +59,13 @@
 
         <!-- Category tree -->
         <TreeView x:Name="TvItems"
-                  SelectedItemChanged="TvItems_SelectedItemChanged"
+                  PreviewMouseLeftButtonDown="TvItems_PreviewMouseLeftButtonDown"
                   MouseDoubleClick="TvItems_MouseDoubleClick"
                   Background="#2C2619"
                   Foreground="#E8D5A3"
                   BorderBrush="#5A4A28" BorderThickness="1">
             <TreeView.Resources>
-                <!-- Dark-theme TreeViewItem -->
+                <!-- Dark-theme TreeViewItem — selection highlight managed in code -->
                 <Style TargetType="TreeViewItem">
                     <Setter Property="Background"  Value="Transparent"/>
                     <Setter Property="Foreground"  Value="#E8D5A3"/>
@@ -77,7 +76,8 @@
                             <Setter Property="Background" Value="#3A3020"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="#5A4A28"/>
+                            <!-- suppress built-in blue highlight; our code sets Background directly -->
+                            <Setter Property="Background" Value="Transparent"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>

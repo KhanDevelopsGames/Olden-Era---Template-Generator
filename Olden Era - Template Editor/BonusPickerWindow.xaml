@@ -99,7 +99,9 @@
                     <TextBlock Text="Artifact ID" Foreground="#9A8A6A" FontSize="11" Margin="0,0,0,3"/>
                     <DockPanel>
                         <Button DockPanel.Dock="Right" Content="Pick…" Width="64"
-                                Height="26" Margin="6,0,0,0" Click="BtnPickItem_Click"/>
+                                Height="26" Margin="6,0,0,0" Click="BtnPickItem_Click"
+                                Background="#1E1A10" BorderBrush="#7A6A48"
+                                Foreground="#C8B87A" FontSize="12" Cursor="Hand"/>
                         <TextBox x:Name="TxtItem" Height="26"
                                  Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28"
                                  CaretBrush="#C9A84C" Padding="6,0"

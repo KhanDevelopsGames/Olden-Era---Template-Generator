@@ -11,17 +11,22 @@ namespace Olden_Era___Template_Editor
 {
     public partial class ItemPickerWindow : Window
     {
-        public string? SelectedId { get; private set; }
+        /// <summary>First selected ID (kept for callers that only need one).</summary>
+        public string?      SelectedId  => SelectedIds.Count > 0 ? SelectedIds[0] : null;
+        public List<string> SelectedIds { get; private set; } = [];
 
-        private readonly List<BanEntry> _allEntries;
-        private readonly HashSet<string> _alreadyBanned;
-        // Categories that the user has manually collapsed — preserved across searches.
-        private readonly HashSet<string> _collapsedCategories = [];
+        private readonly List<BanEntry>         _allEntries;
+        private readonly HashSet<string>         _alreadyBanned;
+        private readonly HashSet<string>         _collapsedCategories = [];
+        private readonly HashSet<TreeViewItem>   _checkedLeaves       = [];
+
+        private static readonly SolidColorBrush CheckedBrush  = new(Color.FromRgb(0x5A, 0x4A, 0x28));
+        private static readonly SolidColorBrush CheckMarkBrush = new(Color.FromRgb(0xC9, 0xA8, 0x4C));
 
         public ItemPickerWindow(IEnumerable<BanEntry> entries, IEnumerable<string> alreadyBanned, string windowTitle)
         {
             InitializeComponent();
-            Title = windowTitle;
+            Title          = windowTitle;
             _allEntries    = [.. entries];
             _alreadyBanned = [.. alreadyBanned];
             RefreshTree(string.Empty);
@@ -32,7 +37,6 @@ namespace Olden_Era___Template_Editor
 
         private void RefreshTree(string filter)
         {
-            // Remember which categories the user collapsed between refreshes.
             foreach (TreeViewItem ci in TvItems.Items)
                 if (ci.Tag is string cat)
                 {
@@ -40,6 +44,7 @@ namespace Olden_Era___Template_Editor
                     else               _collapsedCategories.Add(cat);
                 }
 
+            _checkedLeaves.Clear();
             TvItems.Items.Clear();
 
             var groups = _allEntries
@@ -66,7 +71,7 @@ namespace Olden_Era___Template_Editor
                 TvItems.Items.Add(catNode);
             }
 
-            BtnAdd.IsEnabled = SelectedLeaf() != null;
+            UpdateAddButton();
         }
 
         private static FrameworkElement BuildCategoryHeader(string category, int count)
@@ -92,7 +97,20 @@ namespace Olden_Era___Template_Editor
 
         private static TreeViewItem BuildLeafItem(BanEntry entry)
         {
+            // Check mark placeholder — toggled in code
+            var chk = new TextBlock
+            {
+                Name              = "ChkMark",
+                Text              = "",     // filled with ✓ when checked
+                Width             = 16,
+                Foreground        = CheckMarkBrush,
+                FontWeight        = FontWeights.Bold,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin            = new Thickness(0, 0, 4, 0),
+            };
+
             var sp = new StackPanel { Orientation = System.Windows.Controls.Orientation.Horizontal };
+            sp.Children.Add(chk);
             sp.Children.Add(new Ellipse
             {
                 Width  = 9, Height = 9,
@@ -102,10 +120,10 @@ namespace Olden_Era___Template_Editor
             });
             sp.Children.Add(new TextBlock
             {
-                Text   = entry.DisplayName,
-                Width  = 220,
+                Text       = entry.DisplayName,
+                Width      = 220,
                 Foreground = new SolidColorBrush(Color.FromRgb(0xE8, 0xD5, 0xA3)),
-                Margin = new Thickness(0, 0, 14, 0),
+                Margin     = new Thickness(0, 0, 14, 0),
                 VerticalAlignment = VerticalAlignment.Center,
             });
             sp.Children.Add(new TextBlock
@@ -120,13 +138,48 @@ namespace Olden_Era___Template_Editor
             return new TreeViewItem { Header = sp, Tag = entry };
         }
 
-        private BanEntry? SelectedLeaf()
-            => TvItems.SelectedItem is TreeViewItem { Tag: BanEntry entry } ? entry : null;
+        // ── Check-toggle helpers ─────────────────────────────────────────────────
 
-        private void Commit(string id)
+        private static TextBlock? GetCheckMark(TreeViewItem item)
+            => item.Header is StackPanel sp && sp.Children.Count > 0
+                ? sp.Children[0] as TextBlock
+                : null;
+
+        private void ToggleLeaf(TreeViewItem item)
         {
-            SelectedId   = id;
-            DialogResult = true;
+            if (_checkedLeaves.Contains(item))
+            {
+                _checkedLeaves.Remove(item);
+                item.Background = DependencyProperty.UnsetValue as Brush; // reset
+                item.ClearValue(TreeViewItem.BackgroundProperty);
+                if (GetCheckMark(item) is { } chk) chk.Text = "";
+            }
+            else
+            {
+                _checkedLeaves.Add(item);
+                item.Background = CheckedBrush;
+                if (GetCheckMark(item) is { } chk) chk.Text = "✓";
+            }
+            UpdateAddButton();
+        }
+
+        private void UpdateAddButton()
+        {
+            int n = _checkedLeaves.Count;
+            BtnAdd.Content   = n > 1 ? $"Add Selected ({n})" : "Add Selected";
+            BtnAdd.IsEnabled = n > 0;
+        }
+
+        private static TreeViewItem? FindLeafFromSource(object originalSource)
+        {
+            var dep = originalSource as DependencyObject;
+            while (dep != null)
+            {
+                if (dep is TreeViewItem tvi && tvi.Tag is BanEntry)
+                    return tvi;
+                dep = VisualTreeHelper.GetParent(dep);
+            }
+            return null;
         }
 
         // ── Event handlers ────────────────────────────────────────────────────────
@@ -134,26 +187,43 @@ namespace Olden_Era___Template_Editor
         private void TxtSearch_TextChanged(object sender, TextChangedEventArgs e)
             => RefreshTree(TxtSearch.Text);
 
-        private void TvItems_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-            => BtnAdd.IsEnabled = SelectedLeaf() != null;
+        private void TvItems_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var leaf = FindLeafFromSource(e.OriginalSource);
+            if (leaf == null) return; // category header click — let it expand/collapse normally
+            ToggleLeaf(leaf);
+            e.Handled = true; // suppress built-in selection highlight
+        }
 
         private void TvItems_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (SelectedLeaf() is BanEntry entry)
-                Commit(entry.Id);
+            var leaf = FindLeafFromSource(e.OriginalSource);
+            if (leaf == null) return;
+            // Ensure it's checked, then commit
+            if (!_checkedLeaves.Contains(leaf)) ToggleLeaf(leaf);
+            CommitAll();
+        }
+
+        private void CommitAll()
+        {
+            SelectedIds = _checkedLeaves
+                .Select(tvi => ((BanEntry)tvi.Tag!).Id)
+                .ToList();
+            if (SelectedIds.Count > 0)
+                DialogResult = true;
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedLeaf() is BanEntry entry)
-                Commit(entry.Id);
-        }
+            => CommitAll();
 
         private void BtnAddCustom_Click(object sender, RoutedEventArgs e)
         {
             var id = TxtCustomId.Text.Trim();
             if (!string.IsNullOrEmpty(id))
-                Commit(id);
+            {
+                SelectedIds  = [id];
+                DialogResult = true;
+            }
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)

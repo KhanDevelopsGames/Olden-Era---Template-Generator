@@ -505,13 +505,12 @@ namespace Olden_Era___Template_Editor
             var entries = KnownValues.BannableItems
                 .Select(b => new BanEntry { Id = b.Id, DisplayName = b.DisplayName, Category = b.Category });
             var picker = new ItemPickerWindow(entries, _bannedItems.Select(b => b.Id), "Add Banned Item") { Owner = this };
-            if (picker.ShowDialog() == true && picker.SelectedId is { } id)
+            if (picker.ShowDialog() == true)
             {
-                if (!_bannedItems.Any(e => e.Id == id))
-                {
-                    _bannedItems.Add(ItemEntryFromId(id));
-                    MarkDirty();
-                }
+                foreach (var id in picker.SelectedIds)
+                    if (!_bannedItems.Any(e => e.Id == id))
+                        _bannedItems.Add(ItemEntryFromId(id));
+                MarkDirty();
             }
         }
 
@@ -520,13 +519,12 @@ namespace Olden_Era___Template_Editor
             var entries = KnownValues.BannableMagics
                 .Select(m => new BanEntry { Id = m.Id, DisplayName = m.DisplayName, Category = "Spell" });
             var picker = new ItemPickerWindow(entries, _bannedMagics.Select(b => b.Id), "Add Banned Spell") { Owner = this };
-            if (picker.ShowDialog() == true && picker.SelectedId is { } id)
+            if (picker.ShowDialog() == true)
             {
-                if (!_bannedMagics.Any(e => e.Id == id))
-                {
-                    _bannedMagics.Add(MagicEntryFromId(id));
-                    MarkDirty();
-                }
+                foreach (var id in picker.SelectedIds)
+                    if (!_bannedMagics.Any(e => e.Id == id))
+                        _bannedMagics.Add(MagicEntryFromId(id));
+                MarkDirty();
             }
         }
 
@@ -553,9 +551,10 @@ namespace Olden_Era___Template_Editor
         private void BtnAddBonus_Click(object sender, RoutedEventArgs e)
         {
             var picker = new BonusPickerWindow { Owner = this };
-            if (picker.ShowDialog() == true && picker.Result is { } entry)
+            if (picker.ShowDialog() == true)
             {
-                _bonuses.Add(entry);
+                foreach (var entry in picker.Results)
+                    _bonuses.Add(entry);
                 MarkDirty();
             }
         }
