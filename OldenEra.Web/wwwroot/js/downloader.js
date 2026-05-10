@@ -41,8 +41,10 @@ window.oeShare = {
     },
     copy: async function (text) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(text);
-            return true;
+            try {
+                await navigator.clipboard.writeText(text);
+                return true;
+            } catch { /* fall through to textarea fallback */ }
         }
         const ta = document.createElement("textarea");
         ta.value = text;

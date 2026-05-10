@@ -208,14 +208,10 @@
         string hash = await Js.InvokeAsync<string>("oeShare.getHash");
         if (hash.StartsWith("s=", StringComparison.Ordinal))
         {
-            var fromUrl = SettingsShareCodec.TryDecode(hash[2..], out var status);
+            var fromUrl = SettingsShareCodec.TryDecode(hash[2..], out _);
             if (fromUrl is not null)
             {
                 sourceOfTruth = fromUrl;
-                if (status != SettingsShareCodec.DecodeStatus.Ok)
-                {
-                    ShareToast = "Some settings in the link couldn't be loaded — using defaults for those.";
-                }
             }
             else
             {
