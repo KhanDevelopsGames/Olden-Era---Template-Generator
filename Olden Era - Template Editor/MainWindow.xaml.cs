@@ -98,6 +98,32 @@ namespace Olden_Era___Template_Editor
             PnlZones.ChkRandomPortals.Checked   += ChkRandomPortals_Changed;
             PnlZones.ChkRandomPortals.Unchecked += ChkRandomPortals_Changed;
 
+            // Game Rules panel — combo + slider events.
+            PnlGameRules.CmbVictory.SelectionChanged += CmbVictory_SelectionChanged;
+            PnlGameRules.SldFactionLawsExp.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldAstrologyExp.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldLostStartCityDay.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldCityHoldDays.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldGladiatorDelay.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldGladiatorCountDay.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldTournamentPointsToWin.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldTournamentFirstTournamentDay.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldTournamentInterval.ValueChanged += Slider_ValueChanged;
+
+            // Game Rules panel — checkbox events.
+            PnlGameRules.ChkLostStartCity.Checked   += WinConditionOption_Changed;
+            PnlGameRules.ChkLostStartCity.Unchecked += WinConditionOption_Changed;
+            PnlGameRules.ChkLostStartHero.Checked   += WinConditionOption_Changed;
+            PnlGameRules.ChkLostStartHero.Unchecked += WinConditionOption_Changed;
+            PnlGameRules.ChkCityHold.Checked   += WinConditionOption_Changed;
+            PnlGameRules.ChkCityHold.Unchecked += WinConditionOption_Changed;
+            PnlGameRules.ChkGladiatorArena.Checked   += WinConditionOption_Changed;
+            PnlGameRules.ChkGladiatorArena.Unchecked += WinConditionOption_Changed;
+            PnlGameRules.ChkTournament.Checked   += WinConditionOption_Changed;
+            PnlGameRules.ChkTournament.Unchecked += WinConditionOption_Changed;
+            PnlGameRules.ChkTournamentSaveArmy.Checked   += ChkOption_Changed;
+            PnlGameRules.ChkTournamentSaveArmy.Unchecked += ChkOption_Changed;
+
             // Clamp startup size to the available work area so the window never
             // overflows the screen at high-DPI scaling (e.g. 125 %, 150 %, 200 %).
             var area = SystemParameters.WorkArea;
@@ -114,8 +140,8 @@ namespace Olden_Era___Template_Editor
             CmbGameMode.ItemsSource = KnownValues.GameModes;
             CmbGameMode.SelectedIndex = 0;
             RefreshMapSizeOptions(160);
-            CmbVictory.ItemsSource = KnownValues.VictoryConditionLabels;
-            CmbVictory.SelectedIndex = 0; // Classic (win_condition_1)
+            PnlGameRules.CmbVictory.ItemsSource = KnownValues.VictoryConditionLabels;
+            PnlGameRules.CmbVictory.SelectedIndex = 0; // Classic (win_condition_1)
             PnlTopology.CmbTopology.ItemsSource = TopologyOptions.Select(t => t.Label).ToList();
             PnlTopology.CmbTopology.SelectedIndex = 0; // Random is first
             UpdateValueLabels();
@@ -292,8 +318,8 @@ namespace Olden_Era___Template_Editor
             PnlZones.TxtStructureDensity.Text = $"{(int)PnlZones.SldStructureDensity.Value}%";
             PnlZones.TxtNeutralStackStrength.Text = $"{(int)PnlZones.SldNeutralStackStrength.Value}%";
             PnlZones.TxtBorderGuardStrength.Text = $"{(int)PnlZones.SldBorderGuardStrength.Value}%";
-            TxtFactionLawsExp.Text = $"{(int)SldFactionLawsExp.Value}%";
-            TxtAstrologyExp.Text = $"{(int)SldAstrologyExp.Value}%";
+            PnlGameRules.TxtFactionLawsExp.Text = $"{(int)PnlGameRules.SldFactionLawsExp.Value}%";
+            PnlGameRules.TxtAstrologyExp.Text = $"{(int)PnlGameRules.SldAstrologyExp.Value}%";
             PnlZones.TxtNeutralLowNoCastle.Text = ((int)PnlZones.SldNeutralLowNoCastle.Value).ToString();
             PnlZones.TxtNeutralLowCastle.Text = ((int)PnlZones.SldNeutralLowCastle.Value).ToString();
             PnlZones.TxtNeutralMediumNoCastle.Text = ((int)PnlZones.SldNeutralMediumNoCastle.Value).ToString();
@@ -306,13 +332,13 @@ namespace Olden_Era___Template_Editor
             PnlTopology.TxtHubZoneSize.Text = $"{PnlTopology.SldHubZoneSize.Value:F2}x";
             PnlTopology.TxtHubCastles.Text = ((int)PnlTopology.SldHubCastles.Value).ToString();
             PnlZones.TxtGuardRandomization.Text = $"{(int)PnlZones.SldGuardRandomization.Value}%";
-            TxtLostStartCityDay.Text = ((int)SldLostStartCityDay.Value).ToString();
-            TxtCityHoldDays.Text = ((int)SldCityHoldDays.Value).ToString();
-            TxtGladiatorDelay.Text = ((int)SldGladiatorDelay.Value).ToString();
-            TxtGladiatorCountDay.Text = ((int)SldGladiatorCountDay.Value).ToString();
-            TxtTournamentPointsToWin.Text = ((int)SldTournamentPointsToWin.Value).ToString();
-            TxtTournamentFirstTournamentDay.Text = ((int)SldTournamentFirstTournamentDay.Value).ToString();
-            TxtTournamentInterval.Text = ((int)SldTournamentInterval.Value).ToString();
+            PnlGameRules.TxtLostStartCityDay.Text = ((int)PnlGameRules.SldLostStartCityDay.Value).ToString();
+            PnlGameRules.TxtCityHoldDays.Text = ((int)PnlGameRules.SldCityHoldDays.Value).ToString();
+            PnlGameRules.TxtGladiatorDelay.Text = ((int)PnlGameRules.SldGladiatorDelay.Value).ToString();
+            PnlGameRules.TxtGladiatorCountDay.Text = ((int)PnlGameRules.SldGladiatorCountDay.Value).ToString();
+            PnlGameRules.TxtTournamentPointsToWin.Text = ((int)PnlGameRules.SldTournamentPointsToWin.Value).ToString();
+            PnlGameRules.TxtTournamentFirstTournamentDay.Text = ((int)PnlGameRules.SldTournamentFirstTournamentDay.Value).ToString();
+            PnlGameRules.TxtTournamentInterval.Text = ((int)PnlGameRules.SldTournamentInterval.Value).ToString();
         }
 
         private void SetValidationText(string text)
@@ -389,7 +415,7 @@ namespace Olden_Era___Template_Editor
                     warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
             }
 
-            bool cityHoldActive = ChkCityHold.IsChecked == true;
+            bool cityHoldActive = PnlGameRules.ChkCityHold.IsChecked == true;
             if (cityHoldActive)
             {
                 if (selectedTopology != MapTopology.HubAndSpoke && neutral == 0)
@@ -407,8 +433,8 @@ namespace Olden_Era___Template_Editor
                 return false;
             }
 
-            string selectedVictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
-                ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+            string selectedVictoryCondition = PnlGameRules.CmbVictory.SelectedIndex >= 0 && PnlGameRules.CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
+                ? KnownValues.VictoryConditionIds[PnlGameRules.CmbVictory.SelectedIndex]
                 : "win_condition_1";
             if (selectedVictoryCondition == "win_condition_6" && players != 2)
             {
@@ -600,7 +626,7 @@ namespace Olden_Era___Template_Editor
         {
             if (!IsInitialized) return;
 
-            int idx = CmbVictory.SelectedIndex;
+            int idx = PnlGameRules.CmbVictory.SelectedIndex;
             if (idx >= 0 && idx < KnownValues.VictoryConditionIds.Length)
                 ApplyVictoryPreset(KnownValues.VictoryConditionIds[idx]);
 
@@ -611,49 +637,49 @@ namespace Olden_Era___Template_Editor
 
         private void ApplyVictoryPreset(string victoryCondition)
         {
-            ChkLostStartCity.IsChecked = false;
-            ChkLostStartHero.IsChecked = false;
-            ChkCityHold.IsChecked = false;
-            ChkGladiatorArena.IsChecked = false;
-            ChkTournament.IsChecked = false;
+            PnlGameRules.ChkLostStartCity.IsChecked = false;
+            PnlGameRules.ChkLostStartHero.IsChecked = false;
+            PnlGameRules.ChkCityHold.IsChecked = false;
+            PnlGameRules.ChkGladiatorArena.IsChecked = false;
+            PnlGameRules.ChkTournament.IsChecked = false;
 
-            SldLostStartCityDay.Value = 3;
-            SldCityHoldDays.Value = 6;
-            SldGladiatorDelay.Value = 30;
-            SldGladiatorCountDay.Value = 3;
+            PnlGameRules.SldLostStartCityDay.Value = 3;
+            PnlGameRules.SldCityHoldDays.Value = 6;
+            PnlGameRules.SldGladiatorDelay.Value = 30;
+            PnlGameRules.SldGladiatorCountDay.Value = 3;
 
-            SldTournamentPointsToWin.Value = 2;
-            SldTournamentInterval.Value = 7;
-            SldTournamentFirstTournamentDay.Value = 14;
-            ChkTournamentSaveArmy.IsChecked = true;
+            PnlGameRules.SldTournamentPointsToWin.Value = 2;
+            PnlGameRules.SldTournamentInterval.Value = 7;
+            PnlGameRules.SldTournamentFirstTournamentDay.Value = 14;
+            PnlGameRules.ChkTournamentSaveArmy.IsChecked = true;
 
             switch (victoryCondition)
             {
                 case "win_condition_3":
-                    ChkLostStartCity.IsChecked = true;
+                    PnlGameRules.ChkLostStartCity.IsChecked = true;
                     break;
                 case "win_condition_4":
-                    ChkLostStartHero.IsChecked = true;
-                    ChkGladiatorArena.IsChecked = true;
+                    PnlGameRules.ChkLostStartHero.IsChecked = true;
+                    PnlGameRules.ChkGladiatorArena.IsChecked = true;
                     break;
                 case "win_condition_5":
-                    ChkCityHold.IsChecked = true;
+                    PnlGameRules.ChkCityHold.IsChecked = true;
                     break;
                 case "win_condition_6":
-                    ChkLostStartHero.IsChecked = true;
-                    ChkTournament.IsChecked = true;
-                    SldGladiatorDelay.Value = 21;
-                    SldGladiatorCountDay.Value = 8;
+                    PnlGameRules.ChkLostStartHero.IsChecked = true;
+                    PnlGameRules.ChkTournament.IsChecked = true;
+                    PnlGameRules.SldGladiatorDelay.Value = 21;
+                    PnlGameRules.SldGladiatorCountDay.Value = 8;
                     break;
             }
         }
 
         private void UpdateWinConditionDetailVisibility()
         {
-            if (PnlLostStartCityDetails == null) return;
+            if (PnlGameRules.PnlLostStartCityDetails == null) return;
 
-            string selectedVictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
-                ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+            string selectedVictoryCondition = PnlGameRules.CmbVictory.SelectedIndex >= 0 && PnlGameRules.CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
+                ? KnownValues.VictoryConditionIds[PnlGameRules.CmbVictory.SelectedIndex]
                 : "win_condition_1";
 
             bool isTournament = selectedVictoryCondition == "win_condition_6";
@@ -661,38 +687,38 @@ namespace Olden_Era___Template_Editor
             if (isTournament)
             {
                 // Tournament is exclusive — force it on and disable all other conditions.
-                ChkTournament.IsChecked = true;
-                ChkLostStartCity.IsChecked = false;
-                ChkLostStartHero.IsChecked = false;
-                ChkCityHold.IsChecked = false;
-                ChkGladiatorArena.IsChecked = false;
+                PnlGameRules.ChkTournament.IsChecked = true;
+                PnlGameRules.ChkLostStartCity.IsChecked = false;
+                PnlGameRules.ChkLostStartHero.IsChecked = false;
+                PnlGameRules.ChkCityHold.IsChecked = false;
+                PnlGameRules.ChkGladiatorArena.IsChecked = false;
             }
             else
             {
                 // Tournament is unavailable outside of the Tournament win condition.
-                ChkTournament.IsChecked = false;
+                PnlGameRules.ChkTournament.IsChecked = false;
                 if (selectedVictoryCondition == "win_condition_3")
-                    ChkLostStartCity.IsChecked = true;
+                    PnlGameRules.ChkLostStartCity.IsChecked = true;
                 if (selectedVictoryCondition == "win_condition_4")
                 {
-                    ChkLostStartHero.IsChecked = true;
-                    ChkGladiatorArena.IsChecked = true;
+                    PnlGameRules.ChkLostStartHero.IsChecked = true;
+                    PnlGameRules.ChkGladiatorArena.IsChecked = true;
                 }
                 if (selectedVictoryCondition == "win_condition_5")
-                    ChkCityHold.IsChecked = true;
+                    PnlGameRules.ChkCityHold.IsChecked = true;
             }
 
-            ChkLostStartCity.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_3";
-            ChkLostStartHero.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
-            ChkCityHold.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_5";
-            ChkGladiatorArena.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
-            ChkTournament.IsChecked = isTournament;
-            ChkTournament.IsEnabled = isTournament;
+            PnlGameRules.ChkLostStartCity.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_3";
+            PnlGameRules.ChkLostStartHero.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
+            PnlGameRules.ChkCityHold.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_5";
+            PnlGameRules.ChkGladiatorArena.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
+            PnlGameRules.ChkTournament.IsChecked = isTournament;
+            PnlGameRules.ChkTournament.IsEnabled = isTournament;
 
-            PnlLostStartCityDetails.Visibility = ChkLostStartCity.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            PnlCityHoldDetails.Visibility = ChkCityHold.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            PnlGladiatorDetails.Visibility = ChkGladiatorArena.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            PnlTournamentDetails.Visibility = isTournament ? Visibility.Visible : Visibility.Collapsed;
+            PnlGameRules.PnlLostStartCityDetails.Visibility = PnlGameRules.ChkLostStartCity.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            PnlGameRules.PnlCityHoldDetails.Visibility = PnlGameRules.ChkCityHold.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            PnlGameRules.PnlGladiatorDetails.Visibility = PnlGameRules.ChkGladiatorArena.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            PnlGameRules.PnlTournamentDetails.Visibility = isTournament ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateExperimentalMapSizeWarningVisibility()
@@ -774,23 +800,23 @@ namespace Olden_Era___Template_Editor
             StructureDensityPercent = (int)PnlZones.SldStructureDensity.Value,
             NeutralStackStrengthPercent = (int)PnlZones.SldNeutralStackStrength.Value,
             BorderGuardStrengthPercent = (int)PnlZones.SldBorderGuardStrength.Value,
-            VictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
-                ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+            VictoryCondition = PnlGameRules.CmbVictory.SelectedIndex >= 0 && PnlGameRules.CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
+                ? KnownValues.VictoryConditionIds[PnlGameRules.CmbVictory.SelectedIndex]
                 : "win_condition_1",
-            FactionLawsExpPercent = (int)SldFactionLawsExp.Value,
-            AstrologyExpPercent   = (int)SldAstrologyExp.Value,
-            LostStartCity         = ChkLostStartCity.IsChecked == true,
-            LostStartCityDay = (int)SldLostStartCityDay.Value,
-            LostStartHero         = ChkLostStartHero.IsChecked == true,
-            CityHold              = ChkCityHold.IsChecked == true,
-            CityHoldDays = (int)SldCityHoldDays.Value,
-            GladiatorArena               = ChkGladiatorArena.IsChecked == true,
-            GladiatorArenaDaysDelayStart = (int)SldGladiatorDelay.Value,
-            GladiatorArenaCountDay       = (int)SldGladiatorCountDay.Value,
-            Tournament                   = ChkTournament.IsChecked == true,
-            TournamentFirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
-            TournamentInterval = (int)SldTournamentInterval.Value,
-            TournamentPointsToWin = (int)SldTournamentPointsToWin.Value,
+            FactionLawsExpPercent = (int)PnlGameRules.SldFactionLawsExp.Value,
+            AstrologyExpPercent   = (int)PnlGameRules.SldAstrologyExp.Value,
+            LostStartCity         = PnlGameRules.ChkLostStartCity.IsChecked == true,
+            LostStartCityDay = (int)PnlGameRules.SldLostStartCityDay.Value,
+            LostStartHero         = PnlGameRules.ChkLostStartHero.IsChecked == true,
+            CityHold              = PnlGameRules.ChkCityHold.IsChecked == true,
+            CityHoldDays = (int)PnlGameRules.SldCityHoldDays.Value,
+            GladiatorArena               = PnlGameRules.ChkGladiatorArena.IsChecked == true,
+            GladiatorArenaDaysDelayStart = (int)PnlGameRules.SldGladiatorDelay.Value,
+            GladiatorArenaCountDay       = (int)PnlGameRules.SldGladiatorCountDay.Value,
+            Tournament                   = PnlGameRules.ChkTournament.IsChecked == true,
+            TournamentFirstTournamentDay = (int)PnlGameRules.SldTournamentFirstTournamentDay.Value,
+            TournamentInterval = (int)PnlGameRules.SldTournamentInterval.Value,
+            TournamentPointsToWin = (int)PnlGameRules.SldTournamentPointsToWin.Value,
         };
 
         private void ApplySettings(SettingsFile s)
@@ -835,22 +861,22 @@ namespace Olden_Era___Template_Editor
             PnlZones.SldNeutralStackStrength.Value     = s.NeutralStackStrengthPercent;
             PnlZones.SldBorderGuardStrength.Value      = s.BorderGuardStrengthPercent;
             int victoryIdx = Array.IndexOf(KnownValues.VictoryConditionIds, s.VictoryCondition);
-            CmbVictory.SelectedIndex = victoryIdx >= 0 ? victoryIdx : 0;
-            SldFactionLawsExp.Value = Math.Clamp(s.FactionLawsExpPercent, 25, 200);
-            SldAstrologyExp.Value = Math.Clamp(s.AstrologyExpPercent, 25, 200);
-            ChkLostStartCity.IsChecked = s.LostStartCity;
-            SldLostStartCityDay.Value = Math.Clamp(s.LostStartCityDay, 1, 30);
-            ChkLostStartHero.IsChecked = s.LostStartHero;
-            ChkCityHold.IsChecked = s.CityHold;
-            SldCityHoldDays.Value = Math.Clamp(s.CityHoldDays, 1, 30);
-            ChkGladiatorArena.IsChecked = s.GladiatorArena;
-            SldGladiatorDelay.Value = Math.Clamp(s.GladiatorArenaDaysDelayStart, 1, 60);
-            SldGladiatorCountDay.Value = Math.Clamp(s.GladiatorArenaCountDay, 1, 30);
-            ChkTournament.IsChecked = s.Tournament;
-            SldTournamentFirstTournamentDay.Value = Math.Clamp(s.TournamentFirstTournamentDay, 1, 60);
-            SldTournamentInterval.Value = Math.Clamp(s.TournamentInterval, 1, 30);
-            SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 10);
-            ChkTournamentSaveArmy.IsChecked = s.TournamentSaveArmy;
+            PnlGameRules.CmbVictory.SelectedIndex = victoryIdx >= 0 ? victoryIdx : 0;
+            PnlGameRules.SldFactionLawsExp.Value = Math.Clamp(s.FactionLawsExpPercent, 25, 200);
+            PnlGameRules.SldAstrologyExp.Value = Math.Clamp(s.AstrologyExpPercent, 25, 200);
+            PnlGameRules.ChkLostStartCity.IsChecked = s.LostStartCity;
+            PnlGameRules.SldLostStartCityDay.Value = Math.Clamp(s.LostStartCityDay, 1, 30);
+            PnlGameRules.ChkLostStartHero.IsChecked = s.LostStartHero;
+            PnlGameRules.ChkCityHold.IsChecked = s.CityHold;
+            PnlGameRules.SldCityHoldDays.Value = Math.Clamp(s.CityHoldDays, 1, 30);
+            PnlGameRules.ChkGladiatorArena.IsChecked = s.GladiatorArena;
+            PnlGameRules.SldGladiatorDelay.Value = Math.Clamp(s.GladiatorArenaDaysDelayStart, 1, 60);
+            PnlGameRules.SldGladiatorCountDay.Value = Math.Clamp(s.GladiatorArenaCountDay, 1, 30);
+            PnlGameRules.ChkTournament.IsChecked = s.Tournament;
+            PnlGameRules.SldTournamentFirstTournamentDay.Value = Math.Clamp(s.TournamentFirstTournamentDay, 1, 60);
+            PnlGameRules.SldTournamentInterval.Value = Math.Clamp(s.TournamentInterval, 1, 30);
+            PnlGameRules.SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 10);
+            PnlGameRules.ChkTournamentSaveArmy.IsChecked = s.TournamentSaveArmy;
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
@@ -1052,14 +1078,14 @@ namespace Olden_Era___Template_Editor
             MapSize = SelectedMapSize(),
             GameEndConditions = new GameEndConditions
             {
-                VictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
-                    ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+                VictoryCondition = PnlGameRules.CmbVictory.SelectedIndex >= 0 && PnlGameRules.CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
+                    ? KnownValues.VictoryConditionIds[PnlGameRules.CmbVictory.SelectedIndex]
                     : "win_condition_1",
-                LostStartCity = ChkLostStartCity.IsChecked == true,
-                LostStartCityDay = (int)SldLostStartCityDay.Value,
-                LostStartHero = ChkLostStartHero.IsChecked == true,
-                CityHold = ChkCityHold.IsChecked == true,
-                CityHoldDays = (int)SldCityHoldDays.Value,
+                LostStartCity = PnlGameRules.ChkLostStartCity.IsChecked == true,
+                LostStartCityDay = (int)PnlGameRules.SldLostStartCityDay.Value,
+                LostStartHero = PnlGameRules.ChkLostStartHero.IsChecked == true,
+                CityHold = PnlGameRules.ChkCityHold.IsChecked == true,
+                CityHoldDays = (int)PnlGameRules.SldCityHoldDays.Value,
             },
             ZoneCfg = new ZoneConfiguration
             {
@@ -1096,21 +1122,21 @@ namespace Olden_Era___Template_Editor
             SpawnRemoteFootholds = PnlZones.ChkSpawnFootholds.IsChecked == true,
             GenerateRoads = PnlZones.ChkGenerateRoads.IsChecked == true,
             Topology = PnlTopology.CmbTopology.SelectedIndex >= 0 ? TopologyOptions[PnlTopology.CmbTopology.SelectedIndex].Topology : MapTopology.Default,
-            FactionLawsExpPercent = (int)SldFactionLawsExp.Value,
-            AstrologyExpPercent = (int)SldAstrologyExp.Value,
+            FactionLawsExpPercent = (int)PnlGameRules.SldFactionLawsExp.Value,
+            AstrologyExpPercent = (int)PnlGameRules.SldAstrologyExp.Value,
             GladiatorArenaRules = new GladiatorArenaRules
             {
-                Enabled = ChkGladiatorArena.IsChecked == true,
-                DaysDelayStart = (int)SldGladiatorDelay.Value,
-                CountDay = (int)SldGladiatorCountDay.Value
+                Enabled = PnlGameRules.ChkGladiatorArena.IsChecked == true,
+                DaysDelayStart = (int)PnlGameRules.SldGladiatorDelay.Value,
+                CountDay = (int)PnlGameRules.SldGladiatorCountDay.Value
             },
             TournamentRules = new TournamentRules
             {
-                Enabled = ChkTournament.IsChecked == true,
-                FirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
-                Interval = (int)SldTournamentInterval.Value,
-                PointsToWin = (int)SldTournamentPointsToWin.Value,
-                SaveArmy = ChkTournamentSaveArmy.IsChecked == true
+                Enabled = PnlGameRules.ChkTournament.IsChecked == true,
+                FirstTournamentDay = (int)PnlGameRules.SldTournamentFirstTournamentDay.Value,
+                Interval = (int)PnlGameRules.SldTournamentInterval.Value,
+                PointsToWin = (int)PnlGameRules.SldTournamentPointsToWin.Value,
+                SaveArmy = PnlGameRules.ChkTournamentSaveArmy.IsChecked == true
             }
         };
 
