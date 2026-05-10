@@ -451,6 +451,130 @@
                                               Checked="ChkOption_Changed"
                                               Unchecked="ChkOption_Changed"/>
                                                 </Grid>
+
+                                <Separator Margin="0,12,0,8"/>
+                                <TextBlock Text="◆  BANS &amp; OVERRIDES" Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
+
+                                <!-- Banned Items -->
+                                <DockPanel Margin="0,0,0,4">
+                                    <TextBlock DockPanel.Dock="Left" Text="Banned items"
+                                               Foreground="#E8D5A3" FontSize="12"
+                                               VerticalAlignment="Center"/>
+                                    <Button DockPanel.Dock="Right" Content="+ Add"
+                                            x:Name="BtnAddBannedItem"
+                                            Width="54" Height="22"
+                                            Click="BtnAddBannedItem_Click"/>
+                                </DockPanel>
+                                <ListBox x:Name="LbBannedItems"
+                                         MinHeight="32" MaxHeight="130"
+                                         Background="#2C2619"
+                                         BorderBrush="#5A4A28" BorderThickness="1"
+                                         Margin="0,0,0,10"
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Padding"    Value="0"/>
+                                            <Setter Property="Margin"     Value="0"/>
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <ContentPresenter/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel Margin="4,2">
+                                                <Button DockPanel.Dock="Right"
+                                                        Content="×" Width="20" Height="18"
+                                                        FontSize="13" Padding="0"
+                                                        Tag="{Binding Id}"
+                                                        Click="RemoveBannedItem_Click"
+                                                        ToolTip="Remove"
+                                                        Background="#3A2820"
+                                                        BorderBrush="#5A4A28"
+                                                        Foreground="#E8D5A3"/>
+                                                <Ellipse Width="8" Height="8"
+                                                         Fill="{Binding CategoryBrush}"
+                                                         VerticalAlignment="Center"
+                                                         Margin="0,0,6,0"/>
+                                                <TextBlock Text="{Binding DisplayName}"
+                                                           Foreground="#E8D5A3" FontSize="12"
+                                                           VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Category}"
+                                                           Foreground="#9A8A6A" FontSize="11"
+                                                           VerticalAlignment="Center"
+                                                           Margin="6,0,0,0"/>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+
+                                <!-- Banned Spells -->
+                                <DockPanel Margin="0,0,0,4">
+                                    <TextBlock DockPanel.Dock="Left" Text="Banned spells"
+                                               Foreground="#E8D5A3" FontSize="12"
+                                               VerticalAlignment="Center"/>
+                                    <Button DockPanel.Dock="Right" Content="+ Add"
+                                            x:Name="BtnAddBannedMagic"
+                                            Width="54" Height="22"
+                                            Click="BtnAddBannedMagic_Click"/>
+                                </DockPanel>
+                                <ListBox x:Name="LbBannedMagics"
+                                         MinHeight="32" MaxHeight="130"
+                                         Background="#2C2619"
+                                         BorderBrush="#5A4A28" BorderThickness="1"
+                                         Margin="0,0,0,10"
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="Padding"    Value="0"/>
+                                            <Setter Property="Margin"     Value="0"/>
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <ContentPresenter/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel Margin="4,2">
+                                                <Button DockPanel.Dock="Right"
+                                                        Content="×" Width="20" Height="18"
+                                                        FontSize="13" Padding="0"
+                                                        Tag="{Binding Id}"
+                                                        Click="RemoveBannedMagic_Click"
+                                                        ToolTip="Remove"
+                                                        Background="#3A2820"
+                                                        BorderBrush="#5A4A28"
+                                                        Foreground="#E8D5A3"/>
+                                                <Ellipse Width="8" Height="8"
+                                                         Fill="{Binding CategoryBrush}"
+                                                         VerticalAlignment="Center"
+                                                         Margin="0,0,6,0"/>
+                                                <TextBlock Text="{Binding DisplayName}"
+                                                           Foreground="#E8D5A3" FontSize="12"
+                                                           VerticalAlignment="Center"/>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+
+                                <!-- Value overrides (kept as free-text) -->
+                                <Label Content="Value overrides (one per line: sid=guardValue)" Padding="0,0,0,2"
+                                       Foreground="#E8D5A3" FontSize="12"/>
+                                <TextBox x:Name="TxtValueOverrides"
+                                         AcceptsReturn="True" Height="68" TextWrapping="NoWrap"
+                                         VerticalScrollBarVisibility="Auto"
+                                         FontFamily="Consolas" FontSize="11"
+                                         TextChanged="BansOverrides_TextChanged"/>
                                             </StackPanel>
                                         </StackPanel>
                                     </ScrollViewer>

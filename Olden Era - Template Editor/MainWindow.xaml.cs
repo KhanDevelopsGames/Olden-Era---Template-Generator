@@ -2,8 +2,10 @@
 using Olden_Era___Template_Editor.Models;
 using Olden_Era___Template_Editor.Services;
 using OldenEraTemplateEditor.Models;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -33,6 +35,10 @@ namespace Olden_Era___Template_Editor
         // Currently open settings file path (null = unsaved / untitled)
         private string? _currentSettingsPath = null;
         private bool _isDirty = false;
+
+        // Ban lists
+        private readonly ObservableCollection<BanEntry> _bannedItems  = [];
+        private readonly ObservableCollection<BanEntry> _bannedMagics = [];
         private bool _isRefreshingMapSizes = false;
         private string _baseTitle = string.Empty;
 
@@ -72,6 +78,10 @@ namespace Olden_Era___Template_Editor
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
             UpdateBalancedZonePlacementDescVisibility();
+
+            // Wire ban-list ObservableCollections to the ListBoxes.
+            LbBannedItems.ItemsSource  = _bannedItems;
+            LbBannedMagics.ItemsSource = _bannedMagics;
 
             // Fire-and-forget background update check — never blocks the UI.
             _ = CheckForUpdateAsync(version);
@@ -448,6 +458,94 @@ namespace Olden_Era___Template_Editor
             Validate();
         }
 
+        private void BansOverrides_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            MarkDirty();
+        }
+
+        // ── Ban list picker helpers ───────────────────────────────────────────────
+
+        /// <summary>Builds a BanEntry from an artifact ID using the catalog, or a plain fallback entry.</summary>
+        private static BanEntry ItemEntryFromId(string id)
+        {
+            var known = System.Array.Find(KnownValues.BannableItems, b => b.Id == id);
+            if (known != null)
+                return new BanEntry { Id = id, DisplayName = known.DisplayName, Category = known.Category };
+            return new BanEntry { Id = id, DisplayName = KnownValues.SidToDisplayName(id), Category = "Misc" };
+        }
+
+        /// <summary>Builds a BanEntry from a spell ID using the catalog, or a plain fallback entry.</summary>
+        private static BanEntry MagicEntryFromId(string id)
+        {
+            var known = System.Array.Find(KnownValues.BannableMagics, m => m.Id == id);
+            if (known != null)
+                return new BanEntry { Id = id, DisplayName = known.DisplayName, Category = "Spell" };
+            return new BanEntry { Id = id, DisplayName = KnownValues.SidToDisplayName(id), Category = "Spell" };
+        }
+
+        /// <summary>Reloads an ObservableCollection from a newline-separated string of IDs.</summary>
+        private static void LoadBanList(System.Collections.ObjectModel.ObservableCollection<BanEntry> col,
+                                        string raw, bool isMagics)
+        {
+            col.Clear();
+            if (string.IsNullOrWhiteSpace(raw)) return;
+            foreach (var id in raw.Split('\n'))
+            {
+                var trimmed = id.Trim();
+                if (trimmed.Length == 0) continue;
+                col.Add(isMagics ? MagicEntryFromId(trimmed) : ItemEntryFromId(trimmed));
+            }
+        }
+
+        private void BtnAddBannedItem_Click(object sender, RoutedEventArgs e)
+        {
+            var entries = KnownValues.BannableItems
+                .Select(b => new BanEntry { Id = b.Id, DisplayName = b.DisplayName, Category = b.Category });
+            var picker = new ItemPickerWindow(entries, _bannedItems.Select(b => b.Id), "Add Banned Item") { Owner = this };
+            if (picker.ShowDialog() == true && picker.SelectedId is { } id)
+            {
+                if (!_bannedItems.Any(e => e.Id == id))
+                {
+                    _bannedItems.Add(ItemEntryFromId(id));
+                    MarkDirty();
+                }
+            }
+        }
+
+        private void BtnAddBannedMagic_Click(object sender, RoutedEventArgs e)
+        {
+            var entries = KnownValues.BannableMagics
+                .Select(m => new BanEntry { Id = m.Id, DisplayName = m.DisplayName, Category = "Spell" });
+            var picker = new ItemPickerWindow(entries, _bannedMagics.Select(b => b.Id), "Add Banned Spell") { Owner = this };
+            if (picker.ShowDialog() == true && picker.SelectedId is { } id)
+            {
+                if (!_bannedMagics.Any(e => e.Id == id))
+                {
+                    _bannedMagics.Add(MagicEntryFromId(id));
+                    MarkDirty();
+                }
+            }
+        }
+
+        private void RemoveBannedItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement { Tag: string id })
+            {
+                var entry = _bannedItems.FirstOrDefault(b => b.Id == id);
+                if (entry != null) { _bannedItems.Remove(entry); MarkDirty(); }
+            }
+        }
+
+        private void RemoveBannedMagic_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement { Tag: string id })
+            {
+                var entry = _bannedMagics.FirstOrDefault(b => b.Id == id);
+                if (entry != null) { _bannedMagics.Remove(entry); MarkDirty(); }
+            }
+        }
+
         private void CmbMapSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsInitialized || _isRefreshingMapSizes) return;
@@ -725,6 +823,10 @@ namespace Olden_Era___Template_Editor
             TournamentFirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
             TournamentInterval = (int)SldTournamentInterval.Value,
             TournamentPointsToWin = (int)SldTournamentPointsToWin.Value,
+            TournamentSaveArmy = ChkTournamentSaveArmy.IsChecked == true,
+            BannedItems        = string.Join("\n", _bannedItems.Select(e => e.Id)),
+            BannedMagics       = string.Join("\n", _bannedMagics.Select(e => e.Id)),
+            ValueOverridesText = TxtValueOverrides.Text,
         };
 
         private void ApplySettings(SettingsFile s)
@@ -785,6 +887,9 @@ namespace Olden_Era___Template_Editor
             SldTournamentInterval.Value = Math.Clamp(s.TournamentInterval, 1, 30);
             SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 10);
             ChkTournamentSaveArmy.IsChecked = s.TournamentSaveArmy;
+            LoadBanList(_bannedItems,  s.BannedItems,  isMagics: false);
+            LoadBanList(_bannedMagics, s.BannedMagics, isMagics: true);
+            TxtValueOverrides.Text = s.ValueOverridesText;
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
@@ -1038,7 +1143,10 @@ namespace Olden_Era___Template_Editor
                 Interval = (int)SldTournamentInterval.Value,
                 PointsToWin = (int)SldTournamentPointsToWin.Value,
                 SaveArmy = ChkTournamentSaveArmy.IsChecked == true
-            }
+            },
+            BannedItems        = string.Join("\n", _bannedItems.Select(e => e.Id)),
+            BannedMagics       = string.Join("\n", _bannedMagics.Select(e => e.Id)),
+            ValueOverridesText = TxtValueOverrides.Text,
         };
 
         /// <summary>
