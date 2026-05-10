@@ -18,8 +18,8 @@ namespace OldenEra.TemplateEditor
 {
     public partial class MainWindow : Window
     {
-        private const string GitHubApiLatestRelease = "https://api.github.com/repos/KhanDevelopsGames/Olden-Era---Template-Generator/releases/latest";
-        private const string GitHubReleasesPage     = "https://github.com/KhanDevelopsGames/Olden-Era---Template-Generator/releases";
+        private const string GitHubApiLatestRelease = "https://api.github.com/repos/rannes/Olden-Era---Template-Generator/releases/latest";
+        private const string GitHubReleasesPage     = "https://github.com/rannes/Olden-Era---Template-Generator/releases";
         private const int SimpleModeMaxZones = 32;
         private const int AdvancedModeMaxZones = 32;
 
