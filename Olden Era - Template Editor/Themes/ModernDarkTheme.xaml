@@ -4,10 +4,8 @@
 
     <!--
         Modern dark theme — WPF mirror of OldenEra.Web/wwwroot/css/app.css.
-        Brush keys (e.g. OeBgBrush) map one-to-one to the CSS oe-* tokens.
-        Legacy Brush*/Style aliases at the bottom keep MainWindow.xaml
-        building during the per-section refactor (B5..B11) and disappear
-        when MedievalTheme.xaml is removed (B12).
+        Brush keys (OeBgBrush, OeAccentBrush, etc.) map one-to-one to the
+        CSS oe-* tokens.
     -->
 
     <!-- Tokens -->
@@ -418,22 +416,8 @@
         </Setter>
     </Style>
 
-    <!-- Legacy aliases — see file header. Removed once nothing references them. -->
-    <SolidColorBrush x:Key="BrushBorder"     Color="#2A2F39"/>
-    <SolidColorBrush x:Key="BrushError"      Color="#EF4444"/>
-    <SolidColorBrush x:Key="BrushText"       Color="#E6E8EB"/>
-    <SolidColorBrush x:Key="BrushTextDim"    Color="#9098A3"/>
-    <SolidColorBrush x:Key="BrushWarnBg"     Color="#2A1F0A"/>
-    <SolidColorBrush x:Key="BrushWarnBorder" Color="#F59E0B"/>
-    <SolidColorBrush x:Key="BrushWarnText"   Color="#E6E8EB"/>
-    <SolidColorBrush x:Key="BrushPanel"      Color="#14171C"/>
-    <SolidColorBrush x:Key="BrushInput"      Color="#1B1F26"/>
-    <SolidColorBrush x:Key="BrushGold"       Color="#F59E0B"/>
-    <SolidColorBrush x:Key="BrushGoldDim"    Color="#B45309"/>
-
-    <!-- Legacy named-button aliases route to the new variants. -->
+    <!-- Named-button styles. GenerateButton == primary amber action button. -->
     <Style x:Key="GenerateButton" TargetType="Button" BasedOn="{StaticResource OePrimaryButton}"/>
-    <Style x:Key="ToolbarButton"  TargetType="Button" BasedOn="{StaticResource OeGhostButton}"/>
     <Style x:Key="TitleBarButton" TargetType="Button" BasedOn="{StaticResource OeGhostButton}">
         <Setter Property="Width"  Value="42"/>
         <Setter Property="Height" Value="32"/>

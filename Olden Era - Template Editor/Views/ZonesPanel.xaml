@@ -116,7 +116,7 @@
                         <TextBlock Text="Advanced zone tuning [EXPERIMENTAL]"
                                    Style="{StaticResource SectionHeader}"
                                    Margin="0,0,0,4"/>
-                        <TextBlock Foreground="{StaticResource BrushTextDim}"
+                        <TextBlock Foreground="{StaticResource OeTextDimBrush}"
                                    FontSize="12"
                                    TextWrapping="Wrap"
                                    Margin="0,0,0,6"
@@ -171,7 +171,7 @@
                         <TextBlock Text="Advanced neutral zones"
                                    Style="{StaticResource SectionHeader}"
                                    Margin="0,0,0,4"/>
-                        <TextBlock Foreground="{StaticResource BrushTextDim}"
+                        <TextBlock Foreground="{StaticResource OeTextDimBrush}"
                                    FontSize="12"
                                    TextWrapping="Wrap"
                                    Margin="0,0,0,6"
@@ -274,7 +274,7 @@
                                     Minimum="0" Maximum="8" Value="0"
                                     TickFrequency="1" IsSnapToTickEnabled="True"/>
                         </Grid>
-                        <TextBlock Foreground="{StaticResource BrushTextDim}"
+                        <TextBlock Foreground="{StaticResource OeTextDimBrush}"
                                    FontSize="12"
                                    TextWrapping="Wrap"
                                    Margin="0,4,0,0"
@@ -283,7 +283,7 @@
                     <CheckBox x:Name="ChkGenerateRoads" Content="Generate roads" IsChecked="True" Margin="0,10,0,0"/>
                     <TextBlock x:Name="TxtRoadsHint"
                                Visibility="Collapsed"
-                               Foreground="{StaticResource BrushTextDim}"
+                               Foreground="{StaticResource OeTextDimBrush}"
                                FontSize="13" TextWrapping="Wrap"
                                Margin="18,3,0,0"
                                Text="Note: Roads are only generated within zones that have at least one castle. Neutral zones with 0 castles will not have roads, even if this option is enabled."/>
@@ -311,7 +311,7 @@
                               Margin="0,6,0,0"/>
                     <TextBlock x:Name="TxtBalancedZonePlacementDesc"
                                Visibility="Collapsed"
-                               Foreground="{StaticResource BrushTextDim}"
+                               Foreground="{StaticResource OeTextDimBrush}"
                                FontSize="13" TextWrapping="Wrap"
                                Margin="25,3,0,0"
                                Text="Spreads players and neutral zone tiers more evenly across structured layouts. Random layout uses balanced seed positions before building borders. We recommend to keep this setting enabled."/>
@@ -321,7 +321,7 @@
                               Visibility="Collapsed"/>
                     <TextBlock x:Name="TxtIsolateDesc"
                                Visibility="Collapsed"
-                               Foreground="{StaticResource BrushTextDim}"
+                               Foreground="{StaticResource OeTextDimBrush}"
                                FontSize="13" TextWrapping="Wrap"
                                Margin="25,3,0,0"
                                Text="The game tries to connect player zones to neutral zones only. If no neutral zone borders a player zone, it will fall back to connecting directly to another player zone."/>
