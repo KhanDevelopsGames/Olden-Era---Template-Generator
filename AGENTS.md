@@ -13,7 +13,7 @@ OldenEra.Web/                           net10.0 Blazor WebAssembly host
   Pages/, Components/, Services/        deployed to GitHub Pages
 Olden Era - Template Editor/            net10.0-windows WPF host
   MainWindow.xaml(.cs), Themes/         Steam auto-detect, .oetgs file dialogs
-Olden Era - Template Editor.Tests/      net10.0-windows xUnit tests
+Olden Era - Template Editor.Tests/      net10.0 xUnit tests
 ```
 
 The main solution is:
@@ -22,7 +22,7 @@ The main solution is:
 dotnet build "Olden Era - Template Editor.slnx"
 ```
 
-The test project uses xUnit and targets the generator/model layer plus the SkiaSharp renderer. It currently targets `net10.0-windows` because some pixel-sampling tests use `System.Windows.Media.Imaging.PngBitmapDecoder`.
+The test project uses xUnit and targets the generator/model layer plus the SkiaSharp renderer. It targets plain `net10.0` and runs on any OS — pixel-sampling tests decode PNGs via `SkiaSharp.SKBitmap`.
 
 Example templates are stored in:
 
@@ -147,9 +147,9 @@ The repo's `Directory.Build.props` sets `<EnableWindowsTargeting>true</EnableWin
 - ✅ `dotnet build "Olden Era - Template Editor.slnx"` works on macOS/Linux/Windows.
 - ✅ `dotnet run --project OldenEra.Web` works on macOS/Linux/Windows. Serves at `http://localhost:5230/`.
 - ❌ `dotnet run --project "Olden Era - Template Editor"` works only on Windows (`Microsoft.WindowsDesktop.App` runtime is Windows-only).
-- ❌ `dotnet test` works only on Windows for the same reason — the testhost requires `Microsoft.WindowsDesktop.App`. CI runs tests on `windows-latest` via `.github/workflows/tests.yml`.
+- ✅ `dotnet test "Olden Era - Template Editor.slnx"` works on macOS/Linux/Windows. The test project targets `net10.0` and uses SkiaSharp for any pixel sampling. CI runs tests on `ubuntu-latest` via `.github/workflows/tests.yml`.
 
-When working on macOS or Linux: treat `dotnet build` as the local validation gate. Trust CI for actual test execution. Don't try to drop the test project's `-windows` target without first removing every `System.Windows.*` reference in the test code — pixel-sampling tests in `TemplatePreviewRenderer_EncodesNeutralQualityAndCastleCounts` (and similar) use `PngBitmapDecoder`.
+When working on macOS or Linux: `dotnet build` and `dotnet test` are the local validation gates. The WPF app itself still requires Windows to run, but its logic is covered by the cross-platform test project.
 
 ## Blazor WebAssembly: required wasm-tools workload
 

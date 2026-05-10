@@ -1,12 +1,9 @@
 using OldenEra.Generator.Models;
 using OldenEra.Generator.Services;
 using OldenEra.Generator.Models.Unfrozen;
-using Olden_Era___Template_Editor.Services;
+using SkiaSharp;
 using System.Diagnostics;
 using System.Text.Json;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace Olden_Era___Template_Editor.Tests;
 
@@ -768,10 +765,10 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
-    public void WpfPreviewAdapter_UsesOfficialSidecarNaming()
+    public void PreviewSidecar_UsesOfficialSidecarNaming()
     {
-        Assert.Equal(@"C:\maps\My Template.png", WpfPreviewAdapter.GetSidecarPath(@"C:\maps\My Template.rmg.json"));
-        Assert.Equal(@"C:\maps\Other.png", WpfPreviewAdapter.GetSidecarPath(@"C:\maps\Other.json"));
+        Assert.Equal(@"C:\maps\My Template.png", PreviewSidecar.GetSidecarPath(@"C:\maps\My Template.rmg.json"));
+        Assert.Equal(@"C:\maps\Other.png", PreviewSidecar.GetSidecarPath(@"C:\maps\Other.json"));
     }
 
     [Fact]
@@ -797,42 +794,38 @@ public class TemplateGeneratorTests
 
         {
             byte[] pngBytes = TemplatePreviewRenderer.RenderPng(template);
-            BitmapSource bitmap = null!;
-            RunOnStaThread(() => bitmap = LoadBitmapFromBytes(pngBytes));
+            using SKBitmap bitmap = LoadBitmapFromBytes(pngBytes);
 
             // Use ComputeLayout to find the actual rendered positions (layout is graph-driven, not hardcoded)
             var rawLayout = TemplatePreviewRenderer.ComputeLayout(template);
             double zoneRadius = TemplatePreviewRenderer.GetLastZoneRadius();
-            Dictionary<string, Point> layout = rawLayout.ToDictionary(
-                kv => kv.Key,
-                kv => new Point(kv.Value.X, kv.Value.Y));
 
-            Point pA = layout["Neutral-A"]; // Bronze (sides)
-            Point pB = layout["Neutral-B"]; // Silver (treasure) — 3 castles
-            Point pC = layout["Neutral-C"]; // Gold  (center)  — 2 castles
+            var pA = rawLayout["Neutral-A"]; // Bronze (sides)
+            var pB = rawLayout["Neutral-B"]; // Silver (treasure) — 3 castles
+            var pC = rawLayout["Neutral-C"]; // Gold  (center)  — 2 castles
 
             // Sample a point in the parchment area, well inside the frame.
             // The pixel must be warm (R > G > B) and not the old near-black background.
             int bgX = 50, bgY = 50;
-            Color bg = PixelAt(bitmap, bgX, bgY);
-            Assert.True(bg.R > 80 && bg.R > bg.G && bg.G > bg.B,
-                $"Expected warm parchment background, got RGB({bg.R},{bg.G},{bg.B}).");
+            SKColor bg = PixelAt(bitmap, bgX, bgY);
+            Assert.True(bg.Red > 80 && bg.Red > bg.Green && bg.Green > bg.Blue,
+                $"Expected warm parchment background, got RGB({bg.Red},{bg.Green},{bg.Blue}).");
 
             // The rim of the Silver coin (Neutral-B) should show silver at its top.
             // The rim uses a vertical gradient from RimSilver at the top to dark bronze at the bottom.
             // Sample exactly on the circumference at the top — the AA edge falls cleanly on the rim stroke.
             int bX = (int)Math.Round(pB.X);
             int bY = (int)Math.Round(pB.Y - zoneRadius);
-            bX = Math.Clamp(bX, 0, bitmap.PixelWidth - 1);
-            bY = Math.Clamp(bY, 0, bitmap.PixelHeight - 1);
-            AssertColorNear(Color.FromRgb(192, 192, 192), PixelAt(bitmap, bX, bY), tolerance: 40);
+            bX = Math.Clamp(bX, 0, bitmap.Width - 1);
+            bY = Math.Clamp(bY, 0, bitmap.Height - 1);
+            AssertColorNear(new SKColor(192, 192, 192), PixelAt(bitmap, bX, bY), tolerance: 40);
 
             // The cream "3" castle-count label on Neutral-B is much brighter than parchment.
             // Count cream-bright pixels — should appear in the label rect, not the parchment corner.
-            var bgRect    = new Int32Rect(bgX, bgY, 24, 20);
-            var labelRect = new Int32Rect(
-                Math.Clamp((int)pB.X - 12, 0, bitmap.PixelWidth  - 25),
-                Math.Clamp((int)pB.Y - 10, 0, bitmap.PixelHeight - 21),
+            var bgRect    = SKRectI.Create(bgX, bgY, 24, 20);
+            var labelRect = SKRectI.Create(
+                Math.Clamp((int)pB.X - 12, 0, bitmap.Width  - 25),
+                Math.Clamp((int)pB.Y - 10, 0, bitmap.Height - 21),
                 24, 20);
             int bgCream    = CountCreamPixels(bitmap, bgRect);
             int labelCream = CountCreamPixels(bitmap, labelRect);
@@ -910,89 +903,41 @@ public class TemplateGeneratorTests
     private static List<MainObject> Cities(int count) =>
         Enumerable.Range(0, count).Select(_ => new MainObject { Type = "City" }).ToList();
 
-    private static void RunOnStaThread(Action action)
+    private static SKBitmap LoadBitmapFromBytes(byte[] pngBytes)
     {
-        Exception? thrown = null;
-        var thread = new Thread(() =>
-        {
-            try
-            {
-                action();
-            }
-            catch (Exception ex)
-            {
-                thrown = ex;
-            }
-        });
-
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
-
-        if (thrown is not null)
-            throw new InvalidOperationException("The STA action failed.", thrown);
+        var bitmap = SKBitmap.Decode(pngBytes)
+            ?? throw new InvalidOperationException("SKBitmap.Decode returned null.");
+        return bitmap;
     }
 
-    private static BitmapSource LoadBitmap(string path)
+    private static SKColor PixelAt(SKBitmap bitmap, int x, int y) =>
+        bitmap.GetPixel(x, y);
+
+    private static int CountCreamPixels(SKBitmap bitmap, SKRectI rect)
     {
-        using var stream = File.OpenRead(path);
-        BitmapSource source = BitmapDecoder
-            .Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad)
-            .Frames[0];
-
-        var converted = new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
-        converted.Freeze();
-        return converted;
-    }
-
-    private static BitmapSource LoadBitmapFromBytes(byte[] pngBytes)
-    {
-        using var stream = new MemoryStream(pngBytes);
-        BitmapSource source = BitmapDecoder
-            .Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad)
-            .Frames[0];
-
-        var converted = new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
-        converted.Freeze();
-        return converted;
-    }
-
-    private static Color PixelAt(BitmapSource bitmap, int x, int y)
-    {
-        byte[] pixels = new byte[4];
-        bitmap.CopyPixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
-        return Color.FromRgb(pixels[2], pixels[1], pixels[0]);
-    }
-
-    private static int CountCreamPixels(BitmapSource bitmap, Int32Rect rect)
-    {
-        int stride = rect.Width * 4;
-        byte[] pixels = new byte[stride * rect.Height];
-        bitmap.CopyPixels(rect, pixels, stride, 0);
-
         int count = 0;
-        for (int i = 0; i < pixels.Length; i += 4)
+        for (int y = rect.Top; y < rect.Bottom; y++)
         {
-            byte blue = pixels[i];
-            byte green = pixels[i + 1];
-            byte red = pixels[i + 2];
-            // Cinzel cream numerals (#F1D990 → R-B≈97) on a dark coin.
-            // Parchment cream (#E7D6A8 → R-B≈63) must NOT match, so the threshold
-            // sits between those values.
-            if (red >= 200 && green >= 180 && red - blue >= 80)
-                count++;
+            for (int x = rect.Left; x < rect.Right; x++)
+            {
+                SKColor c = bitmap.GetPixel(x, y);
+                // Cinzel cream numerals (#F1D990 → R-B≈97) on a dark coin.
+                // Parchment cream (#E7D6A8 → R-B≈63) must NOT match, so the threshold
+                // sits between those values.
+                if (c.Red >= 200 && c.Green >= 180 && c.Red - c.Blue >= 80)
+                    count++;
+            }
         }
-
         return count;
     }
 
-    private static void AssertColorNear(Color expected, Color actual, int tolerance = 8)
+    private static void AssertColorNear(SKColor expected, SKColor actual, int tolerance = 8)
     {
         Assert.True(
-            Math.Abs(expected.R - actual.R) <= tolerance &&
-            Math.Abs(expected.G - actual.G) <= tolerance &&
-            Math.Abs(expected.B - actual.B) <= tolerance,
-            $"Expected color near RGB({expected.R}, {expected.G}, {expected.B}), got RGB({actual.R}, {actual.G}, {actual.B}).");
+            Math.Abs(expected.Red   - actual.Red)   <= tolerance &&
+            Math.Abs(expected.Green - actual.Green) <= tolerance &&
+            Math.Abs(expected.Blue  - actual.Blue)  <= tolerance,
+            $"Expected color near RGB({expected.Red}, {expected.Green}, {expected.Blue}), got RGB({actual.Red}, {actual.Green}, {actual.Blue}).");
     }
 
     private static Variant SingleVariant(RmgTemplate template) =>

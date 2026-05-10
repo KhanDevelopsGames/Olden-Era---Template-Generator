@@ -1192,7 +1192,7 @@ namespace Olden_Era___Template_Editor
             string json = JsonSerializer.Serialize(_generatedTemplate, JsonOptions);
             File.WriteAllText(dlg.FileName, json);
 
-            string previewPath = WpfPreviewAdapter.GetSidecarPath(dlg.FileName);
+            string previewPath = PreviewSidecar.GetSidecarPath(dlg.FileName);
             string? previewError = null;
             if (ChkSavePreviewImage.IsChecked == true)
             {

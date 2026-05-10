@@ -16,9 +16,4 @@ public static class WpfPreviewAdapter
         image.Freeze();
         return image;
     }
-
-    public static string GetSidecarPath(string rmgJsonPath) =>
-        rmgJsonPath.EndsWith(".rmg.json", System.StringComparison.OrdinalIgnoreCase)
-            ? rmgJsonPath[..^".rmg.json".Length] + ".png"
-            : System.IO.Path.ChangeExtension(rmgJsonPath, ".png");
 }
