@@ -24,8 +24,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="icon_github.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="favicon.ico" />
     <Resource Include="icon_discord.png" />
+    <Resource Include="icon_github.png" />
   </ItemGroup>
 
 </Project>
