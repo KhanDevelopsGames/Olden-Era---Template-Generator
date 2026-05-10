@@ -976,8 +976,10 @@ public class TemplateGeneratorTests
             byte blue = pixels[i];
             byte green = pixels[i + 1];
             byte red = pixels[i + 2];
-            // Cinzel cream numerals (#F1D990) on the dark coin — high R, B noticeably lower.
-            if (red >= 200 && green >= 180 && red - blue >= 40)
+            // Cinzel cream numerals (#F1D990 → R-B≈97) on a dark coin.
+            // Parchment cream (#E7D6A8 → R-B≈63) must NOT match, so the threshold
+            // sits between those values.
+            if (red >= 200 && green >= 180 && red - blue >= 80)
                 count++;
         }
 

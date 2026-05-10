@@ -9,9 +9,10 @@ using System.Linq;
 namespace OldenEra.Generator.Services
 {
     /// <summary>
-    /// Cross-platform PNG preview renderer for <see cref="RmgTemplate"/>.
-    /// Currently <see cref="RenderPng"/> is a stub; <see cref="ComputeLayout"/> is the
-    /// fully ported pure-math layout engine from the WPF preview writer.
+    /// Cross-platform 700×700 PNG preview renderer for <see cref="RmgTemplate"/>.
+    /// Renders an Olden Era-style parchment map: textured background, bronze coin
+    /// tokens with rim-color encoded zone types, and ink-brown connection lines.
+    /// <see cref="ComputeLayout"/> exposes the pure-math layout used during drawing.
     /// </summary>
     public static class TemplatePreviewRenderer
     {
@@ -101,7 +102,7 @@ namespace OldenEra.Generator.Services
         // ── Main draw ────────────────────────────────────────────────────────────
         private static void DrawPreview(SKCanvas canvas, RmgTemplate template, MapTopology topology)
         {
-            int seed = (template.Name ?? string.Empty).GetHashCode();
+            int seed = StableSeed(template.Name ?? string.Empty);
             DrawParchmentBackground(canvas, seed);
             DrawCompassRose(canvas);
             DrawFrame(canvas);
@@ -131,6 +132,23 @@ namespace OldenEra.Generator.Services
         }
 
         // ── Background, frame, compass ───────────────────────────────────────────
+
+        // FNV-1a 32-bit over UTF-16 code units. Stable across runtimes and processes,
+        // unlike string.GetHashCode() which is randomized per-process by default and
+        // would make stain placement diverge between WPF and Blazor for the same name.
+        private static int StableSeed(string s)
+        {
+            const uint offset = 2166136261u;
+            const uint prime  = 16777619u;
+            uint h = offset;
+            for (int i = 0; i < s.Length; i++)
+            {
+                ushort ch = s[i];
+                h ^= (byte)(ch & 0xFF);    h *= prime;
+                h ^= (byte)((ch >> 8) & 0xFF); h *= prime;
+            }
+            return unchecked((int)h);
+        }
 
         private static void DrawParchmentBackground(SKCanvas canvas, int seed)
         {
