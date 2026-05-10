@@ -7,19 +7,20 @@ Guidance for agents working on this repository.
 This solution generates `.rmg.json` random map template files for Heroes of Might and Magic: Olden Era. It ships in two forms backed by a shared library:
 
 ```text
-OldenEra.Generator/                     net10.0 class library
-  Models/, Services/                    generator + SkiaSharp PNG renderer
-OldenEra.Web/                           net10.0 Blazor WebAssembly host
-  Pages/, Components/, Services/        deployed to GitHub Pages
-Olden Era - Template Editor/            net10.0-windows WPF host
-  MainWindow.xaml(.cs), Themes/         Steam auto-detect, .oetgs file dialogs
-Olden Era - Template Editor.Tests/      net10.0 xUnit tests
+src/OldenEra.Generator/                       net10.0 class library
+  Models/, Services/                          generator + SkiaSharp PNG renderer
+src/OldenEra.Web/                             net10.0 Blazor WebAssembly host
+  Pages/, Components/, Services/              deployed to GitHub Pages
+src/OldenEra.TemplateEditor/                  net10.0-windows WPF host
+  MainWindow.xaml(.cs), Themes/               Steam auto-detect, .oetgs file dialogs
+tests/OldenEra.TemplateEditor.Tests/          net10.0 xUnit tests (cross-platform)
+tests/OldenEra.Generator.Tests/               net10.0 xUnit tests (cross-platform)
 ```
 
 The main solution is:
 
 ```powershell
-dotnet build "Olden Era - Template Editor.slnx"
+dotnet build OldenEra.slnx
 ```
 
 The test project uses xUnit and targets the generator/model layer plus the SkiaSharp renderer. It targets plain `net10.0` and runs on any OS — pixel-sampling tests decode PNGs via `SkiaSharp.SKBitmap`.
@@ -27,17 +28,17 @@ The test project uses xUnit and targets the generator/model layer plus the SkiaS
 Example templates are stored in:
 
 ```text
-Olden Era - Template Editor/GameData/ExampleTemplates
+src/OldenEra.TemplateEditor/GameData/ExampleTemplates
 ```
 
 Use those examples as the primary local reference for the `.rmg.json` shape and expected naming style.
 
 ### Where each kind of code lives
 
-- **Generator logic, DTOs, preview rendering** → `OldenEra.Generator/`. Pure C#, no UI dependencies. Both hosts call into this.
-- **Steam install detection, file-save dialogs, .oetgs file I/O, custom title bar** → `Olden Era - Template Editor/`. Anything that requires WPF, the Windows registry, or local file system access stays here.
-- **Browser settings persistence (localStorage), file download via JS interop, update banner** → `OldenEra.Web/`. Anything sandbox-bound to the browser stays here.
-- **Generation tests, JSON-shape tests, renderer structural tests** → `Olden Era - Template Editor.Tests/`.
+- **Generator logic, DTOs, preview rendering** → `src/OldenEra.Generator/`. Pure C#, no UI dependencies. Both hosts call into this.
+- **Steam install detection, file-save dialogs, .oetgs file I/O, custom title bar** → `src/OldenEra.TemplateEditor/`. Anything that requires WPF, the Windows registry, or local file system access stays here.
+- **Browser settings persistence (localStorage), file download via JS interop, update banner** → `src/OldenEra.Web/`. Anything sandbox-bound to the browser stays here.
+- **Generation tests, JSON-shape tests, renderer structural tests** → `tests/OldenEra.TemplateEditor.Tests/` (Windows-only) and `tests/OldenEra.Generator.Tests/` (cross-platform).
 
 When porting a new feature: implement the core in the library, expose it through public API, then wire up each host.
 
@@ -95,19 +96,19 @@ Avoid broad recursive searches across entire drives unless the user asks for tha
 This is a C# solution. Before handing off changes, build the solution:
 
 ```powershell
-dotnet build "Olden Era - Template Editor.slnx"
+dotnet build OldenEra.slnx
 ```
 
-Unit tests are part of the normal development process. When changing behavior, always add or update focused unit tests that cover the change, then ensure the full unit test suite passes before handing off:
+Unit tests are part of the normal development process. When changing behavior, always add or update focused unit tests that cover the change, then ensure the full unit test suite passes before handing off. `dotnet test OldenEra.slnx` runs both test projects (`OldenEra.TemplateEditor.Tests` and `OldenEra.Generator.Tests`):
 
 ```powershell
-dotnet test "Olden Era - Template Editor.slnx"
+dotnet test OldenEra.slnx
 ```
 
 If `dotnet` is not on PATH in the current shell, use the standard SDK path explicitly:
 
 ```powershell
-& "C:\Program Files\dotnet\dotnet.exe" test "Olden Era - Template Editor.slnx"
+& "C:\Program Files\dotnet\dotnet.exe" test OldenEra.slnx
 ```
 
 For changes to generator logic, prefer focused unit tests around the model/service behavior rather than only testing through the UI.
@@ -119,13 +120,13 @@ For UI changes, build and run the app, then visually check the affected workflow
 Typical local run command:
 
 ```powershell
-dotnet run --project "Olden Era - Template Editor/Olden Era - Template Editor.csproj"
+dotnet run --project src/OldenEra.TemplateEditor/OldenEra.TemplateEditor.csproj
 ```
 
 When possible, open the solution in Visual Studio as part of manual verification:
 
 ```powershell
-Start-Process "Olden Era - Template Editor.slnx"
+Start-Process OldenEra.slnx
 ```
 
 At minimum, verify that the configured options can create a `.rmg.json` file. Generated template validation currently stops there: do not claim that generated templates are guaranteed to generate a playable map in game. In-game validation must be left to users until the project has a reliable automated or documented game-level validation workflow.
@@ -144,10 +145,10 @@ At minimum, verify that the configured options can create a `.rmg.json` file. Ge
 
 The repo's `Directory.Build.props` sets `<EnableWindowsTargeting>true</EnableWindowsTargeting>` so the WPF and test projects compile on macOS and Linux. This is a compile-only fix, not a runtime one:
 
-- ✅ `dotnet build "Olden Era - Template Editor.slnx"` works on macOS/Linux/Windows.
-- ✅ `dotnet run --project OldenEra.Web` works on macOS/Linux/Windows. Serves at `http://localhost:5230/`.
-- ❌ `dotnet run --project "Olden Era - Template Editor"` works only on Windows (`Microsoft.WindowsDesktop.App` runtime is Windows-only).
-- ✅ `dotnet test "Olden Era - Template Editor.slnx"` works on macOS/Linux/Windows. The test project targets `net10.0` and uses SkiaSharp for any pixel sampling. CI runs tests on `ubuntu-latest` via `.github/workflows/tests.yml`.
+- ✅ `dotnet build OldenEra.slnx` works on macOS/Linux/Windows.
+- ✅ `dotnet run --project src/OldenEra.Web` works on macOS/Linux/Windows. Serves at `http://localhost:5230/`.
+- ❌ `dotnet run --project src/OldenEra.TemplateEditor` works only on Windows (`Microsoft.WindowsDesktop.App` runtime is Windows-only).
+- ✅ `dotnet test OldenEra.slnx` works on macOS/Linux/Windows. The test projects target `net10.0` and use SkiaSharp for any pixel sampling. CI runs tests on `ubuntu-latest` via `.github/workflows/tests.yml`.
 
 When working on macOS or Linux: `dotnet build` and `dotnet test` are the local validation gates. The WPF app itself still requires Windows to run, but its logic is covered by the cross-platform test project.
 
@@ -175,7 +176,7 @@ Releases are produced by `.github/workflows/release.yml` and are triggered by pu
 
 To cut a release:
 
-1. Bump `<Version>`, `<AssemblyVersion>`, and `<FileVersion>` in `Olden Era - Template Editor/Olden Era - Template Editor.csproj` to the new `X.Y.Z`. Keep all three in sync. `AssemblyVersion`/`FileVersion` use the four-part `X.Y.Z.0` form.
+1. Bump `<Version>`, `<AssemblyVersion>`, and `<FileVersion>` in `src/OldenEra.TemplateEditor/OldenEra.TemplateEditor.csproj` to the new `X.Y.Z`. Keep all three in sync. `AssemblyVersion`/`FileVersion` use the four-part `X.Y.Z.0` form.
 2. Commit on `main`: `chore: bump version to vX.Y.Z`.
 3. Tag the commit and push:
    ```bash

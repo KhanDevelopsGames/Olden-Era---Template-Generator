@@ -1,0 +1,52 @@
+<UserControl x:Class="OldenEra.TemplateEditor.Views.MapPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Style="{StaticResource SectionBorder}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <TextBlock Text="TEMPLATE" Style="{StaticResource SectionHeader}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="155"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Content="Template Name"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtTemplateName" Text="Custom Template"/>
+                    <Label Grid.Row="2" Grid.Column="0" Content="Map Size"/>
+                    <ComboBox x:Name="CmbMapSize" Grid.Row="2" Grid.Column="1"/>
+                    <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+                        <CheckBox x:Name="ChkExperimentalMapSizes"
+                                  Content="Experimental large map sizes"
+                                  Margin="0,6,0,0"
+                                  Visibility="Visible"/>
+                        <TextBlock x:Name="TxtExperimentalMapSizeWarning"
+                                   Foreground="{StaticResource OeTextDimBrush}"
+                                   FontSize="11"
+                                   TextWrapping="Wrap"
+                                   Margin="0,4,0,0"
+                                   Visibility="Collapsed"
+                                   Text="Adds 256x256 through 512x512. Official templates top out at 240x240, so larger maps may fail, freeze, or behave unpredictably in game."/>
+                    </StackPanel>
+                    <DockPanel Grid.Row="6" Grid.Column="0">
+                        <Label Content="Players" DockPanel.Dock="Left"/>
+                        <TextBlock x:Name="TxtPlayers" Text="2" DockPanel.Dock="Right"
+                                   HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                    </DockPanel>
+                    <Slider Grid.Row="6" Grid.Column="1" x:Name="SldPlayers"
+                            Minimum="2" Maximum="8" Value="2"
+                            TickFrequency="1" IsSnapToTickEnabled="True"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
+</UserControl>

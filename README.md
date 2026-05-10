@@ -101,7 +101,7 @@ Open [the web version](https://rannes.github.io/Olden-Era---Template-Generator/)
 ### Windows desktop app (Steam auto-detect, save direct to `map_templates`)
 
 1. Download the latest release from the [Releases page](https://github.com/KhanDevelopsGames/Olden-Era---Template-Generator/releases)
-2. Extract and run `Olden Era - Template Editor.exe`
+2. Extract and run `OldenEraTemplateGenerator.exe`
 3. No installation required — it's a single self-contained executable
 
 > **Requirements:** Windows 10/11 with [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) installed
@@ -136,17 +136,17 @@ Requirements: the .NET 10 SDK. Visual Studio 2022+ or any editor with C# tooling
 git clone https://github.com/KhanDevelopsGames/Olden-Era---Template-Generator.git
 cd "Olden-Era---Template-Generator"
 dotnet workload install wasm-tools   # one-time, needed for the web project
-dotnet build "Olden Era - Template Editor.slnx"
+dotnet build OldenEra.slnx
 ```
 
 The `wasm-tools` workload provides the Emscripten toolchain that statically links SkiaSharp's native binary into the WebAssembly bundle. Without it, the web project builds but Generate fails at runtime with `DllNotFoundException: libSkiaSharp`.
 
 The solution contains four projects:
 
-- `OldenEra.Generator/` — `net10.0` class library with the generator and SkiaSharp PNG renderer. Builds on any OS.
-- `OldenEra.Web/` — Blazor WebAssembly frontend. Run with `dotnet run --project OldenEra.Web`. Builds on any OS but requires the `wasm-tools` workload (see above).
-- `Olden Era - Template Editor/` — WPF desktop app. Builds and runs on Windows. (`Directory.Build.props` enables `EnableWindowsTargeting=true` so the project compiles on macOS/Linux for cross-checking; tests still need Windows to execute.)
-- `Olden Era - Template Editor.Tests/` — xUnit tests. Currently `net10.0-windows`; runs on Windows only.
+- `src/OldenEra.Generator/` — `net10.0` class library with the generator and SkiaSharp PNG renderer. Builds on any OS.
+- `src/OldenEra.Web/` — Blazor WebAssembly frontend. Run with `dotnet run --project src/OldenEra.Web`. Builds on any OS but requires the `wasm-tools` workload (see above).
+- `src/OldenEra.TemplateEditor/` — WPF desktop app. Builds and runs on Windows. (`Directory.Build.props` enables `EnableWindowsTargeting=true` so the project compiles on macOS/Linux for cross-checking; tests still need Windows to execute.)
+- `tests/OldenEra.TemplateEditor.Tests/` — xUnit tests. Currently `net10.0-windows`; runs on Windows only.
 
 ### End-to-end (web) tests
 

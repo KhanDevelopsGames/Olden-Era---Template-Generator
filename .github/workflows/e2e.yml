@@ -22,10 +22,10 @@ jobs:
         run: dotnet workload install wasm-tools
 
       - name: Restore NuGet
-        run: dotnet restore OldenEra.Web/OldenEra.Web.csproj
+        run: dotnet restore src/OldenEra.Web/OldenEra.Web.csproj
 
       - name: Build OldenEra.Web (Release)
-        run: dotnet build OldenEra.Web/OldenEra.Web.csproj -c Release --no-restore
+        run: dotnet build src/OldenEra.Web/OldenEra.Web.csproj -c Release --no-restore
 
       - name: Setup Node
         uses: actions/setup-node@v5

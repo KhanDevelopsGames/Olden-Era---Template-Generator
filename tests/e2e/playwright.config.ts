@@ -23,7 +23,7 @@ export default defineConfig({
   webServer: {
     // -c Release so the WASM bundle is the size users actually run; also avoids
     // dev-mode hot-reload noise.
-    command: 'dotnet run --project ../../OldenEra.Web -c Release --no-launch-profile --urls http://localhost:5230',
+    command: 'dotnet run --project ../../src/OldenEra.Web -c Release --no-launch-profile --urls http://localhost:5230',
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 300_000, // first-time WASM build + workload restore is slow

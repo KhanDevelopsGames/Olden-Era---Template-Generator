@@ -1,0 +1,156 @@
+<UserControl x:Class="OldenEra.TemplateEditor.Views.TopologyPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Style="{StaticResource SectionBorder}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <TextBlock Text="Topology" Style="{StaticResource SectionHeader}"/>
+                <TextBlock Foreground="{StaticResource OeTextDimBrush}"
+                           FontSize="12" TextWrapping="Wrap"
+                           Margin="0,0,0,12">
+                    How player and neutral zones are arranged on the map.
+                </TextBlock>
+
+                <!--
+                    Topology tile grid. ListBox keeps SelectedIndex / SelectionChanged
+                    surface compatible with the prior ComboBox; code-behind still
+                    populates ItemsSource and reads SelectedIndex on PnlTopology.CmbTopology.
+                    Custom ItemTemplate renders an SVG-style schematic + label per tile.
+                -->
+                <ListBox x:Name="CmbTopology"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Disabled">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="2"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Margin"  Value="4"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="VerticalContentAlignment"   Value="Stretch"/>
+                            <Setter Property="Background"      Value="{StaticResource OeSurface2Brush}"/>
+                            <Setter Property="BorderBrush"     Value="{StaticResource OeBorderBrush}"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="Cursor"          Value="Hand"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Bd"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="6"
+                                                Padding="14,12">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background"  Value="{StaticResource OeSurface3Brush}"/>
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource OeBorderStrongBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Bd" Property="Background"  Value="{StaticResource OeSurface3Brush}"/>
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource OeAccentBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel HorizontalAlignment="Center">
+                                <!--
+                                    Tile schematic. The label string is the topology
+                                    name fed by code-behind ("Random", "Ring", "Hub",
+                                    "Chain"). A DataTrigger picks a Path geometry per
+                                    label so we don't need a converter.
+                                -->
+                                <Path x:Name="Schema"
+                                      Width="56" Height="56"
+                                      Stretch="Uniform"
+                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                      StrokeThickness="2"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      StrokeLineJoin="Round"
+                                      Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}">
+                                    <Path.Style>
+                                        <Style TargetType="Path">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding}" Value="Random">
+                                                    <Setter Property="Data" Value="M 14 18 L 48 14 L 14 18 L 20 50 L 14 18 L 52 46 M 48 14 L 20 50 M 48 14 L 52 46 M 20 50 L 52 46"/>
+                                                    <Setter Property="Fill" Value="Transparent"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding}" Value="Ring">
+                                                    <Setter Property="Data" Value="M 32 12 A 20 20 0 1 1 31.99 12 Z"/>
+                                                    <Setter Property="Fill" Value="Transparent"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding}" Value="Hub">
+                                                    <Setter Property="Data" Value="M 32 14 L 32 50 M 14 32 L 50 32 M 32 26 A 6 6 0 1 1 31.99 26 Z"/>
+                                                    <Setter Property="Fill" Value="Transparent"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding}" Value="Chain">
+                                                    <Setter Property="Data" Value="M 10 32 L 22 32 L 34 32 L 46 32 L 54 32 M 10 32 A 3 3 0 1 1 9.99 32 Z M 22 32 A 3 3 0 1 1 21.99 32 Z M 34 32 A 3 3 0 1 1 33.99 32 Z M 46 32 A 3 3 0 1 1 45.99 32 Z M 54 32 A 3 3 0 1 1 53.99 32 Z"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Path.Style>
+                                </Path>
+                                <TextBlock Text="{Binding}"
+                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                           FontSize="13"
+                                           FontWeight="Medium"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <TextBlock x:Name="TxtTopologyDesc"
+                           Foreground="{StaticResource OeTextDimBrush}"
+                           FontSize="12" TextWrapping="Wrap"
+                           Margin="0,12,0,0"/>
+
+                <Grid x:Name="PnlHubZoneSize" Visibility="Collapsed" Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <DockPanel Grid.Column="0">
+                        <Label Content="Hub zone size" DockPanel.Dock="Left"/>
+                        <TextBlock x:Name="TxtHubZoneSize" Text="1.00x" DockPanel.Dock="Right"
+                                   HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                    </DockPanel>
+                    <Slider Grid.Column="1" x:Name="SldHubZoneSize"
+                            Minimum="0.25" Maximum="3" Value="1"
+                            TickFrequency="0.05" IsSnapToTickEnabled="True"/>
+                </Grid>
+                <Grid x:Name="PnlHubCastles" Visibility="Collapsed" Margin="0,8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <DockPanel Grid.Column="0">
+                        <Label Content="Castles in hub" DockPanel.Dock="Left"/>
+                        <TextBlock x:Name="TxtHubCastles" Text="0" DockPanel.Dock="Right"
+                                   HorizontalAlignment="Right" VerticalAlignment="Center"
+                                   Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
+                    </DockPanel>
+                    <Slider Grid.Column="1" x:Name="SldHubCastles"
+                            Minimum="0" Maximum="4" Value="0"
+                            TickFrequency="1" IsSnapToTickEnabled="True"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Border>
+</UserControl>
