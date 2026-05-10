@@ -77,6 +77,8 @@
                     <Button Content="Open…" Click="BtnOpen_Click" Style="{StaticResource OeGhostButton}" ToolTip="Open settings (Ctrl+O)"/>
                     <Button Content="Save" Click="BtnSave_Click" Style="{StaticResource OeGhostButton}" ToolTip="Save settings (Ctrl+S)"/>
                     <Button Content="Save as…" Click="BtnSaveAs_Click" Style="{StaticResource OeGhostButton}" ToolTip="Save settings as (Ctrl+Shift+S)" Margin="0,0,8,0"/>
+                    <Button Content="GitHub" Click="BtnGithub_Click" Style="{StaticResource OeGhostButton}" ToolTip="View the project on GitHub"/>
+                    <Button Content="Discord" Click="BtnDiscord_Click" Style="{StaticResource OeGhostButton}" ToolTip="Join the community Discord" Margin="0,0,8,0"/>
                     <Button Content="—" Style="{StaticResource TitleBarButton}" ToolTip="Minimize" Click="BtnMinimize_Click"/>
                     <Button x:Name="BtnMaximize" Content="▢" Style="{StaticResource TitleBarButton}" ToolTip="Maximize" Click="BtnMaximize_Click"/>
                     <Button Content="✕" Style="{StaticResource TitleBarCloseButton}" ToolTip="Close" Click="BtnClose_Click"/>
@@ -224,11 +226,17 @@
                                 BorderBrush="{StaticResource OeBorderBrush}"
                                 Background="{StaticResource OeSurface1Brush}"
                                 Padding="6">
-                            <Image x:Name="ImgPreview"
-                                   Stretch="Uniform"
-                                   RenderOptions.BitmapScalingMode="HighQuality"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"/>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Label x:Name="LblNoPreview"
+                                       Visibility="Collapsed"
+                                       FontSize="172"
+                                       Foreground="{StaticResource OeTextDimBrush}"/>
+                                <Image x:Name="ImgPreview"
+                                       Stretch="Uniform"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"/>
+                            </StackPanel>
                         </Border>
 
                         <TextBlock Grid.Row="6"
@@ -241,9 +249,10 @@
 
                         <CheckBox Grid.Row="8"
                                   x:Name="ChkSavePreviewImage"
-                                  Content="Show preview in-game"
+                                  Content="Show preview"
                                   IsChecked="True"
-                                  HorizontalAlignment="Left"/>
+                                  HorizontalAlignment="Left"
+                                  Click="ChkSavePreviewImage_Click"/>
 
                         <Button Grid.Row="10"
                                 x:Name="BtnSaveGenerated"

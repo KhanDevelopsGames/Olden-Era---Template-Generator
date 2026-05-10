@@ -400,6 +400,26 @@ namespace OldenEra.Generator.Services
                     if (weight < 0.01) weight = 0.01;
                     double nudge = (worstPenetration + 2.0) / weight;
                     ctrl = new SKPoint((float)(ctrl.X + nx3 * nudge), (float)(ctrl.Y + ny3 * nudge));
+
+                    // Deflection cap: prevent the curve from bowing out to ridiculous extremes.
+                    double midX = (p1.X + p2.X) / 2.0;
+                    double midY = (p1.Y + p2.Y) / 2.0;
+                    double defX = ctrl.X - midX;
+                    double defY = ctrl.Y - midY;
+                    double defDist = Math.Sqrt(defX * defX + defY * defY);
+                    double maxDeflection = Math.Min(Width, Height) * 0.4;
+                    if (defDist > maxDeflection)
+                    {
+                        ctrl = new SKPoint(
+                            (float)(midX + (defX / defDist) * maxDeflection),
+                            (float)(midY + (defY / defDist) * maxDeflection));
+                    }
+
+                    // Hard canvas clamp: keep the control point safely inside the image bounds.
+                    const double edgePad = 15.0;
+                    ctrl = new SKPoint(
+                        (float)Math.Clamp(ctrl.X, edgePad, Width - edgePad),
+                        (float)Math.Clamp(ctrl.Y, edgePad, Height - edgePad));
                 }
                 return ctrl;
             }
@@ -600,8 +620,8 @@ namespace OldenEra.Generator.Services
             double totalLen = PolylineLength(poly);
             if (totalLen < 0.001) return;
 
-            const double FadeExtraPx = 18.0;
-            const int    FadeSteps   = 20;
+            const double FadeExtraPx = 14.0;
+            const int    FadeSteps   = 50;
 
             var zones = gaps.Select(g => (
                 FadeStart: Math.Max(0, g.Lo - FadeExtraPx / totalLen),

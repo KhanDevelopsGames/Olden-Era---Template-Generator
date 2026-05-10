@@ -294,12 +294,6 @@
                                    Text="Honored only when the selected layout, neutral zone total, and portal settings can support it; otherwise generation uses the normal connection layout."/>
                     </StackPanel>
                     <CheckBox x:Name="ChkGenerateRoads" Content="Generate roads" IsChecked="True" Margin="0,10,0,0"/>
-                    <TextBlock x:Name="TxtRoadsHint"
-                               Visibility="Collapsed"
-                               Foreground="{StaticResource OeTextDimBrush}"
-                               FontSize="13" TextWrapping="Wrap"
-                               Margin="18,3,0,0"
-                               Text="Note: Roads are only generated within zones that have at least one castle. Neutral zones with 0 castles will not have roads, even if this option is enabled."/>
                     <CheckBox x:Name="ChkSpawnFootholds" Content="Spawn remote footholds" IsChecked="True" Margin="0,6,0,0"/>
                     <CheckBox x:Name="ChkRandomPortals"  Content="Always spawn portals"          Margin="0,6,0,0"/>
                     <StackPanel x:Name="PnlMaxPortals" Visibility="Collapsed" Margin="25,4,0,0">

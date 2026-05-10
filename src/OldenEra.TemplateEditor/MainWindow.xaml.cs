@@ -150,7 +150,6 @@ namespace OldenEra.TemplateEditor
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
-            UpdateRoadsHintVisibility();
             UpdateBalancedZonePlacementDescVisibility();
 
             // Fire-and-forget background update check — never blocks the UI.
@@ -208,6 +207,15 @@ namespace OldenEra.TemplateEditor
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
             e.Handled = true;
         }
+
+        private const string GitHubProjectPage = "https://github.com/rannes/Olden-Era---Template-Generator";
+        private const string CommunityDiscordInvite = "https://discord.gg/UqT8KshsxW";
+
+        private void BtnGithub_Click(object sender, RoutedEventArgs e) =>
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(GitHubProjectPage) { UseShellExecute = true });
+
+        private void BtnDiscord_Click(object sender, RoutedEventArgs e) =>
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(CommunityDiscordInvite) { UseShellExecute = true });
 
         // Minimal model for GitHub releases API response.
         private sealed class GitHubRelease
@@ -329,7 +337,6 @@ namespace OldenEra.TemplateEditor
             UpdateValueLabels();
             UpdatePlayerCastleFactionVisibility();
             UpdateAdvancedZoneSettingsVisibility();
-            UpdateRoadsHintVisibility();
             MarkDirty();
             Validate();
         }
@@ -474,7 +481,6 @@ namespace OldenEra.TemplateEditor
         {
             if (!IsInitialized) return;
             UpdateIsolateDescVisibility();
-            UpdateRoadsHintVisibility();
             UpdateBalancedZonePlacementDescVisibility();
             UpdatePlayerCastleFactionVisibility();
             UpdateWinConditionDetailVisibility();
@@ -521,7 +527,6 @@ namespace OldenEra.TemplateEditor
 
             UpdateAdvancedZoneSettingsVisibility();
             UpdateValueLabels();
-            UpdateRoadsHintVisibility();
             MarkDirty();
             Validate();
         }
@@ -683,14 +688,6 @@ namespace OldenEra.TemplateEditor
         {
             if (PnlZones.TxtIsolateDesc == null || PnlZones.ChkNoDirectPlayerConn == null) return;
             PnlZones.TxtIsolateDesc.Visibility = PnlZones.ChkNoDirectPlayerConn.IsChecked == true && PnlZones.ChkNoDirectPlayerConn.Visibility == Visibility.Visible
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-        }
-
-        private void UpdateRoadsHintVisibility()
-        {
-            if (PnlZones.TxtRoadsHint == null || PnlZones.ChkGenerateRoads == null || PnlZones.SldNeutralCastles == null) return;
-            PnlZones.TxtRoadsHint.Visibility = PnlZones.ChkGenerateRoads.IsChecked == true && (int)PnlZones.SldNeutralCastles.Value == 0
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
@@ -896,7 +893,6 @@ namespace OldenEra.TemplateEditor
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
-            UpdateRoadsHintVisibility();
             UpdateBalancedZonePlacementDescVisibility();
             UpdateWinConditionDetailVisibility();
 
@@ -1102,6 +1098,7 @@ namespace OldenEra.TemplateEditor
             _templateOutdated = false;
             byte[] previewPng = TemplatePreviewRenderer.RenderPng(_generatedTemplate, _generatedTopology);
             ImgPreview.Source = WpfPreviewAdapter.ToBitmapImage(previewPng);
+            LblNoPreview.Content = "?";
             BtnSaveGenerated.Visibility = Visibility.Visible;
             UpdateOutdatedWarning();
             Validate(); // refresh warnings now that template is up to date
@@ -1403,6 +1400,19 @@ namespace OldenEra.TemplateEditor
             }
             return null;
         }
-        
+
+        private void ChkSavePreviewImage_Click(object sender, RoutedEventArgs e)
+        {
+            if (ChkSavePreviewImage.IsChecked == true)
+            {
+                ImgPreview.Visibility = Visibility.Visible;
+                LblNoPreview.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ImgPreview.Visibility = Visibility.Collapsed;
+                LblNoPreview.Visibility = Visibility.Visible;
+            }
+        }
     }
 }
