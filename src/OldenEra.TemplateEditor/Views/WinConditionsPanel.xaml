@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Border Style="{StaticResource SectionBorder}">
         <DockPanel>
-            <TextBlock Text="Game Rules" Style="{StaticResource SectionHeader}" DockPanel.Dock="Top"/>
+            <TextBlock Text="Game modifiers" Style="{StaticResource SectionHeader}" DockPanel.Dock="Top"/>
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
                     <Grid>
@@ -15,12 +15,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="10"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="10"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-
-                        <Label Grid.Row="4" Grid.Column="0" Content="Primary win condition"/>
-                        <ComboBox Grid.Row="4" Grid.Column="1" x:Name="CmbVictory"/>
 
                         <DockPanel Grid.Row="0" Grid.Column="0">
                             <Label Content="Faction laws XP" DockPanel.Dock="Left"/>
@@ -46,7 +41,18 @@
                     <TextBlock Text="Faction laws XP scales Law Point gain (passive faction upgrades). Astrology XP scales Astrology Point gain (neutral-spell unlocks)."
                                TextWrapping="Wrap" Foreground="#888" FontStyle="Italic" Margin="5,4,5,8"/>
 
-                    <StackPanel Margin="0,10,0,0">
+                    <TextBlock Text="Win conditions" Style="{StaticResource SectionHeader}" Margin="0,12,0,8"/>
+
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="185"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="Primary win condition"/>
+                        <ComboBox Grid.Column="1" x:Name="CmbVictory"/>
+                    </Grid>
+
+                    <StackPanel Margin="0,4,0,0">
                         <TextBlock Text="Defeat conditions" FontWeight="SemiBold" Margin="0,0,0,4"/>
                         <CheckBox x:Name="ChkLostStartCity"
                                   Content="Lose when starting city is lost"/>
