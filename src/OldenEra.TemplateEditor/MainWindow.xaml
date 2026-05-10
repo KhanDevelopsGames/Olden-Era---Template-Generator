@@ -65,36 +65,51 @@
                                VerticalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- Header actions: ghost-styled Open/Save buttons + caption buttons -->
+                <!-- Window-state buttons only. Action toolbar lives below the title bar. -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
-                    <CheckBox x:Name="ChkExperimentalEnabled"
-                              Content="Experimental ⚗"
-                              VerticalAlignment="Center" Margin="0,0,12,0"
-                              ToolTip="Show experimental features. Generated templates may behave unpredictably."
-                              Checked="ChkExperimentalEnabled_Changed"
-                              Unchecked="ChkExperimentalEnabled_Changed"/>
-                    <Button Content="New" Click="BtnNew_Click" Style="{StaticResource OeGhostButton}" ToolTip="Reset settings (Ctrl+N)"/>
-                    <Button Content="Open…" Click="BtnOpen_Click" Style="{StaticResource OeGhostButton}" ToolTip="Open settings (Ctrl+O)"/>
-                    <Button Content="Save" Click="BtnSave_Click" Style="{StaticResource OeGhostButton}" ToolTip="Save settings (Ctrl+S)"/>
-                    <Button Content="Save as…" Click="BtnSaveAs_Click" Style="{StaticResource OeGhostButton}" ToolTip="Save settings as (Ctrl+Shift+S)" Margin="0,0,8,0"/>
-                    <Button Content="GitHub" Click="BtnGithub_Click" Style="{StaticResource OeGhostButton}" ToolTip="View the project on GitHub"/>
-                    <Button Content="Discord" Click="BtnDiscord_Click" Style="{StaticResource OeGhostButton}" ToolTip="Join the community Discord" Margin="0,0,8,0"/>
                     <Button Content="—" Style="{StaticResource TitleBarButton}" ToolTip="Minimize" Click="BtnMinimize_Click"/>
                     <Button x:Name="BtnMaximize" Content="▢" Style="{StaticResource TitleBarButton}" ToolTip="Maximize" Click="BtnMaximize_Click"/>
                     <Button Content="✕" Style="{StaticResource TitleBarCloseButton}" ToolTip="Close" Click="BtnClose_Click"/>
                 </StackPanel>
             </Grid>
 
-            <!-- Page content: 220px nav | 1fr settings | 320px preview, with WIP banner above. -->
-            <Grid Grid.Row="1" Margin="20,16,20,16">
+            <!-- Page content: toolbar row | WIP banner | three-column shell. -->
+            <Grid Grid.Row="1" Margin="20,12,20,16">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>  <!-- toolbar -->
                     <RowDefinition Height="Auto"/>  <!-- WIP warning -->
                     <RowDefinition Height="Auto"/>  <!-- spacer -->
                     <RowDefinition Height="*"/>     <!-- shell -->
                 </Grid.RowDefinitions>
 
+                <!-- Action toolbar: settings file ops, links, master toggles. -->
+                <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,12">
+                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                        <Button Content="New" Click="BtnNew_Click" Style="{StaticResource OeGhostButton}" ToolTip="Reset settings (Ctrl+N)"/>
+                        <Button Content="Open…" Click="BtnOpen_Click" Style="{StaticResource OeGhostButton}" ToolTip="Open settings (Ctrl+O)"/>
+                        <Button Content="Save" Click="BtnSave_Click" Style="{StaticResource OeGhostButton}" ToolTip="Save settings (Ctrl+S)"/>
+                        <Button Content="Save as…" Click="BtnSaveAs_Click" Style="{StaticResource OeGhostButton}" ToolTip="Save settings as (Ctrl+Shift+S)"/>
+                    </StackPanel>
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <CheckBox x:Name="ChkAdvancedEnabled"
+                                  Content="Advanced"
+                                  VerticalAlignment="Center" Margin="0,0,12,0"
+                                  ToolTip="Show advanced zone settings (per-tier zone counts, separation tuning)."
+                                  Checked="ChkAdvancedEnabled_Changed"
+                                  Unchecked="ChkAdvancedEnabled_Changed"/>
+                        <CheckBox x:Name="ChkExperimentalEnabled"
+                                  Content="Experimental ⚗"
+                                  VerticalAlignment="Center" Margin="0,0,12,0"
+                                  ToolTip="Show experimental features. Generated templates may behave unpredictably."
+                                  Checked="ChkExperimentalEnabled_Changed"
+                                  Unchecked="ChkExperimentalEnabled_Changed"/>
+                        <Button Content="GitHub" Click="BtnGithub_Click" Style="{StaticResource OeGhostButton}" ToolTip="View the project on GitHub"/>
+                        <Button Content="Discord" Click="BtnDiscord_Click" Style="{StaticResource OeGhostButton}" ToolTip="Join the community Discord"/>
+                    </StackPanel>
+                </DockPanel>
+
                 <!-- WIP warning: amber left bar, surface bg, no decorative border. -->
-                <Border Grid.Row="0"
+                <Border Grid.Row="1"
                         Background="{StaticResource OeWarnBgBrush}"
                         BorderBrush="{StaticResource OeAccentBrush}"
                         BorderThickness="3,0,0,0"
@@ -116,7 +131,7 @@
                 </Border>
 
                 <!-- Three-column shell: nav | content | preview -->
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="220"/>
                         <ColumnDefinition Width="24"/>

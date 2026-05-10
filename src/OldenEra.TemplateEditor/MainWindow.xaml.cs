@@ -560,6 +560,15 @@ namespace OldenEra.TemplateEditor
             PnlZones.PnlSimpleNeutralCountLabel.IsEnabled = !advanced;
             if (PnlZones.ChkAdvancedZoneSettings != null)
                 PnlZones.ChkAdvancedZoneSettings.IsChecked = advanced;
+            if (ChkAdvancedEnabled != null)
+                ChkAdvancedEnabled.IsChecked = advanced;
+        }
+
+        private void ChkAdvancedEnabled_Changed(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            // Delegate to the existing per-panel toggle so seeding + dirty + validate run.
+            PnlZones.ChkAdvancedZoneSettings.IsChecked = ChkAdvancedEnabled.IsChecked == true;
         }
 
         private void CmbVictory_SelectionChanged(object sender, SelectionChangedEventArgs e)
