@@ -664,6 +664,18 @@ input[type="range"]:focus-visible::-moz-range-thumb {
     background: var(--oe-surface-3);
 }
 
+/* Share-link copy confirmation toast (sits inside the header actions). */
+.oe-toast {
+    margin-left: 8px;
+    padding: 4px 8px;
+    background: var(--oe-surface-3);
+    border: 1px solid var(--oe-border);
+    border-radius: 4px;
+    color: var(--oe-text);
+    font-size: 12px;
+    align-self: center;
+}
+
 /* -- Modal ---------------------------------------------------------- */
 .oe-modal-overlay {
     position: fixed;
