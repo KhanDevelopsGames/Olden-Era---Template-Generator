@@ -40,6 +40,7 @@
                Min="0" Max="50" Step="1" Suffix="%"
                Value="(int)Math.Round(current.GuardWeeklyIncrement * 100)"
                ValueChanged="@(v => { current.GuardWeeklyIncrement = v / 100.0; NotifyChanged(); })" />
+    <div class="oe-hint">Weekly increase in guard strength for this tier. 0% = use the global value above.</div>
 </ExperimentalCard>
 
 @code {

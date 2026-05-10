@@ -2,7 +2,7 @@
 
 <ExperimentalCard Key="terrain" Title="Terrain density">
     <div class="oe-hint">
-        0 % = generator default. Higher values create more chokepoints.
+        0% = generator default. Obstacles add chokepoints; lakes add water cover.
     </div>
     <SliderRow Label="Obstacles fill" WideLabel="true"
                Min="0" Max="80" Step="5" Suffix="%"
@@ -56,6 +56,9 @@
 </ExperimentalCard>
 
 <ExperimentalCard Key="neutral-cities" Title="Neutral cities">
+    <div class="oe-hint">
+        Chance that a neutral city gets a guarding stack, and how strong it is relative to the zone baseline (100%).
+    </div>
     <SliderRow Label="Guard chance" WideLabel="true"
                Min="0" Max="100" Step="5" Suffix="%"
                Value="(int)Math.Round(Settings.NeutralCities.GuardChance * 100)"

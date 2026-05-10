@@ -6,7 +6,7 @@
     <div class="oe-section">
         <div class="oe-section-header">Advanced zone tuning [EXPERIMENTAL]</div>
         <div class="oe-hint">
-            Relative region weights and guard variance used by the game layout.
+            Per-zone size multipliers and randomization for guard strength. Affects layout but not what's inside.
         </div>
 
         <SliderRow Label="Player zone size" WideLabel="true"
@@ -17,10 +17,13 @@
                    Min="0.5" Max="2" Step="0.05" IsInt="false" Suffix="x"
                    Value="Settings.ZoneCfg.Advanced.NeutralZoneSize"
                    ValueChanged="@(v => { Settings.ZoneCfg.Advanced.NeutralZoneSize = v; NotifyChanged(); })" />
+        <div class="oe-hint">Multiplier applied to the base zone area. 1x is the generator's default.</div>
+
         <SliderRow Label="Guard strength randomization" WideLabel="true"
                    Min="0" Max="50" Step="1" Suffix="%"
                    Value="@(Settings.ZoneCfg.Advanced.GuardRandomization * 100.0)"
                    ValueChanged="@(v => { Settings.ZoneCfg.Advanced.GuardRandomization = v / 100.0; NotifyChanged(); })" />
+        <div class="oe-hint">How much each guard's strength varies from the zone's target. 0% = identical, 50% = up to half-strength swing either way.</div>
     </div>
 
     <div class="oe-section">
