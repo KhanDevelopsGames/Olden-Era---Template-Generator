@@ -180,7 +180,11 @@ namespace OldenEra.Generator.Services
             Dictionary<string, NeutralZoneQuality> tierByLetter)
         {
             // Tier override only applies to neutral zones; player zones use the global setting.
-            TierOverrides? tier = tierByLetter.TryGetValue(zone.Name, out var q) ? GetTierOverrides(settings, q) : null;
+            // Neutral zone names are formatted "Neutral-{letter}"; tierByLetter is keyed by letter.
+            string? letter = ExtractZoneLetter(zone.Name);
+            TierOverrides? tier = letter is not null && tierByLetter.TryGetValue(letter, out var q)
+                ? GetTierOverrides(settings, q)
+                : null;
 
             // Zone guard weekly increment: tier wins, then global.
             double tierZoneInc = tier?.GuardWeeklyIncrement ?? 0;
@@ -222,6 +226,14 @@ namespace OldenEra.Generator.Services
                         mo.GuardValue = (int)System.Math.Round(gv * (neutralPct / 100.0));
                 }
             }
+        }
+
+        // Strips a "{Prefix}-{letter}" zone name down to just the letter.
+        // Returns null for non-prefixed names like "Hub" so non-neutral zones skip tier resolution.
+        private static string? ExtractZoneLetter(string zoneName)
+        {
+            int dash = zoneName.IndexOf('-');
+            return dash >= 0 && dash + 1 < zoneName.Length ? zoneName[(dash + 1)..] : null;
         }
 
         private static TierOverrides GetTierOverrides(GeneratorSettings settings, NeutralZoneQuality q) => q switch
