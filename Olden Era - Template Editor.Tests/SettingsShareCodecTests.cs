@@ -15,4 +15,30 @@ public class SettingsShareCodecTests
         Assert.Equal("RoundTrip", decoded!.TemplateName);
         Assert.Equal(4, decoded.PlayerCount);
     }
+
+    [Fact]
+    public void Decode_ignores_unknown_fields()
+    {
+        string json = """{"templateName":"Hi","futureFeatureXyz":42,"PlayerCount":5}""";
+        string encoded = EncodeRawJson(json);
+
+        var decoded = SettingsShareCodec.TryDecode(encoded, out var status);
+        Assert.Equal(SettingsShareCodec.DecodeStatus.Ok, status);
+        Assert.NotNull(decoded);
+        Assert.Equal("Hi", decoded!.TemplateName);
+        Assert.Equal(5, decoded.PlayerCount);
+    }
+
+    private static string EncodeRawJson(string json)
+    {
+        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
+        using var ms = new System.IO.MemoryStream();
+        using (var gz = new System.IO.Compression.GZipStream(ms,
+            System.IO.Compression.CompressionLevel.Optimal, leaveOpen: true))
+        {
+            gz.Write(bytes, 0, bytes.Length);
+        }
+        return System.Convert.ToBase64String(ms.ToArray())
+            .TrimEnd('=').Replace('+', '-').Replace('/', '_');
+    }
 }
