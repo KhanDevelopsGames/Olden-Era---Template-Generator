@@ -1,20 +1,24 @@
 @* Map topology selection + per-topology details (hub size + castles). *@
+@using OldenEra.Generator.Models
 
 <div class="oe-section">
-    <div class="oe-section-header">◆ Layout</div>
+    <div class="oe-section-header">Topology</div>
+    <p class="oe-hint">How player and neutral zones are arranged on the map.</p>
 
-    <div class="oe-row">
-        <label class="oe-label">Map Layout</label>
-        <select @bind="SelectedTopology" @bind:after="NotifyChanged">
-            @foreach (var opt in Options)
-            {
-                <option value="@opt.Topology">@opt.Label</option>
-            }
-        </select>
-        <span></span>
+    <div class="oe-topo-grid" role="radiogroup" aria-label="Topology">
+        @foreach (var (topo, label, svg) in Tiles)
+        {
+            var isSelected = Settings.Topology == topo;
+            <button type="button"
+                    class="oe-topo-tile @(isSelected ? "selected" : "")"
+                    role="radio"
+                    aria-checked="@isSelected.ToString().ToLower()"
+                    @onclick="() => Select(topo)">
+                <span class="oe-topo-svg" aria-hidden="true">@svg</span>
+                <span class="oe-topo-label">@label</span>
+            </button>
+        }
     </div>
-
-    <div class="oe-hint">@CurrentDescription</div>
 
     @if (Settings.Topology == MapTopology.HubAndSpoke)
     {
@@ -33,24 +37,64 @@
     [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
     [Parameter] public EventCallback OnChanged { get; set; }
 
-    public record TopologyOption(MapTopology Topology, string Label, string Description);
-
-    private static readonly TopologyOption[] Options =
-    [
-        new(MapTopology.Random,      "Random", "Zones are placed at random positions. Each zone connects to all zones that border it — no fixed structure."),
-        new(MapTopology.Default,     "Ring",   "All zones are arranged in a circle. Each zone connects to the two zones next to it."),
-        new(MapTopology.HubAndSpoke, "Hub",    "All zones connect to a shared central hub. Players never border each other directly."),
-        new(MapTopology.Chain,       "Chain",  "Zones are connected in a straight line from one end to the other, with no wrap-around."),
-    ];
-
-    private MapTopology SelectedTopology
+    private async Task Select(MapTopology topo)
     {
-        get => Settings.Topology;
-        set => Settings.Topology = value;
+        if (Settings.Topology == topo) return;
+        Settings.Topology = topo;
+        await OnChanged.InvokeAsync();
     }
 
-    private string CurrentDescription =>
-        Options.FirstOrDefault(o => o.Topology == Settings.Topology)?.Description ?? "";
-
     private Task NotifyChanged() => OnChanged.InvokeAsync();
+
+    private static readonly (MapTopology Topo, string Label, MarkupString Svg)[] Tiles =
+    {
+        (MapTopology.Default,     "Ring",        new MarkupString(RingSvg)),
+        (MapTopology.HubAndSpoke, "Hub & Spoke", new MarkupString(HubSvg)),
+        (MapTopology.Chain,       "Chain",       new MarkupString(ChainSvg)),
+        (MapTopology.Random,      "Random",      new MarkupString(RandomSvg)),
+    };
+
+    private const string RingSvg =
+        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='48' height='48' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>"
+        + "<circle cx='32' cy='12' r='4' fill='currentColor'/>"
+        + "<circle cx='52' cy='32' r='4' fill='currentColor'/>"
+        + "<circle cx='32' cy='52' r='4' fill='currentColor'/>"
+        + "<circle cx='12' cy='32' r='4' fill='currentColor'/>"
+        + "<path d='M32 16 Q52 16 52 32 Q52 52 32 52 Q12 52 12 32 Q12 12 32 12 Z'/>"
+        + "</svg>";
+
+    private const string HubSvg =
+        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='48' height='48' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>"
+        + "<circle cx='32' cy='32' r='6' fill='currentColor'/>"
+        + "<circle cx='32' cy='10' r='4' fill='currentColor'/>"
+        + "<circle cx='54' cy='32' r='4' fill='currentColor'/>"
+        + "<circle cx='32' cy='54' r='4' fill='currentColor'/>"
+        + "<circle cx='10' cy='32' r='4' fill='currentColor'/>"
+        + "<line x1='32' y1='14' x2='32' y2='26'/>"
+        + "<line x1='50' y1='32' x2='38' y2='32'/>"
+        + "<line x1='32' y1='50' x2='32' y2='38'/>"
+        + "<line x1='14' y1='32' x2='26' y2='32'/>"
+        + "</svg>";
+
+    private const string ChainSvg =
+        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='48' height='48' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>"
+        + "<circle cx='10' cy='32' r='4' fill='currentColor'/>"
+        + "<circle cx='25' cy='32' r='4' fill='currentColor'/>"
+        + "<circle cx='40' cy='32' r='4' fill='currentColor'/>"
+        + "<circle cx='55' cy='32' r='4' fill='currentColor'/>"
+        + "<line x1='14' y1='32' x2='21' y2='32'/>"
+        + "<line x1='29' y1='32' x2='36' y2='32'/>"
+        + "<line x1='44' y1='32' x2='51' y2='32'/>"
+        + "</svg>";
+
+    private const string RandomSvg =
+        "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='48' height='48' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>"
+        + "<circle cx='14' cy='18' r='4' fill='currentColor'/>"
+        + "<circle cx='48' cy='14' r='4' fill='currentColor'/>"
+        + "<circle cx='20' cy='50' r='4' fill='currentColor'/>"
+        + "<circle cx='52' cy='46' r='4' fill='currentColor'/>"
+        + "<line x1='17' y1='21' x2='49' y2='44'/>"
+        + "<line x1='44' y1='17' x2='22' y2='47'/>"
+        + "<line x1='14' y1='22' x2='20' y2='46'/>"
+        + "</svg>";
 }

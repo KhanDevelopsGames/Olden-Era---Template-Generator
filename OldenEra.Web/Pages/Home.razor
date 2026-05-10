@@ -7,10 +7,24 @@
 <PageTitle>Olden Era - Template Generator</PageTitle>
 
 <div class="oe-app">
-    <div class="oe-title-bar">
-        <h1>Olden Era — Simple Template Generator</h1>
-        <span class="oe-version-badge">@VersionLabel</span>
-    </div>
+    <header class="oe-header">
+        <div class="oe-header-left">
+            <h1>Olden Era — Simple Template Generator</h1>
+            <span class="oe-version-badge">@VersionLabel</span>
+        </div>
+        <div class="oe-header-actions">
+            <button class="oe-btn ghost" @onclick="OpenSettingsClick">Open settings…</button>
+            <button class="oe-btn ghost" @onclick="SaveSettingsClick">Save settings…</button>
+            <button class="oe-btn ghost" @onclick="ShareSettingsClick">Share link</button>
+            @if (!string.IsNullOrEmpty(ShareToast))
+            {
+                <span class="oe-toast">@ShareToast</span>
+            }
+            <InputFile id="oeOpenSettingsFile" OnChange="OnSettingsFileSelected"
+                       accept=".oetgs,application/json"
+                       style="display:none" />
+        </div>
+    </header>
 
     <div class="oe-warning">
         ⚠️ Work in progress — some generated templates may contain game-breaking bugs or issues.
@@ -19,7 +33,7 @@
     @if (UpdateAvailable is not null)
     {
         <div class="oe-update-banner">
-            🔔 A newer version (<strong>@FormatVersion(UpdateAvailable)</strong>) is available.
+            A newer version (<strong>@FormatVersion(UpdateAvailable)</strong>) is available.
             <a href="@UpdateChecker.ReleasesPageUrl" target="_blank" rel="noopener noreferrer">
                 Open releases page
             </a>
@@ -27,85 +41,57 @@
         </div>
     }
 
-    <div class="oe-toolbar">
-        <button class="oe-btn" @onclick="OpenSettingsClick">📂 Open settings…</button>
-        <button class="oe-btn" @onclick="SaveSettingsClick">💾 Save settings…</button>
-        <button class="oe-btn" @onclick="ShareSettingsClick">🔗 Share link</button>
-        @if (!string.IsNullOrEmpty(ShareToast))
-        {
-            <span class="oe-toast">@ShareToast</span>
-        }
-        <InputFile id="oeOpenSettingsFile" OnChange="OnSettingsFileSelected"
-                   accept=".oetgs,application/json"
-                   style="display:none" />
-    </div>
+    <div class="oe-shell">
+        <aside class="oe-nav">
+            <SectionNav TSection="Section"
+                        Active="ActiveSection"
+                        ActiveChanged="@(s => ActiveSection = s)"
+                        LabelFor="@(s => s switch {
+                            Section.Map => "Map",
+                            Section.Heroes => "Heroes",
+                            Section.Topology => "Topology",
+                            Section.Zones => "Zones",
+                            Section.WinConditions => "Win Conditions",
+                            _ => s.ToString()
+                        })"
+                        ValidationMessage="@(IsValid ? null : ValidationMessage)" />
+        </aside>
 
-    <div class="oe-grid">
-        <div>
-            <div class="oe-columns">
-                <!-- TEMPLATE -->
-                <div class="oe-section">
-                    <div class="oe-section-header">◆ Template</div>
+        <section class="oe-content">
+            @switch (ActiveSection)
+            {
+                case Section.Map:
+                    <MapSettingsPanel Settings="Settings"
+                                      ExperimentalMapSizes="ExperimentalMapSizes"
+                                      ExperimentalMapSizesChanged="OnExperimentalToggled"
+                                      OnChanged="OnChanged" />
+                    break;
+                case Section.Heroes:
+                    <HeroSettingsPanel Settings="Settings" OnChanged="OnChanged" />
+                    break;
+                case Section.Topology:
+                    <TopologyPicker Settings="Settings" OnChanged="OnChanged" />
+                    break;
+                case Section.Zones:
+                    <ZoneConfigPanel Settings="Settings"
+                                     AdvancedMode="AdvancedMode"
+                                     AdvancedModeChanged="OnAdvancedModeChanged"
+                                     OnChanged="OnChanged" />
+                    <AdvancedPanel Settings="Settings"
+                                   AdvancedMode="AdvancedMode"
+                                   OnChanged="OnChanged" />
+                    break;
+                case Section.WinConditions:
+                    <WinConditionsPanel Settings="Settings" OnChanged="OnChanged" />
+                    break;
+            }
+        </section>
 
-                    <div class="oe-stacked">
-                        <label class="oe-label" for="tplname">Template Name</label>
-                        <input id="tplname" type="text"
-                               value="@Settings.TemplateName"
-                               @oninput="OnTemplateNameInput" />
-                    </div>
-
-                    <div class="oe-stacked">
-                        <label class="oe-label" for="mapsize">Map Size</label>
-                        <select id="mapsize" @bind="MapSize" @bind:after="OnChanged">
-                            @foreach (int size in AvailableMapSizes)
-                            {
-                                <option value="@size">@FormatMapSize(size)</option>
-                            }
-                        </select>
-                    </div>
-
-                    <label class="oe-check">
-                        <input type="checkbox" checked="@ExperimentalMapSizes"
-                               @onchange="OnExperimentalToggled" />
-                        <span>Experimental large map sizes</span>
-                    </label>
-                    @if (ExperimentalMapSizes)
-                    {
-                        <div class="oe-hint">
-                            Adds 256x256 through 512x512. Official templates top out at 240x240,
-                            so larger maps may fail, freeze, or behave unpredictably in game.
-                        </div>
-                    }
-
-                    <SliderRow Label="Players"
-                               Min="2" Max="8" Step="1"
-                               Value="Settings.PlayerCount"
-                               ValueChanged="@(v => { Settings.PlayerCount = (int)v; OnChanged(); })" />
-                </div>
-
-                <!-- HEROES -->
-                <HeroSettingsPanel Settings="Settings" OnChanged="OnChanged" />
-            </div>
-
-            <TopologyPicker Settings="Settings" OnChanged="OnChanged" />
-
-            <ZoneConfigPanel Settings="Settings"
-                             AdvancedMode="AdvancedMode"
-                             AdvancedModeChanged="OnAdvancedModeChanged"
-                             OnChanged="OnChanged" />
-
-            <AdvancedPanel Settings="Settings"
-                           AdvancedMode="AdvancedMode"
-                           OnChanged="OnChanged" />
-
-            <WinConditionsPanel Settings="Settings" OnChanged="OnChanged" />
-        </div>
-
-        <div class="oe-preview-col">
+        <aside class="oe-preview-col">
             <button class="oe-btn primary"
                     disabled="@(!IsValid || IsGenerating)"
                     @onclick="OnGenerateClick">
-                ⚔ Generate Template
+                Generate Template
             </button>
             @if (!string.IsNullOrEmpty(ValidationMessage))
             {
@@ -117,14 +103,14 @@
             <button class="oe-btn"
                     disabled="@(GeneratedTemplate is null)"
                     @onclick="DownloadJson">
-                💾 Download .rmg.json
+                Download .rmg.json
             </button>
             <button class="oe-btn"
                     disabled="@(PreviewPng is null)"
                     @onclick="DownloadPng">
-                🖼 Download Preview PNG
+                Download Preview PNG
             </button>
-        </div>
+        </aside>
     </div>
 
     <footer class="oe-footer">
@@ -174,6 +160,9 @@
 
     private const int LargeMapSizeThreshold = 240;
     private const int LargeMapZoneThreshold = 16;
+
+    private enum Section { Map, Heroes, Topology, Zones, WinConditions }
+    private Section ActiveSection { get; set; } = Section.Map;
 
     private GeneratorSettings Settings { get; set; } = new();
     private bool AdvancedMode { get; set; }
@@ -253,29 +242,9 @@
     private static string FormatVersion(Version v)
         => v.Build > 0 ? $"v{v.Major}.{v.Minor}.{v.Build}" : $"v{v.Major}.{v.Minor}";
 
-    private int MapSize
+    private void OnExperimentalToggled(bool value)
     {
-        get => Settings.MapSize;
-        set => Settings.MapSize = value;
-    }
-
-    private IEnumerable<int> AvailableMapSizes =>
-        ExperimentalMapSizes ? KnownValues.AllMapSizes : KnownValues.MapSizes;
-
-    private static string FormatMapSize(int size) =>
-        KnownValues.IsExperimentalMapSize(size)
-            ? $"{size}x{size} ({KnownValues.MapSizeLabel(size)}) (Experimental)"
-            : $"{size}x{size} ({KnownValues.MapSizeLabel(size)})";
-
-    private void OnTemplateNameInput(ChangeEventArgs e)
-    {
-        Settings.TemplateName = e.Value?.ToString() ?? "";
-        OnChanged();
-    }
-
-    private void OnExperimentalToggled(ChangeEventArgs e)
-    {
-        ExperimentalMapSizes = (bool)e.Value!;
+        ExperimentalMapSizes = value;
         if (!ExperimentalMapSizes && KnownValues.IsExperimentalMapSize(Settings.MapSize))
             Settings.MapSize = KnownValues.MaxOfficialMapSize;
         OnChanged();

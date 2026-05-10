@@ -1,15 +1,17 @@
 @* Reusable slider row: label / range input / value text.
    For int sliders set IsInt=true. *@
 
-<div class="oe-row @(WideLabel ? "wide-label" : null)">
+<div class="oe-row @(WideLabel ? "wide-label" : null) @(Disabled ? "disabled" : null)">
     <label class="oe-label">@Label</label>
     <input type="range"
            min="@Min.ToString(CultureInfo.InvariantCulture)"
            max="@Max.ToString(CultureInfo.InvariantCulture)"
            step="@Step.ToString(CultureInfo.InvariantCulture)"
            value="@Value.ToString(CultureInfo.InvariantCulture)"
+           style="--value-pct: @Pct.ToString(CultureInfo.InvariantCulture)%"
+           disabled="@Disabled"
            @oninput="OnInput" />
-    <span class="oe-value">@Display</span>
+    <span class="oe-slider-value">@Display</span>
 </div>
 
 @code {
@@ -23,6 +25,10 @@
     [Parameter] public string Suffix { get; set; } = "";
     [Parameter] public string DisplayFormat { get; set; } = "";
     [Parameter] public bool WideLabel { get; set; } = false;
+    [Parameter] public bool Disabled { get; set; } = false;
+
+    private double Pct =>
+        Max > Min ? Math.Round((Value - Min) / (Max - Min) * 100, 2) : 0;
 
     private string Display
     {

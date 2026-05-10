@@ -3,19 +3,21 @@
 
 <div class="oe-section">
     <div class="oe-section-header">
-        <span>◆ Zone Configuration</span>
+        <span>Zone Configuration</span>
         <label class="oe-check inline" style="margin:0;">
             <input type="checkbox" checked="@AdvancedMode" @onchange="OnAdvancedToggled" />
             <span class="oe-inline-toggle">Advanced settings</span>
         </label>
     </div>
 
-    @if (!AdvancedMode)
+    <SliderRow Label="Additional Neutral Zones" WideLabel="true"
+               Min="0" Max="30" Step="1"
+               Disabled="@AdvancedMode"
+               Value="Settings.ZoneCfg.NeutralZoneCount"
+               ValueChanged="@(v => { Settings.ZoneCfg.NeutralZoneCount = (int)v; NotifyChanged(); })" />
+    @if (AdvancedMode)
     {
-        <SliderRow Label="Additional Neutral Zones" WideLabel="true"
-                   Min="0" Max="30" Step="1"
-                   Value="Settings.ZoneCfg.NeutralZoneCount"
-                   ValueChanged="@(v => { Settings.ZoneCfg.NeutralZoneCount = (int)v; NotifyChanged(); })" />
+        <div class="oe-row-hint">Set per-tier counts below.</div>
     }
 
     <SliderRow Label="Castles / Player Zone" WideLabel="true"

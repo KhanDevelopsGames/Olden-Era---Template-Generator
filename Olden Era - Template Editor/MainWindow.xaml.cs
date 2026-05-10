@@ -46,6 +46,84 @@ namespace Olden_Era___Template_Editor
         {
             InitializeComponent();
 
+            // Re-wire events for controls now hosted in MapPanel UserControl.
+            PnlMap.CmbMapSize.SelectionChanged += CmbMapSize_SelectionChanged;
+            PnlMap.ChkExperimentalMapSizes.Checked += ChkExperimentalMapSizes_Changed;
+            PnlMap.ChkExperimentalMapSizes.Unchecked += ChkExperimentalMapSizes_Changed;
+            PnlMap.SldPlayers.ValueChanged += Slider_ValueChanged;
+
+            // Re-wire events for controls now hosted in HeroesPanel UserControl.
+            PnlHeroes.SldHeroMin.ValueChanged += Slider_ValueChanged;
+            PnlHeroes.SldHeroMax.ValueChanged += Slider_ValueChanged;
+            PnlHeroes.SldHeroIncrement.ValueChanged += Slider_ValueChanged;
+
+            // Re-wire events for controls now hosted in TopologyPanel UserControl.
+            PnlTopology.CmbTopology.SelectionChanged += CmbTopology_SelectionChanged;
+            PnlTopology.SldHubZoneSize.ValueChanged += Slider_ValueChanged;
+            PnlTopology.SldHubCastles.ValueChanged += Slider_ValueChanged;
+
+            // Zones panel — slider events.
+            PnlZones.SldNeutral.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldPlayerCastles.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralCastles.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldResourceDensity.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldStructureDensity.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralStackStrength.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldBorderGuardStrength.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldPlayerZoneSize.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralZoneSize.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldGuardRandomization.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralLowNoCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralLowCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralMediumNoCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralMediumCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralHighNoCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralHighCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldMinNeutralBetweenPlayers.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldMaxPortals.ValueChanged += SldMaxPortals_ValueChanged;
+
+            // Zones panel — checkbox events.
+            PnlZones.ChkAdvancedZoneSettings.Checked   += BtnAdvancedZoneSettings_Click;
+            PnlZones.ChkAdvancedZoneSettings.Unchecked += BtnAdvancedZoneSettings_Click;
+            PnlZones.ChkMatchPlayerCastleFactions.Checked   += ChkOption_Changed;
+            PnlZones.ChkMatchPlayerCastleFactions.Unchecked += ChkOption_Changed;
+            PnlZones.ChkGenerateRoads.Checked   += ChkOption_Changed;
+            PnlZones.ChkGenerateRoads.Unchecked += ChkOption_Changed;
+            PnlZones.ChkSpawnFootholds.Checked   += ChkOption_Changed;
+            PnlZones.ChkSpawnFootholds.Unchecked += ChkOption_Changed;
+            PnlZones.ChkBalancedZonePlacement.Checked   += ChkOption_Changed;
+            PnlZones.ChkBalancedZonePlacement.Unchecked += ChkOption_Changed;
+            PnlZones.ChkNoDirectPlayerConn.Checked   += ChkOption_Changed;
+            PnlZones.ChkNoDirectPlayerConn.Unchecked += ChkOption_Changed;
+            PnlZones.ChkRandomPortals.Checked   += ChkRandomPortals_Changed;
+            PnlZones.ChkRandomPortals.Unchecked += ChkRandomPortals_Changed;
+
+            // Game Rules panel — combo + slider events.
+            PnlGameRules.CmbVictory.SelectionChanged += CmbVictory_SelectionChanged;
+            PnlGameRules.SldFactionLawsExp.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldAstrologyExp.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldLostStartCityDay.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldCityHoldDays.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldGladiatorDelay.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldGladiatorCountDay.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldTournamentPointsToWin.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldTournamentFirstTournamentDay.ValueChanged += Slider_ValueChanged;
+            PnlGameRules.SldTournamentInterval.ValueChanged += Slider_ValueChanged;
+
+            // Game Rules panel — checkbox events.
+            PnlGameRules.ChkLostStartCity.Checked   += WinConditionOption_Changed;
+            PnlGameRules.ChkLostStartCity.Unchecked += WinConditionOption_Changed;
+            PnlGameRules.ChkLostStartHero.Checked   += WinConditionOption_Changed;
+            PnlGameRules.ChkLostStartHero.Unchecked += WinConditionOption_Changed;
+            PnlGameRules.ChkCityHold.Checked   += WinConditionOption_Changed;
+            PnlGameRules.ChkCityHold.Unchecked += WinConditionOption_Changed;
+            PnlGameRules.ChkGladiatorArena.Checked   += WinConditionOption_Changed;
+            PnlGameRules.ChkGladiatorArena.Unchecked += WinConditionOption_Changed;
+            PnlGameRules.ChkTournament.Checked   += WinConditionOption_Changed;
+            PnlGameRules.ChkTournament.Unchecked += WinConditionOption_Changed;
+            PnlGameRules.ChkTournamentSaveArmy.Checked   += ChkOption_Changed;
+            PnlGameRules.ChkTournamentSaveArmy.Unchecked += ChkOption_Changed;
+
             // Clamp startup size to the available work area so the window never
             // overflows the screen at high-DPI scaling (e.g. 125 %, 150 %, 200 %).
             var area = SystemParameters.WorkArea;
@@ -62,10 +140,10 @@ namespace Olden_Era___Template_Editor
             CmbGameMode.ItemsSource = KnownValues.GameModes;
             CmbGameMode.SelectedIndex = 0;
             RefreshMapSizeOptions(160);
-            CmbVictory.ItemsSource = KnownValues.VictoryConditionLabels;
-            CmbVictory.SelectedIndex = 0; // Classic (win_condition_1)
-            CmbTopology.ItemsSource = TopologyOptions.Select(t => t.Label).ToList();
-            CmbTopology.SelectedIndex = 0; // Random is first
+            PnlGameRules.CmbVictory.ItemsSource = KnownValues.VictoryConditionLabels;
+            PnlGameRules.CmbVictory.SelectedIndex = 0; // Classic (win_condition_1)
+            PnlTopology.CmbTopology.ItemsSource = TopologyOptions.Select(t => t.Label).ToList();
+            PnlTopology.CmbTopology.SelectedIndex = 0; // Random is first
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
@@ -75,7 +153,7 @@ namespace Olden_Era___Template_Editor
             // Fire-and-forget background update check — never blocks the UI.
             _ = CheckForUpdateAsync(version);
 
-            TxtTemplateName.TextChanged += (_, _) => { MarkDirtyNameOnly(); Validate(); };
+            PnlMap.TxtTemplateName.TextChanged += (_, _) => { MarkDirtyNameOnly(); Validate(); };
             UpdateTitle();
             TxtWindowTitle.Text = Title;
         }
@@ -150,7 +228,7 @@ namespace Olden_Era___Template_Editor
             if (!IsInitialized) return;
             _isDirty = true;
             if (_generatedTemplate is not null)
-                _generatedTemplate.Name = TxtTemplateName.Text.Trim();
+                _generatedTemplate.Name = PnlMap.TxtTemplateName.Text.Trim();
             UpdateTitle();
         }
 
@@ -173,6 +251,20 @@ namespace Olden_Era___Template_Editor
                 : $"{_baseTitle}  —  {file}";
             Title = full;
             if (IsInitialized) TxtWindowTitle.Text = full;
+        }
+
+        private void LstNav_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (PnlMap is null || PnlHeroes is null || PnlTopology is null
+                || PnlZones is null || PnlGameRules is null) return;
+            if (LstNav.SelectedItem is not ListBoxItem item) return;
+
+            var tag = item.Tag as string;
+            PnlMap.Visibility        = tag == "Map"           ? Visibility.Visible : Visibility.Collapsed;
+            PnlHeroes.Visibility     = tag == "Heroes"        ? Visibility.Visible : Visibility.Collapsed;
+            PnlTopology.Visibility   = tag == "Topology"      ? Visibility.Visible : Visibility.Collapsed;
+            PnlZones.Visibility      = tag == "Zones"         ? Visibility.Visible : Visibility.Collapsed;
+            PnlGameRules.Visibility  = tag == "WinConditions" ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -229,38 +321,38 @@ namespace Olden_Era___Template_Editor
 
         private void UpdateValueLabels()
         {
-            TxtPlayers.Text = ((int)SldPlayers.Value).ToString();
-            TxtHeroMin.Text = ((int)SldHeroMin.Value).ToString();
-            TxtHeroMax.Text = ((int)SldHeroMax.Value).ToString();
-            TxtHeroIncrement.Text = ((int)SldHeroIncrement.Value).ToString();
-            TxtNeutral.Text = ((int)SldNeutral.Value).ToString();
-            TxtPlayerCastles.Text = ((int)SldPlayerCastles.Value).ToString();
-            TxtNeutralCastles.Text = ((int)SldNeutralCastles.Value).ToString();
-            TxtResourceDensity.Text = $"{(int)SldResourceDensity.Value}%";
-            TxtStructureDensity.Text = $"{(int)SldStructureDensity.Value}%";
-            TxtNeutralStackStrength.Text = $"{(int)SldNeutralStackStrength.Value}%";
-            TxtBorderGuardStrength.Text = $"{(int)SldBorderGuardStrength.Value}%";
-            TxtFactionLawsExp.Text = $"{(int)SldFactionLawsExp.Value}%";
-            TxtAstrologyExp.Text = $"{(int)SldAstrologyExp.Value}%";
-            TxtNeutralLowNoCastle.Text = ((int)SldNeutralLowNoCastle.Value).ToString();
-            TxtNeutralLowCastle.Text = ((int)SldNeutralLowCastle.Value).ToString();
-            TxtNeutralMediumNoCastle.Text = ((int)SldNeutralMediumNoCastle.Value).ToString();
-            TxtNeutralMediumCastle.Text = ((int)SldNeutralMediumCastle.Value).ToString();
-            TxtNeutralHighNoCastle.Text = ((int)SldNeutralHighNoCastle.Value).ToString();
-            TxtNeutralHighCastle.Text = ((int)SldNeutralHighCastle.Value).ToString();
-            TxtMinNeutralBetweenPlayers.Text = ((int)SldMinNeutralBetweenPlayers.Value).ToString();
-            TxtPlayerZoneSize.Text = $"{SldPlayerZoneSize.Value:F2}x";
-            TxtNeutralZoneSize.Text = $"{SldNeutralZoneSize.Value:F2}x";
-            TxtHubZoneSize.Text = $"{SldHubZoneSize.Value:F2}x";
-            TxtHubCastles.Text = ((int)SldHubCastles.Value).ToString();
-            TxtGuardRandomization.Text = $"{(int)SldGuardRandomization.Value}%";
-            TxtLostStartCityDay.Text = ((int)SldLostStartCityDay.Value).ToString();
-            TxtCityHoldDays.Text = ((int)SldCityHoldDays.Value).ToString();
-            TxtGladiatorDelay.Text = ((int)SldGladiatorDelay.Value).ToString();
-            TxtGladiatorCountDay.Text = ((int)SldGladiatorCountDay.Value).ToString();
-            TxtTournamentPointsToWin.Text = ((int)SldTournamentPointsToWin.Value).ToString();
-            TxtTournamentFirstTournamentDay.Text = ((int)SldTournamentFirstTournamentDay.Value).ToString();
-            TxtTournamentInterval.Text = ((int)SldTournamentInterval.Value).ToString();
+            PnlMap.TxtPlayers.Text = ((int)PnlMap.SldPlayers.Value).ToString();
+            PnlHeroes.TxtHeroMin.Text = ((int)PnlHeroes.SldHeroMin.Value).ToString();
+            PnlHeroes.TxtHeroMax.Text = ((int)PnlHeroes.SldHeroMax.Value).ToString();
+            PnlHeroes.TxtHeroIncrement.Text = ((int)PnlHeroes.SldHeroIncrement.Value).ToString();
+            PnlZones.TxtNeutral.Text = ((int)PnlZones.SldNeutral.Value).ToString();
+            PnlZones.TxtPlayerCastles.Text = ((int)PnlZones.SldPlayerCastles.Value).ToString();
+            PnlZones.TxtNeutralCastles.Text = ((int)PnlZones.SldNeutralCastles.Value).ToString();
+            PnlZones.TxtResourceDensity.Text = $"{(int)PnlZones.SldResourceDensity.Value}%";
+            PnlZones.TxtStructureDensity.Text = $"{(int)PnlZones.SldStructureDensity.Value}%";
+            PnlZones.TxtNeutralStackStrength.Text = $"{(int)PnlZones.SldNeutralStackStrength.Value}%";
+            PnlZones.TxtBorderGuardStrength.Text = $"{(int)PnlZones.SldBorderGuardStrength.Value}%";
+            PnlGameRules.TxtFactionLawsExp.Text = $"{(int)PnlGameRules.SldFactionLawsExp.Value}%";
+            PnlGameRules.TxtAstrologyExp.Text = $"{(int)PnlGameRules.SldAstrologyExp.Value}%";
+            PnlZones.TxtNeutralLowNoCastle.Text = ((int)PnlZones.SldNeutralLowNoCastle.Value).ToString();
+            PnlZones.TxtNeutralLowCastle.Text = ((int)PnlZones.SldNeutralLowCastle.Value).ToString();
+            PnlZones.TxtNeutralMediumNoCastle.Text = ((int)PnlZones.SldNeutralMediumNoCastle.Value).ToString();
+            PnlZones.TxtNeutralMediumCastle.Text = ((int)PnlZones.SldNeutralMediumCastle.Value).ToString();
+            PnlZones.TxtNeutralHighNoCastle.Text = ((int)PnlZones.SldNeutralHighNoCastle.Value).ToString();
+            PnlZones.TxtNeutralHighCastle.Text = ((int)PnlZones.SldNeutralHighCastle.Value).ToString();
+            PnlZones.TxtMinNeutralBetweenPlayers.Text = ((int)PnlZones.SldMinNeutralBetweenPlayers.Value).ToString();
+            PnlZones.TxtPlayerZoneSize.Text = $"{PnlZones.SldPlayerZoneSize.Value:F2}x";
+            PnlZones.TxtNeutralZoneSize.Text = $"{PnlZones.SldNeutralZoneSize.Value:F2}x";
+            PnlTopology.TxtHubZoneSize.Text = $"{PnlTopology.SldHubZoneSize.Value:F2}x";
+            PnlTopology.TxtHubCastles.Text = ((int)PnlTopology.SldHubCastles.Value).ToString();
+            PnlZones.TxtGuardRandomization.Text = $"{(int)PnlZones.SldGuardRandomization.Value}%";
+            PnlGameRules.TxtLostStartCityDay.Text = ((int)PnlGameRules.SldLostStartCityDay.Value).ToString();
+            PnlGameRules.TxtCityHoldDays.Text = ((int)PnlGameRules.SldCityHoldDays.Value).ToString();
+            PnlGameRules.TxtGladiatorDelay.Text = ((int)PnlGameRules.SldGladiatorDelay.Value).ToString();
+            PnlGameRules.TxtGladiatorCountDay.Text = ((int)PnlGameRules.SldGladiatorCountDay.Value).ToString();
+            PnlGameRules.TxtTournamentPointsToWin.Text = ((int)PnlGameRules.SldTournamentPointsToWin.Value).ToString();
+            PnlGameRules.TxtTournamentFirstTournamentDay.Text = ((int)PnlGameRules.SldTournamentFirstTournamentDay.Value).ToString();
+            PnlGameRules.TxtTournamentInterval.Text = ((int)PnlGameRules.SldTournamentInterval.Value).ToString();
         }
 
         private void SetValidationText(string text)
@@ -271,9 +363,9 @@ namespace Olden_Era___Template_Editor
 
         private bool Validate()
         {
-            int heroMin = (int)SldHeroMin.Value;
-            int heroMax = (int)SldHeroMax.Value;
-            int players = (int)SldPlayers.Value;
+            int heroMin = (int)PnlHeroes.SldHeroMin.Value;
+            int heroMax = (int)PnlHeroes.SldHeroMax.Value;
+            int players = (int)PnlMap.SldPlayers.Value;
             int neutral = TotalNeutralZonesFromUi();
 
             if (heroMin > heroMax)
@@ -291,7 +383,7 @@ namespace Olden_Era___Template_Editor
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(TxtTemplateName.Text))
+            if (string.IsNullOrWhiteSpace(PnlMap.TxtTemplateName.Text))
             {
                 SetValidationText("Template name cannot be empty.");
                 BtnPreview.IsEnabled = false;
@@ -300,12 +392,12 @@ namespace Olden_Era___Template_Editor
 
             var warnings = new System.Collections.Generic.List<string>();
 
-            if (TxtTemplateName.Text.Trim().Equals("Custom Template", StringComparison.OrdinalIgnoreCase))
+            if (PnlMap.TxtTemplateName.Text.Trim().Equals("Custom Template", StringComparison.OrdinalIgnoreCase))
                 warnings.Add("⚠️ The template is still using the default name \"Custom Template\". Consider renaming it before saving.");
 
             int selectedMapSize = SelectedMapSize();
             int totalZones = players + neutral;
-            var selectedTopology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default;
+            var selectedTopology = PnlTopology.CmbTopology.SelectedIndex >= 0 ? TopologyOptions[PnlTopology.CmbTopology.SelectedIndex].Topology : MapTopology.Default;
             // Hub layout has an extra central zone that also occupies map area.
             int totalZonesIncludingHub = selectedTopology == MapTopology.HubAndSpoke ? totalZones + 1 : totalZones;
             if (totalZonesIncludingHub > 0 && (selectedMapSize * selectedMapSize) / totalZonesIncludingHub < 1024)
@@ -316,20 +408,20 @@ namespace Olden_Era___Template_Editor
 
             if (totalZones > 10)
             {
-                int playerCastles = (int)SldPlayerCastles.Value;
-                int neutralCastles = _advancedZoneSettings ? 0 : (int)SldNeutralCastles.Value;
+                int playerCastles = (int)PnlZones.SldPlayerCastles.Value;
+                int neutralCastles = _advancedZoneSettings ? 0 : (int)PnlZones.SldNeutralCastles.Value;
                 if (playerCastles > 1 || neutralCastles > 1)
                     warnings.Add("⚠️ Using more than 1 castle per zone with more than 10 total zones may cause the game to freeze when generating the map. Consider reducing the number of castles.");
             }
 
-            int minNeutralBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value;
+            int minNeutralBetweenPlayers = (int)PnlZones.SldMinNeutralBetweenPlayers.Value;
             if (_advancedZoneSettings && minNeutralBetweenPlayers > 0)
             {
                 var separationSettings = new GeneratorSettings
                 {
                     PlayerCount = players,
                     Topology = selectedTopology,
-                    RandomPortals = ChkRandomPortals.IsChecked == true,
+                    RandomPortals = PnlZones.ChkRandomPortals.IsChecked == true,
                     MinNeutralZonesBetweenPlayers = minNeutralBetweenPlayers
                 };
 
@@ -337,7 +429,7 @@ namespace Olden_Era___Template_Editor
                     warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
             }
 
-            bool cityHoldActive = ChkCityHold.IsChecked == true;
+            bool cityHoldActive = PnlGameRules.ChkCityHold.IsChecked == true;
             if (cityHoldActive)
             {
                 if (selectedTopology != MapTopology.HubAndSpoke && neutral == 0)
@@ -348,15 +440,15 @@ namespace Olden_Era___Template_Editor
                 }
             }
 
-            if (ChkNoDirectPlayerConn.IsChecked == true && neutral == 0)
+            if (PnlZones.ChkNoDirectPlayerConn.IsChecked == true && neutral == 0)
             {
                 SetValidationText("\"Connect via neutral zones only\" requires at least one neutral zone. Add a neutral zone or disable this option.");
                 BtnPreview.IsEnabled = false;
                 return false;
             }
 
-            string selectedVictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
-                ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+            string selectedVictoryCondition = PnlGameRules.CmbVictory.SelectedIndex >= 0 && PnlGameRules.CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
+                ? KnownValues.VictoryConditionIds[PnlGameRules.CmbVictory.SelectedIndex]
                 : "win_condition_1";
             if (selectedVictoryCondition == "win_condition_6" && players != 2)
             {
@@ -374,18 +466,18 @@ namespace Olden_Era___Template_Editor
         private int TotalNeutralZonesFromUi()
         {
             if (!_advancedZoneSettings)
-                return (int)SldNeutral.Value;
+                return (int)PnlZones.SldNeutral.Value;
 
-            return (int)SldNeutralLowNoCastle.Value
-                + (int)SldNeutralLowCastle.Value
-                + (int)SldNeutralMediumNoCastle.Value
-                + (int)SldNeutralMediumCastle.Value
-                + (int)SldNeutralHighNoCastle.Value
-                + (int)SldNeutralHighCastle.Value;
+            return (int)PnlZones.SldNeutralLowNoCastle.Value
+                + (int)PnlZones.SldNeutralLowCastle.Value
+                + (int)PnlZones.SldNeutralMediumNoCastle.Value
+                + (int)PnlZones.SldNeutralMediumCastle.Value
+                + (int)PnlZones.SldNeutralHighNoCastle.Value
+                + (int)PnlZones.SldNeutralHighCastle.Value;
         }
 
         private int SelectedMapSize() =>
-            CmbMapSize.SelectedItem is string sizeStr && int.TryParse(sizeStr.Split('x')[0], out int parsedSize)
+            PnlMap.CmbMapSize.SelectedItem is string sizeStr && int.TryParse(sizeStr.Split('x')[0], out int parsedSize)
                 ? parsedSize
                 : 160;
 
@@ -404,10 +496,10 @@ namespace Olden_Era___Template_Editor
 
         private void RefreshMapSizeOptions(int? requestedSize = null)
         {
-            if (CmbMapSize == null) return;
+            if (PnlMap.CmbMapSize == null) return;
 
             int selectedSize = requestedSize ?? SelectedMapSize();
-            bool includeExperimental = ChkExperimentalMapSizes?.IsChecked == true;
+            bool includeExperimental = PnlMap.ChkExperimentalMapSizes?.IsChecked == true;
             int[] sizes = includeExperimental ? KnownValues.AllMapSizes : KnownValues.MapSizes;
 
             if (!includeExperimental && KnownValues.IsExperimentalMapSize(selectedSize))
@@ -418,10 +510,10 @@ namespace Olden_Era___Template_Editor
             _isRefreshingMapSizes = true;
             try
             {
-                CmbMapSize.ItemsSource = sizes.Select(FormatMapSize).ToList();
-                CmbMapSize.SelectedItem = FormatMapSize(selectedSize);
-                if (CmbMapSize.SelectedIndex < 0)
-                    CmbMapSize.SelectedItem = FormatMapSize(160);
+                PnlMap.CmbMapSize.ItemsSource = sizes.Select(FormatMapSize).ToList();
+                PnlMap.CmbMapSize.SelectedItem = FormatMapSize(selectedSize);
+                if (PnlMap.CmbMapSize.SelectedIndex < 0)
+                    PnlMap.CmbMapSize.SelectedItem = FormatMapSize(160);
             }
             finally
             {
@@ -434,19 +526,19 @@ namespace Olden_Era___Template_Editor
         private void CmbTopology_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsInitialized) return;
-            int idx = CmbTopology.SelectedIndex;
+            int idx = PnlTopology.CmbTopology.SelectedIndex;
             if (idx >= 0 && idx < TopologyOptions.Length)
-                TxtTopologyDesc.Text = TopologyOptions[idx].Description;
+                PnlTopology.TxtTopologyDesc.Text = TopologyOptions[idx].Description;
 
             // Isolate option is only meaningful for Random and Chain topologies.
             var topo = idx >= 0 && idx < TopologyOptions.Length ? TopologyOptions[idx].Topology : MapTopology.Default;
             bool isolateApplicable = topo is MapTopology.Random;
-            ChkNoDirectPlayerConn.Visibility = isolateApplicable ? Visibility.Visible : Visibility.Collapsed;
-            if (!isolateApplicable) ChkNoDirectPlayerConn.IsChecked = false;
+            PnlZones.ChkNoDirectPlayerConn.Visibility = isolateApplicable ? Visibility.Visible : Visibility.Collapsed;
+            if (!isolateApplicable) PnlZones.ChkNoDirectPlayerConn.IsChecked = false;
             UpdateIsolateDescVisibility();
             UpdateAdvancedZoneSettingsVisibility();
-            PnlHubZoneSize.Visibility = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
-            PnlHubCastles.Visibility  = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
+            PnlTopology.PnlHubZoneSize.Visibility = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
+            PnlTopology.PnlHubCastles.Visibility  = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
 
             MarkDirty();
             Validate();
@@ -475,7 +567,7 @@ namespace Olden_Era___Template_Editor
         private void ChkRandomPortals_Changed(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
-            PnlMaxPortals.Visibility = ChkRandomPortals.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            PnlZones.PnlMaxPortals.Visibility = PnlZones.ChkRandomPortals.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
             MarkDirty();
             Validate();
         }
@@ -483,7 +575,7 @@ namespace Olden_Era___Template_Editor
         private void SldMaxPortals_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (!IsInitialized) return;
-            LblMaxPortals.Text = ((int)SldMaxPortals.Value).ToString();
+            PnlZones.LblMaxPortals.Text = ((int)PnlZones.SldMaxPortals.Value).ToString();
             MarkDirty();
         }
 
@@ -500,13 +592,13 @@ namespace Olden_Era___Template_Editor
         private void BtnAdvancedZoneSettings_Click(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
-            _advancedZoneSettings = ChkAdvancedZoneSettings.IsChecked == true;
-            if (_advancedZoneSettings && TotalAdvancedNeutralZonesFromSliders() == 0 && (int)SldNeutral.Value > 0)
+            _advancedZoneSettings = PnlZones.ChkAdvancedZoneSettings.IsChecked == true;
+            if (_advancedZoneSettings && TotalAdvancedNeutralZonesFromSliders() == 0 && (int)PnlZones.SldNeutral.Value > 0)
             {
-                if ((int)SldNeutralCastles.Value > 0)
-                    SldNeutralMediumCastle.Value = SldNeutral.Value;
+                if ((int)PnlZones.SldNeutralCastles.Value > 0)
+                    PnlZones.SldNeutralMediumCastle.Value = PnlZones.SldNeutral.Value;
                 else
-                    SldNeutralMediumNoCastle.Value = SldNeutral.Value;
+                    PnlZones.SldNeutralMediumNoCastle.Value = PnlZones.SldNeutral.Value;
             }
 
             UpdateAdvancedZoneSettingsVisibility();
@@ -525,30 +617,33 @@ namespace Olden_Era___Template_Editor
         }
 
         private int TotalAdvancedNeutralZonesFromSliders() =>
-            (int)SldNeutralLowNoCastle.Value
-            + (int)SldNeutralLowCastle.Value
-            + (int)SldNeutralMediumNoCastle.Value
-            + (int)SldNeutralMediumCastle.Value
-            + (int)SldNeutralHighNoCastle.Value
-            + (int)SldNeutralHighCastle.Value;
+            (int)PnlZones.SldNeutralLowNoCastle.Value
+            + (int)PnlZones.SldNeutralLowCastle.Value
+            + (int)PnlZones.SldNeutralMediumNoCastle.Value
+            + (int)PnlZones.SldNeutralMediumCastle.Value
+            + (int)PnlZones.SldNeutralHighNoCastle.Value
+            + (int)PnlZones.SldNeutralHighCastle.Value;
 
         private void UpdateAdvancedZoneSettingsVisibility()
         {
-            if (PnlAdvancedNeutralZones == null) return;
+            if (PnlZones.PnlAdvancedNeutralZones == null) return;
             bool advanced = _advancedZoneSettings;
-            PnlAdvancedNeutralZones.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
-            PnlAdvancedZoneSizes.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
-            PnlSimpleNeutralCountLabel.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
-            SldNeutral.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
-            if (ChkAdvancedZoneSettings != null)
-                ChkAdvancedZoneSettings.IsChecked = advanced;
+            PnlZones.PnlAdvancedNeutralZones.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+            PnlZones.PnlAdvancedZoneSizes.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+            // Mirror web UX: keep the simple neutral-zones slider visible but
+            // disabled in advanced mode rather than hiding it. Avoids the
+            // "controls disappeared" feeling when toggling the Advanced switch.
+            PnlZones.SldNeutral.IsEnabled = !advanced;
+            PnlZones.PnlSimpleNeutralCountLabel.IsEnabled = !advanced;
+            if (PnlZones.ChkAdvancedZoneSettings != null)
+                PnlZones.ChkAdvancedZoneSettings.IsChecked = advanced;
         }
 
         private void CmbVictory_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsInitialized) return;
 
-            int idx = CmbVictory.SelectedIndex;
+            int idx = PnlGameRules.CmbVictory.SelectedIndex;
             if (idx >= 0 && idx < KnownValues.VictoryConditionIds.Length)
                 ApplyVictoryPreset(KnownValues.VictoryConditionIds[idx]);
 
@@ -559,49 +654,49 @@ namespace Olden_Era___Template_Editor
 
         private void ApplyVictoryPreset(string victoryCondition)
         {
-            ChkLostStartCity.IsChecked = false;
-            ChkLostStartHero.IsChecked = false;
-            ChkCityHold.IsChecked = false;
-            ChkGladiatorArena.IsChecked = false;
-            ChkTournament.IsChecked = false;
+            PnlGameRules.ChkLostStartCity.IsChecked = false;
+            PnlGameRules.ChkLostStartHero.IsChecked = false;
+            PnlGameRules.ChkCityHold.IsChecked = false;
+            PnlGameRules.ChkGladiatorArena.IsChecked = false;
+            PnlGameRules.ChkTournament.IsChecked = false;
 
-            SldLostStartCityDay.Value = 3;
-            SldCityHoldDays.Value = 6;
-            SldGladiatorDelay.Value = 30;
-            SldGladiatorCountDay.Value = 3;
+            PnlGameRules.SldLostStartCityDay.Value = 3;
+            PnlGameRules.SldCityHoldDays.Value = 6;
+            PnlGameRules.SldGladiatorDelay.Value = 30;
+            PnlGameRules.SldGladiatorCountDay.Value = 3;
 
-            SldTournamentPointsToWin.Value = 2;
-            SldTournamentInterval.Value = 7;
-            SldTournamentFirstTournamentDay.Value = 14;
-            ChkTournamentSaveArmy.IsChecked = true;
+            PnlGameRules.SldTournamentPointsToWin.Value = 2;
+            PnlGameRules.SldTournamentInterval.Value = 7;
+            PnlGameRules.SldTournamentFirstTournamentDay.Value = 14;
+            PnlGameRules.ChkTournamentSaveArmy.IsChecked = true;
 
             switch (victoryCondition)
             {
                 case "win_condition_3":
-                    ChkLostStartCity.IsChecked = true;
+                    PnlGameRules.ChkLostStartCity.IsChecked = true;
                     break;
                 case "win_condition_4":
-                    ChkLostStartHero.IsChecked = true;
-                    ChkGladiatorArena.IsChecked = true;
+                    PnlGameRules.ChkLostStartHero.IsChecked = true;
+                    PnlGameRules.ChkGladiatorArena.IsChecked = true;
                     break;
                 case "win_condition_5":
-                    ChkCityHold.IsChecked = true;
+                    PnlGameRules.ChkCityHold.IsChecked = true;
                     break;
                 case "win_condition_6":
-                    ChkLostStartHero.IsChecked = true;
-                    ChkTournament.IsChecked = true;
-                    SldGladiatorDelay.Value = 21;
-                    SldGladiatorCountDay.Value = 8;
+                    PnlGameRules.ChkLostStartHero.IsChecked = true;
+                    PnlGameRules.ChkTournament.IsChecked = true;
+                    PnlGameRules.SldGladiatorDelay.Value = 21;
+                    PnlGameRules.SldGladiatorCountDay.Value = 8;
                     break;
             }
         }
 
         private void UpdateWinConditionDetailVisibility()
         {
-            if (PnlLostStartCityDetails == null) return;
+            if (PnlGameRules.PnlLostStartCityDetails == null) return;
 
-            string selectedVictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
-                ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+            string selectedVictoryCondition = PnlGameRules.CmbVictory.SelectedIndex >= 0 && PnlGameRules.CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
+                ? KnownValues.VictoryConditionIds[PnlGameRules.CmbVictory.SelectedIndex]
                 : "win_condition_1";
 
             bool isTournament = selectedVictoryCondition == "win_condition_6";
@@ -609,76 +704,76 @@ namespace Olden_Era___Template_Editor
             if (isTournament)
             {
                 // Tournament is exclusive — force it on and disable all other conditions.
-                ChkTournament.IsChecked = true;
-                ChkLostStartCity.IsChecked = false;
-                ChkLostStartHero.IsChecked = false;
-                ChkCityHold.IsChecked = false;
-                ChkGladiatorArena.IsChecked = false;
+                PnlGameRules.ChkTournament.IsChecked = true;
+                PnlGameRules.ChkLostStartCity.IsChecked = false;
+                PnlGameRules.ChkLostStartHero.IsChecked = false;
+                PnlGameRules.ChkCityHold.IsChecked = false;
+                PnlGameRules.ChkGladiatorArena.IsChecked = false;
             }
             else
             {
                 // Tournament is unavailable outside of the Tournament win condition.
-                ChkTournament.IsChecked = false;
+                PnlGameRules.ChkTournament.IsChecked = false;
                 if (selectedVictoryCondition == "win_condition_3")
-                    ChkLostStartCity.IsChecked = true;
+                    PnlGameRules.ChkLostStartCity.IsChecked = true;
                 if (selectedVictoryCondition == "win_condition_4")
                 {
-                    ChkLostStartHero.IsChecked = true;
-                    ChkGladiatorArena.IsChecked = true;
+                    PnlGameRules.ChkLostStartHero.IsChecked = true;
+                    PnlGameRules.ChkGladiatorArena.IsChecked = true;
                 }
                 if (selectedVictoryCondition == "win_condition_5")
-                    ChkCityHold.IsChecked = true;
+                    PnlGameRules.ChkCityHold.IsChecked = true;
             }
 
-            ChkLostStartCity.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_3";
-            ChkLostStartHero.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
-            ChkCityHold.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_5";
-            ChkGladiatorArena.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
-            ChkTournament.IsChecked = isTournament;
-            ChkTournament.IsEnabled = isTournament;
+            PnlGameRules.ChkLostStartCity.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_3";
+            PnlGameRules.ChkLostStartHero.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
+            PnlGameRules.ChkCityHold.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_5";
+            PnlGameRules.ChkGladiatorArena.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
+            PnlGameRules.ChkTournament.IsChecked = isTournament;
+            PnlGameRules.ChkTournament.IsEnabled = isTournament;
 
-            PnlLostStartCityDetails.Visibility = ChkLostStartCity.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            PnlCityHoldDetails.Visibility = ChkCityHold.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            PnlGladiatorDetails.Visibility = ChkGladiatorArena.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
-            PnlTournamentDetails.Visibility = isTournament ? Visibility.Visible : Visibility.Collapsed;
+            PnlGameRules.PnlLostStartCityDetails.Visibility = PnlGameRules.ChkLostStartCity.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            PnlGameRules.PnlCityHoldDetails.Visibility = PnlGameRules.ChkCityHold.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            PnlGameRules.PnlGladiatorDetails.Visibility = PnlGameRules.ChkGladiatorArena.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            PnlGameRules.PnlTournamentDetails.Visibility = isTournament ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateExperimentalMapSizeWarningVisibility()
         {
-            if (TxtExperimentalMapSizeWarning == null) return;
-            bool includeExperimental = ChkExperimentalMapSizes?.IsChecked == true;
-            TxtExperimentalMapSizeWarning.Visibility = includeExperimental ? Visibility.Visible : Visibility.Collapsed;
+            if (PnlMap.TxtExperimentalMapSizeWarning == null) return;
+            bool includeExperimental = PnlMap.ChkExperimentalMapSizes?.IsChecked == true;
+            PnlMap.TxtExperimentalMapSizeWarning.Visibility = includeExperimental ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdatePlayerCastleFactionVisibility()
         {
-            if (PnlPlayerCastleFactionOption == null || SldPlayerCastles == null) return;
-            bool hasExtraCastles = (int)SldPlayerCastles.Value > 1;
-            PnlPlayerCastleFactionOption.Visibility = hasExtraCastles ? Visibility.Visible : Visibility.Collapsed;
+            if (PnlZones.PnlPlayerCastleFactionOption == null || PnlZones.SldPlayerCastles == null) return;
+            bool hasExtraCastles = (int)PnlZones.SldPlayerCastles.Value > 1;
+            PnlZones.PnlPlayerCastleFactionOption.Visibility = hasExtraCastles ? Visibility.Visible : Visibility.Collapsed;
             if (!hasExtraCastles)
-                ChkMatchPlayerCastleFactions.IsChecked = false;
+                PnlZones.ChkMatchPlayerCastleFactions.IsChecked = false;
         }
 
         private void UpdateIsolateDescVisibility()
         {
-            if (TxtIsolateDesc == null || ChkNoDirectPlayerConn == null) return;
-            TxtIsolateDesc.Visibility = ChkNoDirectPlayerConn.IsChecked == true && ChkNoDirectPlayerConn.Visibility == Visibility.Visible
+            if (PnlZones.TxtIsolateDesc == null || PnlZones.ChkNoDirectPlayerConn == null) return;
+            PnlZones.TxtIsolateDesc.Visibility = PnlZones.ChkNoDirectPlayerConn.IsChecked == true && PnlZones.ChkNoDirectPlayerConn.Visibility == Visibility.Visible
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
 
         private void UpdateRoadsHintVisibility()
         {
-            if (TxtRoadsHint == null || ChkGenerateRoads == null || SldNeutralCastles == null) return;
-            TxtRoadsHint.Visibility = ChkGenerateRoads.IsChecked == true && (int)SldNeutralCastles.Value == 0
+            if (PnlZones.TxtRoadsHint == null || PnlZones.ChkGenerateRoads == null || PnlZones.SldNeutralCastles == null) return;
+            PnlZones.TxtRoadsHint.Visibility = PnlZones.ChkGenerateRoads.IsChecked == true && (int)PnlZones.SldNeutralCastles.Value == 0
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
 
         private void UpdateBalancedZonePlacementDescVisibility()
         {
-            if (TxtBalancedZonePlacementDesc == null || ChkBalancedZonePlacement == null) return;
-            TxtBalancedZonePlacementDesc.Visibility = ChkBalancedZonePlacement.IsChecked == true
+            if (PnlZones.TxtBalancedZonePlacementDesc == null || PnlZones.ChkBalancedZonePlacement == null) return;
+            PnlZones.TxtBalancedZonePlacementDesc.Visibility = PnlZones.ChkBalancedZonePlacement.IsChecked == true
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
@@ -687,118 +782,118 @@ namespace Olden_Era___Template_Editor
 
         private SettingsFile GatherSettings() => new()
         {
-            TemplateName          = TxtTemplateName.Text.Trim(),
+            TemplateName          = PnlMap.TxtTemplateName.Text.Trim(),
             MapSize               = SelectedMapSize(),
-            PlayerCount           = (int)SldPlayers.Value,
-            NeutralZoneCount      = (int)SldNeutral.Value,
-            PlayerZoneCastles     = (int)SldPlayerCastles.Value,
-            NeutralZoneCastles    = (int)SldNeutralCastles.Value,
+            PlayerCount           = (int)PnlMap.SldPlayers.Value,
+            NeutralZoneCount      = (int)PnlZones.SldNeutral.Value,
+            PlayerZoneCastles     = (int)PnlZones.SldPlayerCastles.Value,
+            NeutralZoneCastles    = (int)PnlZones.SldNeutralCastles.Value,
             AdvancedMode          = _advancedZoneSettings,
-            NeutralLowNoCastleCount = (int)SldNeutralLowNoCastle.Value,
-            NeutralLowCastleCount = (int)SldNeutralLowCastle.Value,
-            NeutralMediumNoCastleCount = (int)SldNeutralMediumNoCastle.Value,
-            NeutralMediumCastleCount = (int)SldNeutralMediumCastle.Value,
-            NeutralHighNoCastleCount = (int)SldNeutralHighNoCastle.Value,
-            NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
-            MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
-            MinNeutralZonesBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value,
-            ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
-            ExperimentalMapSizes  = ChkExperimentalMapSizes.IsChecked == true,
-            PlayerZoneSize        = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
-            NeutralZoneSize       = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
-            HubZoneSize           = SldHubZoneSize.Value,
-            HubZoneCastles        = (int)SldHubCastles.Value,
-            GuardRandomization    = SldGuardRandomization.Value / 100.0,
-            HeroCountMin          = (int)SldHeroMin.Value,
-            HeroCountMax          = (int)SldHeroMax.Value,
-            HeroCountIncrement    = (int)SldHeroIncrement.Value,
-            Topology              = TopologyOptions[CmbTopology.SelectedIndex].Topology,
-            RandomPortals         = ChkRandomPortals.IsChecked == true,
-            MaxPortalConnections  = (int)SldMaxPortals.Value,
-            SpawnRemoteFootholds  = ChkSpawnFootholds.IsChecked == true,
-            GenerateRoads         = ChkGenerateRoads.IsChecked == true,
-            NoDirectPlayerConn    = ChkNoDirectPlayerConn.IsChecked == true,
-            ResourceDensityPercent = (int)SldResourceDensity.Value,
-            StructureDensityPercent = (int)SldStructureDensity.Value,
-            NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
-            BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
-            VictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
-                ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+            NeutralLowNoCastleCount = (int)PnlZones.SldNeutralLowNoCastle.Value,
+            NeutralLowCastleCount = (int)PnlZones.SldNeutralLowCastle.Value,
+            NeutralMediumNoCastleCount = (int)PnlZones.SldNeutralMediumNoCastle.Value,
+            NeutralMediumCastleCount = (int)PnlZones.SldNeutralMediumCastle.Value,
+            NeutralHighNoCastleCount = (int)PnlZones.SldNeutralHighNoCastle.Value,
+            NeutralHighCastleCount = (int)PnlZones.SldNeutralHighCastle.Value,
+            MatchPlayerCastleFactions = PnlZones.ChkMatchPlayerCastleFactions.IsChecked == true,
+            MinNeutralZonesBetweenPlayers = (int)PnlZones.SldMinNeutralBetweenPlayers.Value,
+            ExperimentalBalancedZonePlacement = PnlZones.ChkBalancedZonePlacement.IsChecked == true,
+            ExperimentalMapSizes  = PnlMap.ChkExperimentalMapSizes.IsChecked == true,
+            PlayerZoneSize        = _advancedZoneSettings ? PnlZones.SldPlayerZoneSize.Value : 1.0,
+            NeutralZoneSize       = _advancedZoneSettings ? PnlZones.SldNeutralZoneSize.Value : 1.0,
+            HubZoneSize           = PnlTopology.SldHubZoneSize.Value,
+            HubZoneCastles        = (int)PnlTopology.SldHubCastles.Value,
+            GuardRandomization    = PnlZones.SldGuardRandomization.Value / 100.0,
+            HeroCountMin          = (int)PnlHeroes.SldHeroMin.Value,
+            HeroCountMax          = (int)PnlHeroes.SldHeroMax.Value,
+            HeroCountIncrement    = (int)PnlHeroes.SldHeroIncrement.Value,
+            Topology              = TopologyOptions[PnlTopology.CmbTopology.SelectedIndex].Topology,
+            RandomPortals         = PnlZones.ChkRandomPortals.IsChecked == true,
+            MaxPortalConnections  = (int)PnlZones.SldMaxPortals.Value,
+            SpawnRemoteFootholds  = PnlZones.ChkSpawnFootholds.IsChecked == true,
+            GenerateRoads         = PnlZones.ChkGenerateRoads.IsChecked == true,
+            NoDirectPlayerConn    = PnlZones.ChkNoDirectPlayerConn.IsChecked == true,
+            ResourceDensityPercent = (int)PnlZones.SldResourceDensity.Value,
+            StructureDensityPercent = (int)PnlZones.SldStructureDensity.Value,
+            NeutralStackStrengthPercent = (int)PnlZones.SldNeutralStackStrength.Value,
+            BorderGuardStrengthPercent = (int)PnlZones.SldBorderGuardStrength.Value,
+            VictoryCondition = PnlGameRules.CmbVictory.SelectedIndex >= 0 && PnlGameRules.CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
+                ? KnownValues.VictoryConditionIds[PnlGameRules.CmbVictory.SelectedIndex]
                 : "win_condition_1",
-            FactionLawsExpPercent = (int)SldFactionLawsExp.Value,
-            AstrologyExpPercent   = (int)SldAstrologyExp.Value,
-            LostStartCity         = ChkLostStartCity.IsChecked == true,
-            LostStartCityDay = (int)SldLostStartCityDay.Value,
-            LostStartHero         = ChkLostStartHero.IsChecked == true,
-            CityHold              = ChkCityHold.IsChecked == true,
-            CityHoldDays = (int)SldCityHoldDays.Value,
-            GladiatorArena               = ChkGladiatorArena.IsChecked == true,
-            GladiatorArenaDaysDelayStart = (int)SldGladiatorDelay.Value,
-            GladiatorArenaCountDay       = (int)SldGladiatorCountDay.Value,
-            Tournament                   = ChkTournament.IsChecked == true,
-            TournamentFirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
-            TournamentInterval = (int)SldTournamentInterval.Value,
-            TournamentPointsToWin = (int)SldTournamentPointsToWin.Value,
+            FactionLawsExpPercent = (int)PnlGameRules.SldFactionLawsExp.Value,
+            AstrologyExpPercent   = (int)PnlGameRules.SldAstrologyExp.Value,
+            LostStartCity         = PnlGameRules.ChkLostStartCity.IsChecked == true,
+            LostStartCityDay = (int)PnlGameRules.SldLostStartCityDay.Value,
+            LostStartHero         = PnlGameRules.ChkLostStartHero.IsChecked == true,
+            CityHold              = PnlGameRules.ChkCityHold.IsChecked == true,
+            CityHoldDays = (int)PnlGameRules.SldCityHoldDays.Value,
+            GladiatorArena               = PnlGameRules.ChkGladiatorArena.IsChecked == true,
+            GladiatorArenaDaysDelayStart = (int)PnlGameRules.SldGladiatorDelay.Value,
+            GladiatorArenaCountDay       = (int)PnlGameRules.SldGladiatorCountDay.Value,
+            Tournament                   = PnlGameRules.ChkTournament.IsChecked == true,
+            TournamentFirstTournamentDay = (int)PnlGameRules.SldTournamentFirstTournamentDay.Value,
+            TournamentInterval = (int)PnlGameRules.SldTournamentInterval.Value,
+            TournamentPointsToWin = (int)PnlGameRules.SldTournamentPointsToWin.Value,
         };
 
         private void ApplySettings(SettingsFile s)
         {
-            TxtTemplateName.Text    = s.TemplateName;
+            PnlMap.TxtTemplateName.Text    = s.TemplateName;
             bool hasCustomZoneSizes = Math.Abs(s.PlayerZoneSize - 1.0) > 0.0001 || Math.Abs(s.NeutralZoneSize - 1.0) > 0.0001;
             bool needsExperimentalMapSizes = s.ExperimentalMapSizes || KnownValues.IsExperimentalMapSize(s.MapSize);
             _advancedZoneSettings = s.AdvancedMode || needsExperimentalMapSizes || hasCustomZoneSizes;
-            ChkExperimentalMapSizes.IsChecked = needsExperimentalMapSizes;
+            PnlMap.ChkExperimentalMapSizes.IsChecked = needsExperimentalMapSizes;
             RefreshMapSizeOptions(s.MapSize);
-            SldPlayers.Value        = s.PlayerCount;
-            SldNeutral.Value        = s.NeutralZoneCount;
-            SldPlayerCastles.Value  = s.PlayerZoneCastles;
-            SldNeutralCastles.Value = s.NeutralZoneCastles;
-            SldNeutralLowNoCastle.Value = s.NeutralLowNoCastleCount;
-            SldNeutralLowCastle.Value = s.NeutralLowCastleCount;
-            SldNeutralMediumNoCastle.Value = s.NeutralMediumNoCastleCount;
-            SldNeutralMediumCastle.Value = s.NeutralMediumCastleCount;
-            SldNeutralHighNoCastle.Value = s.NeutralHighNoCastleCount;
-            SldNeutralHighCastle.Value = s.NeutralHighCastleCount;
-            ChkMatchPlayerCastleFactions.IsChecked = s.MatchPlayerCastleFactions;
-            SldMinNeutralBetweenPlayers.Value = s.MinNeutralZonesBetweenPlayers;
-            ChkBalancedZonePlacement.IsChecked = s.ExperimentalBalancedZonePlacement;
-            SldPlayerZoneSize.Value = Math.Clamp(s.PlayerZoneSize, 0.1, 2.0);
-            SldNeutralZoneSize.Value = Math.Clamp(s.NeutralZoneSize, 0.1, 2.0);
-            SldHubZoneSize.Value = Math.Clamp(s.HubZoneSize, 0.25, 3.0);
-            SldHubCastles.Value = Math.Clamp(s.HubZoneCastles, 0, 4);
-            SldGuardRandomization.Value = GuardRandomizationPercent(s.GuardRandomization);
-            SldHeroMin.Value        = s.HeroCountMin;
-            SldHeroMax.Value        = s.HeroCountMax;
-            SldHeroIncrement.Value  = s.HeroCountIncrement;
+            PnlMap.SldPlayers.Value        = s.PlayerCount;
+            PnlZones.SldNeutral.Value        = s.NeutralZoneCount;
+            PnlZones.SldPlayerCastles.Value  = s.PlayerZoneCastles;
+            PnlZones.SldNeutralCastles.Value = s.NeutralZoneCastles;
+            PnlZones.SldNeutralLowNoCastle.Value = s.NeutralLowNoCastleCount;
+            PnlZones.SldNeutralLowCastle.Value = s.NeutralLowCastleCount;
+            PnlZones.SldNeutralMediumNoCastle.Value = s.NeutralMediumNoCastleCount;
+            PnlZones.SldNeutralMediumCastle.Value = s.NeutralMediumCastleCount;
+            PnlZones.SldNeutralHighNoCastle.Value = s.NeutralHighNoCastleCount;
+            PnlZones.SldNeutralHighCastle.Value = s.NeutralHighCastleCount;
+            PnlZones.ChkMatchPlayerCastleFactions.IsChecked = s.MatchPlayerCastleFactions;
+            PnlZones.SldMinNeutralBetweenPlayers.Value = s.MinNeutralZonesBetweenPlayers;
+            PnlZones.ChkBalancedZonePlacement.IsChecked = s.ExperimentalBalancedZonePlacement;
+            PnlZones.SldPlayerZoneSize.Value = Math.Clamp(s.PlayerZoneSize, 0.1, 2.0);
+            PnlZones.SldNeutralZoneSize.Value = Math.Clamp(s.NeutralZoneSize, 0.1, 2.0);
+            PnlTopology.SldHubZoneSize.Value = Math.Clamp(s.HubZoneSize, 0.25, 3.0);
+            PnlTopology.SldHubCastles.Value = Math.Clamp(s.HubZoneCastles, 0, 4);
+            PnlZones.SldGuardRandomization.Value = GuardRandomizationPercent(s.GuardRandomization);
+            PnlHeroes.SldHeroMin.Value        = s.HeroCountMin;
+            PnlHeroes.SldHeroMax.Value        = s.HeroCountMax;
+            PnlHeroes.SldHeroIncrement.Value  = s.HeroCountIncrement;
             int topoIdx = Array.FindIndex(TopologyOptions, t => t.Topology == s.Topology);
-            if (topoIdx >= 0) CmbTopology.SelectedIndex = topoIdx;
-            ChkRandomPortals.IsChecked        = s.RandomPortals;
-            SldMaxPortals.Value               = Math.Clamp(s.MaxPortalConnections, 1, 32);
-            PnlMaxPortals.Visibility          = s.RandomPortals ? Visibility.Visible : Visibility.Collapsed;
-            ChkSpawnFootholds.IsChecked       = s.SpawnRemoteFootholds;
-            ChkGenerateRoads.IsChecked        = s.GenerateRoads;
-            ChkNoDirectPlayerConn.IsChecked   = s.NoDirectPlayerConn;
-            SldResourceDensity.Value          = s.EffectiveResourceDensityPercent;
-            SldStructureDensity.Value         = s.EffectiveStructureDensityPercent;
-            SldNeutralStackStrength.Value     = s.NeutralStackStrengthPercent;
-            SldBorderGuardStrength.Value      = s.BorderGuardStrengthPercent;
+            if (topoIdx >= 0) PnlTopology.CmbTopology.SelectedIndex = topoIdx;
+            PnlZones.ChkRandomPortals.IsChecked        = s.RandomPortals;
+            PnlZones.SldMaxPortals.Value               = Math.Clamp(s.MaxPortalConnections, 1, 32);
+            PnlZones.PnlMaxPortals.Visibility          = s.RandomPortals ? Visibility.Visible : Visibility.Collapsed;
+            PnlZones.ChkSpawnFootholds.IsChecked       = s.SpawnRemoteFootholds;
+            PnlZones.ChkGenerateRoads.IsChecked        = s.GenerateRoads;
+            PnlZones.ChkNoDirectPlayerConn.IsChecked   = s.NoDirectPlayerConn;
+            PnlZones.SldResourceDensity.Value          = s.EffectiveResourceDensityPercent;
+            PnlZones.SldStructureDensity.Value         = s.EffectiveStructureDensityPercent;
+            PnlZones.SldNeutralStackStrength.Value     = s.NeutralStackStrengthPercent;
+            PnlZones.SldBorderGuardStrength.Value      = s.BorderGuardStrengthPercent;
             int victoryIdx = Array.IndexOf(KnownValues.VictoryConditionIds, s.VictoryCondition);
-            CmbVictory.SelectedIndex = victoryIdx >= 0 ? victoryIdx : 0;
-            SldFactionLawsExp.Value = Math.Clamp(s.FactionLawsExpPercent, 25, 200);
-            SldAstrologyExp.Value = Math.Clamp(s.AstrologyExpPercent, 25, 200);
-            ChkLostStartCity.IsChecked = s.LostStartCity;
-            SldLostStartCityDay.Value = Math.Clamp(s.LostStartCityDay, 1, 30);
-            ChkLostStartHero.IsChecked = s.LostStartHero;
-            ChkCityHold.IsChecked = s.CityHold;
-            SldCityHoldDays.Value = Math.Clamp(s.CityHoldDays, 1, 30);
-            ChkGladiatorArena.IsChecked = s.GladiatorArena;
-            SldGladiatorDelay.Value = Math.Clamp(s.GladiatorArenaDaysDelayStart, 1, 60);
-            SldGladiatorCountDay.Value = Math.Clamp(s.GladiatorArenaCountDay, 1, 30);
-            ChkTournament.IsChecked = s.Tournament;
-            SldTournamentFirstTournamentDay.Value = Math.Clamp(s.TournamentFirstTournamentDay, 1, 60);
-            SldTournamentInterval.Value = Math.Clamp(s.TournamentInterval, 1, 30);
-            SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 10);
-            ChkTournamentSaveArmy.IsChecked = s.TournamentSaveArmy;
+            PnlGameRules.CmbVictory.SelectedIndex = victoryIdx >= 0 ? victoryIdx : 0;
+            PnlGameRules.SldFactionLawsExp.Value = Math.Clamp(s.FactionLawsExpPercent, 25, 200);
+            PnlGameRules.SldAstrologyExp.Value = Math.Clamp(s.AstrologyExpPercent, 25, 200);
+            PnlGameRules.ChkLostStartCity.IsChecked = s.LostStartCity;
+            PnlGameRules.SldLostStartCityDay.Value = Math.Clamp(s.LostStartCityDay, 1, 30);
+            PnlGameRules.ChkLostStartHero.IsChecked = s.LostStartHero;
+            PnlGameRules.ChkCityHold.IsChecked = s.CityHold;
+            PnlGameRules.SldCityHoldDays.Value = Math.Clamp(s.CityHoldDays, 1, 30);
+            PnlGameRules.ChkGladiatorArena.IsChecked = s.GladiatorArena;
+            PnlGameRules.SldGladiatorDelay.Value = Math.Clamp(s.GladiatorArenaDaysDelayStart, 1, 60);
+            PnlGameRules.SldGladiatorCountDay.Value = Math.Clamp(s.GladiatorArenaCountDay, 1, 30);
+            PnlGameRules.ChkTournament.IsChecked = s.Tournament;
+            PnlGameRules.SldTournamentFirstTournamentDay.Value = Math.Clamp(s.TournamentFirstTournamentDay, 1, 60);
+            PnlGameRules.SldTournamentInterval.Value = Math.Clamp(s.TournamentInterval, 1, 30);
+            PnlGameRules.SldTournamentPointsToWin.Value = Math.Clamp(s.TournamentPointsToWin, 1, 10);
+            PnlGameRules.ChkTournamentSaveArmy.IsChecked = s.TournamentSaveArmy;
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
@@ -876,7 +971,7 @@ namespace Olden_Era___Template_Editor
             {
                 Title      = "Save Settings As",
                 Filter     = "Template Settings (*.oetgs)|*.oetgs|All files (*.*)|*.*",
-                FileName   = TxtTemplateName.Text.Trim().Length > 0 ? TxtTemplateName.Text.Trim() : "My Settings",
+                FileName   = PnlMap.TxtTemplateName.Text.Trim().Length > 0 ? PnlMap.TxtTemplateName.Text.Trim() : "My Settings",
                 DefaultExt = ".oetgs",
             };
             if (dlg.ShowDialog() == true)
@@ -910,7 +1005,7 @@ namespace Olden_Era___Template_Editor
 
             string? gameTemplatesPath = FindOldenEraTemplatesPath();
 
-            string currentTemplateName = TxtTemplateName.Text.Trim();
+            string currentTemplateName = PnlMap.TxtTemplateName.Text.Trim();
 
             var dlg = new SaveFileDialog
             {
@@ -988,77 +1083,77 @@ namespace Olden_Era___Template_Editor
 
         private GeneratorSettings BuildSettings() => new()
         {
-            TemplateName = TxtTemplateName.Text.Trim(),
+            TemplateName = PnlMap.TxtTemplateName.Text.Trim(),
             GameMode = CmbGameMode.SelectedItem as string ?? "Classic",
-            PlayerCount = (int)SldPlayers.Value,
+            PlayerCount = (int)PnlMap.SldPlayers.Value,
             HeroSettings = new HeroSettings
             {
-                HeroCountMin = (int)SldHeroMin.Value,
-                HeroCountMax = (int)SldHeroMax.Value,
-                HeroCountIncrement = (int)SldHeroIncrement.Value
+                HeroCountMin = (int)PnlHeroes.SldHeroMin.Value,
+                HeroCountMax = (int)PnlHeroes.SldHeroMax.Value,
+                HeroCountIncrement = (int)PnlHeroes.SldHeroIncrement.Value
             },
             MapSize = SelectedMapSize(),
             GameEndConditions = new GameEndConditions
             {
-                VictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
-                    ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
+                VictoryCondition = PnlGameRules.CmbVictory.SelectedIndex >= 0 && PnlGameRules.CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
+                    ? KnownValues.VictoryConditionIds[PnlGameRules.CmbVictory.SelectedIndex]
                     : "win_condition_1",
-                LostStartCity = ChkLostStartCity.IsChecked == true,
-                LostStartCityDay = (int)SldLostStartCityDay.Value,
-                LostStartHero = ChkLostStartHero.IsChecked == true,
-                CityHold = ChkCityHold.IsChecked == true,
-                CityHoldDays = (int)SldCityHoldDays.Value,
+                LostStartCity = PnlGameRules.ChkLostStartCity.IsChecked == true,
+                LostStartCityDay = (int)PnlGameRules.SldLostStartCityDay.Value,
+                LostStartHero = PnlGameRules.ChkLostStartHero.IsChecked == true,
+                CityHold = PnlGameRules.ChkCityHold.IsChecked == true,
+                CityHoldDays = (int)PnlGameRules.SldCityHoldDays.Value,
             },
             ZoneCfg = new ZoneConfiguration
             {
-                NeutralZoneCount = (int)SldNeutral.Value,
-                PlayerZoneCastles = (int)SldPlayerCastles.Value,
-                NeutralZoneCastles = (int)SldNeutralCastles.Value,
-                ResourceDensityPercent = (int)SldResourceDensity.Value,
-                StructureDensityPercent = (int)SldStructureDensity.Value,
-                NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
-                BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
-                HubZoneSize = SldHubZoneSize.Value,
-                HubZoneCastles = (int)SldHubCastles.Value,
+                NeutralZoneCount = (int)PnlZones.SldNeutral.Value,
+                PlayerZoneCastles = (int)PnlZones.SldPlayerCastles.Value,
+                NeutralZoneCastles = (int)PnlZones.SldNeutralCastles.Value,
+                ResourceDensityPercent = (int)PnlZones.SldResourceDensity.Value,
+                StructureDensityPercent = (int)PnlZones.SldStructureDensity.Value,
+                NeutralStackStrengthPercent = (int)PnlZones.SldNeutralStackStrength.Value,
+                BorderGuardStrengthPercent = (int)PnlZones.SldBorderGuardStrength.Value,
+                HubZoneSize = PnlTopology.SldHubZoneSize.Value,
+                HubZoneCastles = (int)PnlTopology.SldHubCastles.Value,
                 Advanced = new AdvancedSettings
                 {
                     Enabled = _advancedZoneSettings,
-                    NeutralLowNoCastleCount = (int)SldNeutralLowNoCastle.Value,
-                    NeutralLowCastleCount = (int)SldNeutralLowCastle.Value,
-                    NeutralMediumNoCastleCount = (int)SldNeutralMediumNoCastle.Value,
-                    NeutralMediumCastleCount = (int)SldNeutralMediumCastle.Value,
-                    NeutralHighNoCastleCount = (int)SldNeutralHighNoCastle.Value,
-                    NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
-                    PlayerZoneSize = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
-                    NeutralZoneSize = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
-                    GuardRandomization = _advancedZoneSettings ? SldGuardRandomization.Value / 100.0 : 0.05,
+                    NeutralLowNoCastleCount = (int)PnlZones.SldNeutralLowNoCastle.Value,
+                    NeutralLowCastleCount = (int)PnlZones.SldNeutralLowCastle.Value,
+                    NeutralMediumNoCastleCount = (int)PnlZones.SldNeutralMediumNoCastle.Value,
+                    NeutralMediumCastleCount = (int)PnlZones.SldNeutralMediumCastle.Value,
+                    NeutralHighNoCastleCount = (int)PnlZones.SldNeutralHighNoCastle.Value,
+                    NeutralHighCastleCount = (int)PnlZones.SldNeutralHighCastle.Value,
+                    PlayerZoneSize = _advancedZoneSettings ? PnlZones.SldPlayerZoneSize.Value : 1.0,
+                    NeutralZoneSize = _advancedZoneSettings ? PnlZones.SldNeutralZoneSize.Value : 1.0,
+                    GuardRandomization = _advancedZoneSettings ? PnlZones.SldGuardRandomization.Value / 100.0 : 0.05,
                 }
             },
             // Neutral zones between players can be influenced by advanced zone settings, but is functionally independent.
-            MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)SldMinNeutralBetweenPlayers.Value : 0,
-            MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
-            ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
-            NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
-            RandomPortals = ChkRandomPortals.IsChecked == true,
-            MaxPortalConnections = (int)SldMaxPortals.Value,
-            SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
-            GenerateRoads = ChkGenerateRoads.IsChecked == true,
-            Topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default,
-            FactionLawsExpPercent = (int)SldFactionLawsExp.Value,
-            AstrologyExpPercent = (int)SldAstrologyExp.Value,
+            MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)PnlZones.SldMinNeutralBetweenPlayers.Value : 0,
+            MatchPlayerCastleFactions = PnlZones.ChkMatchPlayerCastleFactions.IsChecked == true,
+            ExperimentalBalancedZonePlacement = PnlZones.ChkBalancedZonePlacement.IsChecked == true,
+            NoDirectPlayerConnections = PnlZones.ChkNoDirectPlayerConn.IsChecked == true,
+            RandomPortals = PnlZones.ChkRandomPortals.IsChecked == true,
+            MaxPortalConnections = (int)PnlZones.SldMaxPortals.Value,
+            SpawnRemoteFootholds = PnlZones.ChkSpawnFootholds.IsChecked == true,
+            GenerateRoads = PnlZones.ChkGenerateRoads.IsChecked == true,
+            Topology = PnlTopology.CmbTopology.SelectedIndex >= 0 ? TopologyOptions[PnlTopology.CmbTopology.SelectedIndex].Topology : MapTopology.Default,
+            FactionLawsExpPercent = (int)PnlGameRules.SldFactionLawsExp.Value,
+            AstrologyExpPercent = (int)PnlGameRules.SldAstrologyExp.Value,
             GladiatorArenaRules = new GladiatorArenaRules
             {
-                Enabled = ChkGladiatorArena.IsChecked == true,
-                DaysDelayStart = (int)SldGladiatorDelay.Value,
-                CountDay = (int)SldGladiatorCountDay.Value
+                Enabled = PnlGameRules.ChkGladiatorArena.IsChecked == true,
+                DaysDelayStart = (int)PnlGameRules.SldGladiatorDelay.Value,
+                CountDay = (int)PnlGameRules.SldGladiatorCountDay.Value
             },
             TournamentRules = new TournamentRules
             {
-                Enabled = ChkTournament.IsChecked == true,
-                FirstTournamentDay = (int)SldTournamentFirstTournamentDay.Value,
-                Interval = (int)SldTournamentInterval.Value,
-                PointsToWin = (int)SldTournamentPointsToWin.Value,
-                SaveArmy = ChkTournamentSaveArmy.IsChecked == true
+                Enabled = PnlGameRules.ChkTournament.IsChecked == true,
+                FirstTournamentDay = (int)PnlGameRules.SldTournamentFirstTournamentDay.Value,
+                Interval = (int)PnlGameRules.SldTournamentInterval.Value,
+                PointsToWin = (int)PnlGameRules.SldTournamentPointsToWin.Value,
+                SaveArmy = PnlGameRules.ChkTournamentSaveArmy.IsChecked == true
             }
         };
 

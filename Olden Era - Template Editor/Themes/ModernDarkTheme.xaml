@@ -1,0 +1,444 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!--
+        Modern dark theme — WPF mirror of OldenEra.Web/wwwroot/css/app.css.
+        Brush keys (OeBgBrush, OeAccentBrush, etc.) map one-to-one to the
+        CSS oe-* tokens.
+    -->
+
+    <!-- Tokens -->
+    <SolidColorBrush x:Key="OeBgBrush"           Color="#0B0D10"/>
+    <SolidColorBrush x:Key="OeSurface1Brush"     Color="#14171C"/>
+    <SolidColorBrush x:Key="OeSurface2Brush"     Color="#1B1F26"/>
+    <SolidColorBrush x:Key="OeSurface3Brush"     Color="#232831"/>
+    <SolidColorBrush x:Key="OeBorderBrush"       Color="#2A2F39"/>
+    <SolidColorBrush x:Key="OeBorderStrongBrush" Color="#3A4150"/>
+    <SolidColorBrush x:Key="OeTextBrush"         Color="#E6E8EB"/>
+    <SolidColorBrush x:Key="OeTextDimBrush"      Color="#9098A3"/>
+    <SolidColorBrush x:Key="OeTextMuteBrush"     Color="#5F6671"/>
+    <SolidColorBrush x:Key="OeAccentBrush"       Color="#F59E0B"/>
+    <SolidColorBrush x:Key="OeAccentHiBrush"     Color="#FBBF24"/>
+    <SolidColorBrush x:Key="OeAccentDimBrush"    Color="#B45309"/>
+    <SolidColorBrush x:Key="OeOnAccentBrush"     Color="#0B0D10"/>
+    <SolidColorBrush x:Key="OeErrorBrush"        Color="#EF4444"/>
+    <SolidColorBrush x:Key="OeWarnBgBrush"       Color="#2A1F0A"/>
+
+    <FontFamily x:Key="OeFont">Segoe UI Variable, Segoe UI</FontFamily>
+    <sys:Double x:Key="OeFontSize">13</sys:Double>
+    <sys:Double x:Key="OeFontSizeLabel">12</sys:Double>
+    <sys:Double x:Key="OeFontSizeSection">15</sys:Double>
+    <sys:Double x:Key="OeFontSizeTitle">20</sys:Double>
+
+    <!-- Section card → flat: hairline divider on bottom, no panel background. -->
+    <Style x:Key="SectionBorder" TargetType="Border">
+        <Setter Property="Background"      Value="Transparent"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource OeBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Padding"         Value="0,0,0,16"/>
+        <Setter Property="Margin"          Value="0,0,0,16"/>
+    </Style>
+
+    <Style x:Key="SectionHeader" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize"   Value="{StaticResource OeFontSizeSection}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin"     Value="0,0,0,12"/>
+    </Style>
+
+    <Style x:Key="ValueText" TargetType="TextBlock">
+        <Setter Property="Foreground"          Value="{StaticResource OeTextDimBrush}"/>
+        <Setter Property="FontFamily"          Value="Cascadia Mono, Consolas, monospace"/>
+        <Setter Property="FontSize"            Value="12"/>
+        <Setter Property="VerticalAlignment"   Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="MinWidth"            Value="40"/>
+    </Style>
+
+    <!-- Label -->
+    <Style TargetType="Label">
+        <Setter Property="Foreground"        Value="{StaticResource OeTextDimBrush}"/>
+        <Setter Property="FontFamily"        Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize"          Value="13"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Padding"           Value="0"/>
+    </Style>
+
+    <!-- Default TextBlock — modern body text. -->
+    <Style TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize"   Value="13"/>
+    </Style>
+
+    <!-- TextBox -->
+    <Style TargetType="TextBox">
+        <Setter Property="Background"               Value="{StaticResource OeSurface2Brush}"/>
+        <Setter Property="Foreground"               Value="{StaticResource OeTextBrush}"/>
+        <Setter Property="BorderBrush"              Value="{StaticResource OeBorderBrush}"/>
+        <Setter Property="BorderThickness"          Value="1"/>
+        <Setter Property="CaretBrush"               Value="{StaticResource OeAccentBrush}"/>
+        <Setter Property="SelectionBrush"           Value="{StaticResource OeAccentDimBrush}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Height"                   Value="32"/>
+        <Setter Property="FontFamily"               Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize"                 Value="13"/>
+        <Setter Property="Padding"                  Value="10,0"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource OeBorderStrongBrush}"/>
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter Property="BorderBrush" Value="{StaticResource OeAccentBrush}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ComboBox -->
+    <Style TargetType="ComboBox">
+        <Setter Property="Background"               Value="{StaticResource OeSurface2Brush}"/>
+        <Setter Property="Foreground"               Value="{StaticResource OeTextBrush}"/>
+        <Setter Property="BorderBrush"              Value="{StaticResource OeBorderBrush}"/>
+        <Setter Property="Height"                   Value="32"/>
+        <Setter Property="FontFamily"               Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize"                 Value="13"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ComboBoxItem">
+                    <Setter Property="Background" Value="{StaticResource OeSurface2Brush}"/>
+                    <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+                    <Setter Property="FontSize"   Value="13"/>
+                    <Setter Property="Padding"    Value="10,6"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource OeSurface3Brush}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{StaticResource OeSurface3Brush}"/>
+                            <Setter Property="Foreground" Value="{StaticResource OeAccentBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton x:Name="ToggleButton"
+                                      IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay,
+                                                  RelativeSource={RelativeSource TemplatedParent}}"
+                                      Focusable="False" ClickMode="Press">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="Bd"
+                                            Background="{StaticResource OeSurface2Brush}"
+                                            BorderBrush="{StaticResource OeBorderBrush}"
+                                            BorderThickness="1" CornerRadius="4">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="24"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Path Grid.Column="1"
+                                                  Data="M 0 0 L 4 4 L 8 0"
+                                                  Stroke="{StaticResource OeTextDimBrush}"
+                                                  StrokeThickness="1.5"
+                                                  StrokeStartLineCap="Round"
+                                                  StrokeEndLineCap="Round"
+                                                  StrokeLineJoin="Round"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="BorderBrush"
+                                                    Value="{StaticResource OeBorderStrongBrush}"/>
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Bd" Property="BorderBrush"
+                                                    Value="{StaticResource OeAccentBrush}"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+
+                        <ContentPresenter x:Name="ContentSite"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          IsHitTestVisible="False"
+                                          Margin="10,0,28,0"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Left"/>
+
+                        <TextBox x:Name="PART_EditableTextBox"
+                                 Visibility="Hidden" IsReadOnly="True"
+                                 Focusable="False"/>
+
+                        <Popup x:Name="PART_Popup"
+                               Placement="Bottom"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               PopupAnimation="Slide">
+                            <Border x:Name="DropDownBorder"
+                                    MinWidth="{TemplateBinding ActualWidth}"
+                                    MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                    Background="{StaticResource OeSurface2Brush}"
+                                    BorderBrush="{StaticResource OeBorderBrush}"
+                                    BorderThickness="1" CornerRadius="0,0,4,4">
+                                <ScrollViewer CanContentScroll="True">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Slider: 4px track in surface-3, amber fill on the decrease side, 14px round white thumb. -->
+    <Style TargetType="Slider">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="MinHeight"         Value="18"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Slider">
+                    <Grid>
+                        <Track x:Name="PART_Track">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="Slider.DecreaseLarge">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Border Height="4"
+                                                    Background="{StaticResource OeAccentBrush}"
+                                                    VerticalAlignment="Center"
+                                                    CornerRadius="2,0,0,2"/>
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="Slider.IncreaseLarge">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Border Height="4"
+                                                    Background="{StaticResource OeSurface3Brush}"
+                                                    VerticalAlignment="Center"
+                                                    CornerRadius="0,2,2,0"/>
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb>
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Ellipse x:Name="ThumbEl"
+                                                     Width="14" Height="14"
+                                                     Fill="{StaticResource OeTextBrush}"
+                                                     Stroke="{StaticResource OeBorderStrongBrush}"
+                                                     StrokeThickness="1"/>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="ThumbEl" Property="Stroke"
+                                                            Value="{StaticResource OeAccentHiBrush}"/>
+                                                </Trigger>
+                                                <Trigger Property="IsDragging" Value="True">
+                                                    <Setter TargetName="ThumbEl" Property="Stroke"
+                                                            Value="{StaticResource OeAccentBrush}"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.5"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- CheckBox: 16px square in surface-2, amber fill + black tick when checked. -->
+    <Style TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize"   Value="13"/>
+        <Setter Property="Margin"     Value="0,4,0,0"/>
+        <Setter Property="Cursor"     Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Grid Width="16" Height="16" VerticalAlignment="Center">
+                            <Border x:Name="CheckBorder"
+                                    Background="{StaticResource OeSurface2Brush}"
+                                    BorderBrush="{StaticResource OeBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="3"/>
+                            <Path x:Name="CheckMark"
+                                  Data="M 3 8 L 7 12 L 13 4"
+                                  Stroke="{StaticResource OeOnAccentBrush}"
+                                  StrokeThickness="2"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  StrokeLineJoin="Round"
+                                  Visibility="Collapsed"/>
+                        </Grid>
+                        <ContentPresenter Margin="8,0,0,0" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True"/>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckMark"   Property="Visibility"  Value="Visible"/>
+                            <Setter TargetName="CheckBorder" Property="Background"  Value="{StaticResource OeAccentBrush}"/>
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource OeAccentBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource OeBorderStrongBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Default Button: surface-2 fill, 1px border, 4px radius. -->
+    <Style TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize"   Value="13"/>
+        <Setter Property="Cursor"     Value="Hand"/>
+        <Setter Property="Padding"    Value="14,8"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd"
+                            Background="{StaticResource OeSurface2Brush}"
+                            BorderBrush="{StaticResource OeBorderBrush}"
+                            BorderThickness="1" CornerRadius="4"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background"  Value="{StaticResource OeSurface3Brush}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource OeBorderStrongBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource OeSurface2Brush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground"                 Value="{StaticResource OeTextMuteBrush}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource OeBorderBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Primary (amber) button — used by GenerateButton alias. -->
+    <Style x:Key="OePrimaryButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource OeOnAccentBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize"   Value="14"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Cursor"     Value="Hand"/>
+        <Setter Property="Height"     Value="42"/>
+        <Setter Property="Padding"    Value="16,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd"
+                            Background="{StaticResource OeAccentBrush}"
+                            BorderBrush="{StaticResource OeAccentBrush}"
+                            BorderThickness="1" CornerRadius="4"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background"  Value="{StaticResource OeAccentHiBrush}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource OeAccentHiBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Background"  Value="{StaticResource OeSurface3Brush}"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource OeBorderBrush}"/>
+                            <Setter Property="Foreground"                  Value="{StaticResource OeTextMuteBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Ghost button — header Open/Save use this. -->
+    <Style x:Key="OeGhostButton" TargetType="Button">
+        <Setter Property="Foreground" Value="{StaticResource OeTextDimBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize"   Value="13"/>
+        <Setter Property="Cursor"     Value="Hand"/>
+        <Setter Property="Padding"    Value="10,6"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="Transparent"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource OeTextMuteBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Named-button styles. GenerateButton == primary amber action button. -->
+    <Style x:Key="GenerateButton" TargetType="Button" BasedOn="{StaticResource OePrimaryButton}"/>
+    <Style x:Key="TitleBarButton" TargetType="Button" BasedOn="{StaticResource OeGhostButton}">
+        <Setter Property="Width"  Value="42"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+    </Style>
+    <Style x:Key="TitleBarCloseButton" TargetType="Button" BasedOn="{StaticResource TitleBarButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="Transparent">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource OeErrorBrush}"/>
+                            <Setter Property="Foreground"                  Value="{StaticResource OeOnAccentBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
