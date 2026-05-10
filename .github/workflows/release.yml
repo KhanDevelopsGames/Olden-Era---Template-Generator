@@ -42,7 +42,7 @@ jobs:
         shell: pwsh
         run: |
           $exe = "OldenEraTemplateGenerator-${{ steps.tag.outputs.name }}-win-x64.exe"
-          Move-Item publish/OldenEra.TemplateEditor.exe $exe
+          Move-Item publish/OldenEraTemplateGenerator.exe $exe
           "ASSET=$exe" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Create GitHub Release
