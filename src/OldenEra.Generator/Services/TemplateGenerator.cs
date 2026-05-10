@@ -996,8 +996,16 @@ namespace OldenEra.Generator.Services
             playerLetters = [.. playerLetters.OrderBy(_ => Random.Shared.Next())];
 
             bool isTournament = settings.TournamentRules.Enabled || settings.GameEndConditions.VictoryCondition == "win_condition_6";
-            if (isTournament && playerLetters.Count == 2)
+            if (isTournament)
+            {
+                if (playerLetters.Count != 2)
+                {
+                    throw new ArgumentException(
+                        $"Tournament mode requires exactly 2 players, but {playerLetters.Count} were configured.",
+                        nameof(settings));
+                }
                 return BuildVariantTournament(settings, playerLetters, neutralZones, tuning);
+            }
 
             return settings.Topology switch
             {
