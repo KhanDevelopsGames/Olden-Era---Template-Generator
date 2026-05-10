@@ -441,4 +441,120 @@
         </Setter>
     </Style>
 
+    <!-- ScrollBar: thin, surface-1 track, dim thumb that brightens on hover. -->
+    <Style TargetType="{x:Type ScrollBar}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource OeBorderStrongBrush}"/>
+        <Setter Property="Width" Value="10"/>
+        <Setter Property="MinWidth" Value="10"/>
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="MinWidth" Value="0"/>
+                <Setter Property="Height" Value="10"/>
+                <Setter Property="MinHeight" Value="10"/>
+            </Trigger>
+        </Style.Triggers>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ScrollBar}">
+                    <Grid Background="Transparent">
+                        <Track Name="PART_Track" IsDirectionReversed="true">
+                            <Track.Thumb>
+                                <Thumb>
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border Background="{StaticResource OeBorderStrongBrush}"
+                                                    CornerRadius="5"
+                                                    Margin="2"/>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ScrollViewer: dark surface, themed scroll bars, no chrome. -->
+    <Style TargetType="{x:Type ScrollViewer}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+    </Style>
+
+    <!-- TabItem: flat strip with amber underline on selection. -->
+    <Style TargetType="{x:Type TabItem}">
+        <Setter Property="Foreground" Value="{StaticResource OeTextDimBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabItem}">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{StaticResource OeAccentBrush}"
+                            BorderThickness="0,0,0,2"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter ContentSource="Header"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="Transparent"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- TabControl: transparent body, no decorative border. -->
+    <Style TargetType="{x:Type TabControl}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0"
+                                BorderBrush="{StaticResource OeBorderBrush}"
+                                BorderThickness="0,0,0,1">
+                            <TabPanel x:Name="HeaderPanel"
+                                      IsItemsHost="True"
+                                      Background="Transparent"
+                                      Margin="0,0,0,-1"/>
+                        </Border>
+                        <Border Grid.Row="1"
+                                Background="{StaticResource OeSurface1Brush}"
+                                Padding="6">
+                            <ContentPresenter ContentSource="SelectedContent"/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>
