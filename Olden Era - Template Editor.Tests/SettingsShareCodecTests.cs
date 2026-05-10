@@ -43,6 +43,44 @@ public class SettingsShareCodecTests
         Assert.Equal(192, decoded.MapSize);
     }
 
+    [Fact]
+    public void Decode_rejects_payload_over_max_encoded_length()
+    {
+        string oversize = new string('A', SettingsShareCodec.MaxEncodedLength + 1);
+        var decoded = SettingsShareCodec.TryDecode(oversize, out var status);
+        Assert.Null(decoded);
+        Assert.Equal(SettingsShareCodec.DecodeStatus.TooLarge, status);
+    }
+
+    [Fact]
+    public void Decode_rejects_compression_bomb()
+    {
+        byte[] bigJsonish = new byte[1024 * 1024];
+        Array.Fill(bigJsonish, (byte)' ');
+        using var ms = new System.IO.MemoryStream();
+        using (var gz = new System.IO.Compression.GZipStream(ms,
+            System.IO.Compression.CompressionLevel.Optimal, leaveOpen: true))
+        {
+            gz.Write(bigJsonish, 0, bigJsonish.Length);
+        }
+        string encoded = System.Convert.ToBase64String(ms.ToArray())
+            .TrimEnd('=').Replace('+', '-').Replace('/', '_');
+        if (encoded.Length > SettingsShareCodec.MaxEncodedLength)
+            return; // unlikely; we want the gzip-bomb path, not the length cap.
+
+        var decoded = SettingsShareCodec.TryDecode(encoded, out var status);
+        Assert.Null(decoded);
+        Assert.Equal(SettingsShareCodec.DecodeStatus.MalformedGzip, status);
+    }
+
+    [Fact]
+    public void Decode_rejects_garbage_string()
+    {
+        var decoded = SettingsShareCodec.TryDecode("!!!not-valid-base64!!!", out var status);
+        Assert.Null(decoded);
+        Assert.Equal(SettingsShareCodec.DecodeStatus.MalformedBase64, status);
+    }
+
     private static string EncodeRawJson(string json)
     {
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
