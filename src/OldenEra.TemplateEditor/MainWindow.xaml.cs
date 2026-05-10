@@ -647,6 +647,13 @@ namespace OldenEra.TemplateEditor
             PnlGameRules.ChkLostStartHero.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
             PnlGameRules.ChkCityHold.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_5";
             PnlGameRules.ChkGladiatorArena.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
+
+            UpdateLockedHint(PnlGameRules.HntLostStartCityLocked,
+                isTournament, selectedVictoryCondition == "win_condition_3", "Lost City");
+            UpdateLockedHint(PnlGameRules.HntLostStartHeroLocked,
+                isTournament, selectedVictoryCondition == "win_condition_4", "Gladiator Arena");
+            UpdateLockedHint(PnlGameRules.HntCityHoldLocked,
+                isTournament, selectedVictoryCondition == "win_condition_5", "City Hold");
             PnlGameRules.ChkTournament.IsChecked = isTournament;
             PnlGameRules.ChkTournament.IsEnabled = isTournament;
 
@@ -940,6 +947,33 @@ namespace OldenEra.TemplateEditor
 
         private static int ResourceValue(SettingsFile s, string sid) =>
             s.BonusResources is { } d && d.TryGetValue(sid, out int v) ? Math.Clamp(v, 0, 100) : 0;
+
+        /// <summary>
+        /// Shows a "Locked because primary win condition is X" hint under a checkbox
+        /// when its IsEnabled is false because of the primary-win-condition selection.
+        /// Mirrors the Web behavior in WinConditionsPanel.razor.
+        /// </summary>
+        private static void UpdateLockedHint(
+            System.Windows.Controls.TextBlock hint,
+            bool isTournament,
+            bool isOwnWinCondition,
+            string ownConditionLabel)
+        {
+            if (isOwnWinCondition)
+            {
+                hint.Text = $"Locked because primary win condition is {ownConditionLabel}.";
+                hint.Visibility = Visibility.Visible;
+            }
+            else if (isTournament)
+            {
+                hint.Text = "Locked because primary win condition is Tournament.";
+                hint.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                hint.Visibility = Visibility.Collapsed;
+            }
+        }
 
         private static string SpellSidFromCombo(System.Windows.Controls.ComboBox c) =>
             (c.SelectedValue as string) ?? "";
