@@ -52,6 +52,11 @@ namespace Olden_Era___Template_Editor
             PnlMap.ChkExperimentalMapSizes.Unchecked += ChkExperimentalMapSizes_Changed;
             PnlMap.SldPlayers.ValueChanged += Slider_ValueChanged;
 
+            // Re-wire events for controls now hosted in HeroesPanel UserControl.
+            PnlHeroes.SldHeroMin.ValueChanged += Slider_ValueChanged;
+            PnlHeroes.SldHeroMax.ValueChanged += Slider_ValueChanged;
+            PnlHeroes.SldHeroIncrement.ValueChanged += Slider_ValueChanged;
+
             // Clamp startup size to the available work area so the window never
             // overflows the screen at high-DPI scaling (e.g. 125 %, 150 %, 200 %).
             var area = SystemParameters.WorkArea;
@@ -236,9 +241,9 @@ namespace Olden_Era___Template_Editor
         private void UpdateValueLabels()
         {
             PnlMap.TxtPlayers.Text = ((int)PnlMap.SldPlayers.Value).ToString();
-            TxtHeroMin.Text = ((int)SldHeroMin.Value).ToString();
-            TxtHeroMax.Text = ((int)SldHeroMax.Value).ToString();
-            TxtHeroIncrement.Text = ((int)SldHeroIncrement.Value).ToString();
+            PnlHeroes.TxtHeroMin.Text = ((int)PnlHeroes.SldHeroMin.Value).ToString();
+            PnlHeroes.TxtHeroMax.Text = ((int)PnlHeroes.SldHeroMax.Value).ToString();
+            PnlHeroes.TxtHeroIncrement.Text = ((int)PnlHeroes.SldHeroIncrement.Value).ToString();
             TxtNeutral.Text = ((int)SldNeutral.Value).ToString();
             TxtPlayerCastles.Text = ((int)SldPlayerCastles.Value).ToString();
             TxtNeutralCastles.Text = ((int)SldNeutralCastles.Value).ToString();
@@ -277,8 +282,8 @@ namespace Olden_Era___Template_Editor
 
         private bool Validate()
         {
-            int heroMin = (int)SldHeroMin.Value;
-            int heroMax = (int)SldHeroMax.Value;
+            int heroMin = (int)PnlHeroes.SldHeroMin.Value;
+            int heroMax = (int)PnlHeroes.SldHeroMax.Value;
             int players = (int)PnlMap.SldPlayers.Value;
             int neutral = TotalNeutralZonesFromUi();
 
@@ -715,9 +720,9 @@ namespace Olden_Era___Template_Editor
             HubZoneSize           = SldHubZoneSize.Value,
             HubZoneCastles        = (int)SldHubCastles.Value,
             GuardRandomization    = SldGuardRandomization.Value / 100.0,
-            HeroCountMin          = (int)SldHeroMin.Value,
-            HeroCountMax          = (int)SldHeroMax.Value,
-            HeroCountIncrement    = (int)SldHeroIncrement.Value,
+            HeroCountMin          = (int)PnlHeroes.SldHeroMin.Value,
+            HeroCountMax          = (int)PnlHeroes.SldHeroMax.Value,
+            HeroCountIncrement    = (int)PnlHeroes.SldHeroIncrement.Value,
             Topology              = TopologyOptions[CmbTopology.SelectedIndex].Topology,
             RandomPortals         = ChkRandomPortals.IsChecked == true,
             MaxPortalConnections  = (int)SldMaxPortals.Value,
@@ -773,9 +778,9 @@ namespace Olden_Era___Template_Editor
             SldHubZoneSize.Value = Math.Clamp(s.HubZoneSize, 0.25, 3.0);
             SldHubCastles.Value = Math.Clamp(s.HubZoneCastles, 0, 4);
             SldGuardRandomization.Value = GuardRandomizationPercent(s.GuardRandomization);
-            SldHeroMin.Value        = s.HeroCountMin;
-            SldHeroMax.Value        = s.HeroCountMax;
-            SldHeroIncrement.Value  = s.HeroCountIncrement;
+            PnlHeroes.SldHeroMin.Value        = s.HeroCountMin;
+            PnlHeroes.SldHeroMax.Value        = s.HeroCountMax;
+            PnlHeroes.SldHeroIncrement.Value  = s.HeroCountIncrement;
             int topoIdx = Array.FindIndex(TopologyOptions, t => t.Topology == s.Topology);
             if (topoIdx >= 0) CmbTopology.SelectedIndex = topoIdx;
             ChkRandomPortals.IsChecked        = s.RandomPortals;
@@ -999,9 +1004,9 @@ namespace Olden_Era___Template_Editor
             PlayerCount = (int)PnlMap.SldPlayers.Value,
             HeroSettings = new HeroSettings
             {
-                HeroCountMin = (int)SldHeroMin.Value,
-                HeroCountMax = (int)SldHeroMax.Value,
-                HeroCountIncrement = (int)SldHeroIncrement.Value
+                HeroCountMin = (int)PnlHeroes.SldHeroMin.Value,
+                HeroCountMax = (int)PnlHeroes.SldHeroMax.Value,
+                HeroCountIncrement = (int)PnlHeroes.SldHeroIncrement.Value
             },
             MapSize = SelectedMapSize(),
             GameEndConditions = new GameEndConditions
