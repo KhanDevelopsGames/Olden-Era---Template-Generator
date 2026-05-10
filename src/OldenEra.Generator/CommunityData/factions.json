@@ -1,0 +1,50 @@
+[
+  {
+    "id": "temple",
+    "unitKey": "human",
+    "name": "Temple",
+    "skill": "Righteousness",
+    "might": "Knight",
+    "magic": "Cleric"
+  },
+  {
+    "id": "necropolis",
+    "unitKey": "undead",
+    "name": "Necropolis",
+    "skill": "Necromancy",
+    "might": "Death Knight",
+    "magic": "Necromancer"
+  },
+  {
+    "id": "grove",
+    "unitKey": "nature",
+    "name": "Grove",
+    "skill": "Murmuring",
+    "might": "Warden",
+    "magic": "Druid"
+  },
+  {
+    "id": "hive",
+    "unitKey": "demon",
+    "name": "Hive",
+    "skill": "Summon Swarm",
+    "might": "Enforcer",
+    "magic": "Herald"
+  },
+  {
+    "id": "schism",
+    "unitKey": "unfrozen",
+    "name": "Schism",
+    "skill": "Abyssal Communion",
+    "might": "Oathkeeper",
+    "magic": "Riftspeaker"
+  },
+  {
+    "id": "dungeon",
+    "unitKey": "dungeon",
+    "name": "Dungeon",
+    "skill": "Triumvirate's Strength",
+    "might": "Overlord",
+    "magic": "Warlock"
+  }
+]

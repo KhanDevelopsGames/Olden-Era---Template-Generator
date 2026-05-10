@@ -4,16 +4,10 @@ namespace OldenEra.Generator.Services
     /// Olden Era faction metadata + the hero SID pattern.
     /// </summary>
     /// <remarks>
-    /// Hero <em>names</em> are not bundled here. The display strings live in the
-    /// game's localization files and are subject to the publisher's copyright;
-    /// shipping a name list would require an explicit licence from Unfrozen
-    /// Studios or the dervied-data maintainer (e.g. alcaras/homm-olden, which
-    /// at the time of writing has no LICENSE file).
-    ///
-    /// What is safe to ship: the faction list (game facts), the canonical SID
-    /// prefix per faction, and the per-faction hero count + might/magic split.
-    /// A future <c>heroes.json</c> bundle keyed by SID can layer display names
-    /// on top of this without changing the catalog API.
+    /// This static class is intentionally minimal: the six factions, the SID
+    /// format, and the per-faction hero count + might/magic split. For the
+    /// 108 hero entries (id, name, specialty, etc.) and per-class roll tables,
+    /// see <see cref="CommunityCatalog"/>, which is loaded from bundled data.
     /// </remarks>
     public static class HeroCatalog
     {

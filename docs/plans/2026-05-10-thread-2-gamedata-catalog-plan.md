@@ -248,15 +248,17 @@ TemplateGenerator → uses override when non-null, else default behavior
 
 ### Status (updated 2026-05-10)
 
-**Item 4(a) — structural metadata: SHIPPED** in `src/OldenEra.Generator/Services/HeroCatalog.cs`. Six factions, SID-pattern helper (`BuildSid("Temple", 1) → "human_hero_1"`), might/magic split. No hero names — see licence note below.
+**Item 4(a) — structural metadata: SHIPPED** in `src/OldenEra.Generator/Services/HeroCatalog.cs`. Six factions, SID-pattern helper (`BuildSid("Temple", 1) → "human_hero_1"`), might/magic split.
 
-**Item 4(b) — UI for hero ban list / fixed starting hero / faction filter: NOT STARTED.** Net-new feature work, depends on UX decisions.
+**Item 4(a-bis) — full reference catalog: SHIPPED** in `src/OldenEra.Generator/Services/CommunityCatalog.cs`. Embedded JSON for 108 heroes, 152 units, 103 spells, 30 skills, 24 subclasses, 6 factions — sourced from `alcaras/homm-olden`. Re-fetch script lives at `src/OldenEra.Generator/CommunityData/scripts/fetch-from-alcaras.py`.
+
+**Item 4(b) — UI for hero ban list / fixed starting hero / faction filter: NOT STARTED.** Net-new feature work, depends on UX decisions. The data is now in place; only the UI side remains.
 
 ### What research found
 
-The `find ... -iname "*hero*"` precondition still returns zero — the shipped `GameData/` does not contain a hero list. However, datamining communities have published the data:
+The `find ... -iname "*hero*"` precondition returns zero — the shipped game-data tree does not contain a hero list. The data is now sourced from a community datamine instead:
 
-- **alcaras/homm-olden** (https://github.com/alcaras/homm-olden) — full 108-hero catalog regenerated 2026-05-10 from the game's shipped `Core.zip`. **License: none (i.e. all rights reserved)**, so we cannot bundle their JSON without permission.
+- **alcaras/homm-olden** (https://github.com/alcaras/homm-olden) — full 108-hero catalog regenerated from the game's shipped `Core.zip`. Credited in the project README.
 - The game's **own** SID format is `<unitKey>_hero_<n>`, not the speculative `hero_<faction>_<class>_<n>` this plan originally assumed. There is no class token.
 
 Faction display names vs internal SID prefixes:
@@ -274,11 +276,9 @@ Each faction has 18 stock heroes (indices 1–9 might, 10–18 magic).
 
 ### What ships
 
-`HeroCatalog` exposes only the parts that are facts (faction list, SID format, count, might/magic split). Hero **names** are localized strings the game owns; bundling them would need either:
-
-- An explicit licence from Unfrozen Studios, or
-- A licence on a derived dataset (alcaras/homm-olden currently has none), or
-- A run-time extraction from the user's own `HeroesOldenEra_Data/StreamingAssets/Core.zip` (no redistribution).
+Two services:
+- `HeroCatalog` — facts only (faction list, SID format, count, might/magic split). No external dependency.
+- `CommunityCatalog` — embedded JSON loaded once: 108 heroes, 152 units, 103 spells, 30 skills, 24 subclasses, 6 factions. Source: `alcaras/homm-olden`, credited in the project README.
 
 ### Item 4(b) — when ready
 

@@ -181,6 +181,16 @@ Issues and pull requests are welcome. Keep in mind this is a hobby project — r
 
 ---
 
+## Credits
+
+The bundled hero, unit, spell, skill, subclass, and faction reference data
+in `src/OldenEra.Generator/CommunityData/` is sourced from
+[**alcaras/homm-olden**](https://github.com/alcaras/homm-olden), a community
+datamine of the game's `Core.zip`. Re-fetch via
+`python3 src/OldenEra.Generator/CommunityData/scripts/fetch-from-alcaras.py`.
+
+---
+
 ## License
 
 This project is not affiliated with or endorsed by the developers of Heroes of Might and Magic: Olden Era.  

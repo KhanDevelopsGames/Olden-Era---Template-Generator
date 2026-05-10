@@ -1,0 +1,338 @@
+[
+  {
+    "faction": "temple",
+    "kind": "might",
+    "name": "Paragon",
+    "class": "Knight",
+    "skills": [
+      "BAT",
+      "SUM",
+      "DAY",
+      "DPL",
+      "TAC"
+    ],
+    "effect": "Friendly creatures always deal maximum and take minimum Damage."
+  },
+  {
+    "faction": "temple",
+    "kind": "might",
+    "name": "Swashbuckler",
+    "class": "Knight",
+    "skills": [
+      "OFF",
+      "WIS",
+      "NGT",
+      "LD",
+      "LK"
+    ],
+    "effect": "Heroic Strike deals +{0} basic Damage."
+  },
+  {
+    "faction": "temple",
+    "kind": "magic",
+    "name": "Ascendant",
+    "class": "Cleric",
+    "skills": [
+      "RES",
+      "SOR",
+      "PRI",
+      "LOG",
+      "EC"
+    ],
+    "effect": "All the hero’s spells always cost 0 mana."
+  },
+  {
+    "faction": "temple",
+    "kind": "magic",
+    "name": "Grand Inquisitor",
+    "class": "Cleric",
+    "skills": [
+      "DEF",
+      "BMG",
+      "ARC",
+      "INS",
+      "SCT"
+    ],
+    "effect": "Enemy hero can use each spell only once per battle."
+  },
+  {
+    "faction": "necropolis",
+    "kind": "might",
+    "name": "Harbinger of Doom",
+    "class": "Death Knight",
+    "skills": [
+      "DEF",
+      "SOR",
+      "PRI",
+      "LK",
+      "SCT"
+    ],
+    "effect": "Enemy creatures always have their minimum possible Luck and will <b>always</b> land an Unlucky Strike when attacking."
+  },
+  {
+    "faction": "necropolis",
+    "kind": "might",
+    "name": "Walking Rot",
+    "class": "Death Knight",
+    "skills": [
+      "RES",
+      "WIS",
+      "NGT",
+      "DPL",
+      "TAC"
+    ],
+    "effect": "All enemies always have their minimum possible Morale."
+  },
+  {
+    "faction": "necropolis",
+    "kind": "magic",
+    "name": "Chronomancer",
+    "class": "Necromancer",
+    "skills": [
+      "OFF",
+      "BMG",
+      "DAY",
+      "EC",
+      "TAC"
+    ],
+    "effect": "Necromancy works for all creatures and not just the Undead."
+  },
+  {
+    "faction": "necropolis",
+    "kind": "magic",
+    "name": "Soulweaver",
+    "class": "Necromancer",
+    "skills": [
+      "BAT",
+      "SUM",
+      "ARC",
+      "INS",
+      "LOG"
+    ],
+    "effect": "After an enemy stack is killed in battle, a temporary stack of friendly Wights appears in their place."
+  },
+  {
+    "faction": "grove",
+    "kind": "might",
+    "name": "Fortune’s Favored",
+    "class": "Warden",
+    "skills": [
+      "OFF",
+      "WIS",
+      "PRI",
+      "LK",
+      "DPL"
+    ],
+    "effect": "Friendly creatures have their maximum possible Luck and will <b>always</b> land a Lucky Strike when attacking."
+  },
+  {
+    "faction": "grove",
+    "kind": "might",
+    "name": "Wellspring of Vigor",
+    "class": "Warden",
+    "skills": [
+      "RES",
+      "BMG",
+      "DAY",
+      "LD",
+      "INS"
+    ],
+    "effect": "Generates maximum Focus Charges at the beginning of each round."
+  },
+  {
+    "faction": "grove",
+    "kind": "magic",
+    "name": "Celestial Envoy",
+    "class": "Druid",
+    "skills": [
+      "DEF",
+      "SUM",
+      "ARC",
+      "SCT",
+      "EC"
+    ],
+    "effect": "The hero can use all spells."
+  },
+  {
+    "faction": "grove",
+    "kind": "magic",
+    "name": "Heaven’s Fury",
+    "class": "Druid",
+    "skills": [
+      "BAT",
+      "SOR",
+      "NGT",
+      "LOG",
+      "TAC"
+    ],
+    "effect": "Heroic Strike deals Damage to all enemies in a 1‑hex radius."
+  },
+  {
+    "faction": "hive",
+    "kind": "might",
+    "name": "Broodmother",
+    "class": "Enforcer",
+    "skills": [
+      "BAT",
+      "WIS",
+      "NGT",
+      "LD",
+      "EC"
+    ],
+    "effect": "Doubles the base stats of summoned Fire Larvae."
+  },
+  {
+    "faction": "hive",
+    "kind": "might",
+    "name": "Soul Eater",
+    "class": "Enforcer",
+    "skills": [
+      "RES",
+      "BMG",
+      "DAY",
+      "INS",
+      "LOG"
+    ],
+    "effect": "Grants a new battle ability. It allows the hero to consume a target corpse, gaining bonus Attack, Defense, and Spell Power until the end of battle."
+  },
+  {
+    "faction": "hive",
+    "kind": "magic",
+    "name": "Lord of Chaos",
+    "class": "Herald",
+    "skills": [
+      "OFF",
+      "SOR",
+      "PRI",
+      "LK",
+      "SCT"
+    ],
+    "effect": "Heroic Strike deals +{0} Damage per each hero attribute point."
+  },
+  {
+    "faction": "hive",
+    "kind": "magic",
+    "name": "Progenitor",
+    "class": "Herald",
+    "skills": [
+      "DEF",
+      "SUM",
+      "ARC",
+      "DPL",
+      "TAC"
+    ],
+    "effect": "+{0}% creature growth in all your cities."
+  },
+  {
+    "faction": "schism",
+    "kind": "might",
+    "name": "Unbound",
+    "class": "Oathkeeper",
+    "skills": [
+      "OFF",
+      "SOR",
+      "DAY",
+      "LD",
+      "SCT"
+    ],
+    "effect": "Increases the level of all hero’s spells to their maximum."
+  },
+  {
+    "faction": "schism",
+    "kind": "might",
+    "name": "Unfeeling",
+    "class": "Oathkeeper",
+    "skills": [
+      "RES",
+      "WIS",
+      "NGT",
+      "DPL",
+      "EC"
+    ],
+    "effect": "Enemy loses all Focus Charges at the beginning of each round."
+  },
+  {
+    "faction": "schism",
+    "kind": "magic",
+    "name": "Unfathomable",
+    "class": "Riftspeaker",
+    "skills": [
+      "DEF",
+      "SUM",
+      "ARC",
+      "LK",
+      "LOG"
+    ],
+    "effect": "All enemies always deal minimum and take maximum Damage."
+  },
+  {
+    "faction": "schism",
+    "kind": "magic",
+    "name": "Unstoppable",
+    "class": "Riftspeaker",
+    "skills": [
+      "BAT",
+      "BMG",
+      "PRI",
+      "INS",
+      "TAC"
+    ],
+    "effect": "The hero gains +{0} Attack, Defense, Spell Power, and Knowledge."
+  },
+  {
+    "faction": "dungeon",
+    "kind": "might",
+    "name": "Balthazar’s Bodyguard",
+    "class": "Overlord",
+    "skills": [
+      "OFF",
+      "WIS",
+      "NGT",
+      "LD",
+      "DPL"
+    ],
+    "effect": "The hero gains +{0}% Attack."
+  },
+  {
+    "faction": "dungeon",
+    "kind": "might",
+    "name": "Silvertongue’s Envoy",
+    "class": "Overlord",
+    "skills": [
+      "DEF",
+      "SOR",
+      "DAY",
+      "LK",
+      "SCT"
+    ],
+    "effect": "The hero gains +{0}% Defense."
+  },
+  {
+    "faction": "dungeon",
+    "kind": "magic",
+    "name": "Amelchia’s Heir",
+    "class": "Warlock",
+    "skills": [
+      "BAT",
+      "SUM",
+      "PRI",
+      "INS",
+      "TAC"
+    ],
+    "effect": "The hero gains +{0}% Spell Power."
+  },
+  {
+    "faction": "dungeon",
+    "kind": "magic",
+    "name": "Great Merchant",
+    "class": "Warlock",
+    "skills": [
+      "RES",
+      "BMG",
+      "ARC",
+      "LOG",
+      "EC"
+    ],
+    "effect": "Produces +{0} Gold daily."
+  }
+]

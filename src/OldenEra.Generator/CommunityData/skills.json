@@ -1,0 +1,4533 @@
+[
+  {
+    "id": "skill_assault",
+    "name": "Offense",
+    "baseDesc": "Friendly creatures’ basic attacks deal +{0}% Damage.",
+    "group": "combat",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_assault",
+        "name": "Basic Offense",
+        "desc": "Friendly creatures’ basic attacks deal +{0}% Damage.",
+        "bonuses": [
+          "Friendly creatures deal +15% damage on basic attack"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_assault_2",
+        "name": "Advanced Offense",
+        "desc": "Friendly creatures’ basic attacks deal +{0}% Damage.",
+        "bonuses": [
+          "Friendly creatures deal +20% damage on basic attack"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_assault_2",
+            "name": "Archery",
+            "desc": "Friendly creatures’ Ranged and Long Reach attacks deal +{0}% Damage."
+          },
+          {
+            "id": "sub_skill_assault_3",
+            "name": "Battle March",
+            "desc": "Friendly creatures generate +{0} Focus Point(s) per attack. This bonus is doubled if the hero knows “Luck.”"
+          },
+          {
+            "id": "sub_skill_assault_6",
+            "name": "Battle Frenzy",
+            "desc": "Friendly creatures gain +{0} Attack for each point of Morale."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_assault_3",
+        "name": "Expert Offense",
+        "desc": "Friendly creatures’ basic attacks deal +{0}% Damage.",
+        "bonuses": [
+          "Friendly creatures deal +25% damage on basic attack"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_assault_1",
+            "name": "Shadow Blades",
+            "desc": "Friendly creatures deal +{0} Damage."
+          },
+          {
+            "id": "sub_skill_assault_4",
+            "name": "Reality Wardens",
+            "desc": "Friendly creatures deal +{0}% Damage to summoned enemy creatures. This bonus is doubled if the hero knows “Nightshade Magic.”"
+          },
+          {
+            "id": "sub_skill_assault_5",
+            "name": "Firmness",
+            "desc": "–{0}% Defense to enemy creatures."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Swashbuckler",
+        "class": "Knight",
+        "faction": "temple",
+        "kind": "might"
+      },
+      {
+        "name": "Chronomancer",
+        "class": "Necromancer",
+        "faction": "necropolis",
+        "kind": "magic"
+      },
+      {
+        "name": "Fortune’s Favored",
+        "class": "Warden",
+        "faction": "grove",
+        "kind": "might"
+      },
+      {
+        "name": "Lord of Chaos",
+        "class": "Herald",
+        "faction": "hive",
+        "kind": "magic"
+      },
+      {
+        "name": "Unbound",
+        "class": "Oathkeeper",
+        "faction": "schism",
+        "kind": "might"
+      },
+      {
+        "name": "Balthazar’s Bodyguard",
+        "class": "Overlord",
+        "faction": "dungeon",
+        "kind": "might"
+      }
+    ],
+    "starters": [
+      {
+        "id": "nature_hero_2",
+        "name": "Gorel Spearhead",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_1",
+        "name": "Niev",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_3",
+        "name": "Onkos",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_10",
+        "name": "Grellekh the Betrayer",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_4",
+        "name": "Kestrel",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_protection",
+    "name": "Defense",
+    "baseDesc": "Friendly creatures take –{0}% Damage from basic attacks.",
+    "group": "combat",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_protection",
+        "name": "Basic Defense",
+        "desc": "Friendly creatures take –{0}% Damage from basic attacks.",
+        "bonuses": [
+          "Friendly creatures take -15% damage on basic attack"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_protection_2",
+        "name": "Advanced Defense",
+        "desc": "Friendly creatures take –{0}% Damage from basic attacks.",
+        "bonuses": [
+          "Friendly creatures take -20% damage on basic attack"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_protection_2",
+            "name": "Cover",
+            "desc": "Friendly creatures take –{0}% Damage from Ranged and Long Reach attacks."
+          },
+          {
+            "id": "sub_skill_protection_3",
+            "name": "Hymn to the Martyrs",
+            "desc": "Friendly creatures generate +{0} Focus Point(s) when they take Damage. This bonus is doubled if the hero knows “Recruitment.”"
+          },
+          {
+            "id": "sub_skill_protection_6",
+            "name": "As Luck Would Have It",
+            "desc": "Friendly creatures gain +{0} Defense for each point of Luck."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_protection_3",
+        "name": "Expert Defense",
+        "desc": "Friendly creatures take –{0}% Damage from basic attacks.",
+        "bonuses": [
+          "Friendly creatures take -25% damage on basic attack"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_protection_1",
+            "name": "Shields and Shells",
+            "desc": "Enemy creatures deal –{0} Damage."
+          },
+          {
+            "id": "sub_skill_protection_4",
+            "name": "Wizard Contract",
+            "desc": "Friendly creatures take –{0}% Magic Damage. This bonus is doubled if the hero knows “Diplomacy.”"
+          },
+          {
+            "id": "sub_skill_protection_5",
+            "name": "Unstoppable Force",
+            "desc": "–{0}% Attack to enemy creatures."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Grand Inquisitor",
+        "class": "Cleric",
+        "faction": "temple",
+        "kind": "magic"
+      },
+      {
+        "name": "Harbinger of Doom",
+        "class": "Death Knight",
+        "faction": "necropolis",
+        "kind": "might"
+      },
+      {
+        "name": "Celestial Envoy",
+        "class": "Druid",
+        "faction": "grove",
+        "kind": "magic"
+      },
+      {
+        "name": "Progenitor",
+        "class": "Herald",
+        "faction": "hive",
+        "kind": "magic"
+      },
+      {
+        "name": "Unfathomable",
+        "class": "Riftspeaker",
+        "faction": "schism",
+        "kind": "magic"
+      },
+      {
+        "name": "Silvertongue’s Envoy",
+        "class": "Overlord",
+        "faction": "dungeon",
+        "kind": "might"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_1",
+        "name": "Enatee",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_7",
+        "name": "Lo",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_1",
+        "name": "Bulwark",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_11",
+        "name": "Icequeen Hel’Ghat",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_3",
+        "name": "John Johnson",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_leadership",
+    "name": "Leadership",
+    "baseDesc": "The hero gains {0} Morale.",
+    "group": "utility",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_leadership",
+        "name": "Basic Leadership",
+        "desc": "The hero gains {0} Morale.",
+        "bonuses": [
+          "Hero moral +1"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_leadership_2",
+        "name": "Advanced Leadership",
+        "desc": "The hero gains {0} Morale.",
+        "bonuses": [
+          "Hero moral +2"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_leadership_1",
+            "name": "Resolve",
+            "desc": "Friendly creatures’ chance to take an additional turn increases by {0}% for each point of Morale. This bonus is doubled if the hero knows “Battlecraft.”"
+          },
+          {
+            "id": "sub_skill_leadership_4",
+            "name": "Where the Sun Never Sets",
+            "desc": "Attack, Defense, Spell Power, and sight radius increase by {0} when in an area you <b>do not</b> control. This bonus is doubled if the hero knows “Daylight Magic.”"
+          },
+          {
+            "id": "sub_skill_leadership_2",
+            "name": "Hero of Legends",
+            "desc": "Enemy Morale is reduced by {0} in battle."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_leadership_3",
+        "name": "Expert Leadership",
+        "desc": "The hero gains {0} Morale.",
+        "bonuses": [
+          "Hero moral +3"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_leadership_6",
+            "name": "Inspiring Strike",
+            "desc": "The hero gains a chance to instantly reset the cooldown of Heroic Strike whenever they use it: {0}% per point of the hero’s Morale."
+          },
+          {
+            "id": "sub_skill_leadership_5",
+            "name": "March!",
+            "desc": "Friendly creatures gain {0} Initiative."
+          },
+          {
+            "id": "sub_skill_leadership_3",
+            "name": "Enthusiasm",
+            "desc": "Whenever a friendly creature gains a turn from positive Morale effect, all friendly creatures’ Morale increases by {0} until the end of the next round."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Swashbuckler",
+        "class": "Knight",
+        "faction": "temple",
+        "kind": "might"
+      },
+      {
+        "name": "Wellspring of Vigor",
+        "class": "Warden",
+        "faction": "grove",
+        "kind": "might"
+      },
+      {
+        "name": "Broodmother",
+        "class": "Enforcer",
+        "faction": "hive",
+        "kind": "might"
+      },
+      {
+        "name": "Unbound",
+        "class": "Oathkeeper",
+        "faction": "schism",
+        "kind": "might"
+      },
+      {
+        "name": "Balthazar’s Bodyguard",
+        "class": "Overlord",
+        "faction": "dungeon",
+        "kind": "might"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_6",
+        "name": "Devir, son of Devir",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_8",
+        "name": "Goldentongue",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_5",
+        "name": "Aeos the Exalted",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_luck",
+    "name": "Luck",
+    "baseDesc": "The hero gains {0} Luck.",
+    "group": "utility",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_luck",
+        "name": "Basic Luck",
+        "desc": "The hero gains {0} Luck.",
+        "bonuses": [
+          "Hero luck +1"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_luck_2",
+        "name": "Advanced Luck",
+        "desc": "The hero gains {0} Luck.",
+        "bonuses": [
+          "Hero luck +2"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_luck_1",
+            "name": "Beastly Confidence",
+            "desc": "Friendly creatures have a {0}% higher chance to land a Lucky Strike for each point of Luck. This bonus is doubled if the hero knows “Primal Magic.”"
+          },
+          {
+            "id": "sub_skill_luck_2",
+            "name": "Always Heads",
+            "desc": "The hero gains +{0}% Gold and resources from piles on the global map. This bonus is doubled if the hero knows “Economy.”"
+          },
+          {
+            "id": "sub_skill_luck_3",
+            "name": "Mearea’s Chosen",
+            "desc": "Enemy Luck is reduced by {0} in battle."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_luck_3",
+        "name": "Expert Luck",
+        "desc": "The hero gains {0} Luck.",
+        "bonuses": [
+          "Hero luck +3"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_luck_4",
+            "name": "Lucky Hit",
+            "desc": "When friendly creatures land a Lucky Strike, the enemy does not counterattack."
+          },
+          {
+            "id": "sub_skill_luck_5",
+            "name": "Lightning Strikes Twice",
+            "desc": "Spells can also land a Lucky Strike, dealing {0}% Damage. The chance increases by {1}% for every point of Luck."
+          },
+          {
+            "id": "sub_skill_luck_6",
+            "name": "Lucky Day",
+            "desc": "Whenever a friendly creature lands a Lucky Strike, all friendly creatures gain +{0} Luck until the end of the next round."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Swashbuckler",
+        "class": "Knight",
+        "faction": "temple",
+        "kind": "might"
+      },
+      {
+        "name": "Harbinger of Doom",
+        "class": "Death Knight",
+        "faction": "necropolis",
+        "kind": "might"
+      },
+      {
+        "name": "Fortune’s Favored",
+        "class": "Warden",
+        "faction": "grove",
+        "kind": "might"
+      },
+      {
+        "name": "Lord of Chaos",
+        "class": "Herald",
+        "faction": "hive",
+        "kind": "magic"
+      },
+      {
+        "name": "Unfathomable",
+        "class": "Riftspeaker",
+        "faction": "schism",
+        "kind": "magic"
+      },
+      {
+        "name": "Silvertongue’s Envoy",
+        "class": "Overlord",
+        "faction": "dungeon",
+        "kind": "might"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_13",
+        "name": "Motley",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_8",
+        "name": "Rhea",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_5",
+        "name": "Octavia",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_13",
+        "name": "Guildmaster Klastor",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_economy",
+    "name": "Economy",
+    "baseDesc": "+{0} Gold daily.",
+    "group": "utility",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_economy",
+        "name": "Basic Economy",
+        "desc": "+{0} Gold daily.",
+        "bonuses": [
+          "+500 gold/day"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_economy_2",
+        "name": "Advanced Economy",
+        "desc": "+{0} Gold daily.",
+        "bonuses": [
+          "+750 gold/day"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_economy_1",
+            "name": "Tax Collector",
+            "desc": "+{0} Gold daily. This bonus is doubled if the hero knows “Logistics.”"
+          },
+          {
+            "id": "sub_skill_economy_2",
+            "name": "Smuggler",
+            "desc": "+{0} Crystal, Gem, or Mercury daily (depending on the hero’s faction)."
+          },
+          {
+            "id": "sub_skill_economy_3",
+            "name": "Master Builder",
+            "desc": "+{0} Wood and Ore daily."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_economy_3",
+        "name": "Expert Economy",
+        "desc": "+{0} Gold daily.",
+        "bonuses": [
+          "+1000 gold/day"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_economy_4",
+            "name": "Experimenter",
+            "desc": "+{0} Alchemical Dust daily. This bonus is doubled if the hero knows “Insight.”"
+          },
+          {
+            "id": "sub_skill_economy_5",
+            "name": "Merchant",
+            "desc": "This hero counts as an additional Marketplace when calculating trading prices."
+          },
+          {
+            "id": "sub_skill_economy_6",
+            "name": "Antiquarian",
+            "desc": "This hero sells artifacts for {0}% more Gold and buys them for {0}% less."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Ascendant",
+        "class": "Cleric",
+        "faction": "temple",
+        "kind": "magic"
+      },
+      {
+        "name": "Chronomancer",
+        "class": "Necromancer",
+        "faction": "necropolis",
+        "kind": "magic"
+      },
+      {
+        "name": "Celestial Envoy",
+        "class": "Druid",
+        "faction": "grove",
+        "kind": "magic"
+      },
+      {
+        "name": "Broodmother",
+        "class": "Enforcer",
+        "faction": "hive",
+        "kind": "might"
+      },
+      {
+        "name": "Unfeeling",
+        "class": "Oathkeeper",
+        "faction": "schism",
+        "kind": "might"
+      },
+      {
+        "name": "Great Merchant",
+        "class": "Warlock",
+        "faction": "dungeon",
+        "kind": "magic"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_7",
+        "name": "Creta, daughter of Navarr",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_15",
+        "name": "Glastor",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_12",
+        "name": "Bathym, Duke of Jewels",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_18",
+        "name": "Clarissa",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_logistic",
+    "name": "Logistics",
+    "baseDesc": "+{0}% Movement points on the global map.",
+    "group": "utility",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_logistic",
+        "name": "Basic Logistics",
+        "desc": "+{0}% Movement points on the global map.",
+        "bonuses": [
+          "Hero movementPerBonus +0.10"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_logistic_2",
+        "name": "Advanced Logistics",
+        "desc": "+{0}% Movement points on the global map.",
+        "bonuses": [
+          "Hero movementPerBonus +0.15"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_logistic_2",
+            "name": "Leaps and Bounds",
+            "desc": "The hero restores {0} Movement point(s) after each victory in battle."
+          },
+          {
+            "id": "sub_skill_logistic_4",
+            "name": "Strong Mounts",
+            "desc": "Neutral Global Map spells cost –{0} mana. This bonus is doubled if the hero knows “Scouting.”"
+          },
+          {
+            "id": "sub_skill_logistic_3",
+            "name": "Careful Planning",
+            "desc": "Every day, the hero saves up to {0} unused Movement points for the next day. This bonus is doubled if the hero knows “Arcane Magic.”"
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_logistic_3",
+        "name": "Expert Logistics",
+        "desc": "+{0}% Movement points on the global map.",
+        "bonuses": [
+          "Hero movementPerBonus +0.20"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_logistic_1",
+            "name": "Secret Passages",
+            "desc": "Terrain penalties are reduced by {0}%."
+          },
+          {
+            "id": "sub_skill_logistic_5",
+            "name": "Back to Town!",
+            "desc": "Grants a new global map spell. It teleports the hero to the nearest city they control within {0} square(s). All remaining Movement points are lost upon casting."
+          },
+          {
+            "id": "sub_skill_logistic_6",
+            "name": "Battle Logistics",
+            "desc": "Friendly creatures gain +{0} Speed on Native Terrain."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Ascendant",
+        "class": "Cleric",
+        "faction": "temple",
+        "kind": "magic"
+      },
+      {
+        "name": "Soulweaver",
+        "class": "Necromancer",
+        "faction": "necropolis",
+        "kind": "magic"
+      },
+      {
+        "name": "Heaven’s Fury",
+        "class": "Druid",
+        "faction": "grove",
+        "kind": "magic"
+      },
+      {
+        "name": "Soul Eater",
+        "class": "Enforcer",
+        "faction": "hive",
+        "kind": "might"
+      },
+      {
+        "name": "Unfathomable",
+        "class": "Riftspeaker",
+        "faction": "schism",
+        "kind": "magic"
+      },
+      {
+        "name": "Great Merchant",
+        "class": "Warlock",
+        "faction": "dungeon",
+        "kind": "magic"
+      }
+    ],
+    "starters": [
+      {
+        "id": "demon_hero_10",
+        "name": "Fleu",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_7",
+        "name": "Marl",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_1",
+        "name": "Nihil",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_14",
+        "name": "Tölketh",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_1",
+        "name": "Ister",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_enlightenment",
+    "name": "Insight",
+    "baseDesc": "The hero gains +{0}% more XP.",
+    "group": "utility",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_enlightenment",
+        "name": "Basic Insight",
+        "desc": "The hero gains +{0}% more XP.",
+        "bonuses": [
+          "Hero expPerBonus +0.20"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_enlightenment_2",
+        "name": "Advanced Insight",
+        "desc": "The hero gains +{0}% more XP.",
+        "bonuses": [
+          "Hero expPerBonus +0.30"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_enlightenment_1",
+            "name": "Enlightenment",
+            "desc": "The hero gains an additional +{0}% XP."
+          },
+          {
+            "id": "sub_skill_enlightenment_2",
+            "name": "Civic Innovation",
+            "desc": "The hero gains +{0}% Law points. This bonus is doubled if the hero knows “Leadership.”"
+          },
+          {
+            "id": "sub_skill_enlightenment_3",
+            "name": "Sagacity",
+            "desc": "Shows the intentions of all neutral squads within {0} square(s) of the hero."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_enlightenment_3",
+        "name": "Expert Insight",
+        "desc": "The hero gains +{0}% more XP.",
+        "bonuses": [
+          "Hero expPerBonus +0.40"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_enlightenment_4",
+            "name": "Scholar of Magic",
+            "desc": "Allows heroes to teach each other spells when they interact on the global map. In the exchange, each hero will learn all the spells of the other that their skills, level, and items permit."
+          },
+          {
+            "id": "sub_skill_enlightenment_5",
+            "name": "Endless Charisma",
+            "desc": "+{0} Attack, Defense, Spell Power, and Knowledge. This bonus is doubled if the hero knows “Tactics.”"
+          },
+          {
+            "id": "sub_skill_enlightenment_6",
+            "name": "Perception",
+            "desc": "Enables viewing detailed information about the enemy hero during battle."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Grand Inquisitor",
+        "class": "Cleric",
+        "faction": "temple",
+        "kind": "magic"
+      },
+      {
+        "name": "Soulweaver",
+        "class": "Necromancer",
+        "faction": "necropolis",
+        "kind": "magic"
+      },
+      {
+        "name": "Wellspring of Vigor",
+        "class": "Warden",
+        "faction": "grove",
+        "kind": "might"
+      },
+      {
+        "name": "Soul Eater",
+        "class": "Enforcer",
+        "faction": "hive",
+        "kind": "might"
+      },
+      {
+        "name": "Unstoppable",
+        "class": "Riftspeaker",
+        "faction": "schism",
+        "kind": "magic"
+      },
+      {
+        "name": "Amelchia’s Heir",
+        "class": "Warlock",
+        "faction": "dungeon",
+        "kind": "magic"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_10",
+        "name": "Kelarr, son of Navarr",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_9",
+        "name": "Aunt Daliar",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_2",
+        "name": "Maelstrom",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_11",
+        "name": "Pip",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_sorcery",
+    "name": "Sorcery",
+    "baseDesc": "+{0}% Magic Damage dealt.",
+    "group": "magic",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_sorcery",
+        "name": "Basic Sorcery",
+        "desc": "+{0}% Magic Damage dealt.",
+        "bonuses": [
+          "Hero magicAttackPerBonus +0.10"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_sorcery_2",
+        "name": "Advanced Sorcery",
+        "desc": "+{0}% Magic Damage dealt.",
+        "bonuses": [
+          "Hero magicAttackPerBonus +0.20"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_sorcery_6",
+            "name": "Magical Influence",
+            "desc": "The cooldowns of all friendly creature abilities are reduced by {0} round(s)."
+          },
+          {
+            "id": "sub_skill_sorcery_2",
+            "name": "Magic Arrow",
+            "desc": "Grants a new battle spell. It deals Magic Damage to a single target, has no cooldown, and costs no mana."
+          },
+          {
+            "id": "sub_skill_sorcery_3",
+            "name": "Raw Energy",
+            "desc": "+{0}% more Magic Damage dealt. This bonus is doubled if the hero knows “Offense.”"
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_sorcery_3",
+        "name": "Expert Sorcery",
+        "desc": "+{0}% Magic Damage dealt.",
+        "bonuses": [
+          "Hero magicAttackPerBonus +0.30"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_sorcery_4",
+            "name": "Piercing Spells",
+            "desc": "Offensive spells ignore {0}% of target’s magic resistance."
+          },
+          {
+            "id": "sub_skill_sorcery_5",
+            "name": "High Mage",
+            "desc": "All the spells belonging to Magic Schools the hero has learned gain {0} level(s)."
+          },
+          {
+            "id": "sub_skill_sorcery_1",
+            "name": "Sticky Magic",
+            "desc": "Effects applied by the hero last +{0} round(s). This bonus is doubled if the hero knows “Wisdom.”"
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Ascendant",
+        "class": "Cleric",
+        "faction": "temple",
+        "kind": "magic"
+      },
+      {
+        "name": "Harbinger of Doom",
+        "class": "Death Knight",
+        "faction": "necropolis",
+        "kind": "might"
+      },
+      {
+        "name": "Heaven’s Fury",
+        "class": "Druid",
+        "faction": "grove",
+        "kind": "magic"
+      },
+      {
+        "name": "Lord of Chaos",
+        "class": "Herald",
+        "faction": "hive",
+        "kind": "magic"
+      },
+      {
+        "name": "Unbound",
+        "class": "Oathkeeper",
+        "faction": "schism",
+        "kind": "might"
+      },
+      {
+        "name": "Silvertongue’s Envoy",
+        "class": "Overlord",
+        "faction": "dungeon",
+        "kind": "might"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_11",
+        "name": "Zakron the Great",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_6",
+        "name": "Mreowa",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_18",
+        "name": "The Minstrel",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_15",
+        "name": "Laura",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_2",
+        "name": "Blackhorn",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_magic_day",
+    "name": "Daylight Magic",
+    "baseDesc": "The hero can learn tier‑{0} Daylight spells.",
+    "group": "school",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_magic_day",
+        "name": "Basic Daylight Magic",
+        "desc": "The hero can learn tier‑{0} Daylight spells.",
+        "bonuses": [
+          "Hero magicSchoolSet day",
+          "Hero magicSchoolSet day"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_magic_day_2",
+        "name": "Advanced Daylight Magic",
+        "desc": "The hero can learn tier‑{0} Daylight spells. Daylight spells gain +{1} level(s).",
+        "bonuses": [
+          "Hero magicSchoolSet day",
+          "Hero magicSchoolSet day",
+          "Hero magicCostSchoolSet day"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_magic_day_6",
+            "name": "Daylight Time",
+            "desc": "The cooldowns of all the hero’s Daylight spells are reduced by {0} round(s)."
+          },
+          {
+            "id": "sub_skill_magic_day_2",
+            "name": "Luminous Focus",
+            "desc": "Generates {0} Focus Charge(s) at the start of every battle."
+          },
+          {
+            "id": "sub_skill_magic_day_3",
+            "name": "Brightest Sun",
+            "desc": "–{0} level(s) to all enemy Daylight spells."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_magic_day_3",
+        "name": "Expert Daylight Magic",
+        "desc": "The hero can learn tier‑{0} Daylight spells, and can learn Daylight spells unlocked in the Observatory, without visiting a Mage Guild. Daylight spells gain +{1} level(s).",
+        "bonuses": [
+          "Hero magicSchoolSet day",
+          "Hero magicSchoolSet day",
+          "Hero magicCostSchoolSet day",
+          "learnMagicRemoteFromMagicGuild: day"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_magic_day_4",
+            "name": "Daylight Teachings",
+            "desc": "+{0} level(s) to this hero’s Daylight spells."
+          },
+          {
+            "id": "sub_skill_magic_day_5",
+            "name": "Speed of Light",
+            "desc": "+{0} Movement points. This bonus is doubled if the hero knows “Logistics.”"
+          },
+          {
+            "id": "sub_skill_magic_day_1",
+            "name": "Scholar Synergy: Arina",
+            "desc": "+{0} Spell Power when casting Daylight spells. Gain an additional +{1} for each other Magic School skill known."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Paragon",
+        "class": "Knight",
+        "faction": "temple",
+        "kind": "might"
+      },
+      {
+        "name": "Chronomancer",
+        "class": "Necromancer",
+        "faction": "necropolis",
+        "kind": "magic"
+      },
+      {
+        "name": "Wellspring of Vigor",
+        "class": "Warden",
+        "faction": "grove",
+        "kind": "might"
+      },
+      {
+        "name": "Soul Eater",
+        "class": "Enforcer",
+        "faction": "hive",
+        "kind": "might"
+      },
+      {
+        "name": "Unbound",
+        "class": "Oathkeeper",
+        "faction": "schism",
+        "kind": "might"
+      },
+      {
+        "name": "Silvertongue’s Envoy",
+        "class": "Overlord",
+        "faction": "dungeon",
+        "kind": "might"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_17",
+        "name": "Sunny Rauktol",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_15",
+        "name": "Mila",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_9",
+        "name": "Martyr Tho",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_13",
+        "name": "Lia the Untethered One",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_15",
+        "name": "Vesper",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_magic_night",
+    "name": "Nightshade Magic",
+    "baseDesc": "The hero can learn tier‑{0} Nightshade spells.",
+    "group": "school",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_magic_night",
+        "name": "Basic Nightshade Magic",
+        "desc": "The hero can learn tier‑{0} Nightshade spells.",
+        "bonuses": [
+          "Hero magicSchoolSet night",
+          "Hero magicSchoolSet night"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_magic_night_2",
+        "name": "Advanced Nightshade Magic",
+        "desc": "The hero can learn tier‑{0} Nightshade spells. Nightshade spells gain +{1} level(s).",
+        "bonuses": [
+          "Hero magicSchoolSet night",
+          "Hero magicSchoolSet night",
+          "Hero magicCostSchoolSet night"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_magic_night_6",
+            "name": "Nightshade Time",
+            "desc": "The cooldowns of all the hero’s Nightshade spells are reduced by {0} round(s)."
+          },
+          {
+            "id": "sub_skill_magic_night_2",
+            "name": "Chronic Weakness",
+            "desc": "Enemy creature maximum HP reduces by {0}. This effect is doubled if the hero knows “Resistance.”"
+          },
+          {
+            "id": "sub_skill_magic_night_3",
+            "name": "Darkest Night",
+            "desc": "–{0} level(s) to all enemy Nightshade spells."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_magic_night_3",
+        "name": "Expert Nightshade Magic",
+        "desc": "The hero can learn tier‑{0} Nightshade spells, and can learn Nightshade spells unlocked in the Observatory, without visiting a Mage Guild. Nightshade spells gain +{1} level(s).",
+        "bonuses": [
+          "Hero magicSchoolSet night",
+          "Hero magicSchoolSet night",
+          "Hero magicCostSchoolSet night",
+          "learnMagicRemoteFromMagicGuild: night"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_magic_night_4",
+            "name": "Nightshade Teachings",
+            "desc": "+{0} level(s) to this hero’s Nightshade spells."
+          },
+          {
+            "id": "sub_skill_magic_night_5",
+            "name": "Hour of the Wolf",
+            "desc": "–{0}% Attack and Defense to enemy creatures."
+          },
+          {
+            "id": "sub_skill_magic_night_1",
+            "name": "Scholar Synergy: Naira",
+            "desc": "+{0} Spell Power when casting Nightshade spells. Gain an additional +{1} for each other Magic School skill known."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Swashbuckler",
+        "class": "Knight",
+        "faction": "temple",
+        "kind": "might"
+      },
+      {
+        "name": "Walking Rot",
+        "class": "Death Knight",
+        "faction": "necropolis",
+        "kind": "might"
+      },
+      {
+        "name": "Heaven’s Fury",
+        "class": "Druid",
+        "faction": "grove",
+        "kind": "magic"
+      },
+      {
+        "name": "Broodmother",
+        "class": "Enforcer",
+        "faction": "hive",
+        "kind": "might"
+      },
+      {
+        "name": "Unfeeling",
+        "class": "Oathkeeper",
+        "faction": "schism",
+        "kind": "might"
+      },
+      {
+        "name": "Balthazar’s Bodyguard",
+        "class": "Overlord",
+        "faction": "dungeon",
+        "kind": "might"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_18",
+        "name": "Lodos",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_4",
+        "name": "Zoran, the Self‑Founded",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_14",
+        "name": "Shadespinner Oona",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_17",
+        "name": "Sister Keiri",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_17",
+        "name": "Nadir",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_magic_space",
+    "name": "Arcane Magic",
+    "baseDesc": "The hero can learn tier‑{0} Arcane spells.",
+    "group": "school",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_magic_space",
+        "name": "Basic Arcane Magic",
+        "desc": "The hero can learn tier‑{0} Arcane spells.",
+        "bonuses": [
+          "Hero magicSchoolSet space",
+          "Hero magicSchoolSet space"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_magic_space_2",
+        "name": "Advanced Arcane Magic",
+        "desc": "The hero can learn tier‑{0} Arcane spells. Arcane spells gain +{1} level(s).",
+        "bonuses": [
+          "Hero magicSchoolSet space",
+          "Hero magicSchoolSet space",
+          "Hero magicCostSchoolSet space"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_magic_space_6",
+            "name": "Arcane Time",
+            "desc": "The cooldowns of all the hero’s Arcane spells are reduced by {0} round(s)."
+          },
+          {
+            "id": "sub_skill_magic_space_2",
+            "name": "All Life is Endless",
+            "desc": "+{0}% healing and revival from friendly creature abilities and hero spells in battle. This bonus is doubled if the hero knows “Summon Avatar.”"
+          },
+          {
+            "id": "sub_skill_magic_space_3",
+            "name": "Purest Thought",
+            "desc": "–{0} level(s) to all enemy Arcane spells."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_magic_space_3",
+        "name": "Expert Arcane Magic",
+        "desc": "The hero can learn tier‑{0} Arcane spells, and can learn Arcane spells unlocked in the Observatory, without visiting a Mage Guild. Arcane spells gain +{1} level(s).",
+        "bonuses": [
+          "Hero magicSchoolSet space",
+          "Hero magicSchoolSet space",
+          "Hero magicCostSchoolSet space",
+          "learnMagicRemoteFromMagicGuild: space"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_magic_space_4",
+            "name": "Arcane Teachings",
+            "desc": "+{0} level(s) to this hero’s Arcane spells."
+          },
+          {
+            "id": "sub_skill_magic_space_5",
+            "name": "Mana Flex",
+            "desc": "Spells cost –{0} mana."
+          },
+          {
+            "id": "sub_skill_magic_space_1",
+            "name": "Scholar Synergy: Doreath",
+            "desc": "+{0} Spell Power when casting Arcane spells. Gain an additional +{1} for each other Magic School skill known."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Grand Inquisitor",
+        "class": "Cleric",
+        "faction": "temple",
+        "kind": "magic"
+      },
+      {
+        "name": "Soulweaver",
+        "class": "Necromancer",
+        "faction": "necropolis",
+        "kind": "magic"
+      },
+      {
+        "name": "Celestial Envoy",
+        "class": "Druid",
+        "faction": "grove",
+        "kind": "magic"
+      },
+      {
+        "name": "Progenitor",
+        "class": "Herald",
+        "faction": "hive",
+        "kind": "magic"
+      },
+      {
+        "name": "Unfathomable",
+        "class": "Riftspeaker",
+        "faction": "schism",
+        "kind": "magic"
+      },
+      {
+        "name": "Great Merchant",
+        "class": "Warlock",
+        "faction": "dungeon",
+        "kind": "magic"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_9",
+        "name": "Gleard the Grey",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_16",
+        "name": "Echolily",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_10",
+        "name": "Mag",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_16",
+        "name": "Ra’Davok",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_magic_primal",
+    "name": "Primal Magic",
+    "baseDesc": "The hero can learn tier‑{0} Primal spells.",
+    "group": "school",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_magic_primal",
+        "name": "Basic Primal Magic",
+        "desc": "The hero can learn tier‑{0} Primal spells.",
+        "bonuses": [
+          "Hero magicSchoolSet primal",
+          "Hero magicSchoolSet primal"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_magic_primal_2",
+        "name": "Advanced Primal Magic",
+        "desc": "The hero can learn tier‑{0} Primal spells. Primal spells gain +{1} level(s).",
+        "bonuses": [
+          "Hero magicSchoolSet primal",
+          "Hero magicSchoolSet primal",
+          "Hero magicCostSchoolSet primal"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_magic_primal_6",
+            "name": "Primal Time",
+            "desc": "The cooldowns of all the hero’s Primal spells are reduced by {0} round(s)."
+          },
+          {
+            "id": "sub_skill_magic_primal_2",
+            "name": "Primal Force",
+            "desc": "Negative and positive effects used by the hero and friendly creatures last {0} additional round(s)."
+          },
+          {
+            "id": "sub_skill_magic_primal_3",
+            "name": "Sharpest Teeth",
+            "desc": "–{0} level(s) to all enemy Primal spells."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_magic_primal_3",
+        "name": "Expert Primal Magic",
+        "desc": "The hero can learn tier‑{0} Primal spells, and can learn Primal spells unlocked in the Observatory, without visiting a Mage Guild. Primal spells gain +{1} level(s).",
+        "bonuses": [
+          "Hero magicSchoolSet primal",
+          "Hero magicSchoolSet primal",
+          "Hero magicCostSchoolSet primal",
+          "learnMagicRemoteFromMagicGuild: primal"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_magic_primal_4",
+            "name": "Primal Teachings",
+            "desc": "+{0} level(s) to this hero’s Primal spells."
+          },
+          {
+            "id": "sub_skill_magic_primal_5",
+            "name": "Chaos Reigns",
+            "desc": "The hero and friendly creatures deal {0}% more Damage with Lucky Strikes. This bonus is doubled if the hero knows “Battle Magic.”"
+          },
+          {
+            "id": "sub_skill_magic_primal_1",
+            "name": "Scholar Synergy: Hksmilla",
+            "desc": "+{0} Spell Power when casting Primal spells. Gain an additional +{1} for each other Magic School skill known."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Ascendant",
+        "class": "Cleric",
+        "faction": "temple",
+        "kind": "magic"
+      },
+      {
+        "name": "Harbinger of Doom",
+        "class": "Death Knight",
+        "faction": "necropolis",
+        "kind": "might"
+      },
+      {
+        "name": "Fortune’s Favored",
+        "class": "Warden",
+        "faction": "grove",
+        "kind": "might"
+      },
+      {
+        "name": "Lord of Chaos",
+        "class": "Herald",
+        "faction": "hive",
+        "kind": "magic"
+      },
+      {
+        "name": "Unstoppable",
+        "class": "Riftspeaker",
+        "faction": "schism",
+        "kind": "magic"
+      },
+      {
+        "name": "Amelchia’s Heir",
+        "class": "Warlock",
+        "faction": "dungeon",
+        "kind": "magic"
+      }
+    ],
+    "starters": [
+      {
+        "id": "nature_hero_12",
+        "name": "Aeliniel",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_13",
+        "name": "Glacia",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_15",
+        "name": "Halon",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_14",
+        "name": "Vim",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_17",
+        "name": "Khariseth",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_7",
+        "name": "Wal’kha",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_battlemage",
+    "name": "Battle Magic",
+    "baseDesc": "Friendly creatures’ Attack and Defense increase by {0}% of the hero’s Spell Power and Knowledge respectively.",
+    "group": "magic",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_battlemage",
+        "name": "Basic Battle Magic",
+        "desc": "Friendly creatures’ Attack and Defense increase by {0}% of the hero’s Spell Power and Knowledge respectively.",
+        "bonuses": [
+          "Unit heroSpellPowerModifier +0.15",
+          "Unit heroIntelligenceModifier +0.15"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_battlemage_2",
+        "name": "Advanced Battle Magic",
+        "desc": "Friendly creatures’ Attack and Defense increase by {0}% of the hero’s Spell Power and Knowledge respectively.",
+        "bonuses": [
+          "Unit heroSpellPowerModifier +0.25",
+          "Unit heroIntelligenceModifier +0.25"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_battlemage_1",
+            "name": "Aura of Destruction",
+            "desc": "Every time the hero uses a spell in a battle, their Attack increases by {0} until the end of that battle."
+          },
+          {
+            "id": "sub_skill_battlemage_2",
+            "name": "Aura of Protection",
+            "desc": "Every time the hero uses a spell in a battle, their Defense increases by {0} until the end of that battle."
+          },
+          {
+            "id": "sub_skill_battlemage_3",
+            "name": "Aura of Wizardry",
+            "desc": "Every time the hero uses a spell in a battle, their Spell Power increases by {0} until the end of that battle."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_battlemage_3",
+        "name": "Expert Battle Magic",
+        "desc": "Friendly creatures’ Attack and Defense increase by {0}% of the hero’s Spell Power and Knowledge respectively.",
+        "bonuses": [
+          "Unit heroSpellPowerModifier +0.35",
+          "Unit heroIntelligenceModifier +0.35"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_battlemage_4",
+            "name": "Battle Mage’s Authority",
+            "desc": "Friendly creatures’ Attack increases by {0}% of the hero’s Spell Power. This bonus is doubled if the hero knows “Sorcery.”"
+          },
+          {
+            "id": "sub_skill_battlemage_5",
+            "name": "Mage Protector’s Authority",
+            "desc": "Friendly creatures’ Defense increases by {0}% of the hero’s Knowledge. This bonus is doubled if the hero knows “Resistance.”"
+          },
+          {
+            "id": "sub_skill_battlemage_6",
+            "name": "Magic Time",
+            "desc": "The cooldowns of all the hero’s battle spells are reduced by {0} round(s)."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Grand Inquisitor",
+        "class": "Cleric",
+        "faction": "temple",
+        "kind": "magic"
+      },
+      {
+        "name": "Chronomancer",
+        "class": "Necromancer",
+        "faction": "necropolis",
+        "kind": "magic"
+      },
+      {
+        "name": "Wellspring of Vigor",
+        "class": "Warden",
+        "faction": "grove",
+        "kind": "might"
+      },
+      {
+        "name": "Soul Eater",
+        "class": "Enforcer",
+        "faction": "hive",
+        "kind": "might"
+      },
+      {
+        "name": "Unstoppable",
+        "class": "Riftspeaker",
+        "faction": "schism",
+        "kind": "magic"
+      },
+      {
+        "name": "Great Merchant",
+        "class": "Warlock",
+        "faction": "dungeon",
+        "kind": "magic"
+      }
+    ],
+    "starters": [
+      {
+        "id": "nature_hero_4",
+        "name": "Old Pilgrim",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_13",
+        "name": "Leira",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_18",
+        "name": "Pauper",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_18",
+        "name": "Milossa the Golden",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_resistance",
+    "name": "Resistance",
+    "baseDesc": "Friendly creatures take –{0}% Magic Damage.",
+    "group": "combat",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_resistance",
+        "name": "Basic Resistance",
+        "desc": "Friendly creatures take –{0}% Magic Damage.",
+        "bonuses": [
+          "Friendly creatures take -15% damage on magic damage"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_resistance_2",
+        "name": "Advanced Resistance",
+        "desc": "Friendly creatures take –{0}% Magic Damage.",
+        "bonuses": [
+          "Friendly creatures take -25% damage on magic damage"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_resistance_1",
+            "name": "Obstruction",
+            "desc": "Enemy spells cost {0}% more mana. If the hero knows a Magic School skill, the cost of enemy spells from that School increases by an additional {0}%."
+          },
+          {
+            "id": "sub_skill_resistance_4",
+            "name": "Hindrance Aura",
+            "desc": "Enemy loses {0} Focus Charge(s) at the beginning of each battle round."
+          },
+          {
+            "id": "sub_skill_resistance_3",
+            "name": "Fast Metabolism",
+            "desc": "All negative effects on friendly creatures last for {0} fewer rounds (no less than {1})."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_resistance_3",
+        "name": "Expert Resistance",
+        "desc": "Friendly creatures take –{0}% Magic Damage.",
+        "bonuses": [
+          "Friendly creatures take -35% damage on magic damage"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_resistance_5",
+            "name": "Magic Suppression",
+            "desc": "Grants a new ability. It deals significant Magic Damage to the target summoned creature, scaling with the hero’s level."
+          },
+          {
+            "id": "sub_skill_resistance_7",
+            "name": "Time Shift",
+            "desc": "+{0} round(s) to the cooldown of all enemy spells."
+          },
+          {
+            "id": "sub_skill_resistance_6",
+            "name": "Draining",
+            "desc": "The enemy loses {0} levels on all Magic School spells."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Ascendant",
+        "class": "Cleric",
+        "faction": "temple",
+        "kind": "magic"
+      },
+      {
+        "name": "Walking Rot",
+        "class": "Death Knight",
+        "faction": "necropolis",
+        "kind": "might"
+      },
+      {
+        "name": "Wellspring of Vigor",
+        "class": "Warden",
+        "faction": "grove",
+        "kind": "might"
+      },
+      {
+        "name": "Soul Eater",
+        "class": "Enforcer",
+        "faction": "hive",
+        "kind": "might"
+      },
+      {
+        "name": "Unfeeling",
+        "class": "Oathkeeper",
+        "faction": "schism",
+        "kind": "might"
+      },
+      {
+        "name": "Great Merchant",
+        "class": "Warlock",
+        "faction": "dungeon",
+        "kind": "magic"
+      }
+    ],
+    "starters": [
+      {
+        "id": "demon_hero_11",
+        "name": "Xirr",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_6",
+        "name": "Artorius Veritas",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_6",
+        "name": "The Iron Master",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_14",
+        "name": "Julius",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_diplomacy",
+    "name": "Diplomacy",
+    "baseDesc": "",
+    "group": "utility",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_diplomacy",
+        "name": "Basic Diplomacy",
+        "desc": "Provides a chance of neutral squads offering to join the hero’s army for Gold instead of fighting them.",
+        "bonuses": [
+          "Hero enableDiplomacy true",
+          "Hero diplomacyEfficiencyPerBonus +0"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_diplomacy_2",
+        "name": "Advanced Diplomacy",
+        "desc": "Provides a chance of neutral squads offering to join the hero’s army for Gold instead of fighting them. +{0}% Persuasion Power in Diplomacy.",
+        "bonuses": [
+          "Hero enableDiplomacy true",
+          "Hero diplomacyEfficiencyPerBonus +0.25"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_diplomacy_1",
+            "name": "Larger Than Life",
+            "desc": "Neutral squads view the hero’s army as +{0}% more powerful than it is, increasing the chance that they will join or flee. This bonus is doubled if the hero knows “Battlecraft.”"
+          },
+          {
+            "id": "sub_skill_diplomacy_2",
+            "name": "Eloquence",
+            "desc": "–{0}% to the cost of surrendering."
+          },
+          {
+            "id": "sub_skill_diplomacy_3",
+            "name": "Folk Hero",
+            "desc": "+{0}% Persuasion Power in Diplomacy with neutral squads from the hero’s faction."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_diplomacy_3",
+        "name": "Expert Diplomacy",
+        "desc": "Provides a chance of neutral squads offering to join the hero’s army for Gold instead of fighting them. +{0}% Persuasion Power in Diplomacy.",
+        "bonuses": [
+          "Hero enableDiplomacy true",
+          "Hero diplomacyEfficiencyPerBonus +0.50"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_diplomacy_4",
+            "name": "Art of the Deal",
+            "desc": "Neutral squads take –{0}% Gold to recruit. This bonus is doubled if the hero knows “Economy.”"
+          },
+          {
+            "id": "sub_skill_diplomacy_5",
+            "name": "Vagrant Army",
+            "desc": "Friendly creatures with neutral affinity gain an additional +{0}% of the hero’s Attack and Defense to their Attack and Defense."
+          },
+          {
+            "id": "sub_skill_diplomacy_6",
+            "name": "Negotiator",
+            "desc": "+{0}% to the number of units from neutral squads joining the hero’s army."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Paragon",
+        "class": "Knight",
+        "faction": "temple",
+        "kind": "might"
+      },
+      {
+        "name": "Walking Rot",
+        "class": "Death Knight",
+        "faction": "necropolis",
+        "kind": "might"
+      },
+      {
+        "name": "Fortune’s Favored",
+        "class": "Warden",
+        "faction": "grove",
+        "kind": "might"
+      },
+      {
+        "name": "Progenitor",
+        "class": "Herald",
+        "faction": "hive",
+        "kind": "magic"
+      },
+      {
+        "name": "Unfeeling",
+        "class": "Oathkeeper",
+        "faction": "schism",
+        "kind": "might"
+      },
+      {
+        "name": "Balthazar’s Bodyguard",
+        "class": "Overlord",
+        "faction": "dungeon",
+        "kind": "might"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_14",
+        "name": "Ylwari",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_8",
+        "name": "Alluring Sh’a",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_2",
+        "name": "King‑of‑Kings",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_10",
+        "name": "Merry Elias",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_mastery",
+    "name": "Wisdom",
+    "baseDesc": "The hero can learn up to tier‑{0} spells without knowing the corresponding Magic School skill.",
+    "group": "magic",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_mastery",
+        "name": "Basic Wisdom",
+        "desc": "The hero can learn up to tier‑{0} spells without knowing the corresponding Magic School skill.",
+        "bonuses": [
+          "Hero magicSchoolSet day",
+          "Hero magicSchoolSet night",
+          "Hero magicSchoolSet space",
+          "Hero magicSchoolSet primal"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_mastery_2",
+        "name": "Advanced Wisdom",
+        "desc": "The hero can learn up to tier‑{0} spells without knowing the corresponding Magic School skill.",
+        "bonuses": [
+          "Hero magicSchoolSet day",
+          "Hero magicSchoolSet night",
+          "Hero magicSchoolSet space",
+          "Hero magicSchoolSet primal"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_mastery_5",
+            "name": "Rite of Magic",
+            "desc": "Grants a new global map spell. It allows the hero to convert all of their current Movement points into mana."
+          },
+          {
+            "id": "sub_skill_mastery_2",
+            "name": "Between the Lines",
+            "desc": "The hero may learn high Neutral magic, regardless of their level."
+          },
+          {
+            "id": "sub_skill_mastery_7",
+            "name": "Seeing Through",
+            "desc": "Heroic Strike instantly kills all temporary units in the target stack."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_mastery_3",
+        "name": "Expert Wisdom",
+        "desc": "The hero can learn up to tier‑{0} spells without knowing the corresponding Magic School skill.",
+        "bonuses": [
+          "Hero magicSchoolSet day",
+          "Hero magicSchoolSet night",
+          "Hero magicSchoolSet space",
+          "Hero magicSchoolSet primal"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_mastery_1",
+            "name": "Rhythmic Cadence",
+            "desc": "+{0}% maximum mana. This bonus is doubled if the hero knows “Sorcery.”"
+          },
+          {
+            "id": "sub_skill_mastery_3",
+            "name": "Eagle Eye",
+            "desc": "At the start of battle, the hero learns all spells the enemy knows that the hero is capable of learning."
+          },
+          {
+            "id": "sub_skill_mastery_6",
+            "name": "Stargazer",
+            "desc": "+{0} Astrology Points per day. This bonus is doubled if the hero knows “Scouting.”"
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Swashbuckler",
+        "class": "Knight",
+        "faction": "temple",
+        "kind": "might"
+      },
+      {
+        "name": "Walking Rot",
+        "class": "Death Knight",
+        "faction": "necropolis",
+        "kind": "might"
+      },
+      {
+        "name": "Fortune’s Favored",
+        "class": "Warden",
+        "faction": "grove",
+        "kind": "might"
+      },
+      {
+        "name": "Broodmother",
+        "class": "Enforcer",
+        "faction": "hive",
+        "kind": "might"
+      },
+      {
+        "name": "Unfeeling",
+        "class": "Oathkeeper",
+        "faction": "schism",
+        "kind": "might"
+      },
+      {
+        "name": "Balthazar’s Bodyguard",
+        "class": "Overlord",
+        "faction": "dungeon",
+        "kind": "might"
+      }
+    ],
+    "starters": [
+      {
+        "id": "nature_hero_10",
+        "name": "Vatawna",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_14",
+        "name": "Groo",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_12",
+        "name": "Ethric",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_4",
+        "name": "Jänhei",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_12",
+        "name": "Zenith",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_scouting",
+    "name": "Scouting",
+    "baseDesc": "The hero gains {0} sight radius.",
+    "group": "utility",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_scouting",
+        "name": "Basic Scouting",
+        "desc": "The hero gains {0} sight radius.",
+        "bonuses": [
+          "Hero viewRadius +1"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_scouting_2",
+        "name": "Advanced Scouting",
+        "desc": "The hero gains {0} sight radius.",
+        "bonuses": [
+          "Hero viewRadius +2"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_scouting_1",
+            "name": "Long‑Sight",
+            "desc": "Sight radius increases by an additional {0}. This bonus is doubled if the hero knows “Luck.”"
+          },
+          {
+            "id": "sub_skill_scouting_2",
+            "name": "Familiar Paths",
+            "desc": "+{0} Movement points when the hero starts the day in an area you control. This bonus is doubled if the hero knows “Wisdom.”"
+          },
+          {
+            "id": "sub_skill_scouting_3",
+            "name": "Pathfinding",
+            "desc": "Terrain penalties are reduced by {0}%."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_scouting_3",
+        "name": "Expert Scouting",
+        "desc": "The hero gains {0} sight radius.",
+        "bonuses": [
+          "Hero viewRadius +3"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_scouting_5",
+            "name": "Reconnaissance",
+            "desc": "Removes the fog of war within {0} square(s) of the hero each morning."
+          },
+          {
+            "id": "sub_skill_scouting_4",
+            "name": "Visions",
+            "desc": "Shows the exact army composition of any enemy within {0} square(s) of the hero."
+          },
+          {
+            "id": "sub_skill_scouting_6",
+            "name": "Counterespionage",
+            "desc": "Enemies can’t see detailed information about your army. When they try, they see random numbers of random creatures of your faction."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Grand Inquisitor",
+        "class": "Cleric",
+        "faction": "temple",
+        "kind": "magic"
+      },
+      {
+        "name": "Harbinger of Doom",
+        "class": "Death Knight",
+        "faction": "necropolis",
+        "kind": "might"
+      },
+      {
+        "name": "Celestial Envoy",
+        "class": "Druid",
+        "faction": "grove",
+        "kind": "magic"
+      },
+      {
+        "name": "Lord of Chaos",
+        "class": "Herald",
+        "faction": "hive",
+        "kind": "magic"
+      },
+      {
+        "name": "Unbound",
+        "class": "Oathkeeper",
+        "faction": "schism",
+        "kind": "might"
+      },
+      {
+        "name": "Silvertongue’s Envoy",
+        "class": "Overlord",
+        "faction": "dungeon",
+        "kind": "might"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_5",
+        "name": "Mouaren",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_1",
+        "name": "Eith",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_5",
+        "name": "Natalida",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_15",
+        "name": "Ulkuth",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_2",
+        "name": "Leon Sticky‑Fingers",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_formation",
+    "name": "Battlecraft",
+    "baseDesc": "When a friendly creature waits on their turn, they gain +{0}% Attack until the end of the round. When they skip turn, they gain +{0}% Defense until the end of the round.",
+    "group": "combat",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_formation",
+        "name": "Basic Battlecraft",
+        "desc": "When a friendly creature waits on their turn, they gain +{0}% Attack until the end of the round. When they skip turn, they gain +{0}% Defense until the end of the round.",
+        "bonuses": [
+          "battle: unit_buff skill_formation_1_bonus"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_formation_2",
+        "name": "Advanced Battlecraft",
+        "desc": "When a friendly creature waits on their turn, they gain +{0}% Attack until the end of the round. When they skip turn, they gain +{0}% Defense until the end of the round.",
+        "bonuses": [
+          "battle: unit_buff skill_formation_2_bonus"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_formation_1",
+            "name": "Melee Mastery",
+            "desc": "Friendly creatures deal +{0}% and take –{0}% Melee Damage."
+          },
+          {
+            "id": "sub_skill_formation_2",
+            "name": "Ranged Mastery",
+            "desc": "Friendly creatures deal +{0}% and take –{0}% Ranged and Long Reach Damage."
+          },
+          {
+            "id": "sub_skill_formation_3",
+            "name": "Overwatch",
+            "desc": "Friendly creatures gain overwatch when they choose to wait in battle. While overwatching, they will counterattack when an enemy moves into their Melee Range."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_formation_3",
+        "name": "Expert Battlecraft",
+        "desc": "When a friendly creature waits on their turn, they gain +{0}% Attack until the end of the round. When they skip turn, they gain +{0}% Defense until the end of the round.",
+        "bonuses": [
+          "battle: unit_buff skill_formation_3_bonus"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_formation_4",
+            "name": "Battle Focus",
+            "desc": "Generates +{0} Focus Charge(s) at the beginning of each round. This bonus is doubled if the hero knows “Battle Magic.”"
+          },
+          {
+            "id": "sub_skill_formation_5",
+            "name": "Preemptive Strike",
+            "desc": "Friendly creatures prepare for a preemptive strike when they choose to skip their turn. If they are attacked, their counterattack will land before the enemy’s first blow."
+          },
+          {
+            "id": "sub_skill_formation_6",
+            "name": "Manacraft",
+            "desc": "The hero’s maximum mana increases by {0} per their Attack and Defense. This bonus is doubled if the hero knows “Recruitment.”"
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Paragon",
+        "class": "Knight",
+        "faction": "temple",
+        "kind": "might"
+      },
+      {
+        "name": "Soulweaver",
+        "class": "Necromancer",
+        "faction": "necropolis",
+        "kind": "magic"
+      },
+      {
+        "name": "Heaven’s Fury",
+        "class": "Druid",
+        "faction": "grove",
+        "kind": "magic"
+      },
+      {
+        "name": "Broodmother",
+        "class": "Enforcer",
+        "faction": "hive",
+        "kind": "might"
+      },
+      {
+        "name": "Unstoppable",
+        "class": "Riftspeaker",
+        "faction": "schism",
+        "kind": "magic"
+      },
+      {
+        "name": "Amelchia’s Heir",
+        "class": "Warlock",
+        "faction": "dungeon",
+        "kind": "magic"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_2",
+        "name": "Tellaris the Betrayed",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_3",
+        "name": "Gingertail",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_3",
+        "name": "Nor",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_9",
+        "name": "Zam",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_7",
+        "name": "Keandra",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_tactics",
+    "name": "Tactics",
+    "baseDesc": "In the Tactics Phase, creatures can be placed within a {0}‑line area.",
+    "group": "utility",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_tactics",
+        "name": "Basic Tactics",
+        "desc": "In the Tactics Phase, creatures can be placed within a {0}‑line area.",
+        "bonuses": [
+          "Hero enableTactics true",
+          "Hero tacticsPlacementSize +1",
+          "heroStatBattle: tacticsPlacementSize -1"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_tactics_2",
+        "name": "Advanced Tactics",
+        "desc": "In the Tactics Phase, creatures can be placed within a {0}‑line area.",
+        "bonuses": [
+          "Hero enableTactics true",
+          "Hero tacticsPlacementSize +2",
+          "heroStatBattle: tacticsPlacementSize -2"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_tactics_1",
+            "name": "One for All",
+            "desc": "Friendly creatures gain +{0} Attack for each adjacent enemy. This bonus is doubled if the hero knows “Offense.”"
+          },
+          {
+            "id": "sub_skill_tactics_2",
+            "name": "Easy Prey",
+            "desc": "Once per round, when an enemy waits, friendly creatures gain +{0} Initiative until the end of round. This effect <b>does not</b> stack."
+          },
+          {
+            "id": "sub_skill_tactics_3",
+            "name": "Energizing Mana",
+            "desc": "Generate +{0} Focus Charge each time your enemy uses a spell."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_tactics_3",
+        "name": "Expert Tactics",
+        "desc": "In the Tactics Phase, creatures can be placed within a {0}‑line area.",
+        "bonuses": [
+          "Hero enableTactics true",
+          "Hero tacticsPlacementSize +3",
+          "heroStatBattle: tacticsPlacementSize -3"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_tactics_4",
+            "name": "All for One",
+            "desc": "Friendly creatures gain +{0} Defense for each adjacent ally. This bonus is doubled if the hero knows “Defense.”"
+          },
+          {
+            "id": "sub_skill_tactics_5",
+            "name": "Riposte Mastery",
+            "desc": "Whenever a friendly creature kills an enemy with a counterattack, their counterattacks are refreshed for the round."
+          },
+          {
+            "id": "sub_skill_tactics_6",
+            "name": "Spellcaster Tactics",
+            "desc": "Whenever friendly creatures or the hero spend Focus, they gain {0} temporary mana."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Paragon",
+        "class": "Knight",
+        "faction": "temple",
+        "kind": "might"
+      },
+      {
+        "name": "Walking Rot",
+        "class": "Death Knight",
+        "faction": "necropolis",
+        "kind": "might"
+      },
+      {
+        "name": "Chronomancer",
+        "class": "Necromancer",
+        "faction": "necropolis",
+        "kind": "magic"
+      },
+      {
+        "name": "Heaven’s Fury",
+        "class": "Druid",
+        "faction": "grove",
+        "kind": "magic"
+      },
+      {
+        "name": "Progenitor",
+        "class": "Herald",
+        "faction": "hive",
+        "kind": "magic"
+      },
+      {
+        "name": "Unstoppable",
+        "class": "Riftspeaker",
+        "faction": "schism",
+        "kind": "magic"
+      },
+      {
+        "name": "Amelchia’s Heir",
+        "class": "Warlock",
+        "faction": "dungeon",
+        "kind": "magic"
+      }
+    ],
+    "starters": [
+      {
+        "id": "dungeon_hero_4",
+        "name": "Kieran",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_9",
+        "name": "Abigor, Duke of Battle",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_4",
+        "name": "Kel’Ghul",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_3",
+        "name": "Matastala the White",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_summoner",
+    "name": "Summon Avatar",
+    "baseDesc": "",
+    "group": "magic",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_summoner",
+        "name": "Basic Summon Avatar",
+        "desc": "Grants a new battle spell. It summons an Avatar that scales with the hero’s Spell Power and Knowledge.",
+        "bonuses": [
+          "heroMagicAddition: bonus_magic_astral_summon_1 false",
+          "Unit heroSpellPowerModifier +1",
+          "Unit heroIntelligenceModifier +1"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_summoner_2",
+        "name": "Advanced Summon Avatar",
+        "desc": "Grants a new battle spell. It summons an Avatar that scales more strongly with the hero’s Spell Power and Knowledge.",
+        "bonuses": [
+          "heroMagicAddition: bonus_magic_astral_summon_2 false",
+          "Unit heroSpellPowerModifier +1",
+          "Unit heroIntelligenceModifier +1"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_summoner_1",
+            "name": "Avatar of Fury",
+            "desc": "Avatar’s Attack increases by {0}% of the hero’s Spell Power. This bonus is doubled if the hero knows “Leadership.”"
+          },
+          {
+            "id": "sub_skill_summoner_2",
+            "name": "Avatar of Toughness",
+            "desc": "Avatar’s Defense increases by {0}% of the hero’s Knowledge. This bonus is doubled if the hero knows “Defense.”"
+          },
+          {
+            "id": "sub_skill_summoner_3",
+            "name": "Avatar of Celerity",
+            "desc": "Avatar’s Speed and Initiative increase by {0}. This bonus is doubled if the hero knows “Insight.”"
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_summoner_3",
+        "name": "Expert Summon Avatar",
+        "desc": "Grants a new battle spell. It summons an Avatar that scales even more strongly with the hero’s Spell Power and Knowledge.",
+        "bonuses": [
+          "heroMagicAddition: bonus_magic_astral_summon_3 false",
+          "Unit heroSpellPowerModifier +1",
+          "Unit heroIntelligenceModifier +1"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_summoner_4",
+            "name": "Stabilization",
+            "desc": "Summoned friendly creatures become immune to effects that dispel summoned creatures."
+          },
+          {
+            "id": "sub_skill_summoner_5",
+            "name": "Their Name is Legion",
+            "desc": "Friendly creatures’ abilities summon +{0}% creatures."
+          },
+          {
+            "id": "sub_skill_summoner_6",
+            "name": "Fields of Mana",
+            "desc": "Using spells, the hero can summon creatures onto any free hex."
+          }
+        ]
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Paragon",
+        "class": "Knight",
+        "faction": "temple",
+        "kind": "might"
+      },
+      {
+        "name": "Soulweaver",
+        "class": "Necromancer",
+        "faction": "necropolis",
+        "kind": "magic"
+      },
+      {
+        "name": "Celestial Envoy",
+        "class": "Druid",
+        "faction": "grove",
+        "kind": "magic"
+      },
+      {
+        "name": "Progenitor",
+        "class": "Herald",
+        "faction": "hive",
+        "kind": "magic"
+      },
+      {
+        "name": "Unfathomable",
+        "class": "Riftspeaker",
+        "faction": "schism",
+        "kind": "magic"
+      },
+      {
+        "name": "Amelchia’s Heir",
+        "class": "Warlock",
+        "faction": "dungeon",
+        "kind": "magic"
+      }
+    ],
+    "starters": [
+      {
+        "id": "nature_hero_17",
+        "name": "Sullie",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_16",
+        "name": "Oriax",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_8",
+        "name": "Changeling Urgo",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_13",
+        "name": "The Eye Collective",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_trainer",
+    "name": "Recruitment",
+    "baseDesc": "",
+    "group": "never",
+    "skillType": "Class",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_trainer",
+        "name": "Basic Recruitment",
+        "desc": "+{0} to tier‑1 creature growth in all your cities.",
+        "bonuses": [
+          "cityUnitsIncrement: 1 4"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_trainer_2",
+        "name": "Advanced Recruitment",
+        "desc": "+{0} to tier‑1 and +{1} to tier‑2 creature growth in all your cities.",
+        "bonuses": [
+          "cityUnitsIncrement: 1 4",
+          "cityUnitsIncrement: 2 3"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_trainer_1",
+            "name": "Direct Supervision",
+            "desc": "If the hero is in a city at the start of a week, growth of all creatures in that city increases by an additional {0}% growth."
+          },
+          {
+            "id": "sub_skill_trainer_5",
+            "name": "Elite Guards",
+            "desc": "Tier‑1, tier‑2 and tier‑3 friendly creatures gain {0}% of the hero’s Attack and Defense as Attack and Defense. This bonus is doubled if the hero knows “Tactics.”"
+          },
+          {
+            "id": "sub_skill_trainer_3",
+            "name": "Veterans",
+            "desc": "Tier‑4 creature growth in all your cities increases by {0}. This bonus is doubled if the hero knows “Diplomacy.”"
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_trainer_3",
+        "name": "Expert Recruitment",
+        "desc": "+{0} to tier‑1, +{1} to tier‑2, and +{2} to tier‑3 creature growth in all your cities.",
+        "bonuses": [
+          "cityUnitsIncrement: 1 4",
+          "cityUnitsIncrement: 2 3",
+          "cityUnitsIncrement: 3 2"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_trainer_4",
+            "name": "Relocation",
+            "desc": "Grants a new global map spell. It allows interaction with any controlled city, enabling the transfer of creatures to or from that city. Usable once per day."
+          },
+          {
+            "id": "sub_skill_trainer_2",
+            "name": "Strenuous Training",
+            "desc": "Friendly creatures gain {0} HP."
+          },
+          {
+            "id": "sub_skill_trainer_6",
+            "name": "Mentors",
+            "desc": "Allows creatures in the hero’s army to be upgraded outside the city, provided the army already contains the upgraded version. Upgrading this way costs more than normal."
+          }
+        ]
+      }
+    ],
+    "subclasses": [],
+    "starters": [
+      {
+        "id": "necro_hero_11",
+        "name": "Adahn",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_12",
+        "name": "Kwinri",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_6",
+        "name": "Heretic Avis",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_siege",
+    "name": "Siegecraft",
+    "baseDesc": "",
+    "group": "never",
+    "skillType": "Common",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_siege",
+        "name": "Basic Siegecraft",
+        "desc": "The catapult deals +{0} Damage.",
+        "bonuses": [
+          "battle: hero_ability skill_siege_attack_siege_ability_bonus_1"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_siege_2",
+        "name": "Advanced Siegecraft",
+        "desc": "The catapult deals +{0} Damage.",
+        "bonuses": [
+          "battle: hero_ability skill_siege_attack_siege_ability_bonus_2"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_siege_1",
+            "name": "Relentless Assault",
+            "desc": "While besieging a city, friendly creatures gain +{0} Speed and Initiative."
+          },
+          {
+            "id": "sub_skill_siege_2",
+            "name": "Forward Observers",
+            "desc": "Ranged Damage of friendly creatures is not reduced by walls during a siege."
+          },
+          {
+            "id": "sub_skill_siege_3",
+            "name": "Barrage",
+            "desc": "Grants a new siege ability. It attacks a chosen hex and all adjacent hexes. Usable once per round."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_siege_3",
+        "name": "Expert Siegecraft",
+        "desc": "The catapult deals +{0} Damage.",
+        "bonuses": [
+          "battle: hero_ability skill_siege_attack_siege_ability_bonus_3"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_siege_4",
+            "name": "Phalanx",
+            "desc": "While besieging a city, friendly creatures take –{0}% Damage from the defender’s towers."
+          },
+          {
+            "id": "sub_skill_siege_5",
+            "name": "Tunnelling",
+            "desc": "Grants a new siege ability. It teleports a friendly creature to a chosen free hex up to {0} hexes away. Usable once per round."
+          },
+          {
+            "id": "sub_skill_siege_6",
+            "name": "Sabotage",
+            "desc": "While the hero is besieging a city, the enemy gate is always open."
+          }
+        ]
+      }
+    ],
+    "subclasses": [],
+    "starters": []
+  },
+  {
+    "id": "skill_battle_artistry",
+    "name": "Combat",
+    "baseDesc": "",
+    "group": "combat-class",
+    "skillType": "Class",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_battle_artistry",
+        "name": "Basic Combat",
+        "desc": "Heroic Strike deals +{0} basic Damage.",
+        "bonuses": [
+          "battle: hero_ability skill_warrior_ability_skill_battle_artistry_1_base"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_battle_artistry_2",
+        "name": "Advanced Combat",
+        "desc": "Heroic Strike deals +{0} basic Damage.",
+        "bonuses": [
+          "battle: hero_ability skill_warrior_ability_skill_battle_artistry_2_base"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_battle_artistry_1",
+            "name": "Effortless Strike",
+            "desc": "Heroic Strike costs {0} fewer Focus Charge(s)."
+          },
+          {
+            "id": "sub_skill_battle_artistry_2",
+            "name": "Revenge",
+            "desc": "Once per round, after the first death of a friendly stack, allows to use Heroic Strike again."
+          },
+          {
+            "id": "sub_skill_battle_artistry_4",
+            "name": "Mighty Strike",
+            "desc": "Heroic Strike deals +{0}% Damage (based on the hero’s level)."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_battle_artistry_3",
+        "name": "Expert Combat",
+        "desc": "Heroic Strike deals +{0} basic Damage.",
+        "bonuses": [
+          "battle: hero_ability skill_warrior_ability_skill_battle_artistry_3_base"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_battle_artistry_3",
+            "name": "Swordcraft",
+            "desc": "+{0} Attack and Defense."
+          },
+          {
+            "id": "sub_skill_battle_artistry_5",
+            "name": "Battle Thrill",
+            "desc": "Once per round, after killing an enemy stack with Heroic Strike, the hero can use it one additional time."
+          },
+          {
+            "id": "sub_skill_battle_artistry_6",
+            "name": "Confusing Strike",
+            "desc": "Heroic Strike reduces the target’s counterattacks by {0}."
+          }
+        ]
+      }
+    ],
+    "subclasses": [],
+    "starters": [
+      {
+        "id": "dungeon_hero_3",
+        "name": "Stinger",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_5",
+        "name": "Curson, Duke of Rage",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_9",
+        "name": "Old Lord Mandall",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_wisdom",
+    "name": "Thaumaturgy",
+    "baseDesc": "The hero can use the Spellbook one more time per battle round, but only to cast a spell of a Magic School that hasn’t been used this round. Spells cost +{0}% mana for each use after the first.",
+    "group": "magic-class",
+    "skillType": "Class",
+    "factionId": null,
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_wisdom",
+        "name": "Basic Thaumaturgy",
+        "desc": "The hero can use the Spellbook one more time per battle round, but only to cast a spell of a Magic School that hasn’t been used this round. Spells cost +{0}% mana for each use after the first.",
+        "bonuses": [
+          "Hero magicOverloadsPerRound +1",
+          "Hero magicOverloadPercent +1"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_wisdom_2",
+        "name": "Advanced Thaumaturgy",
+        "desc": "The hero can use the Spellbook one more time per battle round, but only to cast a spell of a Magic School that hasn’t been used this round. Spells cost +{0}% mana for each use after the first.",
+        "bonuses": [
+          "Hero magicOverloadsPerRound +1",
+          "Hero magicOverloadPercent +0.75"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_wisdom_1",
+            "name": "Antimage",
+            "desc": "Enemy spells cost +{0} mana."
+          },
+          {
+            "id": "sub_skill_wisdom_5",
+            "name": "Ancient Scrolls",
+            "desc": "Adds all tier‑{0} spells to the hero’s Spellbook."
+          },
+          {
+            "id": "sub_skill_wisdom_4",
+            "name": "Practical Incantations",
+            "desc": "Heroic Strike deals +{0} Damage."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_wisdom_3",
+        "name": "Expert Thaumaturgy",
+        "desc": "The hero can use the Spellbook one more time per battle round, but only to cast a spell of a Magic School that hasn’t been used this round. Spells cost +{0}% mana for each use after the first.",
+        "bonuses": [
+          "Hero magicOverloadsPerRound +1",
+          "Hero magicOverloadPercent +0.50"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_wisdom_6",
+            "name": "Thaumaturge Brilliance",
+            "desc": "+{0} Spell Power and Knowledge."
+          },
+          {
+            "id": "sub_skill_wisdom_2",
+            "name": "Vast Soul",
+            "desc": "+{0}% mana restored each morning."
+          },
+          {
+            "id": "sub_skill_wisdom_3",
+            "name": "Archmage",
+            "desc": "All the spells belonging to Magic Schools the hero has learned gain {0} level(s)."
+          }
+        ]
+      }
+    ],
+    "subclasses": [],
+    "starters": [
+      {
+        "id": "dungeon_hero_12",
+        "name": "Sister Deira",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_11",
+        "name": "Elder Tss’kish",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_16",
+        "name": "Lord Rufus",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_16",
+        "name": "Anastasia the Meek",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_faction_humans",
+    "name": "Righteousness",
+    "baseDesc": "<i>All who fall in battle do so in the hero’s name!</i> Whenever a friendly creature dies or kills an enemy, the hero’s Attack, Defense, Spell Power and Knowledge increase by {0} for one round. This effect is stackable.",
+    "group": "faction",
+    "skillType": "Faction",
+    "factionId": "temple",
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_faction_humans",
+        "name": "Basic Righteousness",
+        "desc": "<i>All who fall in battle do so in the hero’s name!</i> Whenever a friendly creature dies or kills an enemy, the hero’s Attack, Defense, Spell Power and Knowledge increase by {0} for two rounds. This effect is stackable.",
+        "bonuses": [
+          "battle: unit_buff skill_faction_humans_new_1_bonus"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_faction_humans_2",
+        "name": "Advanced Righteousness",
+        "desc": "<i>All who fall in battle do so in the hero’s name!</i> Whenever a friendly creature dies or kills an enemy, the hero’s Attack, Defense, Spell Power and Knowledge increase by {0} for three rounds. This effect is stackable.",
+        "bonuses": [
+          "battle: unit_buff skill_faction_humans_new_2_bonus"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_humans_1",
+            "name": "Fields of Serenity",
+            "desc": "Friendly Temple creatures deal +{0}% and take –{0}% Damage on Native Terrain."
+          },
+          {
+            "id": "sub_skill_faction_humans_2",
+            "name": "Righteous Sacrifice",
+            "desc": "Whenever a friendly stack dies or kills an enemy stack, the hero gains {0} temporary mana."
+          },
+          {
+            "id": "sub_skill_faction_humans_3",
+            "name": "Purging Touch",
+            "desc": "Grants a new ability. It dispels all negative effects from the target."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_faction_humans_3",
+        "name": "Expert Righteousness",
+        "desc": "<i>All who fall in battle do so in the hero’s name!</i> Whenever a friendly creature dies or kills an enemy, the hero’s Attack, Defense, Spell Power and Knowledge increase by {0} for four rounds. This effect is stackable.",
+        "bonuses": [
+          "battle: unit_buff skill_faction_humans_new_3_bonus"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_humans_2_old",
+            "name": "Guardian",
+            "desc": "Whenever a friendly creature kills an enemy, it fully restores its HP."
+          },
+          {
+            "id": "sub_skill_faction_humans_5",
+            "name": "The Chosen One",
+            "desc": "Grants a new ability. It increases Attack of a friendly creature by {0}% of the hero’s Attack and Spell Power, and its Defense by {0}% of the hero’s Defense and Knowledge (until the end of the round)."
+          },
+          {
+            "id": "sub_skill_faction_humans_6",
+            "name": "Strong Faith",
+            "desc": "Whenever Righteousness is triggered, the hero gains +{0} to all attributes until the end of the round."
+          }
+        ]
+      }
+    ],
+    "subclasses": [],
+    "starters": [
+      {
+        "id": "human_hero_8",
+        "name": "Lord Edgar",
+        "faction": "temple",
+        "kind": "might",
+        "level": 2
+      },
+      {
+        "id": "human_hero_5",
+        "name": "Aeos the Exalted",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_16",
+        "name": "Anastasia the Meek",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_18",
+        "name": "Clarissa",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_6",
+        "name": "Heretic Avis",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_1",
+        "name": "Ister",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_3",
+        "name": "John Johnson",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_14",
+        "name": "Julius",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_7",
+        "name": "Keandra",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_4",
+        "name": "Kestrel",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_2",
+        "name": "Leon Sticky‑Fingers",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_13",
+        "name": "Lia the Untethered One",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_10",
+        "name": "Merry Elias",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_17",
+        "name": "Nadir",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_9",
+        "name": "Old Lord Mandall",
+        "faction": "temple",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "human_hero_11",
+        "name": "Pip",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_15",
+        "name": "Vesper",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "human_hero_12",
+        "name": "Zenith",
+        "faction": "temple",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_faction_undead",
+    "name": "Necromancy",
+    "baseDesc": "After winning a battle, transforms {0}% of the strongest enemy stack into friendly Undead of the same tier. This requires Necromantic Energy, which stores up to {1} and refills each week or when the hero has no stack of that tier in their army.",
+    "group": "faction",
+    "skillType": "Faction",
+    "factionId": "necropolis",
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_faction_undead",
+        "name": "Basic Necromancy",
+        "desc": "After winning a battle, transforms {0}% of the strongest enemy stack into friendly Undead of the same tier. This requires Necromantic Energy, which stores up to {1} and refills each week or when the hero has no stack of that tier in their army.",
+        "bonuses": [
+          "Hero enableNecromancy true",
+          "Hero necromancyPerBonus +0.10",
+          "Hero energyEnablesSet undead",
+          "Hero energyValuesSet undead",
+          "Hero enableRestoreNecromancyEnergy true"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_faction_undead_2",
+        "name": "Advanced Necromancy",
+        "desc": "After winning a battle, transforms {0}% of the strongest enemy stack into friendly Undead of the same tier. This requires Necromantic Energy, which stores up to {1} and refills each week or when the hero has no stack of that tier in their army.",
+        "bonuses": [
+          "Hero enableNecromancy true",
+          "Hero necromancyPerBonus +0.15",
+          "Hero energyEnablesSet undead",
+          "Hero energyValuesSet undead",
+          "heroAddEnergy: undead 250",
+          "Hero enableRestoreNecromancyEnergy true"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_undead_1",
+            "name": "Gravesoil",
+            "desc": "Friendly Necropolis creatures deal +{0}% and take –{0}% Damage on Native Terrain."
+          },
+          {
+            "id": "sub_skill_faction_undead_2",
+            "name": "Soul Harvest",
+            "desc": "Restores {0} mana after a battle victory."
+          },
+          {
+            "id": "sub_skill_faction_undead_3",
+            "name": "Death Herald",
+            "desc": "+{0} to the hero’s maximum Necromantic Energy."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_faction_undead_3",
+        "name": "Expert Necromancy",
+        "desc": "After winning a battle, transforms {0}% of the strongest enemy stack into friendly Undead of the same tier. This requires Necromantic Energy, which stores up to {1} and refills each week or when the hero has no stack of that tier in their army.",
+        "bonuses": [
+          "Hero enableNecromancy true",
+          "Hero necromancyPerBonus +0.20",
+          "Hero energyEnablesSet undead",
+          "Hero energyValuesSet undead",
+          "heroAddEnergy: undead 250",
+          "Hero enableRestoreNecromancyEnergy true"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_undead_4",
+            "name": "Soul Reaper",
+            "desc": "–{0} to enemy Morale and Luck."
+          },
+          {
+            "id": "sub_skill_faction_undead_5",
+            "name": "Eternal Service",
+            "desc": "Grants a new ability. It restores HP to the target friendly Undead and can revive fallen units."
+          },
+          {
+            "id": "sub_skill_faction_undead_6",
+            "name": "Fields of the Dead",
+            "desc": "+{0}% Necromantic Energy gained when the hero has no Undead of the required tier."
+          }
+        ]
+      }
+    ],
+    "subclasses": [],
+    "starters": [
+      {
+        "id": "necro_hero_17",
+        "name": "Funerella",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 2
+      },
+      {
+        "id": "necro_hero_8",
+        "name": "Tarius",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 2
+      },
+      {
+        "id": "necro_hero_11",
+        "name": "Adahn",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_6",
+        "name": "Artorius Veritas",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_1",
+        "name": "Bulwark",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_12",
+        "name": "Ethric",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_13",
+        "name": "Guildmaster Klastor",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_4",
+        "name": "Kel’Ghul",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_2",
+        "name": "King‑of‑Kings",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_15",
+        "name": "Laura",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_16",
+        "name": "Lord Rufus",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_10",
+        "name": "Mag",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_7",
+        "name": "Marl",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_18",
+        "name": "Milossa the Golden",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_5",
+        "name": "Natalida",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_3",
+        "name": "Onkos",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_14",
+        "name": "Shadespinner Oona",
+        "faction": "necropolis",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "necro_hero_9",
+        "name": "Zam",
+        "faction": "necropolis",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_faction_nature",
+    "name": "Murmuring",
+    "baseDesc": "Generates {0} Focus Charge(s) at the start of every battle.",
+    "group": "faction",
+    "skillType": "Faction",
+    "factionId": "grove",
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_faction_nature",
+        "name": "Basic Murmuring",
+        "desc": "Generates {0} Focus Charge(s) at the start of every battle.",
+        "bonuses": [
+          "Hero startEnergyLevelsBonus +1"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_faction_nature_2",
+        "name": "Advanced Murmuring",
+        "desc": "Generates {0} Focus Charge(s) at the start of every battle.",
+        "bonuses": [
+          "Hero startEnergyLevelsBonus +2"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_nature_1",
+            "name": "Mycelium Grounds",
+            "desc": "Friendly Grove creatures deal +{0}% and take –{0}% Damage on Native Terrain."
+          },
+          {
+            "id": "sub_skill_faction_nature_2",
+            "name": "Life Essence",
+            "desc": "Focus Charge limit increases by {0}."
+          },
+          {
+            "id": "sub_skill_faction_nature_3",
+            "name": "Child of the Woods",
+            "desc": "+{0} maximum mana."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_faction_nature_3",
+        "name": "Expert Murmuring",
+        "desc": "Generates {0} Focus Charge(s) at the start of every battle.",
+        "bonuses": [
+          "Hero startEnergyLevelsBonus +3"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_nature_new_4",
+            "name": "Just One More Time",
+            "desc": "Whenever friendly creatures or the hero spend Focus, the cooldowns of all the hero’s spells are reduced by {0} round(s)."
+          },
+          {
+            "id": "sub_skill_faction_nature_new_5",
+            "name": "Burst of Energy",
+            "desc": "Whenever friendly creatures or the hero spend Focus, they gain +{0}% per hero level to the Damage dealt with Heroic Strike. This bonus lasts until the end of the battle."
+          },
+          {
+            "id": "sub_skill_faction_nature_new_6",
+            "name": "Strong Connection",
+            "desc": "Whenever friendly creatures or the hero spend Focus, the hero gains +{0} to all attributes until the end of the battle."
+          }
+        ]
+      }
+    ],
+    "subclasses": [],
+    "starters": [
+      {
+        "id": "nature_hero_7",
+        "name": "Faleor",
+        "faction": "grove",
+        "kind": "might",
+        "level": 2
+      },
+      {
+        "id": "nature_hero_12",
+        "name": "Aeliniel",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_8",
+        "name": "Alluring Sh’a",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_9",
+        "name": "Aunt Daliar",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_16",
+        "name": "Echolily",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_1",
+        "name": "Eith",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_11",
+        "name": "Elder Tss’kish",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_3",
+        "name": "Gingertail",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_13",
+        "name": "Glacia",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_2",
+        "name": "Gorel Spearhead",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_15",
+        "name": "Halon",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_6",
+        "name": "Mreowa",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_5",
+        "name": "Octavia",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_4",
+        "name": "Old Pilgrim",
+        "faction": "grove",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_17",
+        "name": "Sullie",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_18",
+        "name": "The Minstrel",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_10",
+        "name": "Vatawna",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "nature_hero_14",
+        "name": "Vim",
+        "faction": "grove",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_faction_unfrozen",
+    "name": "Abyssal Communion",
+    "baseDesc": "After each battle victory, the hero increases their Communion level by 1 (up to a max. of {0}).  Each level increases the number of friendly Schism units by {1}% until the end of the battle. Each morning, all heroes’ Communion level is halved.",
+    "group": "faction",
+    "skillType": "Faction",
+    "factionId": "schism",
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_faction_unfrozen",
+        "name": "Basic Abyssal Communion",
+        "desc": "After each battle victory, the hero increases their Communion level by 1 (up to a max. of {0}).  Each level increases the number of friendly Schism units by {1}% until the end of the battle. Each morning, all heroes’ Communion level is halved.",
+        "bonuses": [
+          "Hero energyEnablesSet unfrozen",
+          "Hero energyValuesSet unfrozen",
+          "startBattleUnfrozenUnitCountBonus: temp 0.03"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_faction_unfrozen_2",
+        "name": "Advanced Abyssal Communion",
+        "desc": "After each battle victory, the hero increases their Communion level by 1 (up to a max. of {0}).  Each level increases the number of friendly Schism units by {1}% until the end of the battle. Each morning, all heroes’ Communion level is halved.",
+        "bonuses": [
+          "Hero energyEnablesSet unfrozen",
+          "Hero energyValuesSet unfrozen",
+          "startBattleUnfrozenUnitCountBonus: temp 0.03"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_unfrozen_1",
+            "name": "Our True Home",
+            "desc": "Friendly Schism creatures deal +{0}% and take –{0}% Damage on Native Terrain."
+          },
+          {
+            "id": "sub_skill_faction_unfrozen_2",
+            "name": "Comprehensible Depths",
+            "desc": "The hero’s maximum Communion level increases by {0}."
+          },
+          {
+            "id": "sub_skill_faction_unfrozen_3",
+            "name": "Call of the Void",
+            "desc": "Each morning, before the Communion level is halved, restores {0} mana per Communion level."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_faction_unfrozen_3",
+        "name": "Expert Abyssal Communion",
+        "desc": "After each battle victory, the hero increases their Communion level by 1 (up to a max. of {0}).  Each level increases the number of friendly Schism units by {1}% until the end of the battle. Each morning, all heroes’ Communion level is halved.",
+        "bonuses": [
+          "Hero energyEnablesSet unfrozen",
+          "Hero energyValuesSet unfrozen",
+          "startBattleUnfrozenUnitCountBonus: temp 0.03"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_unfrozen_4",
+            "name": "Black Ice",
+            "desc": "Enemy spells cost +{0} for each active Communion level."
+          },
+          {
+            "id": "sub_skill_faction_unfrozen_5",
+            "name": "Abyssopelagial",
+            "desc": "Each victory in battle increases the Communion level by an additional {0}."
+          },
+          {
+            "id": "sub_skill_faction_unfrozen_6",
+            "name": "Celestial Abyss",
+            "desc": "Increases the number of friendly Schism units per Communion level by an additional {0}%."
+          }
+        ]
+      }
+    ],
+    "subclasses": [],
+    "starters": [
+      {
+        "id": "unfrozen_hero_18",
+        "name": "Dhüvri",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 2
+      },
+      {
+        "id": "unfrozen_hero_5",
+        "name": "Mara Mat’ha",
+        "faction": "schism",
+        "kind": "might",
+        "level": 2
+      },
+      {
+        "id": "unfrozen_hero_2",
+        "name": "Blackhorn",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_8",
+        "name": "Changeling Urgo",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_10",
+        "name": "Grellekh the Betrayer",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_11",
+        "name": "Icequeen Hel’Ghat",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_4",
+        "name": "Jänhei",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_12",
+        "name": "Kwinri",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_9",
+        "name": "Martyr Tho",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_3",
+        "name": "Matastala the White",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_1",
+        "name": "Nihil",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_16",
+        "name": "Ra’Davok",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_17",
+        "name": "Sister Keiri",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_13",
+        "name": "The Eye Collective",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_6",
+        "name": "The Iron Master",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_14",
+        "name": "Tölketh",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_15",
+        "name": "Ulkuth",
+        "faction": "schism",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "unfrozen_hero_7",
+        "name": "Wal’kha",
+        "faction": "schism",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_faction_demons",
+    "name": "Summon Swarm",
+    "baseDesc": "Once per round, lays eggs on the battlefield. At the start of next round, they spawn a stack of Fire Larvae. The stack has {0}% of the total HP of all Hive Spawns in its army, and the strength of its abilities scales with the hero’s level.",
+    "group": "faction",
+    "skillType": "Faction",
+    "factionId": "hive",
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_faction_demons",
+        "name": "Basic Summon Swarm",
+        "desc": "Once per round, lays eggs on the battlefield. At the start of next round, they spawn a stack of Fire Larvae. The stack has {0}% of the total HP of all Hive Spawns in its army, and the strength of its abilities scales with the hero’s level.",
+        "bonuses": [
+          "hero ability: skill_faction_demon_ability",
+          "hero ability: skill_faction_demon_ability_1"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_faction_demons_2",
+        "name": "Advanced Summon Swarm",
+        "desc": "Once per round, lays eggs on the battlefield. At the start of next round, they spawn a stack of Fire Larvae. The stack has {0}% of the total HP of all Hive Spawns in its army, and the strength of its abilities scales with the hero’s level.",
+        "bonuses": [
+          "hero ability: skill_faction_demon_ability",
+          "hero ability: skill_faction_demon_ability_1"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_demons_1",
+            "name": "Warmth of the Nest",
+            "desc": "Friendly Hive creatures deal +{0}% and take –{0}% Damage on Native Terrain."
+          },
+          {
+            "id": "sub_skill_faction_demons_2",
+            "name": "Thy Children",
+            "desc": "+{0} Fire Larvae spawned for every hero level."
+          },
+          {
+            "id": "sub_skill_faction_demons_3",
+            "name": "Ravage",
+            "desc": "Fire Larvae deal +{0} Damage."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_faction_demons_3",
+        "name": "Expert Summon Swarm",
+        "desc": "Once per round, lays eggs on the battlefield. At the start of next round, they spawn a stack of Fire Larvae. The stack has {0}% of the total HP of all Hive Spawns in its army, and the strength of its abilities scales with the hero’s level.",
+        "bonuses": [
+          "hero ability: skill_faction_demon_ability",
+          "hero ability: skill_faction_demon_ability_1"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_demons_4",
+            "name": "Hive Power",
+            "desc": "The hero gains {0} Luck and Morale."
+          },
+          {
+            "id": "sub_skill_faction_demons_5",
+            "name": "Hardened Shells",
+            "desc": "The clutch of eggs can withstand +{0} hit(s)."
+          },
+          {
+            "id": "sub_skill_faction_demons_6",
+            "name": "Hive Flame",
+            "desc": "Summoned Fire Larvae last one round longer"
+          }
+        ]
+      }
+    ],
+    "subclasses": [],
+    "starters": [
+      {
+        "id": "demon_hero_6",
+        "name": "Tavi",
+        "faction": "hive",
+        "kind": "might",
+        "level": 2
+      },
+      {
+        "id": "demon_hero_9",
+        "name": "Abigor, Duke of Battle",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_12",
+        "name": "Bathym, Duke of Jewels",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_5",
+        "name": "Curson, Duke of Rage",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_10",
+        "name": "Fleu",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_8",
+        "name": "Goldentongue",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_14",
+        "name": "Groo",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_17",
+        "name": "Khariseth",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_13",
+        "name": "Leira",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_7",
+        "name": "Lo",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_2",
+        "name": "Maelstrom",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_15",
+        "name": "Mila",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_1",
+        "name": "Niev",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_3",
+        "name": "Nor",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_16",
+        "name": "Oriax",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_18",
+        "name": "Pauper",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_11",
+        "name": "Xirr",
+        "faction": "hive",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "demon_hero_4",
+        "name": "Zoran, the Self‑Founded",
+        "faction": "hive",
+        "kind": "might",
+        "level": 1
+      }
+    ]
+  },
+  {
+    "id": "skill_faction_dungeon",
+    "name": "Triumvirate’s Strength",
+    "baseDesc": "Once per round, the hero can activate one of the three Stances in battle. The active Stance grants the hero +{0} to the Stance’s corresponding attribute.",
+    "group": "faction",
+    "skillType": "Faction",
+    "factionId": "dungeon",
+    "levels": [
+      {
+        "level": 1,
+        "icon": "skill_faction_dungeon",
+        "name": "Basic Triumvirate’s Strength",
+        "desc": "Once per round, the hero can activate one of the three Stances in battle. The active Stance grants the hero +{0} to the Stance’s corresponding attribute.",
+        "bonuses": [
+          "hero ability: skill_faction_dungeon_ability_spellPower",
+          "hero ability: skill_faction_dungeon_ability_defence",
+          "hero ability: skill_faction_dungeon_ability_offence"
+        ],
+        "subskills": []
+      },
+      {
+        "level": 2,
+        "icon": "skill_faction_dungeon_2",
+        "name": "Advanced Triumvirate’s Strength",
+        "desc": "Once per round, the hero can activate one of the three Stances in battle. The active Stance grants the hero +{0} to the Stance’s corresponding attribute.",
+        "bonuses": [
+          "hero ability: skill_faction_dungeon_ability_spellPower",
+          "hero ability: skill_faction_dungeon_ability_defence",
+          "hero ability: skill_faction_dungeon_ability_offence"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_dungeon_1",
+            "name": "Underground Passages",
+            "desc": "Friendly Dungeon creatures deal +{0}% and take –{0}% Damage on Native Terrain."
+          },
+          {
+            "id": "sub_skill_faction_dungeon_2",
+            "name": "Alvarian Expertise",
+            "desc": "When selecting a Stance, the corresponding attribute of enemy hero partially decreases while the Stance is active."
+          },
+          {
+            "id": "sub_skill_faction_dungeon_6",
+            "name": "Underground Mana Pools",
+            "desc": "When selecting a Stance, the hero gains {0} temporary mana."
+          }
+        ]
+      },
+      {
+        "level": 3,
+        "icon": "skill_faction_dungeon_3",
+        "name": "Expert Triumvirate’s Strength",
+        "desc": "Once per round, the hero can activate one of the three Stances in battle. The active Stance grants the hero +{0} to the Stance’s corresponding attribute.",
+        "bonuses": [
+          "hero ability: skill_faction_dungeon_ability_spellPower",
+          "hero ability: skill_faction_dungeon_ability_defence",
+          "hero ability: skill_faction_dungeon_ability_offence"
+        ],
+        "subskills": [
+          {
+            "id": "sub_skill_faction_dungeon_4",
+            "name": "Jack of All Trades",
+            "desc": "When selecting a Stance, the hero’s corresponding attribute increases by {0}% until the end of the battle."
+          },
+          {
+            "id": "sub_skill_faction_dungeon_5",
+            "name": "Flow",
+            "desc": "Generate {0} Focus Charge(s) each time the hero selects a Stance."
+          },
+          {
+            "id": "sub_skill_faction_dungeon_3",
+            "name": "Opportunists",
+            "desc": "Friendly creatures gain {0} Initiative."
+          }
+        ]
+      }
+    ],
+    "subclasses": [],
+    "starters": [
+      {
+        "id": "dungeon_hero_16",
+        "name": "Typhona",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 2
+      },
+      {
+        "id": "dungeon_hero_7",
+        "name": "Creta, daughter of Navarr",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_6",
+        "name": "Devir, son of Devir",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_1",
+        "name": "Enatee",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_15",
+        "name": "Glastor",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_9",
+        "name": "Gleard the Grey",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_10",
+        "name": "Kelarr, son of Navarr",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_4",
+        "name": "Kieran",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_18",
+        "name": "Lodos",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_13",
+        "name": "Motley",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_5",
+        "name": "Mouaren",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_8",
+        "name": "Rhea",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_12",
+        "name": "Sister Deira",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_3",
+        "name": "Stinger",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_17",
+        "name": "Sunny Rauktol",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_2",
+        "name": "Tellaris the Betrayed",
+        "faction": "dungeon",
+        "kind": "might",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_14",
+        "name": "Ylwari",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      },
+      {
+        "id": "dungeon_hero_11",
+        "name": "Zakron the Great",
+        "faction": "dungeon",
+        "kind": "magic",
+        "level": 1
+      }
+    ]
+  }
+]

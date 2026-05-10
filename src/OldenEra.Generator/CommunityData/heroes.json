@@ -1,0 +1,2262 @@
+[
+  {
+    "id": "human_hero_10",
+    "specId": "human_hero_10_specialization",
+    "faction": "temple",
+    "kind": "magic",
+    "name": "Merry Elias",
+    "specialty": "Spiritual Vigor",
+    "specDesc": "He can use each Global Map spell +{3} time(s) per day. His maximum mana increases by {0}%, plus another {1}% for every {2} hero level(s).",
+    "armyScore": 3046,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Righteousness L1",
+      "Diplomacy L1"
+    ],
+    "army": "12–17 Swordsman · 8–12 Crossbowman · 4–6 Griffin"
+  },
+  {
+    "id": "human_hero_11",
+    "specId": "human_hero_11_specialization",
+    "faction": "temple",
+    "kind": "magic",
+    "name": "Pip",
+    "specialty": "Wish to Learn",
+    "specDesc": "When leveling up, he gains {3} additional attribute point(s) for every {4} hero level(s). He gains +{1}% XP for every {2} hero level(s).",
+    "armyScore": 3046,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Righteousness L1",
+      "Insight L1"
+    ],
+    "army": "12–17 Swordsman · 8–12 Crossbowman · 4–6 Griffin"
+  },
+  {
+    "id": "human_hero_12",
+    "specId": "human_hero_12_specialization",
+    "faction": "temple",
+    "kind": "magic",
+    "name": "Zenith",
+    "specialty": "Weaving the Light",
+    "specDesc": "Lightweaver growth in your cities increases by {0}.\nUnder her command, Lightweavers gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Lightweavers lose an equal amount of Attack and Defense.",
+    "armyScore": 3284,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Righteousness L1",
+      "Wisdom L1"
+    ],
+    "army": "12–17 Swordsman · 3–5 Lightweaver · 3–5 Lightweaver"
+  },
+  {
+    "id": "human_hero_13",
+    "specId": "human_hero_13_specialization",
+    "faction": "temple",
+    "kind": "magic",
+    "name": "Lia the Untethered One",
+    "specialty": "Radiating Knowledge",
+    "specDesc": "She receives +{0} level to all Daylight spells, plus another +{1} for every {2} hero levels. Casting Daylight spells does not prevent her from using other spells of the same Magic School. Enemy hero cannot cast Daylight spells.",
+    "armyScore": 3046,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Righteousness L1",
+      "Daylight Magic L1"
+    ],
+    "army": "12–17 Swordsman · 8–12 Crossbowman · 4–6 Griffin"
+  },
+  {
+    "id": "human_hero_14",
+    "specId": "human_hero_14_specialization",
+    "faction": "temple",
+    "kind": "magic",
+    "name": "Julius",
+    "specialty": "Compassionate Healer",
+    "specDesc": "He starts with the “Masterful Healing Water” spell. This version of the spell dispels all negative effects from friendly creatures.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 3046,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Righteousness L1",
+      "Resistance L1"
+    ],
+    "army": "12–17 Swordsman · 8–12 Crossbowman · 4–6 Griffin"
+  },
+  {
+    "id": "human_hero_15",
+    "specId": "human_hero_15_specialization",
+    "faction": "temple",
+    "kind": "magic",
+    "name": "Vesper",
+    "specialty": "Blessing",
+    "specDesc": "He starts with the “Masterful Blessing” spell. This version of the spell makes the target always deal maximum Damage. \nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 3046,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Righteousness L1",
+      "Daylight Magic L1"
+    ],
+    "army": "12–17 Swordsman · 8–12 Crossbowman · 4–6 Griffin"
+  },
+  {
+    "id": "human_hero_16",
+    "specId": "human_hero_16_specialization",
+    "faction": "temple",
+    "kind": "magic",
+    "name": "Anastasia the Meek",
+    "specialty": "Hymn to Arina",
+    "specDesc": "She starts with the “Masterful Arina’s Touch” spell. This version of the spell increases target’s Speed by {2}. \nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 3046,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Righteousness L1",
+      "Thaumaturgy L1"
+    ],
+    "army": "12–17 Swordsman · 8–12 Crossbowman · 4–6 Griffin"
+  },
+  {
+    "id": "human_hero_17",
+    "specId": "human_hero_17_specialization",
+    "faction": "temple",
+    "kind": "magic",
+    "name": "Nadir",
+    "specialty": "Heart of Hearts",
+    "specDesc": "He starts with the “Masterful Vulnerability” spell. This version of the spell makes the target always take maximum Damage. \nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 3046,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Righteousness L1",
+      "Nightshade Magic L1"
+    ],
+    "army": "12–17 Swordsman · 8–12 Crossbowman · 4–6 Griffin"
+  },
+  {
+    "id": "human_hero_18",
+    "specId": "human_hero_18_specialization",
+    "faction": "temple",
+    "kind": "magic",
+    "name": "Clarissa",
+    "specialty": "Wealthy",
+    "specDesc": "She produces +{0} Gold per day, plus another +{1} for every {2} hero level(s). Increases the amount of Gold found on the map by {3}%.",
+    "armyScore": 3046,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Righteousness L1",
+      "Economy L1"
+    ],
+    "army": "12–17 Swordsman · 8–12 Crossbowman · 4–6 Griffin"
+  },
+  {
+    "id": "human_hero_1",
+    "specId": "human_hero_1_specialization",
+    "faction": "temple",
+    "kind": "might",
+    "name": "Ister",
+    "specialty": "Wayfarer",
+    "specDesc": "He has +{0}% Movement points for every {1} hero level(s). Moves significantly more efficiently on roads.",
+    "armyScore": 3629,
+    "stats": {
+      "A": 2,
+      "D": 3,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Righteousness L1",
+      "Logistics L1"
+    ],
+    "army": "14–20 Swordsman · 10–14 Crossbowman · 5–7 Griffin"
+  },
+  {
+    "id": "human_hero_2",
+    "specId": "human_hero_2_specialization",
+    "faction": "temple",
+    "kind": "might",
+    "name": "Leon Sticky‑Fingers",
+    "specialty": "Pathfinder",
+    "specDesc": "His movement takes no terrain penalties. He also has +{0} Sight Radius, plus another +{1} for every {2} hero level(s).",
+    "armyScore": 3629,
+    "stats": {
+      "A": 2,
+      "D": 3,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Righteousness L1",
+      "Scouting L1"
+    ],
+    "army": "14–20 Swordsman · 10–14 Crossbowman · 5–7 Griffin"
+  },
+  {
+    "id": "human_hero_3",
+    "specId": "human_hero_3_specialization",
+    "faction": "temple",
+    "kind": "might",
+    "name": "John Johnson",
+    "specialty": "Salt of the Earth",
+    "specDesc": "Swordsman growth in your cities increases by {0}.\nUnder his command, Swordsmen gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Swordsmen lose an equal amount of Attack and Defense.",
+    "armyScore": 2714,
+    "stats": {
+      "A": 2,
+      "D": 3,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Righteousness L1",
+      "Defense L1"
+    ],
+    "army": "11–16 Swordsman · 11–16 Swordsman · 11–16 Swordsman"
+  },
+  {
+    "id": "human_hero_4",
+    "specId": "human_hero_4_specialization",
+    "faction": "temple",
+    "kind": "might",
+    "name": "Kestrel",
+    "specialty": "Jaeger",
+    "specDesc": "Crossbowman growth in your cities increases by {0}.\nUnder her command, Crossbowmen gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Crossbowmen lose an equal amount of Attack and Defense.",
+    "armyScore": 2594,
+    "stats": {
+      "A": 2,
+      "D": 3,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Righteousness L1",
+      "Offense L1"
+    ],
+    "army": "8–11 Crossbowman · 8–11 Crossbowman · 8–11 Crossbowman"
+  },
+  {
+    "id": "human_hero_5",
+    "specId": "human_hero_5_specialization",
+    "faction": "temple",
+    "kind": "might",
+    "name": "Aeos the Exalted",
+    "specialty": "Rousing Presence",
+    "specDesc": "Friendly creatures have +{0} Morale. They also have a higher chance of triggering the positive Morale effect: +{1}% chance per Morale point. For every {3} levels, this bonus increases by {2}%.",
+    "armyScore": 3629,
+    "stats": {
+      "A": 2,
+      "D": 3,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Righteousness L1",
+      "Leadership L1"
+    ],
+    "army": "14–20 Swordsman · 10–14 Crossbowman · 5–7 Griffin"
+  },
+  {
+    "id": "human_hero_6",
+    "specId": "human_hero_6_specialization",
+    "faction": "temple",
+    "kind": "might",
+    "name": "Heretic Avis",
+    "specialty": "Gem Seeker",
+    "specDesc": "He produces +{0} Gem per day, plus another +{1} for every {2} hero level(s). Increases the amount of Gems found on the map by {3}%.",
+    "armyScore": 3629,
+    "stats": {
+      "A": 2,
+      "D": 3,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Righteousness L1",
+      "Recruitment L1"
+    ],
+    "army": "14–20 Swordsman · 10–14 Crossbowman · 5–7 Griffin"
+  },
+  {
+    "id": "human_hero_7",
+    "specId": "human_hero_7_specialization",
+    "faction": "temple",
+    "kind": "might",
+    "name": "Keandra",
+    "specialty": "Jouster",
+    "specDesc": "Cavalry growth in your cities increases by {0}.\nUnder her command, Cavalry gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Cavalry lose an equal amount of Attack and Defense.",
+    "armyScore": 3409,
+    "stats": {
+      "A": 2,
+      "D": 3,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Righteousness L1",
+      "Battlecraft L1"
+    ],
+    "army": "14–20 Swordsman · 2–3 Cavalry"
+  },
+  {
+    "id": "human_hero_8",
+    "specId": "human_hero_8_specialization",
+    "faction": "temple",
+    "kind": "might",
+    "name": "Lord Edgar",
+    "specialty": "True Lord",
+    "specDesc": "Friendly creatures gain {0}% of his Attack and Defense (as Attack and Defense), plus another {1}% for every {2} hero level(s).",
+    "armyScore": 3629,
+    "stats": {
+      "A": 2,
+      "D": 3,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Righteousness L2"
+    ],
+    "army": "14–20 Swordsman · 10–14 Crossbowman · 5–7 Griffin"
+  },
+  {
+    "id": "human_hero_9",
+    "specId": "human_hero_9_specialization",
+    "faction": "temple",
+    "kind": "might",
+    "name": "Old Lord Mandall",
+    "specialty": "Heroic Smite",
+    "specDesc": "His Heroic Strike deals +{0} Damage, plus another +{1} for every {2} hero level(s). It also increases all Damage taken by the target by {3}% until the end of the next round. This effect is stackable.",
+    "armyScore": 3629,
+    "stats": {
+      "A": 2,
+      "D": 3,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Righteousness L1",
+      "Combat L1"
+    ],
+    "army": "14–20 Swordsman · 10–14 Crossbowman · 5–7 Griffin"
+  },
+  {
+    "id": "necro_hero_10",
+    "specId": "necro_hero_10_specialization",
+    "faction": "necropolis",
+    "kind": "magic",
+    "name": "Mag",
+    "specialty": "Arcane Dominion",
+    "specDesc": "He receives +{0} level to all Arcane spells, plus another +{1} for every {2} hero levels. Casting Arcane spells does not prevent him from using other spells of the same Magic School. Enemy hero cannot cast Arcane spells.",
+    "armyScore": 2706,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 2,
+      "K": 4
+    },
+    "skills": [
+      "Necromancy L1",
+      "Arcane Magic L1"
+    ],
+    "army": "20–27 Skeleton · 10–13 Wight · 8–10 Undead Pet"
+  },
+  {
+    "id": "necro_hero_11",
+    "specId": "necro_hero_11_specialization",
+    "faction": "necropolis",
+    "kind": "magic",
+    "name": "Adahn",
+    "specialty": "Amnesiac",
+    "specDesc": "Wight growth in your cities increases by {0}.\nUnder his command, Wights gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Wights lose an equal amount of Attack and Defense.",
+    "armyScore": 2430,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 2,
+      "K": 4
+    },
+    "skills": [
+      "Necromancy L1",
+      "Recruitment L1"
+    ],
+    "army": "8–10 Wight · 8–10 Wight · 8–10 Wight"
+  },
+  {
+    "id": "necro_hero_12",
+    "specId": "necro_hero_12_specialization",
+    "faction": "necropolis",
+    "kind": "magic",
+    "name": "Ethric",
+    "specialty": "Tomb‑bound Will",
+    "specDesc": "Lich growth in your cities increases by {0}.\nUnder his command, Liches gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Liches lose an equal amount of Attack and Defense.",
+    "armyScore": 2903,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 2,
+      "K": 4
+    },
+    "skills": [
+      "Necromancy L1",
+      "Wisdom L1"
+    ],
+    "army": "20–27 Skeleton · 10–13 Wight · 3–4 Lich"
+  },
+  {
+    "id": "necro_hero_13",
+    "specId": "necro_hero_13_specialization",
+    "faction": "necropolis",
+    "kind": "magic",
+    "name": "Guildmaster Klastor",
+    "specialty": "Bones Guild",
+    "specDesc": "Graverobber growth in your cities increases by {0}.\nUnder his command, Graverobbers gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Graverobbers lose an equal amount of Attack and Defense.",
+    "armyScore": 3754,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 2,
+      "K": 4
+    },
+    "skills": [
+      "Necromancy L1",
+      "Luck L1"
+    ],
+    "army": "20–27 Skeleton · 5–7 Graverobber · 5–7 Graverobber"
+  },
+  {
+    "id": "necro_hero_14",
+    "specId": "necro_hero_14_specialization",
+    "faction": "necropolis",
+    "kind": "magic",
+    "name": "Shadespinner Oona",
+    "specialty": "Shadowmastery",
+    "specDesc": "She receives +{0} level to all Nightshade spells, plus another +{1} for every {2} hero levels. Casting Nightshade spells does not prevent her from using other spells of the same Magic School. Enemy hero cannot cast Nightshade spells.",
+    "armyScore": 2706,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 2,
+      "K": 4
+    },
+    "skills": [
+      "Necromancy L1",
+      "Nightshade Magic L1"
+    ],
+    "army": "20–27 Skeleton · 10–13 Wight · 8–10 Undead Pet"
+  },
+  {
+    "id": "necro_hero_15",
+    "specId": "necro_hero_15_specialization",
+    "faction": "necropolis",
+    "kind": "magic",
+    "name": "Laura",
+    "specialty": "Moldering",
+    "specDesc": "She starts with the “Masterful Despair” spell. This version of the spell affects all types of enemies.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 2706,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 2,
+      "K": 4
+    },
+    "skills": [
+      "Necromancy L1",
+      "Sorcery L1"
+    ],
+    "army": "20–27 Skeleton · 10–13 Wight · 8–10 Undead Pet"
+  },
+  {
+    "id": "necro_hero_16",
+    "specId": "necro_hero_16_specialization",
+    "faction": "necropolis",
+    "kind": "magic",
+    "name": "Lord Rufus",
+    "specialty": "Wistful Nostalgia",
+    "specDesc": "He starts with the “Masterful Rewind Life” spell. This version of the spell can revive units beyond their original amount.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 2706,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 2,
+      "K": 4
+    },
+    "skills": [
+      "Necromancy L1",
+      "Thaumaturgy L1"
+    ],
+    "army": "20–27 Skeleton · 10–13 Wight · 8–10 Undead Pet"
+  },
+  {
+    "id": "necro_hero_17",
+    "specId": "necro_hero_17_specialization",
+    "faction": "necropolis",
+    "kind": "magic",
+    "name": "Funerella",
+    "specialty": "Undead Legion",
+    "specDesc": "She has +{0}% Necromancy Power, plus another {1}% for every {2} hero level(s).",
+    "armyScore": 2706,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 2,
+      "K": 4
+    },
+    "skills": [
+      "Necromancy L2"
+    ],
+    "army": "20–27 Skeleton · 10–13 Wight · 8–10 Undead Pet"
+  },
+  {
+    "id": "necro_hero_18",
+    "specId": "necro_hero_18_specialization",
+    "faction": "necropolis",
+    "kind": "magic",
+    "name": "Milossa the Golden",
+    "specialty": "Wealthy",
+    "specDesc": "She produces +{0} Gold per day, plus another +{1} for every {2} hero level(s). Increases the amount of Gold found on the map by {3}%.",
+    "armyScore": 2706,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 2,
+      "K": 4
+    },
+    "skills": [
+      "Necromancy L1",
+      "Battle Magic L1"
+    ],
+    "army": "20–27 Skeleton · 10–13 Wight · 8–10 Undead Pet"
+  },
+  {
+    "id": "necro_hero_1",
+    "specId": "necro_hero_1_specialization",
+    "faction": "necropolis",
+    "kind": "might",
+    "name": "Bulwark",
+    "specialty": "Built Different",
+    "specDesc": "Friendly creatures take –{0}% Damage from basic attacks, and an additional –{1}% for every {2} hero level(s). For every {4} hero levels, creatures in his army take –{3}% Damage from Ranged and Long Reach attacks.",
+    "armyScore": 3352,
+    "stats": {
+      "A": 3,
+      "D": 1,
+      "P": 1,
+      "K": 2
+    },
+    "skills": [
+      "Necromancy L1",
+      "Defense L1"
+    ],
+    "army": "24–33 Skeleton · 12–16 Wight · 10–13 Undead Pet"
+  },
+  {
+    "id": "necro_hero_2",
+    "specId": "necro_hero_2_specialization",
+    "faction": "necropolis",
+    "kind": "might",
+    "name": "King‑of‑Kings",
+    "specialty": "Charismatic",
+    "specDesc": "It keeps its army when fleeing from battle against neutral squads. +{0}% Persuasion Power when using Diplomacy, plus another {1}% for every {2} hero level(s).",
+    "armyScore": 3352,
+    "stats": {
+      "A": 3,
+      "D": 1,
+      "P": 1,
+      "K": 2
+    },
+    "skills": [
+      "Necromancy L1",
+      "Diplomacy L1"
+    ],
+    "army": "24–33 Skeleton · 12–16 Wight · 10–13 Undead Pet"
+  },
+  {
+    "id": "necro_hero_3",
+    "specId": "necro_hero_3_specialization",
+    "faction": "necropolis",
+    "kind": "might",
+    "name": "Onkos",
+    "specialty": "Perfect Puppets",
+    "specDesc": "Skeleton growth in your cities increases by {0}.\nUnder his command, Skeletons gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Skeletons lose an equal amount of Attack and Defense.",
+    "armyScore": 1958,
+    "stats": {
+      "A": 3,
+      "D": 1,
+      "P": 1,
+      "K": 2
+    },
+    "skills": [
+      "Necromancy L1",
+      "Offense L1"
+    ],
+    "army": "19–26 Skeleton · 19–26 Skeleton · 19–26 Skeleton"
+  },
+  {
+    "id": "necro_hero_4",
+    "specId": "necro_hero_4_specialization",
+    "faction": "necropolis",
+    "kind": "might",
+    "name": "Kel’Ghul",
+    "specialty": "Dreadful War",
+    "specDesc": "Dread Knight growth in your cities increases by {0}.\nUnder his command, Dread Knights gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Dread Knights lose an equal amount of Attack and Defense.",
+    "armyScore": 2380,
+    "stats": {
+      "A": 3,
+      "D": 1,
+      "P": 1,
+      "K": 2
+    },
+    "skills": [
+      "Necromancy L1",
+      "Tactics L1"
+    ],
+    "army": "2–3 Dread Knight"
+  },
+  {
+    "id": "necro_hero_5",
+    "specId": "necro_hero_5_specialization",
+    "faction": "necropolis",
+    "kind": "might",
+    "name": "Natalida",
+    "specialty": "Part of a Pack",
+    "specDesc": "Undead Pet growth in your cities increases by {0}.\nUnder her command, Undead Pets gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Undead Pets lose an equal amount of Attack and Defense.",
+    "armyScore": 2970,
+    "stats": {
+      "A": 3,
+      "D": 1,
+      "P": 1,
+      "K": 2
+    },
+    "skills": [
+      "Necromancy L1",
+      "Scouting L1"
+    ],
+    "army": "8–10 Undead Pet · 8–10 Undead Pet · 8–10 Undead Pet"
+  },
+  {
+    "id": "necro_hero_6",
+    "specId": "necro_hero_6_specialization",
+    "faction": "necropolis",
+    "kind": "might",
+    "name": "Artorius Veritas",
+    "specialty": "Drive ’em Crazy",
+    "specDesc": "He starts with the “Masterful Berserk” spell. This version of the spell affects all creatures adjacent to the target.\nThe cost of this spell is reduced by {0} mana for every {1} hero level(s).",
+    "armyScore": 3352,
+    "stats": {
+      "A": 3,
+      "D": 1,
+      "P": 1,
+      "K": 2
+    },
+    "skills": [
+      "Necromancy L1",
+      "Resistance L1"
+    ],
+    "army": "24–33 Skeleton · 12–16 Wight · 10–13 Undead Pet"
+  },
+  {
+    "id": "necro_hero_7",
+    "specId": "necro_hero_7_specialization",
+    "faction": "necropolis",
+    "kind": "might",
+    "name": "Marl",
+    "specialty": "Languid Soil",
+    "specDesc": "He starts with the “Masterful Web” spell. This version of the spell affects all enemies.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 3352,
+    "stats": {
+      "A": 3,
+      "D": 1,
+      "P": 1,
+      "K": 2
+    },
+    "skills": [
+      "Necromancy L1",
+      "Logistics L1"
+    ],
+    "army": "24–33 Skeleton · 12–16 Wight · 10–13 Undead Pet"
+  },
+  {
+    "id": "necro_hero_8",
+    "specId": "necro_hero_8_specialization",
+    "faction": "necropolis",
+    "kind": "might",
+    "name": "Tarius",
+    "specialty": "Undead Legion",
+    "specDesc": "He has +{0}% Necromancy Power, plus another {1}% for every {2} hero level(s).",
+    "armyScore": 3352,
+    "stats": {
+      "A": 3,
+      "D": 1,
+      "P": 1,
+      "K": 2
+    },
+    "skills": [
+      "Necromancy L2"
+    ],
+    "army": "24–33 Skeleton · 12–16 Wight · 10–13 Undead Pet"
+  },
+  {
+    "id": "necro_hero_9",
+    "specId": "necro_hero_9_specialization",
+    "faction": "necropolis",
+    "kind": "might",
+    "name": "Zam",
+    "specialty": "Alchemist",
+    "specDesc": "He produces +{0} Mercury per day, plus another +{1} for every {2} hero level(s). Increases the amount of Mercury found on the map by {3}%.",
+    "armyScore": 3352,
+    "stats": {
+      "A": 3,
+      "D": 1,
+      "P": 1,
+      "K": 2
+    },
+    "skills": [
+      "Necromancy L1",
+      "Battlecraft L1"
+    ],
+    "army": "24–33 Skeleton · 12–16 Wight · 10–13 Undead Pet"
+  },
+  {
+    "id": "nature_hero_10",
+    "specId": "nature_hero_10_specialization",
+    "faction": "grove",
+    "kind": "magic",
+    "name": "Vatawna",
+    "specialty": "Spiritual Vigor",
+    "specDesc": "+{3} spell cap for each Global Map spell. Her maximum mana increases by {0}%, plus another {1}% for every {2} hero level(s).",
+    "armyScore": 2472,
+    "stats": {
+      "A": 1,
+      "D": 2,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Wisdom L1"
+    ],
+    "army": "8–11 Faun · 5–7 Hoplet · 3–5 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_11",
+    "specId": "nature_hero_11_specialization",
+    "faction": "grove",
+    "kind": "magic",
+    "name": "Elder Tss’kish",
+    "specialty": "Oldest Known Tree",
+    "specDesc": "Herbomancer growth in your cities increases by {0}.\nUnder his command, Herbomancers gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Herbomancers lose an equal amount of Attack and Defense.",
+    "armyScore": 2658,
+    "stats": {
+      "A": 1,
+      "D": 2,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Thaumaturgy L1"
+    ],
+    "army": "8–11 Faun · 2–3 Herbomancer"
+  },
+  {
+    "id": "nature_hero_12",
+    "specId": "nature_hero_12_specialization",
+    "faction": "grove",
+    "kind": "magic",
+    "name": "Aeliniel",
+    "specialty": "Tempered Embers",
+    "specDesc": "She starts with the “Masterful Firewall” spell. This version of the spell stays active for +{2} round(s).\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 2472,
+    "stats": {
+      "A": 1,
+      "D": 2,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Primal Magic L1"
+    ],
+    "army": "8–11 Faun · 5–7 Hoplet · 3–5 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_13",
+    "specId": "nature_hero_13_specialization",
+    "faction": "grove",
+    "kind": "magic",
+    "name": "Glacia",
+    "specialty": "Ice Bolt",
+    "specDesc": "She starts with the “Masterful Ice Bolt” spell. The Initiative penalty of this version of the spell is twice as strong.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 2472,
+    "stats": {
+      "A": 1,
+      "D": 2,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Primal Magic L1"
+    ],
+    "army": "8–11 Faun · 5–7 Hoplet · 3–5 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_14",
+    "specId": "nature_hero_14_specialization",
+    "faction": "grove",
+    "kind": "magic",
+    "name": "Vim",
+    "specialty": "Rock It up!",
+    "specDesc": "He starts with the “Masterful Cave In” spell. The obstacles created by this version of the spell must be damaged +{2} more times to be destroyed. \nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 2472,
+    "stats": {
+      "A": 1,
+      "D": 2,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Primal Magic L1"
+    ],
+    "army": "8–11 Faun · 5–7 Hoplet · 3–5 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_15",
+    "specId": "nature_hero_15_specialization",
+    "faction": "grove",
+    "kind": "magic",
+    "name": "Halon",
+    "specialty": "Thunder and Lightning",
+    "specDesc": "He starts with the “Masterful Chain Lightning” spell. This version of the spell loses half as much Damage when jumping between targets.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 2472,
+    "stats": {
+      "A": 1,
+      "D": 2,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Primal Magic L1"
+    ],
+    "army": "8–11 Faun · 5–7 Hoplet · 3–5 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_16",
+    "specId": "nature_hero_16_specialization",
+    "faction": "grove",
+    "kind": "magic",
+    "name": "Echolily",
+    "specialty": "Murmuring Copy",
+    "specDesc": "She starts with the “Masterful Mirror Copy” spell. This version of the spell can target enemy creatures.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 2472,
+    "stats": {
+      "A": 1,
+      "D": 2,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Arcane Magic L1"
+    ],
+    "army": "8–11 Faun · 5–7 Hoplet · 3–5 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_17",
+    "specId": "nature_hero_17_specialization",
+    "faction": "grove",
+    "kind": "magic",
+    "name": "Sullie",
+    "specialty": "Murmurwood Native",
+    "specDesc": "Her summoned Avatar is immune to Magic Damage\nWhen casting Summon Avatar, its effective Spell Power is increased by +{0} per {1} hero level(s).",
+    "armyScore": 2472,
+    "stats": {
+      "A": 1,
+      "D": 2,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Summon Avatar L1"
+    ],
+    "army": "8–11 Faun · 5–7 Hoplet · 3–5 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_18",
+    "specId": "nature_hero_18_specialization",
+    "faction": "grove",
+    "kind": "magic",
+    "name": "The Minstrel",
+    "specialty": "Wandering Musician",
+    "specDesc": "At the beginning of each round, he generates +{0} Focus Point(s), plus another +{1} for every {2} hero level(s). The enemy loses the same amount of Focus Points.",
+    "armyScore": 2472,
+    "stats": {
+      "A": 1,
+      "D": 2,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Sorcery L1"
+    ],
+    "army": "8–11 Faun · 5–7 Hoplet · 3–5 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_1",
+    "specId": "nature_hero_1_specialization",
+    "faction": "grove",
+    "kind": "might",
+    "name": "Eith",
+    "specialty": "Pathfinder",
+    "specDesc": "His movement takes no terrain penalties. He also has +{0} Sight Radius, plus another +{1} for every {2} hero level(s).",
+    "armyScore": 2993,
+    "stats": {
+      "A": 2,
+      "D": 1,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Scouting L1"
+    ],
+    "army": "9–14 Faun · 6–8 Hoplet · 4–6 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_2",
+    "specId": "nature_hero_2_specialization",
+    "faction": "grove",
+    "kind": "might",
+    "name": "Gorel Spearhead",
+    "specialty": "Shooter",
+    "specDesc": "Creatures in his army deal +{0}% basic attack Damage, plus another {1}% for every {2} hero level(s). Additionally, they deal +{3}% Ranged and Long Reach Damage for every {4} hero level(s).",
+    "armyScore": 2993,
+    "stats": {
+      "A": 2,
+      "D": 1,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Offense L1"
+    ],
+    "army": "9–14 Faun · 6–8 Hoplet · 4–6 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_3",
+    "specId": "nature_hero_3_specialization",
+    "faction": "grove",
+    "kind": "might",
+    "name": "Gingertail",
+    "specialty": "Faunsong",
+    "specDesc": "Faun growth in your cities increases by {0}.\nUnder her command, Fauns gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Fauns lose an equal amount of Attack and Defense.",
+    "armyScore": 2268,
+    "stats": {
+      "A": 2,
+      "D": 1,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Battlecraft L1"
+    ],
+    "army": "7–11 Faun · 7–11 Faun · 7–11 Faun"
+  },
+  {
+    "id": "nature_hero_4",
+    "specId": "nature_hero_4_specialization",
+    "faction": "grove",
+    "kind": "might",
+    "name": "Old Pilgrim",
+    "specialty": "Natural Selection",
+    "specDesc": "He starts with the “Masterful Guillotine” spell. This version of the spell’s Damage increases twice as fast when cast on the same target.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 2993,
+    "stats": {
+      "A": 2,
+      "D": 1,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Battle Magic L1"
+    ],
+    "army": "9–14 Faun · 6–8 Hoplet · 4–6 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_5",
+    "specId": "nature_hero_5_specialization",
+    "faction": "grove",
+    "kind": "might",
+    "name": "Octavia",
+    "specialty": "Four‑Leaf Horseshoe",
+    "specDesc": "She has +{0} Luck, and creatures under her command have an increased chance of triggering a Lucky Strike: +{1}% chance per Luck point. For every {3} levels, this bonus increases by {2}%.",
+    "armyScore": 2993,
+    "stats": {
+      "A": 2,
+      "D": 1,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Luck L1"
+    ],
+    "army": "9–14 Faun · 6–8 Hoplet · 4–6 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_6",
+    "specId": "nature_hero_6_specialization",
+    "faction": "grove",
+    "kind": "might",
+    "name": "Mreowa",
+    "specialty": "Charming Shine",
+    "specDesc": "She produces +{0} Crystals per day, plus another +{1} for every {2} hero level(s). Increases the amount of Crystals found on the map by {3}%.",
+    "armyScore": 2993,
+    "stats": {
+      "A": 2,
+      "D": 1,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Sorcery L1"
+    ],
+    "army": "9–14 Faun · 6–8 Hoplet · 4–6 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_7",
+    "specId": "nature_hero_7_specialization",
+    "faction": "grove",
+    "kind": "might",
+    "name": "Faleor",
+    "specialty": "Hksmilla’s Step",
+    "specDesc": "He starts with the “Masterful Fireball” spell. This version of the spell hits a bigger area.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 2993,
+    "stats": {
+      "A": 2,
+      "D": 1,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L2"
+    ],
+    "army": "9–14 Faun · 6–8 Hoplet · 4–6 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_8",
+    "specId": "nature_hero_8_specialization",
+    "faction": "grove",
+    "kind": "might",
+    "name": "Alluring Sh’a",
+    "specialty": "Charismatic",
+    "specDesc": "It keeps its army when fleeing from battle against neutral squads. +{0}% Persuasion Power when using Diplomacy, plus another {1}% for every {2} hero level(s).",
+    "armyScore": 2993,
+    "stats": {
+      "A": 2,
+      "D": 1,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Diplomacy L1"
+    ],
+    "army": "9–14 Faun · 6–8 Hoplet · 4–6 Vine Iriyad"
+  },
+  {
+    "id": "nature_hero_9",
+    "specId": "nature_hero_9_specialization",
+    "faction": "grove",
+    "kind": "might",
+    "name": "Aunt Daliar",
+    "specialty": "Wish to Learn",
+    "specDesc": "When leveling up, she gains {3} additional attribute point(s) for every {4} hero level(s). She gains +{1}% XP for every {2} hero level(s).",
+    "armyScore": 2993,
+    "stats": {
+      "A": 2,
+      "D": 1,
+      "P": 2,
+      "K": 2
+    },
+    "skills": [
+      "Murmuring L1",
+      "Insight L1"
+    ],
+    "army": "9–14 Faun · 6–8 Hoplet · 4–6 Vine Iriyad"
+  },
+  {
+    "id": "demon_hero_10",
+    "specId": "demon_hero_10_specialization",
+    "faction": "hive",
+    "kind": "magic",
+    "name": "Fleu",
+    "specialty": "Wayfarer",
+    "specDesc": "She has +{0}% Movement points for every {1} hero level(s). Moves significantly more efficiently on roads.",
+    "armyScore": 3174,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 4,
+      "K": 2
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Logistics L1"
+    ],
+    "army": "14–19 Parasite · 8–11 Locust · 4–6 Hornet"
+  },
+  {
+    "id": "demon_hero_11",
+    "specId": "demon_hero_11_specialization",
+    "faction": "hive",
+    "kind": "magic",
+    "name": "Xirr",
+    "specialty": "Resistant to Elements",
+    "specDesc": "He is immune to negative effects in battles and on the global map. His creatures take –{0}% Magic Damage, and an additional –{1}% for every {2} hero level(s).",
+    "armyScore": 3174,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 4,
+      "K": 2
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Resistance L1"
+    ],
+    "army": "14–19 Parasite · 8–11 Locust · 4–6 Hornet"
+  },
+  {
+    "id": "demon_hero_12",
+    "specId": "demon_hero_12_specialization",
+    "faction": "hive",
+    "kind": "magic",
+    "name": "Bathym, Duke of Jewels",
+    "specialty": "Charming Shine",
+    "specDesc": "He produces +{0} Crystals per day, plus another +{1} for every {2} hero level(s). Increases the amount of Crystals found on the map by {3}%.",
+    "armyScore": 3174,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 4,
+      "K": 2
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Economy L1"
+    ],
+    "army": "14–19 Parasite · 8–11 Locust · 4–6 Hornet"
+  },
+  {
+    "id": "demon_hero_13",
+    "specId": "demon_hero_13_specialization",
+    "faction": "hive",
+    "kind": "magic",
+    "name": "Leira",
+    "specialty": "Stinging",
+    "specDesc": "Hornet growth in your cities increases by {0}.\nUnder her command, Hornets gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Hornets lose an equal amount of Attack and Defense.",
+    "armyScore": 2580,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 4,
+      "K": 2
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Battle Magic L1"
+    ],
+    "army": "3–5 Hornet · 3–5 Hornet · 3–5 Hornet"
+  },
+  {
+    "id": "demon_hero_14",
+    "specId": "demon_hero_14_specialization",
+    "faction": "hive",
+    "kind": "magic",
+    "name": "Groo",
+    "specialty": "Son of All Mothers",
+    "specDesc": "Hive Queen growth in your cities increases by {0}.\nUnder his command, Hive Queens gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Hive Queens lose an equal amount of Attack and Defense.",
+    "armyScore": 3174,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 4,
+      "K": 2
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Wisdom L1"
+    ],
+    "army": "14–19 Parasite · 8–11 Locust · 4–6 Hornet"
+  },
+  {
+    "id": "demon_hero_15",
+    "specId": "demon_hero_15_specialization",
+    "faction": "hive",
+    "kind": "magic",
+    "name": "Mila",
+    "specialty": "Wingflap",
+    "specDesc": "She starts with the “Masterful Haste” spell. This version of the spell affects all friendly creatures.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 3174,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 4,
+      "K": 2
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Daylight Magic L1"
+    ],
+    "army": "14–19 Parasite · 8–11 Locust · 4–6 Hornet"
+  },
+  {
+    "id": "demon_hero_16",
+    "specId": "demon_hero_16_specialization",
+    "faction": "hive",
+    "kind": "magic",
+    "name": "Oriax",
+    "specialty": "Here and There",
+    "specDesc": "She starts with the “Masterful Blink” spell. This version of the spell can target enemy creatures.\nThe cost of this spell is reduced by {0} mana for every {1} hero level(s).",
+    "armyScore": 3174,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 4,
+      "K": 2
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Summon Avatar L1"
+    ],
+    "army": "14–19 Parasite · 8–11 Locust · 4–6 Hornet"
+  },
+  {
+    "id": "demon_hero_17",
+    "specId": "demon_hero_17_specialization",
+    "faction": "hive",
+    "kind": "magic",
+    "name": "Khariseth",
+    "specialty": "Primal Weaving",
+    "specDesc": "They receive +{0} level to all Primal spells, plus another +{1} for every {2} hero levels. Casting Primal spells does not prevent them from using other spells of the same Magic School. Enemy hero cannot cast Primal spells.",
+    "armyScore": 3174,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 4,
+      "K": 2
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Primal Magic L1"
+    ],
+    "army": "14–19 Parasite · 8–11 Locust · 4–6 Hornet"
+  },
+  {
+    "id": "demon_hero_18",
+    "specId": "demon_hero_18_specialization",
+    "faction": "hive",
+    "kind": "magic",
+    "name": "Pauper",
+    "specialty": "Flea Bites",
+    "specDesc": "Friendly creatures have +{0} Speed, plus an additional {1} for every {2} hero level(s).",
+    "armyScore": 3174,
+    "stats": {
+      "A": 1,
+      "D": 0,
+      "P": 4,
+      "K": 2
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Battle Magic L1"
+    ],
+    "army": "14–19 Parasite · 8–11 Locust · 4–6 Hornet"
+  },
+  {
+    "id": "demon_hero_1",
+    "specId": "demon_hero_1_specialization",
+    "faction": "hive",
+    "kind": "might",
+    "name": "Niev",
+    "specialty": "Shooter",
+    "specDesc": "Creatures in her army deal +{0}% basic attack Damage, plus an additional {1}% for every {2} hero level(s). Additionally, they deal +{3}% Ranged and Long Reach Damage for every {4} hero level(s).",
+    "armyScore": 3864,
+    "stats": {
+      "A": 4,
+      "D": 0,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Offense L1"
+    ],
+    "army": "17–24 Parasite · 10–13 Locust · 5–7 Hornet"
+  },
+  {
+    "id": "demon_hero_2",
+    "specId": "demon_hero_2_specialization",
+    "faction": "hive",
+    "kind": "might",
+    "name": "Maelstrom",
+    "specialty": "Reave Away",
+    "specDesc": "Reaver growth in your cities increases by {0}.\nUnder his command, Reavers gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Reavers lose an equal amount of Attack and Defense.",
+    "armyScore": 3395,
+    "stats": {
+      "A": 4,
+      "D": 0,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Insight L1"
+    ],
+    "army": "17–24 Parasite · 2–3 Reaver"
+  },
+  {
+    "id": "demon_hero_3",
+    "specId": "demon_hero_3_specialization",
+    "faction": "hive",
+    "kind": "might",
+    "name": "Nor",
+    "specialty": "Wish to Learn",
+    "specDesc": "When leveling up, he gains {3} additional attribute point(s) for every {4} hero level(s). He gains +{1}% XP for every {2} hero level(s).",
+    "armyScore": 3864,
+    "stats": {
+      "A": 4,
+      "D": 0,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Battlecraft L1"
+    ],
+    "army": "17–24 Parasite · 10–13 Locust · 5–7 Hornet"
+  },
+  {
+    "id": "demon_hero_4",
+    "specId": "demon_hero_4_specialization",
+    "faction": "hive",
+    "kind": "might",
+    "name": "Zoran, the Self‑Founded",
+    "specialty": "Waurmification",
+    "specDesc": "Waurms growth in your cities increases by {0}.\nUnder his command, Waurmos gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Waurmos lose an equal amount of Attack and Defense.",
+    "armyScore": 2808,
+    "stats": {
+      "A": 4,
+      "D": 0,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Nightshade Magic L1"
+    ],
+    "army": "2–2 Waurms"
+  },
+  {
+    "id": "demon_hero_5",
+    "specId": "demon_hero_5_specialization",
+    "faction": "hive",
+    "kind": "might",
+    "name": "Curson, Duke of Rage",
+    "specialty": "Intimidating Strike",
+    "specDesc": "His Heroic Strike deals +{0} Damage, plus {1} more for every {2} hero level(s). Additionally, it reduces the target’s Initiative by {3} until the battle end. This effect is stackable.",
+    "armyScore": 3864,
+    "stats": {
+      "A": 4,
+      "D": 0,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Combat L1"
+    ],
+    "army": "17–24 Parasite · 10–13 Locust · 5–7 Hornet"
+  },
+  {
+    "id": "demon_hero_6",
+    "specId": "demon_hero_6_specialization",
+    "faction": "hive",
+    "kind": "might",
+    "name": "Tavi",
+    "specialty": "Proliferation",
+    "specDesc": "Her summoned Fire Larva stacks have +{0}% health, plus another {1}% for every {2} hero level(s).",
+    "armyScore": 3864,
+    "stats": {
+      "A": 4,
+      "D": 0,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Summon Swarm L2"
+    ],
+    "army": "17–24 Parasite · 10–13 Locust · 5–7 Hornet"
+  },
+  {
+    "id": "demon_hero_7",
+    "specId": "demon_hero_7_specialization",
+    "faction": "hive",
+    "kind": "might",
+    "name": "Lo",
+    "specialty": "Scavenger",
+    "specDesc": "Locust growth in your cities increases by {0}.\nUnder her command, Locusts gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Locusts lose an equal amount of Attack and Defense.",
+    "armyScore": 2916,
+    "stats": {
+      "A": 4,
+      "D": 0,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Defense L1"
+    ],
+    "army": "8–10 Locust · 8–10 Locust · 8–10 Locust"
+  },
+  {
+    "id": "demon_hero_8",
+    "specId": "demon_hero_8_specialization",
+    "faction": "hive",
+    "kind": "might",
+    "name": "Goldentongue",
+    "specialty": "Rousing Presence",
+    "specDesc": "Friendly creatures have +{0} Morale. They also have a higher chance of triggering the positive Morale effect: +{1}% chance per Morale point. For every {3} levels, this bonus increases by {2}%.",
+    "armyScore": 3864,
+    "stats": {
+      "A": 4,
+      "D": 0,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Leadership L1"
+    ],
+    "army": "17–24 Parasite · 10–13 Locust · 5–7 Hornet"
+  },
+  {
+    "id": "demon_hero_9",
+    "specId": "demon_hero_9_specialization",
+    "faction": "hive",
+    "kind": "might",
+    "name": "Abigor, Duke of Battle",
+    "specialty": "Chessmaster",
+    "specDesc": "In the Tactics Phase, he has +{0} hex to the creature placement range and can see the positions of neutral stacks. Creatures in his army gain {1} Initiative for every {2} hero level(s).",
+    "armyScore": 3864,
+    "stats": {
+      "A": 4,
+      "D": 0,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Summon Swarm L1",
+      "Tactics L1"
+    ],
+    "army": "17–24 Parasite · 10–13 Locust · 5–7 Hornet"
+  },
+  {
+    "id": "unfrozen_hero_10",
+    "specId": "unfrozen_hero_10_specialization",
+    "faction": "schism",
+    "kind": "magic",
+    "name": "Grellekh the Betrayer",
+    "specialty": "Fighter",
+    "specDesc": "Creatures in his army deal +{0}% basic attack Damage, plus another {1}% for every {2} hero level(s). Additionally, they deal +{3}% Melee Damage for every {4} hero level(s).",
+    "armyScore": 3252,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 3,
+      "K": 2
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Offense L1"
+    ],
+    "army": "13–18 Ra’Shoth · 7–10 Cultist · 5–7 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_11",
+    "specId": "unfrozen_hero_11_specialization",
+    "faction": "schism",
+    "kind": "magic",
+    "name": "Icequeen Hel’Ghat",
+    "specialty": "Heart of Ice",
+    "specDesc": "Creatures in her army take –{0}% basic attack Damage, and an additional –{1}% for every {2} hero level(s). For every {4} hero levels, creatures in her army take –{3}% Damage from Melee attacks.",
+    "armyScore": 3252,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 3,
+      "K": 2
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Defense L1"
+    ],
+    "army": "13–18 Ra’Shoth · 7–10 Cultist · 5–7 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_12",
+    "specId": "unfrozen_hero_12_specialization",
+    "faction": "schism",
+    "kind": "magic",
+    "name": "Kwinri",
+    "specialty": "Low Summoning",
+    "specDesc": "Ra’Shoth growth in your cities increases by {0}.\nUnder her command, Ra’Shoth gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Ra’Shoth lose an equal amount of Attack and Defense.",
+    "armyScore": 2124,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 3,
+      "K": 2
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Recruitment L1"
+    ],
+    "army": "10–14 Ra’Shoth · 10–14 Ra’Shoth · 10–14 Ra’Shoth"
+  },
+  {
+    "id": "unfrozen_hero_13",
+    "specId": "unfrozen_hero_13_specialization",
+    "faction": "schism",
+    "kind": "magic",
+    "name": "The Eye Collective",
+    "specialty": "Rift’s Envoy",
+    "specDesc": "Grand Shoth growth in your cities increases by {0}.\nUnder its command, Grand Shoth gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Grand Shoth lose an equal amount of Attack and Defense.",
+    "armyScore": 3180,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 3,
+      "K": 2
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Summon Avatar L1"
+    ],
+    "army": "13–18 Ra’Shoth · 2–3 Grand Shoth · 2–3 Grand Shoth"
+  },
+  {
+    "id": "unfrozen_hero_14",
+    "specId": "unfrozen_hero_14_specialization",
+    "faction": "schism",
+    "kind": "magic",
+    "name": "Tölketh",
+    "specialty": "Stellar Dilation",
+    "specDesc": "His Heroic Strike deals +{0} Damage, plus {1} more for every {2} hero level(s). Additionally, it reduces the target’s Speed by {3} until the battle end. This effect is stackable.",
+    "armyScore": 3252,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 3,
+      "K": 2
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Logistics L1"
+    ],
+    "army": "13–18 Ra’Shoth · 7–10 Cultist · 5–7 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_15",
+    "specId": "unfrozen_hero_15_specialization",
+    "faction": "schism",
+    "kind": "magic",
+    "name": "Ulkuth",
+    "specialty": "Pathfinder",
+    "specDesc": "His movement takes no terrain penalties. He also has +{0} Sight Radius, plus another +{1} for every {2} hero level(s).",
+    "armyScore": 3252,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 3,
+      "K": 2
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Scouting L1"
+    ],
+    "army": "13–18 Ra’Shoth · 7–10 Cultist · 5–7 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_16",
+    "specId": "unfrozen_hero_16_specialization",
+    "faction": "schism",
+    "kind": "magic",
+    "name": "Ra’Davok",
+    "specialty": "Magic Fortress",
+    "specDesc": "He starts with the “Masterful Carapace” spell. This version of the spell makes the target immune to negative effects and dispell.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 3252,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 3,
+      "K": 2
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Arcane Magic L1"
+    ],
+    "army": "13–18 Ra’Shoth · 7–10 Cultist · 5–7 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_17",
+    "specId": "unfrozen_hero_17_specialization",
+    "faction": "schism",
+    "kind": "magic",
+    "name": "Sister Keiri",
+    "specialty": "Mask of the Moon",
+    "specDesc": "She starts with the “Masterful Umbral Grip” spell. This version of the spell also affects enemy creatures adjacent to the target.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 3252,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 3,
+      "K": 2
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Nightshade Magic L1"
+    ],
+    "army": "13–18 Ra’Shoth · 7–10 Cultist · 5–7 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_18",
+    "specId": "unfrozen_hero_18_specialization",
+    "faction": "schism",
+    "kind": "magic",
+    "name": "Dhüvri",
+    "specialty": "True Believer",
+    "specDesc": "She gains +{0} Communion level after a victory and has +{1} maximum Communion level for every {2} hero level(s).",
+    "armyScore": 3252,
+    "stats": {
+      "A": 1,
+      "D": 1,
+      "P": 3,
+      "K": 2
+    },
+    "skills": [
+      "Abyssal Communion L2"
+    ],
+    "army": "13–18 Ra’Shoth · 7–10 Cultist · 5–7 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_1",
+    "specId": "unfrozen_hero_1_specialization",
+    "faction": "schism",
+    "kind": "might",
+    "name": "Nihil",
+    "specialty": "Wayfarer",
+    "specDesc": "She has +{0}% Movement points for every {1} hero level(s). Moves significantly more efficiently on roads.",
+    "armyScore": 3928,
+    "stats": {
+      "A": 3,
+      "D": 2,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Logistics L1"
+    ],
+    "army": "16–22 Ra’Shoth · 9–12 Cultist · 6–8 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_2",
+    "specId": "unfrozen_hero_2_specialization",
+    "faction": "schism",
+    "kind": "might",
+    "name": "Blackhorn",
+    "specialty": "Spellweaver",
+    "specDesc": "He deals +{0}% Damage with spells, plus another {1}% for every {2} hero level(s). The Damage from the enemy hero’s spells is reduced by the same value.",
+    "armyScore": 3928,
+    "stats": {
+      "A": 3,
+      "D": 2,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Sorcery L1"
+    ],
+    "army": "16–22 Ra’Shoth · 9–12 Cultist · 6–8 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_3",
+    "specId": "unfrozen_hero_3_specialization",
+    "faction": "schism",
+    "kind": "might",
+    "name": "Matastala the White",
+    "specialty": "Chessmaster",
+    "specDesc": "In the Tactics Phase, she has +{0} hex to the creature placement range and can see the positions of neutral stacks. Creatures in her army gain {1} Initiative for every {2} hero level(s).",
+    "armyScore": 3928,
+    "stats": {
+      "A": 3,
+      "D": 2,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Tactics L1"
+    ],
+    "army": "16–22 Ra’Shoth · 9–12 Cultist · 6–8 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_4",
+    "specId": "unfrozen_hero_4_specialization",
+    "faction": "schism",
+    "kind": "might",
+    "name": "Jänhei",
+    "specialty": "Roguish",
+    "specDesc": "Cultist growth in your cities increases by {0}.\nUnder his command, Cultists gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Cultists lose an equal amount of Attack and Defense.",
+    "armyScore": 3519,
+    "stats": {
+      "A": 3,
+      "D": 2,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Wisdom L1"
+    ],
+    "army": "7–10 Cultist · 7–10 Cultist · 7–10 Cultist"
+  },
+  {
+    "id": "unfrozen_hero_5",
+    "specId": "unfrozen_hero_5_specialization",
+    "faction": "schism",
+    "kind": "might",
+    "name": "Mara Mat’ha",
+    "specialty": "Coldblood Siblings",
+    "specDesc": "Aga’Shoth Rider growth in your cities increases by {0}.\nUnder his command, Aga’Shoth Riders gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Aga’Shoth Riders lose an equal amount of Attack and Defense.",
+    "armyScore": 3201,
+    "stats": {
+      "A": 3,
+      "D": 2,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Abyssal Communion L2"
+    ],
+    "army": "5–6 Aga’Shoth Rider · 5–6 Aga’Shoth Rider · 5–6 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_6",
+    "specId": "unfrozen_hero_6_specialization",
+    "faction": "schism",
+    "kind": "might",
+    "name": "The Iron Master",
+    "specialty": "Leash of Chains",
+    "specDesc": "Concubus growth in your cities increases by {0}.\nUnder his command, Concubi gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Concubi lose an equal amount of Attack and Defense.",
+    "armyScore": 2538,
+    "stats": {
+      "A": 3,
+      "D": 2,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Resistance L1"
+    ],
+    "army": "16–22 Ra’Shoth · 2–3 Concubus"
+  },
+  {
+    "id": "unfrozen_hero_7",
+    "specId": "unfrozen_hero_7_specialization",
+    "faction": "schism",
+    "kind": "might",
+    "name": "Wal’kha",
+    "specialty": "Primal Weaving",
+    "specDesc": "She receives +{0} level to all Primal spells, plus another +{1} for every {2} hero levels. Casting Primal spells does not prevent her from using other spells of the same Magic School. Enemy hero cannot cast Primal spells.",
+    "armyScore": 3928,
+    "stats": {
+      "A": 3,
+      "D": 2,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Primal Magic L1"
+    ],
+    "army": "16–22 Ra’Shoth · 9–12 Cultist · 6–8 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_8",
+    "specId": "unfrozen_hero_8_specialization",
+    "faction": "schism",
+    "kind": "might",
+    "name": "Changeling Urgo",
+    "specialty": "Everchanging Essence",
+    "specDesc": "Its summoned Avatar gains a barrier at the start of its turn that blocks one instance of Damage.\nWhen casting Summon Avatar, its effective Spell Power is increased by +{0} per {1} hero level(s).",
+    "armyScore": 3928,
+    "stats": {
+      "A": 3,
+      "D": 2,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Summon Avatar L1"
+    ],
+    "army": "16–22 Ra’Shoth · 9–12 Cultist · 6–8 Aga’Shoth Rider"
+  },
+  {
+    "id": "unfrozen_hero_9",
+    "specId": "unfrozen_hero_9_specialization",
+    "faction": "schism",
+    "kind": "might",
+    "name": "Martyr Tho",
+    "specialty": "Alchemist",
+    "specDesc": "He produces +{0} Mercury per day, plus another +{1} for every {2} hero level(s). Increases the amount of Mercury found on the map by {3}%.",
+    "armyScore": 3928,
+    "stats": {
+      "A": 3,
+      "D": 2,
+      "P": 1,
+      "K": 1
+    },
+    "skills": [
+      "Abyssal Communion L1",
+      "Daylight Magic L1"
+    ],
+    "army": "16–22 Ra’Shoth · 9–12 Cultist · 6–8 Aga’Shoth Rider"
+  },
+  {
+    "id": "dungeon_hero_10",
+    "specId": "dungeon_hero_10_specialization",
+    "faction": "dungeon",
+    "kind": "magic",
+    "name": "Kelarr, son of Navarr",
+    "specialty": "Wish to Learn",
+    "specDesc": "When leveling up, he gains {3} additional attribute point(s) for every {4} hero level(s). He gains +{1}% XP for every {2} hero level(s).",
+    "armyScore": 2673,
+    "stats": {
+      "A": 0,
+      "D": 2,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Insight L1"
+    ],
+    "army": "18–25 Troglodyte · 8–11 Infiltrator · 5–7 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_11",
+    "specId": "dungeon_hero_11_specialization",
+    "faction": "dungeon",
+    "kind": "magic",
+    "name": "Zakron the Great",
+    "specialty": "Spellweaver",
+    "specDesc": "He deals +{0}% Damage with spells, plus another {1}% for every {2} hero level(s). The Damage from the enemy hero’s spells is reduced by the same value.",
+    "armyScore": 2673,
+    "stats": {
+      "A": 0,
+      "D": 2,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Sorcery L1"
+    ],
+    "army": "18–25 Troglodyte · 8–11 Infiltrator · 5–7 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_12",
+    "specId": "dungeon_hero_12_specialization",
+    "faction": "dungeon",
+    "kind": "magic",
+    "name": "Sister Deira",
+    "specialty": "Mask of the Sun",
+    "specDesc": "She starts with the “Masterful Arina’s Chosen” spell. This version of the spell gives the target +{2} extra turn(s).\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 2673,
+    "stats": {
+      "A": 0,
+      "D": 2,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Thaumaturgy L1"
+    ],
+    "army": "18–25 Troglodyte · 8–11 Infiltrator · 5–7 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_13",
+    "specId": "dungeon_hero_13_specialization",
+    "faction": "dungeon",
+    "kind": "magic",
+    "name": "Motley",
+    "specialty": "Danse Macabre",
+    "specDesc": "Onyx Dancer growth in your cities increases by {0}.\nUnder her command, Onyx Dancers gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Onyx Dancers lose an equal amount of Attack and Defense.",
+    "armyScore": 2205,
+    "stats": {
+      "A": 0,
+      "D": 2,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Luck L1"
+    ],
+    "army": "4–6 Onyx Dancer · 4–6 Onyx Dancer · 4–6 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_14",
+    "specId": "dungeon_hero_14_specialization",
+    "faction": "dungeon",
+    "kind": "magic",
+    "name": "Ylwari",
+    "specialty": "Charismatic",
+    "specDesc": "She keeps her army when fleeing from battle against neutral squads. +{0}% Persuasion Power when using Diplomacy, plus another {1}% for every {2} hero level(s).",
+    "armyScore": 2673,
+    "stats": {
+      "A": 0,
+      "D": 2,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Diplomacy L1"
+    ],
+    "army": "18–25 Troglodyte · 8–11 Infiltrator · 5–7 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_15",
+    "specId": "dungeon_hero_15_specialization",
+    "faction": "dungeon",
+    "kind": "magic",
+    "name": "Glastor",
+    "specialty": "Wealthy",
+    "specDesc": "He produces +{0} Gold per day, plus another +{1} for every {2} hero level(s). Increases the amount of Gold found on the map by {3}%.",
+    "armyScore": 2673,
+    "stats": {
+      "A": 0,
+      "D": 2,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Economy L1"
+    ],
+    "army": "18–25 Troglodyte · 8–11 Infiltrator · 5–7 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_16",
+    "specId": "dungeon_hero_16_specialization",
+    "faction": "dungeon",
+    "kind": "magic",
+    "name": "Typhona",
+    "specialty": "Alvarian Hydra",
+    "specDesc": "Hydra growth in your cities increases by {0}.\nUnder her command, Hydras gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Hydras lose an equal amount of Attack and Defense.",
+    "armyScore": 2956,
+    "stats": {
+      "A": 0,
+      "D": 2,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Triumvirate's Strength L2"
+    ],
+    "army": "2–2 Hydra"
+  },
+  {
+    "id": "dungeon_hero_17",
+    "specId": "dungeon_hero_17_specialization",
+    "faction": "dungeon",
+    "kind": "magic",
+    "name": "Sunny Rauktol",
+    "specialty": "Radiating Knowledge",
+    "specDesc": "He receives +{0} level to all Daylight spells, plus another +{1} for every {2} hero levels. Casting Daylight spells does not prevent him from using other spells of the same Magic School. Enemy hero cannot cast Daylight spells.",
+    "armyScore": 2673,
+    "stats": {
+      "A": 0,
+      "D": 2,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Daylight Magic L1"
+    ],
+    "army": "18–25 Troglodyte · 8–11 Infiltrator · 5–7 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_18",
+    "specId": "dungeon_hero_18_specialization",
+    "faction": "dungeon",
+    "kind": "magic",
+    "name": "Lodos",
+    "specialty": "Shadowmastery",
+    "specDesc": "He receives +{0} level to all Nightshade spells, plus another +{1} for every {2} hero levels. Casting Nightshade spells does not prevent him from using other spells of the same Magic School. Enemy hero cannot cast Nightshade spells.",
+    "armyScore": 2673,
+    "stats": {
+      "A": 0,
+      "D": 2,
+      "P": 2,
+      "K": 3
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Nightshade Magic L1"
+    ],
+    "army": "18–25 Troglodyte · 8–11 Infiltrator · 5–7 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_1",
+    "specId": "dungeon_hero_1_specialization",
+    "faction": "dungeon",
+    "kind": "might",
+    "name": "Enatee",
+    "specialty": "Slithering Menace",
+    "specDesc": "Medusa growth in your cities increases by {0}.\nUnder her command, Medusae gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Medusae lose an equal amount of Attack and Defense.",
+    "armyScore": 2912,
+    "stats": {
+      "A": 2,
+      "D": 2,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Defense L1"
+    ],
+    "army": "22–30 Troglodyte · 3–4 Medusa"
+  },
+  {
+    "id": "dungeon_hero_2",
+    "specId": "dungeon_hero_2_specialization",
+    "faction": "dungeon",
+    "kind": "might",
+    "name": "Tellaris the Betrayed",
+    "specialty": "With One Eye Open",
+    "specDesc": "He starts with the “Masterful Early Start” spell. This version of the spell cannot be dispelled by any means.\nWhile casting this spell, effective Spell Power is increased by {0} for every {1} hero level(s).",
+    "armyScore": 3196,
+    "stats": {
+      "A": 2,
+      "D": 2,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Battlecraft L1"
+    ],
+    "army": "22–30 Troglodyte · 10–13 Infiltrator · 6–8 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_3",
+    "specId": "dungeon_hero_3_specialization",
+    "faction": "dungeon",
+    "kind": "might",
+    "name": "Stinger",
+    "specialty": "Venomous Strike",
+    "specDesc": "Her Heroic Strike deals +{0} Damage, plus another +{1} for every {2} hero level(s). It additionally poisons the target until the end of the battle, dealing {3} Magic Damage each round. This effect is stackable.",
+    "armyScore": 3196,
+    "stats": {
+      "A": 2,
+      "D": 2,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Combat L1"
+    ],
+    "army": "22–30 Troglodyte · 10–13 Infiltrator · 6–8 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_4",
+    "specId": "dungeon_hero_4_specialization",
+    "faction": "dungeon",
+    "kind": "might",
+    "name": "Kieran",
+    "specialty": "The Blind Folk",
+    "specDesc": "Troglodyte growth in your cities increases by {0}.\nUnder his command, Troglodytes gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Troglodytes lose an equal amount of Attack and Defense.",
+    "armyScore": 2520,
+    "stats": {
+      "A": 2,
+      "D": 2,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Tactics L1"
+    ],
+    "army": "18–24 Troglodyte · 18–24 Troglodyte · 18–24 Troglodyte"
+  },
+  {
+    "id": "dungeon_hero_5",
+    "specId": "dungeon_hero_5_specialization",
+    "faction": "dungeon",
+    "kind": "might",
+    "name": "Mouaren",
+    "specialty": "Spy",
+    "specDesc": "Infiltrator growth in your cities increases by {0}.\nUnder his command, Infiltrators gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Infiltrators lose an equal amount of Attack and Defense.",
+    "armyScore": 2646,
+    "stats": {
+      "A": 2,
+      "D": 2,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Scouting L1"
+    ],
+    "army": "8–10 Infiltrator · 8–10 Infiltrator · 8–10 Infiltrator"
+  },
+  {
+    "id": "dungeon_hero_6",
+    "specId": "dungeon_hero_6_specialization",
+    "faction": "dungeon",
+    "kind": "might",
+    "name": "Devir, son of Devir",
+    "specialty": "Balthazar’s Lair",
+    "specDesc": "Minotaur growth in your cities increases by {0}.\nUnder his command, Minotaurs gain {1} Speed, {1} Initiative, and {2}% HP. Their Attack and Defense increase by {3} for every {4} hero levels, and enemy Minotaurs lose an equal amount of Attack and Defense.",
+    "armyScore": 4088,
+    "stats": {
+      "A": 2,
+      "D": 2,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Leadership L1"
+    ],
+    "army": "22–30 Troglodyte · 3–5 Minotaur · 3–5 Minotaur"
+  },
+  {
+    "id": "dungeon_hero_7",
+    "specId": "dungeon_hero_7_specialization",
+    "faction": "dungeon",
+    "kind": "might",
+    "name": "Creta, daughter of Navarr",
+    "specialty": "Gem Seeker",
+    "specDesc": "She produces +{0} Gem per day, plus another +{1} for every {2} hero level(s). Increases the amount of Gems found on the map by {3}%.",
+    "armyScore": 3196,
+    "stats": {
+      "A": 2,
+      "D": 2,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Economy L1"
+    ],
+    "army": "22–30 Troglodyte · 10–13 Infiltrator · 6–8 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_8",
+    "specId": "dungeon_hero_8_specialization",
+    "faction": "dungeon",
+    "kind": "might",
+    "name": "Rhea",
+    "specialty": "Four‑Leaf Horseshoe",
+    "specDesc": "She has +{0} Luck, and creatures under her command have an increased chance of triggering a Lucky Strike: +{1}% chance per Luck point. For every {3} levels, this bonus increases by {2}%.",
+    "armyScore": 3196,
+    "stats": {
+      "A": 2,
+      "D": 2,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Luck L1"
+    ],
+    "army": "22–30 Troglodyte · 10–13 Infiltrator · 6–8 Onyx Dancer"
+  },
+  {
+    "id": "dungeon_hero_9",
+    "specId": "dungeon_hero_9_specialization",
+    "faction": "dungeon",
+    "kind": "might",
+    "name": "Gleard the Grey",
+    "specialty": "Arcane Dominion",
+    "specDesc": "He receives +{0} level to all Arcane spells, plus another +{1} for every {2} hero levels. Casting Arcane spells does not prevent him from using other spells of the same Magic School. Enemy hero cannot cast Arcane spells.",
+    "armyScore": 3196,
+    "stats": {
+      "A": 2,
+      "D": 2,
+      "P": 2,
+      "K": 1
+    },
+    "skills": [
+      "Triumvirate's Strength L1",
+      "Arcane Magic L1"
+    ],
+    "army": "22–30 Troglodyte · 10–13 Infiltrator · 6–8 Onyx Dancer"
+  }
+]

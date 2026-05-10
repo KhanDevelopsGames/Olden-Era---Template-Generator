@@ -1,0 +1,102 @@
+[
+  {
+    "key": "OFF",
+    "name": "Offense",
+    "group": "combat"
+  },
+  {
+    "key": "DEF",
+    "name": "Defense",
+    "group": "combat"
+  },
+  {
+    "key": "RES",
+    "name": "Resistance",
+    "group": "combat"
+  },
+  {
+    "key": "BAT",
+    "name": "Battlecraft",
+    "group": "combat"
+  },
+  {
+    "key": "SOR",
+    "name": "Sorcery",
+    "group": "magic"
+  },
+  {
+    "key": "WIS",
+    "name": "Wisdom",
+    "group": "magic"
+  },
+  {
+    "key": "SUM",
+    "name": "Summon Avatar",
+    "group": "magic"
+  },
+  {
+    "key": "BMG",
+    "name": "Battle Magic",
+    "group": "magic"
+  },
+  {
+    "key": "DAY",
+    "name": "Daylight Magic",
+    "group": "school"
+  },
+  {
+    "key": "NGT",
+    "name": "Nightshade",
+    "group": "school"
+  },
+  {
+    "key": "ARC",
+    "name": "Arcane Magic",
+    "group": "school"
+  },
+  {
+    "key": "PRI",
+    "name": "Primal Magic",
+    "group": "school"
+  },
+  {
+    "key": "LD",
+    "name": "Leadership",
+    "group": "utility"
+  },
+  {
+    "key": "LK",
+    "name": "Luck",
+    "group": "utility"
+  },
+  {
+    "key": "INS",
+    "name": "Insight",
+    "group": "utility"
+  },
+  {
+    "key": "DPL",
+    "name": "Diplomacy",
+    "group": "utility"
+  },
+  {
+    "key": "LOG",
+    "name": "Logistics",
+    "group": "utility"
+  },
+  {
+    "key": "SCT",
+    "name": "Scouting",
+    "group": "utility"
+  },
+  {
+    "key": "EC",
+    "name": "Economy",
+    "group": "utility"
+  },
+  {
+    "key": "TAC",
+    "name": "Tactics",
+    "group": "utility"
+  }
+]

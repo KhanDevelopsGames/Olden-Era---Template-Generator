@@ -1,0 +1,2819 @@
+[
+  {
+    "id": "day_2_magic_sharp_edge",
+    "name": "Blessing",
+    "icon": "day_2_magic_sharp_edge",
+    "school": "day",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature deals +{0}% Damage with basic attacks. \nDuration: {1} round(s).",
+    "manaCost": [
+      7,
+      7,
+      7,
+      7
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "day_3_magic_haste",
+    "name": "Haste",
+    "icon": "day_3_magic_haste",
+    "school": "day",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature gains +{0} Speed.\nDuration: {1} round(s).",
+    "manaCost": [
+      6,
+      6,
+      6,
+      6
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "day_1_magic_healing_water",
+    "name": "Healing Water",
+    "icon": "day_1_magic_healing_water",
+    "school": "day",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "Recovery",
+    "desc": "Target friendly creature restores {0} HP.\nCannot revive fallen units.",
+    "manaCost": [
+      5,
+      5,
+      5,
+      5
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "day_5_magic_shorten_shadow",
+    "name": "Shorten Shadow",
+    "icon": "day_5_magic_shorten_shadow",
+    "school": "day",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target enemy creature loses {0} Attack and Defense.\nDuration: {1} round(s).",
+    "manaCost": [
+      6,
+      6,
+      6,
+      6
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "day_4_magic_favorable_wind",
+    "name": "Favorable Wind",
+    "icon": "day_4_magic_favorable_wind",
+    "school": "day",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature deals +{0}% Damage with Ranged and Long Reach attacks.\nDuration: {1} round(s).",
+    "manaCost": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "day_17_magic_clear_view",
+    "name": "From a Bird’s Eye",
+    "icon": "day_17_magic_clear_view",
+    "school": "day",
+    "tier": 2,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Reveals the borders of all areas, including those hidden by the fog of war.",
+    "manaCost": [
+      10,
+      6,
+      6,
+      6
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "day_7_magic_inner_light",
+    "name": "Inner Light",
+    "icon": "day_7_magic_inner_light",
+    "school": "day",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Reduces the duration of all negative effects applied to the target friendly creature by {0}.",
+    "manaCost": [
+      8,
+      8,
+      8,
+      8
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "day_6_magic_cleansing_ray",
+    "name": "Weakening Ray",
+    "icon": "day_6_magic_cleansing_ray",
+    "school": "day",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Removes {0} counterattack charge(s) from the target enemy for this round.",
+    "manaCost": [
+      10,
+      6,
+      6,
+      6
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "day_9_magic_arinas_hymn",
+    "name": "Arina’s Touch",
+    "icon": "day_9_magic_arinas_hymn",
+    "school": "day",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature gains {0} Initiative and {1}% maximum HP.\nDuration: {2} round(s).",
+    "manaCost": [
+      14,
+      14,
+      14,
+      14
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "day_11_magic_masterful_parry",
+    "name": "Riposte",
+    "icon": "day_11_magic_masterful_parry",
+    "school": "day",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature counterattacks before enemy attack lands.\nDuration: {0} round(s).",
+    "manaCost": [
+      15,
+      15,
+      15,
+      15
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "day_10_magic_second_song",
+    "name": "Song of Power",
+    "icon": "day_10_magic_second_song",
+    "school": "day",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Resets the cooldowns of the target friendly creature.",
+    "manaCost": [
+      6,
+      6,
+      6,
+      6
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "day_8_magic_taunt",
+    "name": "Taunt",
+    "icon": "day_8_magic_taunt",
+    "school": "day",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "All enemies within {0} hexes from the target friendly creature can only target that creature. Each instance of Damage makes the effect last {2} round(s) shorter.\nDuration: {1} round(s).",
+    "manaCost": [
+      11,
+      11,
+      11,
+      11
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "day_18_magic_farsight",
+    "name": "Clear Fog",
+    "icon": "day_18_magic_farsight",
+    "school": "day",
+    "tier": 4,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Reveals {0} squares around the selected space on the global map up to {1} square(s) away from the hero. Usable {2} time(s) per day.",
+    "manaCost": [
+      14,
+      14,
+      14,
+      14
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "day_13_magic_holy_arms",
+    "name": "Heavenly Blades",
+    "icon": "day_13_magic_holy_arms",
+    "school": "day",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature deals +{0} Pure Damage with each basic attack and restores the same amount of HP. Cannot revive fallen units.\nDuration: {1} round(s).",
+    "manaCost": [
+      21,
+      21,
+      21,
+      21
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "day_12_magic_radiant_armor",
+    "name": "Radiant Armor",
+    "icon": "day_12_magic_radiant_armor",
+    "school": "day",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature takes –{0}% Damage from all sources.\nDuration: {1} round(s).",
+    "manaCost": [
+      18,
+      18,
+      18,
+      18
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "day_14_magic_vengeance",
+    "name": "Vengeance",
+    "icon": "day_14_magic_vengeance",
+    "school": "day",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Whenever an enemy attacks target friendly creature in Melee, that enemy takes {0} Magic Damage. \nDuration: {1} round(s).",
+    "manaCost": [
+      16,
+      16,
+      16,
+      16
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "day_16_magic_arinas_chosen",
+    "name": "Arina’s Chosen",
+    "icon": "day_16_magic_arinas_chosen",
+    "school": "day",
+    "tier": 5,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature cannot have less than {0}% of their current units. Taking Damage reduces the duration of the effect by {2} round(s).\nDuration: {1} round(s).",
+    "manaCost": [
+      18,
+      18,
+      18,
+      18
+    ],
+    "cooldown": 6,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 10
+      },
+      {
+        "name": "crystals",
+        "cost": 10
+      },
+      {
+        "name": "mercury",
+        "cost": 10
+      }
+    ]
+  },
+  {
+    "id": "day_15_magic_judgement",
+    "name": "Judgement",
+    "icon": "day_15_magic_judgement",
+    "school": "day",
+    "tier": 5,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Strikes target enemy four times, dealing a total of {0} Magic Damage.",
+    "manaCost": [
+      35,
+      35,
+      35,
+      35
+    ],
+    "cooldown": 6,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 10
+      },
+      {
+        "name": "crystals",
+        "cost": 10
+      },
+      {
+        "name": "mercury",
+        "cost": 10
+      }
+    ]
+  },
+  {
+    "id": "night_4_magic_despair",
+    "name": "Despair",
+    "icon": "night_4_magic_despair",
+    "school": "night",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Curses the target enemy. Cursed creatures take {0} Pure Damage at the start of their turn. This effect is stackable. \nDuration: {1} round(s).",
+    "manaCost": [
+      9,
+      9,
+      9,
+      9
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "night_3_magic_enlarge_shadow",
+    "name": "Enlarge Shadow",
+    "icon": "night_3_magic_enlarge_shadow",
+    "school": "night",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature gains {0} Attack and Defense.\nDuration: {1} round(s).",
+    "manaCost": [
+      7,
+      7,
+      7,
+      7
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "night_7_magic_fatal_decay",
+    "name": "Fatal Decay",
+    "icon": "night_7_magic_fatal_decay",
+    "school": "night",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target enemy creature cannot restore HP. This effect remains after the creature’s death.\nDuration: {0} round(s).",
+    "manaCost": [
+      4,
+      4,
+      4,
+      4
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "night_1_magic_unnatural_calm",
+    "name": "Unnatural Calm",
+    "icon": "night_1_magic_unnatural_calm",
+    "school": "night",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target enemy deals –{0}% Damage with basic attacks. \nDuration: {1} round(s).",
+    "manaCost": [
+      6,
+      6,
+      6,
+      6
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "night_17_magic_read_minds",
+    "name": "Read Minds",
+    "icon": "night_17_magic_read_minds",
+    "school": "night",
+    "tier": 2,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Reveals the precise number and intentions of all neutral squads within {0} squares of the hero.",
+    "manaCost": [
+      10,
+      7,
+      7,
+      7
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "night_5_magic_shade_cloak",
+    "name": "Shade Cloak",
+    "icon": "night_5_magic_shade_cloak",
+    "school": "night",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature cannot be targeted. Effect ends when the unit takes any action or at the end of the round.",
+    "manaCost": [
+      7,
+      7,
+      4,
+      4
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "night_6_magic_deaths_grip",
+    "name": "Umbral Grip",
+    "icon": "night_6_magic_deaths_grip",
+    "school": "night",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Pure Damage to the target enemy. This Damage cannot be modified in any way.",
+    "manaCost": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "night_2_magic_web",
+    "name": "Web",
+    "icon": "night_2_magic_web",
+    "school": "night",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target enemy creature loses {0} Speed\nDuration: {1} round(s).",
+    "manaCost": [
+      11,
+      11,
+      11,
+      11
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "night_18_magic_nairas_veil",
+    "name": "Naira’s Veil",
+    "icon": "night_18_magic_nairas_veil",
+    "school": "night",
+    "tier": 3,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Renews the fog of war in a {0}‑square radius around the hero, concealing them from opponents until the fog is re‑cleared. Usable {1} time(s) per day.",
+    "manaCost": [
+      16,
+      12,
+      12,
+      12
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "night_10_magic_silence",
+    "name": "Silence",
+    "icon": "night_10_magic_silence",
+    "school": "night",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target enemy creature is prevented from using abilities or generating Focus Points.\nDuration: {0} round(s).",
+    "manaCost": [
+      5,
+      5,
+      5,
+      5
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "night_8_magic_sleep",
+    "name": "Sleep",
+    "icon": "night_8_magic_sleep",
+    "school": "night",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target enemy creature falls asleep and cannot take any actions. Dispelled upon taking Damage. After awakening, the same creature cannot fall asleep again until the end of the battle. \nDuration: {0} round(s).",
+    "manaCost": [
+      13,
+      13,
+      13,
+      13
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "night_9_magic_twilight",
+    "name": "Twilight",
+    "icon": "night_9_magic_twilight",
+    "school": "night",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target enemy creature is prevented from using Ranged attacks.\nDuration: {0} round(s).",
+    "manaCost": [
+      16,
+      16,
+      16,
+      16
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "night_13_magic_berserker",
+    "name": "Berserk",
+    "icon": "night_13_magic_berserker",
+    "school": "night",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target creature immediately and uncontrollably attacks the closest target within its attack radius, whether it is a friendly or enemy creature.",
+    "manaCost": [
+      16,
+      16,
+      16,
+      16
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "night_12_magic_summon_starchild",
+    "name": "Summon Starchild",
+    "icon": "night_12_magic_summon_starchild",
+    "school": "night",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons a stack of {0} Starchildren on an adjacent free hex. They will disappear at the end of the battle.",
+    "manaCost": [
+      20,
+      20,
+      20,
+      20
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "night_11_magic_vulnerability",
+    "name": "Vulnerability",
+    "icon": "night_11_magic_vulnerability",
+    "school": "night",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target enemy creature takes +{0}% Damage from all sources.\nDuration: {1} round(s).",
+    "manaCost": [
+      11,
+      11,
+      11,
+      11
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "night_15_magic_deaths_call",
+    "name": "Coup de Grâce",
+    "icon": "night_15_magic_deaths_call",
+    "school": "night",
+    "tier": 5,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target enemy creature will die after taking any Damage if its stack size is lower than or equal to {0}% of its original number.\nDuration: {1} round(s).",
+    "manaCost": [
+      24,
+      24,
+      24,
+      24
+    ],
+    "cooldown": 6,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 10
+      },
+      {
+        "name": "crystals",
+        "cost": 10
+      },
+      {
+        "name": "mercury",
+        "cost": 10
+      }
+    ]
+  },
+  {
+    "id": "night_14_magic_nairas_kiss",
+    "name": "Naira’s Kiss",
+    "icon": "night_14_magic_nairas_kiss",
+    "school": "night",
+    "tier": 5,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Marks the target enemy creature. Marked creatures take {1} Magic Damage whenever they perform any action.\nDuration: {0} round(s).",
+    "manaCost": [
+      18,
+      14,
+      14,
+      14
+    ],
+    "cooldown": 6,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 10
+      },
+      {
+        "name": "crystals",
+        "cost": 10
+      },
+      {
+        "name": "mercury",
+        "cost": 10
+      }
+    ]
+  },
+  {
+    "id": "night_16_magic_shadow_army",
+    "name": "Shadow Army",
+    "icon": "night_16_magic_shadow_army",
+    "school": "night",
+    "tier": 5,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Increases the number of units in the target friendly stack by {0}%. These units are temporary and cannot exceed {1}% of the current number of permanent units in the stack.",
+    "manaCost": [
+      35,
+      35,
+      35,
+      35
+    ],
+    "cooldown": 6,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 10
+      },
+      {
+        "name": "crystals",
+        "cost": 10
+      },
+      {
+        "name": "mercury",
+        "cost": 10
+      }
+    ]
+  },
+  {
+    "id": "space_1_magic_early_start",
+    "name": "Early Start",
+    "icon": "space_1_magic_early_start",
+    "school": "space",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature gains +{0} Initiative.\nDuration: {1} round(s).",
+    "manaCost": [
+      6,
+      6,
+      6,
+      6
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "space_3_magic_energyze",
+    "name": "Energize",
+    "icon": "space_3_magic_energyze",
+    "school": "space",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Immediately generates {0} Focus Charge(s).",
+    "manaCost": [
+      11,
+      8,
+      8,
+      8
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "space_11_magic_decimate",
+    "name": "Guillotine",
+    "icon": "space_11_magic_decimate",
+    "school": "space",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0}% of target enemy creature’s maximum HP as Magic Damage. Each time this spell is re‑cast on the same target, it deals +{1}% more Damage. This effect is stackable.",
+    "manaCost": [
+      7,
+      7,
+      7,
+      7
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "space_4_magic_optical_illusion",
+    "name": "Optical Illusion",
+    "icon": "space_4_magic_optical_illusion",
+    "school": "space",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature takes –{0}% Ranged Damage.\nDuration: {1} round(s).",
+    "manaCost": [
+      8,
+      8,
+      8,
+      8
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "space_6_magic_blink",
+    "name": "Blink",
+    "icon": "space_6_magic_blink",
+    "school": "space",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Teleports a target friendly creature up to {0} hexes from its current hex.",
+    "manaCost": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "space_8_magic_carapace",
+    "name": "Carapace",
+    "icon": "space_8_magic_carapace",
+    "school": "space",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Shields a target friendly creature with a barrier that blocks the next instance of Damage.\nDuration: {0} round(s).",
+    "manaCost": [
+      14,
+      11,
+      11,
+      11
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "space_2_magic_energy_explosion",
+    "name": "Energy Explosion",
+    "icon": "space_2_magic_energy_explosion",
+    "school": "space",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Magic Damage per Focus Charge to all creatures in one‑hex radius.",
+    "manaCost": [
+      8,
+      8,
+      8,
+      8
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "space_17_magic_reinforcements",
+    "name": "Reinforcements",
+    "icon": "space_17_magic_reinforcements",
+    "school": "space",
+    "tier": 2,
+    "scope": "world",
+    "magicType": "",
+    "desc": "The casting hero immediately interacts with any external dwelling you control within {0} squares. Usable {1} times per day.",
+    "manaCost": [
+      18,
+      18,
+      18,
+      18
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "space_18_magic_assemble",
+    "name": "Assemble!",
+    "icon": "space_18_magic_assemble",
+    "school": "space",
+    "tier": 3,
+    "scope": "world",
+    "magicType": "",
+    "desc": "The casting hero immediately interacts with any allied hero within {0} squares. Usable {1} times per day.",
+    "manaCost": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "space_9_magic_impending_fate",
+    "name": "Impending Fate",
+    "icon": "space_9_magic_impending_fate",
+    "school": "space",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals Damage to all enemies. Each stack takes {0} Magic Damage per its creature tier",
+    "manaCost": [
+      13,
+      13,
+      13,
+      13
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "space_7_magic_shackles",
+    "name": "Shackles",
+    "icon": "space_7_magic_shackles",
+    "school": "space",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target enemy creature cannot counterattack.\nDuration: {0} round(s).",
+    "manaCost": [
+      9,
+      9,
+      9,
+      9
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "space_5_magic_trap_jaws",
+    "name": "Temporal Spheres",
+    "icon": "space_5_magic_trap_jaws",
+    "school": "space",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Place up to {1} invisible traps on free hexes. Traps trigger when stepped on by a ground creature, dealing Pure Damage to the creature and adjacent ones before disappearing. The Damage equals {0}% of one unit’s maximum HP.\nDuration: {2} round(s).",
+    "manaCost": [
+      9,
+      9,
+      9,
+      9
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "space_10_magic_mirror_copy",
+    "name": "Mirror Copy",
+    "icon": "space_10_magic_mirror_copy",
+    "school": "space",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons a copy of a target friendly creature. The copy deals –{0}% and takes +{1}% Damage and can’t use special abilities.\nDuration: {2} round(s).",
+    "manaCost": [
+      24,
+      24,
+      24,
+      24
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "space_12_magic_rewind",
+    "name": "Rewind Life",
+    "icon": "space_12_magic_rewind",
+    "school": "space",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Restore {0} HP to a target friendly creature.\nThis can revive fallen units.",
+    "manaCost": [
+      17,
+      17,
+      17,
+      17
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "space_15_magic_trap_snare",
+    "name": "Spatial Snare",
+    "icon": "space_15_magic_trap_snare",
+    "school": "space",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Place up to {1} invisible trap(s) on free hexes. Traps trigger when a ground creature moves through them, halting the creature’s movement, ending its current turn and cancelling its next turn. After triggering, the trap disappears. If the trapped hex is the creature’s <b>final destination</b>, the trap <b>does not</b> trigger.\nDuration: {0} round(s).",
+    "manaCost": [
+      10,
+      5,
+      5,
+      5
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "space_13_magic_black_hole",
+    "name": "Black Hole",
+    "icon": "space_13_magic_black_hole",
+    "school": "space",
+    "tier": 5,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Magic Damage to all creatures on the target hex and up to 2 hexes away in every direction. Pulls the furthest affected targets towards the center if possible.",
+    "manaCost": [
+      30,
+      30,
+      30,
+      30
+    ],
+    "cooldown": 6,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 10
+      },
+      {
+        "name": "crystals",
+        "cost": 10
+      },
+      {
+        "name": "mercury",
+        "cost": 10
+      }
+    ]
+  },
+  {
+    "id": "space_14_magic_doreaths_tide",
+    "name": "Doreath’s Tide",
+    "icon": "space_14_magic_doreaths_tide",
+    "school": "space",
+    "tier": 5,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "All friendly creatures gain {0} Speed and Initiative. All enemies lose {0} Speed and Initiative.\nDuration: {1} round(s).",
+    "manaCost": [
+      23,
+      23,
+      19,
+      19
+    ],
+    "cooldown": 6,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 10
+      },
+      {
+        "name": "crystals",
+        "cost": 10
+      },
+      {
+        "name": "mercury",
+        "cost": 10
+      }
+    ]
+  },
+  {
+    "id": "space_16_magic_reality_distortion",
+    "name": "Reality Distortion",
+    "icon": "space_16_magic_reality_distortion",
+    "school": "space",
+    "tier": 5,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Selected target takes no Damage from any source. Instead, at the start of each round, it takes all Damage that it would have taken in the previous round as Pure Damage. \nDuration: {0} round(s).",
+    "manaCost": [
+      21,
+      21,
+      21,
+      21
+    ],
+    "cooldown": 6,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 10
+      },
+      {
+        "name": "crystals",
+        "cost": 10
+      },
+      {
+        "name": "mercury",
+        "cost": 10
+      }
+    ]
+  },
+  {
+    "id": "primal_17_magic_groundsight",
+    "name": "Groundsight",
+    "icon": "primal_17_magic_groundsight",
+    "school": "primal",
+    "tier": 1,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Reveals the location of all neutral squads on the global map (including those in the fog of war).",
+    "manaCost": [
+      10,
+      6,
+      6,
+      6
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "primal_1_magic_thunderbolt",
+    "name": "Lightning Bolt",
+    "icon": "primal_1_magic_thunderbolt",
+    "school": "primal",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Magic Damage to target enemy creature.",
+    "manaCost": [
+      6,
+      6,
+      6,
+      6
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "primal_2_magic_thick_hide",
+    "name": "Thick Hide",
+    "icon": "primal_2_magic_thick_hide",
+    "school": "primal",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature takes –{0}% Damage from Melee attacks.\nDuration: {1} round(s).",
+    "manaCost": [
+      6,
+      6,
+      6,
+      6
+    ],
+    "cooldown": 2,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 2
+      },
+      {
+        "name": "crystals",
+        "cost": 2
+      },
+      {
+        "name": "mercury",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "primal_5_magic_crystal_crown",
+    "name": "Crystal Crown",
+    "icon": "primal_5_magic_crystal_crown",
+    "school": "primal",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Place up to {1} crystal obstacles. An obstacle is destroyed upon taking {0} hit(s) from attacks.\nDuration: {2} round(s).",
+    "manaCost": [
+      8,
+      8,
+      8,
+      8
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "primal_4_magic_fire_globe",
+    "name": "Fireball",
+    "icon": "primal_4_magic_fire_globe",
+    "school": "primal",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Magic Damage to all creatures in a 1‑hex radius.",
+    "manaCost": [
+      13,
+      13,
+      13,
+      13
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "primal_6_magic_ice_bolt",
+    "name": "Ice Bolt",
+    "icon": "primal_6_magic_ice_bolt",
+    "school": "primal",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Magic Damage to target enemy creature and reduces their Initiative by {1}.\nDuration: {2} round(s).",
+    "manaCost": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "primal_3_magic_wean",
+    "name": "Wean",
+    "icon": "primal_3_magic_wean",
+    "school": "primal",
+    "tier": 2,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Reduces the duration of all positive effects applied to the target by {0}.",
+    "manaCost": [
+      8,
+      8,
+      8,
+      8
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 4
+      },
+      {
+        "name": "crystals",
+        "cost": 4
+      },
+      {
+        "name": "mercury",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "primal_8_magic_cave_in",
+    "name": "Cave In",
+    "icon": "primal_8_magic_cave_in",
+    "school": "primal",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Magic Damage to the target enemy. All adjacent empty hexes are filled with rock obstacles. An obstacle is destroyed upon taking {2} hit(s) from attacks.\nDuration: {1} round(s).",
+    "manaCost": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "primal_9_magic_earths_rage",
+    "name": "Earth’s Rage",
+    "icon": "primal_9_magic_earths_rage",
+    "school": "primal",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Damage to all defensive structures on the battlefield. Also deals {1} Damage to all creatures within castle walls.",
+    "manaCost": [
+      16,
+      16,
+      16,
+      16
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "primal_7_magic_wall_of_flame",
+    "name": "Firewall",
+    "icon": "primal_7_magic_wall_of_flame",
+    "school": "primal",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Burns {2} selected hexes. A ground creature that steps onto a burning hex takes {0} Magic Damage.\nDuration: {1} round(s).",
+    "manaCost": [
+      12,
+      9,
+      9,
+      9
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "primal_16_magic_stone_fangs",
+    "name": "Stone Fangs",
+    "icon": "primal_16_magic_stone_fangs",
+    "school": "primal",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Magic Damage to up to {1} different target enemies.",
+    "manaCost": [
+      18,
+      18,
+      18,
+      18
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 6
+      },
+      {
+        "name": "crystals",
+        "cost": 6
+      },
+      {
+        "name": "mercury",
+        "cost": 6
+      }
+    ]
+  },
+  {
+    "id": "primal_10_magic_primordial_purity",
+    "name": "Anti‑Magic",
+    "icon": "primal_10_magic_primordial_purity",
+    "school": "primal",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Any chosen target becomes immune to spells of tier {1} and lower. This effect cannot be dispelled. If the target is a summoned creature or contains temporary units in its stack, those are destroyed. \nDuration: {0} round(s).",
+    "manaCost": [
+      18,
+      18,
+      18,
+      18
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "primal_12_magic_chain_lightning",
+    "name": "Chain Lightning",
+    "icon": "primal_12_magic_chain_lightning",
+    "school": "primal",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Magic Damage to the target enemy creature. The lightning then jumps {2} time(s) to a random target within {3} hex(es), dealing –{1}% Damage with each jump.",
+    "manaCost": [
+      24,
+      24,
+      24,
+      24
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "primal_13_magic_avalanche",
+    "name": "Circle of Winter",
+    "icon": "primal_13_magic_avalanche",
+    "school": "primal",
+    "tier": 4,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Magic Damage to all creatures adjacent to target hex. All affected stacks are pushed away from the center if possible.",
+    "manaCost": [
+      19,
+      19,
+      19,
+      19
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "primal_18_magic_primordial_chaos",
+    "name": "Primordial Chaos",
+    "icon": "primal_18_magic_primordial_chaos",
+    "school": "primal",
+    "tier": 4,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Affects a neutral squad in a {0}‑square radius. Transforms it into a different squad of the same strength. Usable {1} time(s) per day.",
+    "manaCost": [
+      17,
+      17,
+      17,
+      17
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 8
+      },
+      {
+        "name": "crystals",
+        "cost": 8
+      },
+      {
+        "name": "mercury",
+        "cost": 8
+      }
+    ]
+  },
+  {
+    "id": "primal_11_magic_armageddon",
+    "name": "Armageddon",
+    "icon": "primal_11_magic_armageddon",
+    "school": "primal",
+    "tier": 5,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Magic Damage to all creatures on the battlefield.",
+    "manaCost": [
+      40,
+      40,
+      40,
+      40
+    ],
+    "cooldown": 6,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 10
+      },
+      {
+        "name": "crystals",
+        "cost": 10
+      },
+      {
+        "name": "mercury",
+        "cost": 10
+      }
+    ]
+  },
+  {
+    "id": "primal_14_magic_hksmillas_rampage",
+    "name": "Hksmilla’s Rampage",
+    "icon": "primal_14_magic_hksmillas_rampage",
+    "school": "primal",
+    "tier": 5,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Target friendly creature gains Double Strike and deals <i>and takes</i> +{0}% Damage.\nDuration: {1} round(s).",
+    "manaCost": [
+      28,
+      28,
+      28,
+      28
+    ],
+    "cooldown": 6,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 10
+      },
+      {
+        "name": "crystals",
+        "cost": 10
+      },
+      {
+        "name": "mercury",
+        "cost": 10
+      }
+    ]
+  },
+  {
+    "id": "primal_15_magic_summon_primal_remnant",
+    "name": "Summon Primal Remnant",
+    "icon": "primal_15_magic_summon_primal_remnant",
+    "school": "primal",
+    "tier": 5,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons a stack of {0} Primal Remnants. They will disappear at the end of the battle.",
+    "manaCost": [
+      20,
+      20,
+      20,
+      20
+    ],
+    "cooldown": 6,
+    "learnCost": [
+      {
+        "name": "gemstones",
+        "cost": 10
+      },
+      {
+        "name": "crystals",
+        "cost": 10
+      },
+      {
+        "name": "mercury",
+        "cost": 10
+      }
+    ]
+  },
+  {
+    "id": "neutral_1_magic_back_to_garrison",
+    "name": "Back to Foothold!",
+    "icon": "neutral_1_magic_back_to_garrison",
+    "school": "neutral",
+    "tier": 1,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Teleports the casting hero to a selected Remote Foothold you control. Usable {0} time(s) per day.",
+    "manaCost": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 2,
+    "learnCost": []
+  },
+  {
+    "id": "neutral_1_magic_back_to_city",
+    "name": "Back to Town!",
+    "icon": "neutral_1_magic_back_to_city",
+    "school": "neutral",
+    "tier": 1,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Teleports the casting hero to the nearest city you control within {0} squares. All remaining movement points are lost. Usable {1} time(s) per day.",
+    "manaCost": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 2,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_kill_summon",
+    "name": "Dispel Summon",
+    "icon": "bonus_magic_kill_summon",
+    "school": "neutral",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Immediately dispels target enemy summoned creature.",
+    "manaCost": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 2,
+    "learnCost": []
+  },
+  {
+    "id": "night_bonus_magic_1_magic",
+    "name": "Dusk Dampening",
+    "icon": "night_bonus_magic_1_magic",
+    "school": "neutral",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "The enemy hero’s next spell costs +{0}% mana and gains a –{0}% Spell Power malus.",
+    "manaCost": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 2,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_pure_bolt",
+    "name": "Magic Arrow",
+    "icon": "bonus_magic_pure_bolt",
+    "school": "neutral",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Deals {0} Magic Damage to a target enemy creature.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 2,
+    "learnCost": []
+  },
+  {
+    "id": "neutral_1_magic_mana_restore",
+    "name": "Mana Rite",
+    "icon": "neutral_1_magic_mana_restore",
+    "school": "neutral",
+    "tier": 1,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Restores the casting hero’s mana based on their remaining movement points: {0}% of mana per {1}% of remaining points. All movement points are lost.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 2,
+    "learnCost": []
+  },
+  {
+    "id": "neutral_1_magic_mana_transfer",
+    "name": "Mana Transfusion",
+    "icon": "neutral_1_magic_mana_transfer",
+    "school": "neutral",
+    "tier": 1,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Removes {2} mana from the casting hero to restore {3} mana to any allied hero within {0} squares. Usable {1} time(s) per day.",
+    "manaCost": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 2,
+    "learnCost": []
+  },
+  {
+    "id": "change_use_necromancy",
+    "name": "Necromancer Will",
+    "icon": "neutral_1_magic_change_use_necromancy",
+    "school": "neutral",
+    "tier": 1,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Allows raising Undead to be toggled on or off. When it is off, the hero restores Necromantic Energy after winning a battle instead of raising friendly Undead.",
+    "manaCost": [
+      0
+    ],
+    "cooldown": 2,
+    "learnCost": []
+  },
+  {
+    "id": "neutral_1_magic_units_replace",
+    "name": "Relocation",
+    "icon": "neutral_1_magic_units_replace",
+    "school": "neutral",
+    "tier": 1,
+    "scope": "world",
+    "magicType": "",
+    "desc": "The casting hero immediately interacts with any controlled city, enabling the transfer of creatures to or from that city. Usable {0} time per day.",
+    "manaCost": [
+      12,
+      12,
+      12,
+      12
+    ],
+    "cooldown": 2,
+    "learnCost": []
+  },
+  {
+    "id": "primal_bonus_magic_1_magic",
+    "name": "Spell Eruption",
+    "icon": "primal_bonus_magic_1_magic",
+    "school": "neutral",
+    "tier": 1,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "The casting hero’s next spell costs –{0}% mana and gains a +{0}% Spell Power bonus.",
+    "manaCost": [
+      10,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 2,
+    "learnCost": []
+  },
+  {
+    "id": "neutral_magic_pocket_dimension",
+    "name": "Pocket Dimension",
+    "icon": "neutral_magic_pocket_dimension",
+    "school": "neutral",
+    "tier": 2,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Creates an entrance to a Foothold on an adjacent space that lasts until the end of the day, allowing any allied hero to leave creatures and artifacts there. If an enemy hero interacts with the entrance, it disappears. Usable {0} time(s) per day.",
+    "manaCost": [
+      14,
+      10,
+      10,
+      10
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "starDust",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "neutral_magic_second_sight",
+    "name": "Second Wind",
+    "icon": "neutral_magic_second_sight",
+    "school": "neutral",
+    "tier": 2,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Immediately restores {0} Movement points to the hero. Usable {1} time(s) per day.",
+    "manaCost": [
+      17,
+      13,
+      13,
+      13
+    ],
+    "cooldown": 3,
+    "learnCost": [
+      {
+        "name": "starDust",
+        "cost": 2
+      }
+    ]
+  },
+  {
+    "id": "neutral_magic_shadow_form",
+    "name": "Shadowflight",
+    "icon": "neutral_magic_shadow_form",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Grants the hero the ability to fly, moving freely through any obstacles on the global map. Flying above obstacles costs +{0}% Movement points.",
+    "manaCost": [
+      20,
+      14,
+      14,
+      14
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "starDust",
+        "cost": 3
+      }
+    ]
+  },
+  {
+    "id": "neutral_magic_town_portal",
+    "name": "Town Portal",
+    "icon": "neutral_magic_town_portal",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Teleports the casting hero to a selected city you control. Usable {0} times per day.",
+    "manaCost": [
+      24,
+      18,
+      18,
+      18
+    ],
+    "cooldown": 4,
+    "learnCost": [
+      {
+        "name": "starDust",
+        "cost": 3
+      }
+    ]
+  },
+  {
+    "id": "bonus_magic_astral_summon_1",
+    "name": "bonus_magic_astral_summon_1",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_2",
+    "name": "bonus_magic_astral_summon_2",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_3",
+    "name": "bonus_magic_astral_summon_3",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_4",
+    "name": "bonus_magic_astral_summon_4",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_5",
+    "name": "bonus_magic_astral_summon_5",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_nature_1",
+    "name": "bonus_magic_astral_summon_nature_1",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_nature_2",
+    "name": "bonus_magic_astral_summon_nature_2",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_nature_3",
+    "name": "bonus_magic_astral_summon_nature_3",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_nature_4",
+    "name": "bonus_magic_astral_summon_nature_4",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_nature_5",
+    "name": "bonus_magic_astral_summon_nature_5",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_unfrozen_1",
+    "name": "bonus_magic_astral_summon_unfrozen_1",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_unfrozen_2",
+    "name": "bonus_magic_astral_summon_unfrozen_2",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_unfrozen_3",
+    "name": "bonus_magic_astral_summon_unfrozen_3",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_unfrozen_4",
+    "name": "bonus_magic_astral_summon_unfrozen_4",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "bonus_magic_astral_summon_unfrozen_5",
+    "name": "bonus_magic_astral_summon_unfrozen_5",
+    "icon": "bonus_magic_astral_summon",
+    "school": "neutral",
+    "tier": 3,
+    "scope": "battle",
+    "magicType": "",
+    "desc": "Summons an Avatar. It has {0} HP and deals {1} base Damage. It gains Attack and Defense equivalent to the hero’s Spell Power and Knowledge. Each side of the battle can have only one Avatar at a time.",
+    "manaCost": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "cooldown": 4,
+    "learnCost": []
+  },
+  {
+    "id": "neutral_magic_dimension_door",
+    "name": "Dimension Door",
+    "icon": "neutral_magic_dimension_door",
+    "school": "neutral",
+    "tier": 4,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Teleports the hero to target location within {0} squares. Usable {1} times per day.",
+    "manaCost": [
+      22,
+      14,
+      14,
+      14
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "starDust",
+        "cost": 4
+      }
+    ]
+  },
+  {
+    "id": "neutral_magic_light_gate",
+    "name": "Gate of Light",
+    "icon": "neutral_magic_light_gate",
+    "school": "neutral",
+    "tier": 4,
+    "scope": "world",
+    "magicType": "",
+    "desc": "Creates a portal until the end of the day, allowing any hero to travel through it. Entry is from any free adjacent space, and exit is to any free space within {0} square(s) of the hero. {1} time(s) per day.",
+    "manaCost": [
+      28,
+      20,
+      20,
+      20
+    ],
+    "cooldown": 5,
+    "learnCost": [
+      {
+        "name": "starDust",
+        "cost": 4
+      }
+    ]
+  }
+]

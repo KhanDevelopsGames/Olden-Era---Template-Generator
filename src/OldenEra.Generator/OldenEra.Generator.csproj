@@ -16,5 +16,6 @@
     <EmbeddedResource Include="Resources\Installer\install.bat" />
     <EmbeddedResource Include="Resources\Installer\install.ps1" />
     <EmbeddedResource Include="Resources\Installer\README.txt" />
+    <EmbeddedResource Include="CommunityData\*.json" />
   </ItemGroup>
 </Project>
