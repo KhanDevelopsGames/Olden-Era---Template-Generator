@@ -101,14 +101,14 @@
             <PreviewPanel PngBytes="PreviewPng" />
 
             <button class="oe-btn"
-                    disabled="@(GeneratedTemplate is null)"
-                    @onclick="DownloadJson">
-                Download .rmg.json
+                    disabled="@(GeneratedTemplate is null || PreviewPng is null)"
+                    @onclick="DownloadMap">
+                Download map
             </button>
             <button class="oe-btn"
-                    disabled="@(PreviewPng is null)"
-                    @onclick="DownloadPng">
-                Download Preview PNG
+                    disabled="@(GeneratedTemplate is null || PreviewPng is null)"
+                    @onclick="DownloadMapWithInstaller">
+                Download map w/ installer
             </button>
         </aside>
     </div>
@@ -467,20 +467,26 @@
         }
     }
 
-    private async Task DownloadJson()
+    private async Task DownloadMap()
     {
-        if (GeneratedTemplate is null) return;
-        byte[] bytes = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(GeneratedTemplate, JsonOptions);
-        string name = string.IsNullOrWhiteSpace(Settings.TemplateName) ? "Custom Template" : Settings.TemplateName.Trim();
-        await Downloader.DownloadAsync($"{name}.rmg.json", "application/json", bytes);
+        if (GeneratedTemplate is null || PreviewPng is null) return;
+        string name = ResolveTemplateName();
+        byte[] json = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(GeneratedTemplate, JsonOptions);
+        byte[] zip = InstallerPackager.BuildPlainZip(name, json, PreviewPng);
+        await Downloader.DownloadAsync($"{name}.zip", "application/zip", zip);
     }
 
-    private async Task DownloadPng()
+    private async Task DownloadMapWithInstaller()
     {
-        if (PreviewPng is null) return;
-        string name = string.IsNullOrWhiteSpace(Settings.TemplateName) ? "Custom Template" : Settings.TemplateName.Trim();
-        await Downloader.DownloadAsync($"{name}.png", "image/png", PreviewPng);
+        if (GeneratedTemplate is null || PreviewPng is null) return;
+        string name = ResolveTemplateName();
+        byte[] json = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(GeneratedTemplate, JsonOptions);
+        byte[] zip = InstallerPackager.BuildInstallerZip(name, json, PreviewPng);
+        await Downloader.DownloadAsync($"{name}-installer.zip", "application/zip", zip);
     }
+
+    private string ResolveTemplateName() =>
+        string.IsNullOrWhiteSpace(Settings.TemplateName) ? "Custom Template" : Settings.TemplateName.Trim();
 
     // -- Share link --------------------------------------------------------
 

@@ -1,7 +1,7 @@
 # Installer-zip download for the web host
 
 **Date:** 2026-05-10
-**Status:** Design
+**Status:** Implemented (2026-05-10) — packager lives in `OldenEra.Generator` (not `OldenEra.Web`) so the WPF-target test project can reference it without pulling in the Blazor WASM SDK.
 
 ## Motivation
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using OldenEra.Generator.Constants;
 using OldenEra.Generator.Models;
 using OldenEra.Generator.Services;
 using OldenEra.Generator.Models.Unfrozen;
@@ -1179,7 +1180,7 @@ namespace Olden_Era___Template_Editor
             }
 
             // Game not found via registry/fallback paths — match on the known folder-structure tail.
-            const string expectedTail = @"HeroesOldenEra_Data\StreamingAssets\map_templates";
+            const string expectedTail = OldenEraSteamInfo.TemplatesSubpath;
             return chosenDir.EndsWith(expectedTail, StringComparison.OrdinalIgnoreCase)
                 || chosenDir.Contains(expectedTail + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
         }
@@ -1190,14 +1191,11 @@ namespace Olden_Era___Template_Editor
         /// </summary>
         private static string? FindOldenEraTemplatesPath()
         {
-            // Olden Era Steam App ID
-            const string appId = "3105440";
-
             // Steam stores per-app install paths under this key.
             string[] registryRoots =
             [
-                $@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {appId}",
-                $@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {appId}"
+                $@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {OldenEraSteamInfo.AppId}",
+                $@"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Steam App {OldenEraSteamInfo.AppId}"
             ];
 
             foreach (var keyPath in registryRoots)
@@ -1207,7 +1205,7 @@ namespace Olden_Era___Template_Editor
                     using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(keyPath);
                     if (key?.GetValue("InstallLocation") is string installDir && Directory.Exists(installDir))
                     {
-                        string templatesDir = Path.Combine(installDir, "HeroesOldenEra_Data", "StreamingAssets", "map_templates");
+                        string templatesDir = Path.Combine(installDir, OldenEraSteamInfo.TemplatesSubpath);
                         if (Directory.Exists(templatesDir))
                             return templatesDir;
                     }
@@ -1218,13 +1216,13 @@ namespace Olden_Era___Template_Editor
             // Fallback: check common Steam library locations manually.
             string[] steamLibraryRoots =
             [
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Steam", "steamapps", "common", "Heroes of Might and Magic Olden Era"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),    "Steam", "steamapps", "common", "Heroes of Might and Magic Olden Era"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Steam", "steamapps", "common", OldenEraSteamInfo.SteamFolderName),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),    "Steam", "steamapps", "common", OldenEraSteamInfo.SteamFolderName),
             ];
 
             foreach (var candidate in steamLibraryRoots)
             {
-                string templatesDir = Path.Combine(candidate, "HeroesOldenEra_Data", "StreamingAssets", "map_templates");
+                string templatesDir = Path.Combine(candidate, OldenEraSteamInfo.TemplatesSubpath);
                 if (Directory.Exists(templatesDir))
                     return templatesDir;
             }
