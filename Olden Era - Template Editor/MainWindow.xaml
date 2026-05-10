@@ -360,58 +360,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- TOPOLOGY -->
-                <Border Grid.Row="0" Style="{StaticResource SectionBorder}">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel>
-                        <TextBlock Text="◆  LAYOUT" Style="{StaticResource SectionHeader}"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="155"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Content="Map Layout"/>
-                            <ComboBox Grid.Column="1" x:Name="CmbTopology"
-                                      SelectionChanged="CmbTopology_SelectionChanged"/>
-                        </Grid>
-                        <TextBlock x:Name="TxtTopologyDesc"
-                                   Foreground="{StaticResource BrushTextDim}"
-                                   FontSize="11" TextWrapping="Wrap"
-                                   Margin="0,6,0,0"/>
-                        <Grid x:Name="PnlHubZoneSize" Visibility="Collapsed" Margin="0,8,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="155"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <DockPanel Grid.Column="0">
-                                <Label Content="Hub zone size" DockPanel.Dock="Left"/>
-                                <TextBlock x:Name="TxtHubZoneSize" Text="1.00x" DockPanel.Dock="Right"
-                                           HorizontalAlignment="Right" VerticalAlignment="Center"
-                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                            </DockPanel>
-                            <Slider Grid.Column="1" x:Name="SldHubZoneSize"
-                                    Minimum="0.25" Maximum="3" Value="1"
-                                    TickFrequency="0.05" IsSnapToTickEnabled="True"
-                                    ValueChanged="Slider_ValueChanged"/>
-                        </Grid>
-                        <Grid x:Name="PnlHubCastles" Visibility="Collapsed" Margin="0,8,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="155"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <DockPanel Grid.Column="0">
-                                <Label Content="Castles in hub" DockPanel.Dock="Left"/>
-                                <TextBlock x:Name="TxtHubCastles" Text="0" DockPanel.Dock="Right"
-                                           HorizontalAlignment="Right" VerticalAlignment="Center"
-                                           Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
-                            </DockPanel>
-                            <Slider Grid.Column="1" x:Name="SldHubCastles"
-                                    Minimum="0" Maximum="4" Value="0"
-                                    TickFrequency="1" IsSnapToTickEnabled="True"
-                                    ValueChanged="Slider_ValueChanged"/>
-                        </Grid>
-                    </StackPanel>
-                    </ScrollViewer>
-                </Border>
+                <views:TopologyPanel Grid.Row="0" x:Name="PnlTopology"/>
 
                 <!-- ZONE CONFIGURATION -->
                 <Border Grid.Row="2" Style="{StaticResource SectionBorder}">

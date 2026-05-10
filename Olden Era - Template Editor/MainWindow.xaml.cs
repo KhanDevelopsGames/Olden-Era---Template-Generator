@@ -57,6 +57,11 @@ namespace Olden_Era___Template_Editor
             PnlHeroes.SldHeroMax.ValueChanged += Slider_ValueChanged;
             PnlHeroes.SldHeroIncrement.ValueChanged += Slider_ValueChanged;
 
+            // Re-wire events for controls now hosted in TopologyPanel UserControl.
+            PnlTopology.CmbTopology.SelectionChanged += CmbTopology_SelectionChanged;
+            PnlTopology.SldHubZoneSize.ValueChanged += Slider_ValueChanged;
+            PnlTopology.SldHubCastles.ValueChanged += Slider_ValueChanged;
+
             // Clamp startup size to the available work area so the window never
             // overflows the screen at high-DPI scaling (e.g. 125 %, 150 %, 200 %).
             var area = SystemParameters.WorkArea;
@@ -75,8 +80,8 @@ namespace Olden_Era___Template_Editor
             RefreshMapSizeOptions(160);
             CmbVictory.ItemsSource = KnownValues.VictoryConditionLabels;
             CmbVictory.SelectedIndex = 0; // Classic (win_condition_1)
-            CmbTopology.ItemsSource = TopologyOptions.Select(t => t.Label).ToList();
-            CmbTopology.SelectedIndex = 0; // Random is first
+            PnlTopology.CmbTopology.ItemsSource = TopologyOptions.Select(t => t.Label).ToList();
+            PnlTopology.CmbTopology.SelectedIndex = 0; // Random is first
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
@@ -262,8 +267,8 @@ namespace Olden_Era___Template_Editor
             TxtMinNeutralBetweenPlayers.Text = ((int)SldMinNeutralBetweenPlayers.Value).ToString();
             TxtPlayerZoneSize.Text = $"{SldPlayerZoneSize.Value:F2}x";
             TxtNeutralZoneSize.Text = $"{SldNeutralZoneSize.Value:F2}x";
-            TxtHubZoneSize.Text = $"{SldHubZoneSize.Value:F2}x";
-            TxtHubCastles.Text = ((int)SldHubCastles.Value).ToString();
+            PnlTopology.TxtHubZoneSize.Text = $"{PnlTopology.SldHubZoneSize.Value:F2}x";
+            PnlTopology.TxtHubCastles.Text = ((int)PnlTopology.SldHubCastles.Value).ToString();
             TxtGuardRandomization.Text = $"{(int)SldGuardRandomization.Value}%";
             TxtLostStartCityDay.Text = ((int)SldLostStartCityDay.Value).ToString();
             TxtCityHoldDays.Text = ((int)SldCityHoldDays.Value).ToString();
@@ -316,7 +321,7 @@ namespace Olden_Era___Template_Editor
 
             int selectedMapSize = SelectedMapSize();
             int totalZones = players + neutral;
-            var selectedTopology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default;
+            var selectedTopology = PnlTopology.CmbTopology.SelectedIndex >= 0 ? TopologyOptions[PnlTopology.CmbTopology.SelectedIndex].Topology : MapTopology.Default;
             // Hub layout has an extra central zone that also occupies map area.
             int totalZonesIncludingHub = selectedTopology == MapTopology.HubAndSpoke ? totalZones + 1 : totalZones;
             if (totalZonesIncludingHub > 0 && (selectedMapSize * selectedMapSize) / totalZonesIncludingHub < 1024)
@@ -445,9 +450,9 @@ namespace Olden_Era___Template_Editor
         private void CmbTopology_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!IsInitialized) return;
-            int idx = CmbTopology.SelectedIndex;
+            int idx = PnlTopology.CmbTopology.SelectedIndex;
             if (idx >= 0 && idx < TopologyOptions.Length)
-                TxtTopologyDesc.Text = TopologyOptions[idx].Description;
+                PnlTopology.TxtTopologyDesc.Text = TopologyOptions[idx].Description;
 
             // Isolate option is only meaningful for Random and Chain topologies.
             var topo = idx >= 0 && idx < TopologyOptions.Length ? TopologyOptions[idx].Topology : MapTopology.Default;
@@ -456,8 +461,8 @@ namespace Olden_Era___Template_Editor
             if (!isolateApplicable) ChkNoDirectPlayerConn.IsChecked = false;
             UpdateIsolateDescVisibility();
             UpdateAdvancedZoneSettingsVisibility();
-            PnlHubZoneSize.Visibility = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
-            PnlHubCastles.Visibility  = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
+            PnlTopology.PnlHubZoneSize.Visibility = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
+            PnlTopology.PnlHubCastles.Visibility  = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
 
             MarkDirty();
             Validate();
@@ -717,13 +722,13 @@ namespace Olden_Era___Template_Editor
             ExperimentalMapSizes  = PnlMap.ChkExperimentalMapSizes.IsChecked == true,
             PlayerZoneSize        = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
             NeutralZoneSize       = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
-            HubZoneSize           = SldHubZoneSize.Value,
-            HubZoneCastles        = (int)SldHubCastles.Value,
+            HubZoneSize           = PnlTopology.SldHubZoneSize.Value,
+            HubZoneCastles        = (int)PnlTopology.SldHubCastles.Value,
             GuardRandomization    = SldGuardRandomization.Value / 100.0,
             HeroCountMin          = (int)PnlHeroes.SldHeroMin.Value,
             HeroCountMax          = (int)PnlHeroes.SldHeroMax.Value,
             HeroCountIncrement    = (int)PnlHeroes.SldHeroIncrement.Value,
-            Topology              = TopologyOptions[CmbTopology.SelectedIndex].Topology,
+            Topology              = TopologyOptions[PnlTopology.CmbTopology.SelectedIndex].Topology,
             RandomPortals         = ChkRandomPortals.IsChecked == true,
             MaxPortalConnections  = (int)SldMaxPortals.Value,
             SpawnRemoteFootholds  = ChkSpawnFootholds.IsChecked == true,
@@ -775,14 +780,14 @@ namespace Olden_Era___Template_Editor
             ChkBalancedZonePlacement.IsChecked = s.ExperimentalBalancedZonePlacement;
             SldPlayerZoneSize.Value = Math.Clamp(s.PlayerZoneSize, 0.1, 2.0);
             SldNeutralZoneSize.Value = Math.Clamp(s.NeutralZoneSize, 0.1, 2.0);
-            SldHubZoneSize.Value = Math.Clamp(s.HubZoneSize, 0.25, 3.0);
-            SldHubCastles.Value = Math.Clamp(s.HubZoneCastles, 0, 4);
+            PnlTopology.SldHubZoneSize.Value = Math.Clamp(s.HubZoneSize, 0.25, 3.0);
+            PnlTopology.SldHubCastles.Value = Math.Clamp(s.HubZoneCastles, 0, 4);
             SldGuardRandomization.Value = GuardRandomizationPercent(s.GuardRandomization);
             PnlHeroes.SldHeroMin.Value        = s.HeroCountMin;
             PnlHeroes.SldHeroMax.Value        = s.HeroCountMax;
             PnlHeroes.SldHeroIncrement.Value  = s.HeroCountIncrement;
             int topoIdx = Array.FindIndex(TopologyOptions, t => t.Topology == s.Topology);
-            if (topoIdx >= 0) CmbTopology.SelectedIndex = topoIdx;
+            if (topoIdx >= 0) PnlTopology.CmbTopology.SelectedIndex = topoIdx;
             ChkRandomPortals.IsChecked        = s.RandomPortals;
             SldMaxPortals.Value               = Math.Clamp(s.MaxPortalConnections, 1, 32);
             PnlMaxPortals.Visibility          = s.RandomPortals ? Visibility.Visible : Visibility.Collapsed;
@@ -1029,8 +1034,8 @@ namespace Olden_Era___Template_Editor
                 StructureDensityPercent = (int)SldStructureDensity.Value,
                 NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
                 BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
-                HubZoneSize = SldHubZoneSize.Value,
-                HubZoneCastles = (int)SldHubCastles.Value,
+                HubZoneSize = PnlTopology.SldHubZoneSize.Value,
+                HubZoneCastles = (int)PnlTopology.SldHubCastles.Value,
                 Advanced = new AdvancedSettings
                 {
                     Enabled = _advancedZoneSettings,
@@ -1054,7 +1059,7 @@ namespace Olden_Era___Template_Editor
             MaxPortalConnections = (int)SldMaxPortals.Value,
             SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
             GenerateRoads = ChkGenerateRoads.IsChecked == true,
-            Topology = CmbTopology.SelectedIndex >= 0 ? TopologyOptions[CmbTopology.SelectedIndex].Topology : MapTopology.Default,
+            Topology = PnlTopology.CmbTopology.SelectedIndex >= 0 ? TopologyOptions[PnlTopology.CmbTopology.SelectedIndex].Topology : MapTopology.Default,
             FactionLawsExpPercent = (int)SldFactionLawsExp.Value,
             AstrologyExpPercent = (int)SldAstrologyExp.Value,
             GladiatorArenaRules = new GladiatorArenaRules
