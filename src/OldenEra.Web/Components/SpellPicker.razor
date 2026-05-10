@@ -1,0 +1,64 @@
+@* Dropdown for selecting a bonus spell SID, fed by CommunityCatalog.Default.Spells.
+   Groups by school, sorted by tier then name. Empty value = no bonus spell.
+   Preserves legacy / unknown SIDs as a top option so saved .oetgs files round-trip. *@
+
+<select value="@Value" @onchange="OnChange">
+    <option value="">(no bonus spell)</option>
+    @if (!string.IsNullOrEmpty(Value) && !KnownIds.Contains(Value))
+    {
+        <option value="@Value">@Value (legacy/unknown)</option>
+    }
+    @foreach (var group in Grouped)
+    {
+        <optgroup label="@FriendlySchool(group.Key)">
+            @foreach (var spell in group)
+            {
+                <option value="@spell.Id">@($"T{spell.Tier}. {spell.Name}")</option>
+            }
+        </optgroup>
+    }
+</select>
+
+@code {
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    private static readonly IReadOnlyList<SpellEntry> AllSpells =
+        CommunityCatalog.Default.Spells;
+
+    private static readonly HashSet<string> KnownIds =
+        new(AllSpells.Select(s => s.Id), StringComparer.Ordinal);
+
+    private static readonly IReadOnlyList<IGrouping<string, SpellEntry>> Grouped =
+        AllSpells
+            .OrderBy(s => SchoolOrder(s.School))
+            .ThenBy(s => s.Tier)
+            .ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase)
+            .GroupBy(s => s.School, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+    private async Task OnChange(ChangeEventArgs e)
+    {
+        var v = e.Value?.ToString() ?? "";
+        Value = v;
+        await ValueChanged.InvokeAsync(v);
+    }
+
+    private static int SchoolOrder(string school) => school?.ToLowerInvariant() switch
+    {
+        "day" => 0,
+        "night" => 1,
+        "arcane" => 2,
+        "primal" => 3,
+        _ => 99,
+    };
+
+    private static string FriendlySchool(string school) => school?.ToLowerInvariant() switch
+    {
+        "day" => "Day",
+        "night" => "Night",
+        "arcane" => "Arcane",
+        "primal" => "Primal",
+        _ => string.IsNullOrEmpty(school) ? "Other" : char.ToUpper(school[0]) + school[1..],
+    };
+}

@@ -173,8 +173,9 @@
                             <Label   Grid.Row="0" Grid.Column="0" Content="Bonus item SID" Padding="5,2"/>
                             <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtBonusItemSid"/>
                             <CheckBox Grid.Row="1" Grid.Column="1" x:Name="ChkBonusItemStartHeroOnly" Content="Apply to start hero only" Margin="0,2,0,4"/>
-                            <Label   Grid.Row="2" Grid.Column="0" Content="Bonus spell SID" Padding="5,2"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="TxtBonusSpellSid"/>
+                            <Label    Grid.Row="2" Grid.Column="0" Content="Bonus spell" Padding="5,2"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" x:Name="CmbBonusSpell"
+                                      DisplayMemberPath="Display" SelectedValuePath="Id"/>
                             <CheckBox Grid.Row="3" Grid.Column="1" x:Name="ChkBonusSpellStartHeroOnly" Content="Apply to start hero only" Margin="0,2,0,4"/>
                             <Label   Grid.Row="4" Grid.Column="0" Content="Unit multiplier (%)" Padding="5,2"/>
                             <DockPanel Grid.Row="4" Grid.Column="1">

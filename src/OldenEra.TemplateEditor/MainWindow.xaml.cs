@@ -777,7 +777,7 @@ namespace OldenEra.TemplateEditor
             BonusHeroStatStartHeroOnly = PnlExperimental.ChkBonusHeroStatStartHeroOnly.IsChecked == true,
             BonusItemSid               = PnlExperimental.TxtBonusItemSid.Text.Trim(),
             BonusItemStartHeroOnly     = PnlExperimental.ChkBonusItemStartHeroOnly.IsChecked == true,
-            BonusSpellSid              = PnlExperimental.TxtBonusSpellSid.Text.Trim(),
+            BonusSpellSid              = SpellSidFromCombo(PnlExperimental.CmbBonusSpell),
             BonusSpellStartHeroOnly    = PnlExperimental.ChkBonusSpellStartHeroOnly.IsChecked == true,
             BonusUnitMultiplier        = PnlExperimental.SldBonusUnitMultiplier.Value / 100.0,
             BonusUnitMultiplierStartHeroOnly = PnlExperimental.ChkBonusUnitMultiplierStartHeroOnly.IsChecked == true,
@@ -923,7 +923,7 @@ namespace OldenEra.TemplateEditor
             PnlExperimental.ChkBonusHeroStatStartHeroOnly.IsChecked = s.BonusHeroStatStartHeroOnly;
             PnlExperimental.TxtBonusItemSid.Text = s.BonusItemSid ?? "";
             PnlExperimental.ChkBonusItemStartHeroOnly.IsChecked = s.BonusItemStartHeroOnly;
-            PnlExperimental.TxtBonusSpellSid.Text = s.BonusSpellSid ?? "";
+            SetSpellCombo(PnlExperimental.CmbBonusSpell, s.BonusSpellSid ?? "");
             PnlExperimental.ChkBonusSpellStartHeroOnly.IsChecked = s.BonusSpellStartHeroOnly;
             PnlExperimental.SldBonusUnitMultiplier.Value = Math.Clamp(s.BonusUnitMultiplier * 100.0, 0, 500);
             PnlExperimental.ChkBonusUnitMultiplierStartHeroOnly.IsChecked = s.BonusUnitMultiplierStartHeroOnly;
@@ -937,6 +937,29 @@ namespace OldenEra.TemplateEditor
 
         private static int ResourceValue(SettingsFile s, string sid) =>
             s.BonusResources is { } d && d.TryGetValue(sid, out int v) ? Math.Clamp(v, 0, 100) : 0;
+
+        private static string SpellSidFromCombo(System.Windows.Controls.ComboBox c) =>
+            (c.SelectedValue as string) ?? "";
+
+        private static void SetSpellCombo(System.Windows.Controls.ComboBox c, string sid)
+        {
+            sid = (sid ?? "").Trim();
+            if (string.IsNullOrEmpty(sid)) { c.SelectedValue = ""; return; }
+            // If the saved SID is not in the catalog list, prepend a "legacy/unknown" entry
+            // so the original string round-trips on save.
+            if (c.ItemsSource is System.Collections.Generic.List<OldenEra.TemplateEditor.Views.ExperimentalPanel.SpellOption> list)
+            {
+                if (!list.Any(o => o.Id == sid))
+                {
+                    // Drop any prior legacy entry, then insert the new one at index 1 (after the "(none)" sentinel).
+                    list.RemoveAll(o => o.Id != "" && o.Display.EndsWith("(legacy/unknown)"));
+                    list.Insert(1, new OldenEra.TemplateEditor.Views.ExperimentalPanel.SpellOption(sid, $"{sid} (legacy/unknown)"));
+                    c.ItemsSource = null;
+                    c.ItemsSource = list;
+                }
+            }
+            c.SelectedValue = sid;
+        }
 
         private static void SetPresetCombo(System.Windows.Controls.ComboBox c, string sid)
         {
@@ -1244,7 +1267,7 @@ namespace OldenEra.TemplateEditor
                 HeroStatStartHeroOnly = PnlExperimental.ChkBonusHeroStatStartHeroOnly.IsChecked == true,
                 ItemSid = PnlExperimental.TxtBonusItemSid.Text.Trim(),
                 ItemStartHeroOnly = PnlExperimental.ChkBonusItemStartHeroOnly.IsChecked == true,
-                SpellSid = PnlExperimental.TxtBonusSpellSid.Text.Trim(),
+                SpellSid = SpellSidFromCombo(PnlExperimental.CmbBonusSpell),
                 SpellStartHeroOnly = PnlExperimental.ChkBonusSpellStartHeroOnly.IsChecked == true,
                 UnitMultiplier = PnlExperimental.SldBonusUnitMultiplier.Value / 100.0,
                 UnitMultiplierStartHeroOnly = PnlExperimental.ChkBonusUnitMultiplierStartHeroOnly.IsChecked == true,

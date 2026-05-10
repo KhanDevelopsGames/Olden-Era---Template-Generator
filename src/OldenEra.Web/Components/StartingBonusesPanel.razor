@@ -56,10 +56,9 @@
     </div>
 
     <div class="oe-stacked">
-        <label class="oe-label">Bonus spell SID</label>
-        <input type="text" placeholder="(empty = no bonus spell)"
-               value="@Settings.Bonuses.SpellSid"
-               @oninput="@(e => { Settings.Bonuses.SpellSid = e.Value?.ToString() ?? ""; NotifyChanged(); })" />
+        <label class="oe-label">Bonus spell</label>
+        <SpellPicker Value="@Settings.Bonuses.SpellSid"
+                     ValueChanged="@(v => { Settings.Bonuses.SpellSid = v ?? ""; NotifyChanged(); })" />
         <label class="oe-check">
             <input type="checkbox" checked="@Settings.Bonuses.SpellStartHeroOnly"
                    @onchange="@(e => { Settings.Bonuses.SpellStartHeroOnly = (bool)e.Value!; NotifyChanged(); })" />

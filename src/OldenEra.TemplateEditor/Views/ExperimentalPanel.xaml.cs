@@ -1,11 +1,16 @@
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using OldenEra.Generator.Models.Unfrozen;
+using OldenEra.Generator.Services;
 
 namespace OldenEra.TemplateEditor.Views;
 
 public partial class ExperimentalPanel : UserControl
 {
+    /// <summary>Item shape for spell ComboBox; flat sorted list "{Tier}. {Name} ({School})".</summary>
+    public sealed record SpellOption(string Id, string Display);
+
     public ExperimentalPanel()
     {
         InitializeComponent();
@@ -23,6 +28,21 @@ public partial class ExperimentalPanel : UserControl
         CmbLowTierPreset.SelectedIndex = 0;
         CmbMediumTierPreset.SelectedIndex = 0;
         CmbHighTierPreset.SelectedIndex = 0;
+
+        // Populate the bonus-spell combo from the community catalog.
+        // Index 0 = sentinel (no bonus spell, value="").
+        var spells = new System.Collections.Generic.List<SpellOption>
+        {
+            new("", "(no bonus spell)"),
+        };
+        spells.AddRange(
+            CommunityCatalog.Default.Spells
+                .OrderBy(s => s.School, System.StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.Tier)
+                .ThenBy(s => s.Name, System.StringComparer.OrdinalIgnoreCase)
+                .Select(s => new SpellOption(s.Id, $"T{s.Tier}. {s.Name} ({s.School})")));
+        CmbBonusSpell.ItemsSource = spells;
+        CmbBonusSpell.SelectedIndex = 0;
 
         // Live label updates for sliders.
         SldBonusGold.ValueChanged       += (_, _) => TxtBonusGold.Text       = ((int)SldBonusGold.Value).ToString();
