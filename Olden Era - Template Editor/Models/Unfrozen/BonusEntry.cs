@@ -54,18 +54,31 @@ namespace OldenEraTemplateEditor.Models
             _ => sid,
         };
 
+        private static readonly Brush MagicDotBrush    = CreateFrozenBrush(Color.FromRgb(147, 112, 219));
+        private static readonly Brush CombatDotBrush   = CreateFrozenBrush(Color.FromRgb(205,  92,  92));
+        private static readonly Brush MovementDotBrush = CreateFrozenBrush(Color.FromRgb(100, 149, 237));
+        private static readonly Brush SetDotBrush      = CreateFrozenBrush(Color.FromRgb(186,  85, 211));
+        private static readonly Brush ResourceDotBrush = CreateFrozenBrush(Color.FromRgb(218, 165,  32));
+
+        private static Brush CreateFrozenBrush(Color color)
+        {
+            var brush = new SolidColorBrush(color);
+            brush.Freeze();
+            return brush;
+        }
+
         public Brush DotBrush => PresetType switch
         {
             BonusPresetType.TownPortalFree or BonusPresetType.Spell
-                => new SolidColorBrush(Color.FromRgb(147, 112, 219)), // medium purple (magic)
+                => MagicDotBrush,    // medium purple (magic)
             BonusPresetType.UnitMultiplier
-                => new SolidColorBrush(Color.FromRgb(205,  92,  92)), // indian red (combat)
+                => CombatDotBrush,   // indian red (combat)
             BonusPresetType.MovementBonus
-                => new SolidColorBrush(Color.FromRgb(100, 149, 237)), // cornflower blue (movement)
+                => MovementDotBrush, // cornflower blue (movement)
             BonusPresetType.StartingItem
-                => new SolidColorBrush(Color.FromRgb(186,  85, 211)), // medium orchid (set)
+                => SetDotBrush,      // medium orchid (set)
             _ /* resources */
-                => new SolidColorBrush(Color.FromRgb(218, 165,  32)), // goldenrod (resources)
+                => ResourceDotBrush, // goldenrod (resources)
         };
 
         /// <summary>Expands this entry into one or two raw Bonus objects for the template.</summary>
