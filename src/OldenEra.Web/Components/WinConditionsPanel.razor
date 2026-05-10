@@ -8,10 +8,14 @@
                Min="25" Max="200" Step="25" Suffix="%"
                Value="Settings.FactionLawsExpPercent"
                ValueChanged="@(v => { Settings.FactionLawsExpPercent = (int)v; NotifyChanged(); })" />
+    @* TODO: verify wording against in-game tooltip *@
+    <div class="oe-hint">Adjusts the rate at which Faction Laws progress. 100% = standard pace.</div>
     <SliderRow Label="Astrology XP" WideLabel="true"
                Min="25" Max="200" Step="25" Suffix="%"
                Value="Settings.AstrologyExpPercent"
                ValueChanged="@(v => { Settings.AstrologyExpPercent = (int)v; NotifyChanged(); })" />
+    @* TODO: verify wording against in-game tooltip *@
+    <div class="oe-hint">Adjusts the rate at which Astrology progresses. 100% = standard pace.</div>
 
     <div class="oe-row wide-label">
         <label class="oe-label">Primary win condition</label>
@@ -32,6 +36,8 @@
         bool isCityHoldWin = Settings.GameEndConditions.VictoryCondition == "win_condition_5";
     }
 
+    <div class="oe-subsection-header">Defeat conditions</div>
+
     <label class="oe-check">
         <input type="checkbox"
                checked="@Settings.GameEndConditions.LostStartCity"
@@ -39,6 +45,14 @@
                @onchange="@(e => { Settings.GameEndConditions.LostStartCity = (bool)e.Value!; NotifyChanged(); })" />
         <span>Lose when starting city is lost</span>
     </label>
+    @if (isLostCityWin)
+    {
+        <div class="oe-hint" style="margin-left:1.5rem;">Locked because primary win condition is Lost City.</div>
+    }
+    else if (isTournament)
+    {
+        <div class="oe-hint" style="margin-left:1.5rem;">Locked because primary win condition is Tournament.</div>
+    }
     @if (Settings.GameEndConditions.LostStartCity)
     {
         <div style="margin-left:1.5rem;">
@@ -56,6 +70,12 @@
                @onchange="@(e => { Settings.GameEndConditions.LostStartHero = (bool)e.Value!; NotifyChanged(); })" />
         <span>Lose when starting hero is lost</span>
     </label>
+    @if (isTournament)
+    {
+        <div class="oe-hint" style="margin-left:1.5rem;">Locked because primary win condition is Tournament.</div>
+    }
+
+    <div class="oe-subsection-header">Alternate victory</div>
 
     <label class="oe-check">
         <input type="checkbox"
@@ -64,6 +84,14 @@
                @onchange="@(e => { Settings.GameEndConditions.CityHold = (bool)e.Value!; NotifyChanged(); })" />
         <span>Win by holding a neutral city</span>
     </label>
+    @if (isCityHoldWin)
+    {
+        <div class="oe-hint" style="margin-left:1.5rem;">Locked because primary win condition is City Hold.</div>
+    }
+    else if (isTournament)
+    {
+        <div class="oe-hint" style="margin-left:1.5rem;">Locked because primary win condition is Tournament.</div>
+    }
     @if (Settings.GameEndConditions.CityHold)
     {
         <div style="margin-left:1.5rem;">

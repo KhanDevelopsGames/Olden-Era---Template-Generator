@@ -43,7 +43,12 @@
                                 TickFrequency="25" IsSnapToTickEnabled="True"/>
                     </Grid>
 
+                    <!-- TODO: verify wording against in-game tooltip -->
+                    <TextBlock Text="Faction laws XP and Astrology XP adjust the rate at which those systems progress. 100% = standard pace."
+                               TextWrapping="Wrap" Foreground="#888" FontStyle="Italic" Margin="5,4,5,8"/>
+
                     <StackPanel Margin="0,10,0,0">
+                        <TextBlock Text="Defeat conditions" FontWeight="SemiBold" Margin="0,0,0,4"/>
                         <CheckBox x:Name="ChkLostStartCity"
                                   Content="Lose when starting city is lost"/>
                         <Grid x:Name="PnlLostStartCityDetails" Margin="18,3,0,6">
@@ -65,9 +70,9 @@
                         <CheckBox x:Name="ChkLostStartHero"
                                   Content="Lose when starting hero is lost"/>
 
+                        <TextBlock Text="Alternate victory" FontWeight="SemiBold" Margin="0,12,0,4"/>
                         <CheckBox x:Name="ChkCityHold"
-                                  Content="Win by holding a neutral city"
-                                  Margin="0,6,0,0"/>
+                                  Content="Win by holding a neutral city"/>
                         <Grid x:Name="PnlCityHoldDetails" Margin="18,3,0,6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="167"/>

@@ -325,6 +325,15 @@ code { color: var(--oe-accent); background: var(--oe-surface-2); padding: 0 4px;
     font-weight: 400;
 }
 
+.oe-subsection-header {
+    color: var(--oe-text);
+    font-weight: 600;
+    font-size: 13px;
+    margin: 12px 0 4px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--oe-border, #2a2a2a);
+}
+
 .oe-hint {
     color: var(--oe-text-dim);
     font-size: 12px;
