@@ -111,6 +111,22 @@ public class SettingsShareCodecTests
         Assert.Equal(8, mapped.ZoneCfg.NeutralZoneCount);
     }
 
+    [Fact]
+    public void Decode_of_v1_payload_still_yields_known_fields()
+    {
+        // Pinned encoded payload of: new SettingsFile { TemplateName = "FrozenFixture", MapSize = 160, PlayerCount = 4 }.
+        // If this ever fails, you renamed/removed a [JsonPropertyName] — restore
+        // backward compat (read both old + new key) or version the payload.
+        const string FrozenV1Payload = "H4sIAAAAAAAAE21TXW_aQBD8L_eMKkjStOItISVECgiFSJX6Em3sDZxyvrX21oCp-t-7PoM_IG--2dm9mbn1XyOY5Q4EF5ChGZsp0wH91O6lYDQDk0G-sgetjG6HA6PMEnlChRczvhkYj4UwuD_k8Qi2JAjiMGhjQ-tCkG7BJ5jOKdXhH-ACNrxn2i2oJseBLXwJzjG1RfYVva5c4jO73nzFr_AOmoEkm2XHyhQSseRDozazftH6D_coO0Rft4Q4A_c5ss3QC7h7cNFwxVVOghXczOoy53Xk7UV1oFXj8Sl6wTfYpng_PzeJq5h1AZy-gE8psweorCj8bfhdicg0tz6-aPyGvRn_rL-ffMJHqTpSKCdH6zJSOc5aEqvmTiqwr6EJ-Sqs66uBCTns_JRINuRSxYQLZa7RI-vmvRC0oA1UbWN-SrG_GSuB5HMljH4tG1U0VF_vxCnyY-XurLK1iRCXKiS1tV-zs_4tOZ3fRrrgH_WzPsMu_Nrnx06NjaPRFnIURK9nmVgpG1099AG0cN0BZxpgQ02UMVP_F4C2qdFbDcRBakEl36kNaHh9uGI_oMYTb9D7hueM-CeetAgV7KG3ay00tRzktTnGntFNl_HkBXkLzox_dOElWS_hlX5XW3PVraxgi3eclfV7_vsPQr-4K2AEAAA";
+
+        var decoded = SettingsShareCodec.TryDecode(FrozenV1Payload, out var status);
+        Assert.NotNull(decoded);
+        Assert.Equal(SettingsShareCodec.DecodeStatus.Ok, status);
+        Assert.Equal("FrozenFixture", decoded!.TemplateName);
+        Assert.Equal(160, decoded.MapSize);
+        Assert.Equal(4, decoded.PlayerCount);
+    }
+
     private static string EncodeRawJson(string json)
     {
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
