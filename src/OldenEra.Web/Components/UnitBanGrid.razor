@@ -10,12 +10,6 @@
                 <span class="oe-faction-name">@fg.FactionName</span>
                 <span class="oe-faction-shortcuts">
                     <button type="button" class="oe-link-btn"
-                            @onclick="@(() => BanAllInTier(fg, 1))"
-                            title="Ban every tier-1 unit of @fg.FactionName">Ban T1</button>
-                    <button type="button" class="oe-link-btn"
-                            @onclick="@(() => BanAllInTier(fg, 7))"
-                            title="Ban every tier-7 unit of @fg.FactionName">Ban T7</button>
-                    <button type="button" class="oe-link-btn"
                             @onclick="@(() => ClearFaction(fg))"
                             title="Clear bans for @fg.FactionName">Clear</button>
                 </span>
@@ -121,18 +115,6 @@
     {
         if (!Settings.Content.GlobalBans.Remove(sid))
             Settings.Content.GlobalBans.Add(sid);
-        await NotifyChanged();
-    }
-
-    private async Task BanAllInTier(FactionGroup fg, int tier)
-    {
-        var group = fg.Tiers.FirstOrDefault(t => t.Tier == tier);
-        if (group is null) return;
-        foreach (var u in group.Units)
-        {
-            if (!Settings.Content.GlobalBans.Contains(u.Id))
-                Settings.Content.GlobalBans.Add(u.Id);
-        }
         await NotifyChanged();
     }
 
