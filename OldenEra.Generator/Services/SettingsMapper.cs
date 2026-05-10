@@ -1,8 +1,7 @@
 using OldenEra.Generator.Models;
 using OldenEra.Generator.Models.Unfrozen;
-using OldenEra.Generator.Services;
 
-namespace OldenEra.Web.Services;
+namespace OldenEra.Generator.Services;
 
 /// <summary>
 /// Translates between the persisted <see cref="SettingsFile"/> shape and the
