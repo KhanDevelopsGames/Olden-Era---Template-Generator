@@ -11,10 +11,20 @@ namespace OldenEra.TemplateEditor.Views;
 public partial class ExperimentalPanel : UserControl
 {
     /// <summary>Item shape for spell ComboBox; flat sorted list "{Tier}. {Name} ({School})".</summary>
-    public sealed record SpellOption(string Id, string Display);
+    public sealed record SpellOption(string Id, string Display)
+    {
+        // Default record ToString prints "SpellOption { Id=..., Display=... }".
+        // The custom ComboBox template's SelectionBoxItem falls back to ToString
+        // when the auto-generated DisplayMemberPath template isn't picked up,
+        // so render the friendly label instead.
+        public override string ToString() => Display;
+    }
 
     /// <summary>Row in the catalog-driven ban-unit ComboBox.</summary>
-    public sealed record BanUnitRow(string Id, string Display, string Faction);
+    public sealed record BanUnitRow(string Id, string Display, string Faction)
+    {
+        public override string ToString() => Display;
+    }
 
     public ExperimentalPanel()
     {
