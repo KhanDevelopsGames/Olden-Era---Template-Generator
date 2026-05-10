@@ -237,6 +237,15 @@ code { color: var(--oe-accent); background: var(--oe-surface-2); padding: 0 4px;
 
 .oe-row label.oe-label { color: var(--oe-text-dim); font-size: 13px; }
 
+.oe-row.disabled label.oe-label,
+.oe-row.disabled .oe-slider-value {
+    color: var(--oe-text-mute);
+}
+.oe-row.disabled input[type="range"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .oe-stacked {
     display: flex;
     flex-direction: column;

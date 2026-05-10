@@ -10,12 +10,16 @@
         </label>
     </div>
 
-    @if (!AdvancedMode)
+    <SliderRow Label="Additional Neutral Zones" WideLabel="true"
+               Min="0" Max="30" Step="1"
+               Disabled="@AdvancedMode"
+               Value="Settings.ZoneCfg.NeutralZoneCount"
+               ValueChanged="@(v => { Settings.ZoneCfg.NeutralZoneCount = (int)v; NotifyChanged(); })" />
+    @if (AdvancedMode)
     {
-        <SliderRow Label="Additional Neutral Zones" WideLabel="true"
-                   Min="0" Max="30" Step="1"
-                   Value="Settings.ZoneCfg.NeutralZoneCount"
-                   ValueChanged="@(v => { Settings.ZoneCfg.NeutralZoneCount = (int)v; NotifyChanged(); })" />
+        <div class="oe-hint" style="margin-left:240px;margin-top:-4px;">
+            Set per-tier counts below.
+        </div>
     }
 
     <SliderRow Label="Castles / Player Zone" WideLabel="true"
