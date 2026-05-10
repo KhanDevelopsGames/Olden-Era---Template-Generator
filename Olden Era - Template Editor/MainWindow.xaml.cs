@@ -46,6 +46,12 @@ namespace Olden_Era___Template_Editor
         {
             InitializeComponent();
 
+            // Re-wire events for controls now hosted in MapPanel UserControl.
+            PnlMap.CmbMapSize.SelectionChanged += CmbMapSize_SelectionChanged;
+            PnlMap.ChkExperimentalMapSizes.Checked += ChkExperimentalMapSizes_Changed;
+            PnlMap.ChkExperimentalMapSizes.Unchecked += ChkExperimentalMapSizes_Changed;
+            PnlMap.SldPlayers.ValueChanged += Slider_ValueChanged;
+
             // Clamp startup size to the available work area so the window never
             // overflows the screen at high-DPI scaling (e.g. 125 %, 150 %, 200 %).
             var area = SystemParameters.WorkArea;
@@ -75,7 +81,7 @@ namespace Olden_Era___Template_Editor
             // Fire-and-forget background update check — never blocks the UI.
             _ = CheckForUpdateAsync(version);
 
-            TxtTemplateName.TextChanged += (_, _) => { MarkDirtyNameOnly(); Validate(); };
+            PnlMap.TxtTemplateName.TextChanged += (_, _) => { MarkDirtyNameOnly(); Validate(); };
             UpdateTitle();
             TxtWindowTitle.Text = Title;
         }
@@ -150,7 +156,7 @@ namespace Olden_Era___Template_Editor
             if (!IsInitialized) return;
             _isDirty = true;
             if (_generatedTemplate is not null)
-                _generatedTemplate.Name = TxtTemplateName.Text.Trim();
+                _generatedTemplate.Name = PnlMap.TxtTemplateName.Text.Trim();
             UpdateTitle();
         }
 
@@ -229,7 +235,7 @@ namespace Olden_Era___Template_Editor
 
         private void UpdateValueLabels()
         {
-            TxtPlayers.Text = ((int)SldPlayers.Value).ToString();
+            PnlMap.TxtPlayers.Text = ((int)PnlMap.SldPlayers.Value).ToString();
             TxtHeroMin.Text = ((int)SldHeroMin.Value).ToString();
             TxtHeroMax.Text = ((int)SldHeroMax.Value).ToString();
             TxtHeroIncrement.Text = ((int)SldHeroIncrement.Value).ToString();
@@ -273,7 +279,7 @@ namespace Olden_Era___Template_Editor
         {
             int heroMin = (int)SldHeroMin.Value;
             int heroMax = (int)SldHeroMax.Value;
-            int players = (int)SldPlayers.Value;
+            int players = (int)PnlMap.SldPlayers.Value;
             int neutral = TotalNeutralZonesFromUi();
 
             if (heroMin > heroMax)
@@ -291,7 +297,7 @@ namespace Olden_Era___Template_Editor
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(TxtTemplateName.Text))
+            if (string.IsNullOrWhiteSpace(PnlMap.TxtTemplateName.Text))
             {
                 SetValidationText("Template name cannot be empty.");
                 BtnPreview.IsEnabled = false;
@@ -300,7 +306,7 @@ namespace Olden_Era___Template_Editor
 
             var warnings = new System.Collections.Generic.List<string>();
 
-            if (TxtTemplateName.Text.Trim().Equals("Custom Template", StringComparison.OrdinalIgnoreCase))
+            if (PnlMap.TxtTemplateName.Text.Trim().Equals("Custom Template", StringComparison.OrdinalIgnoreCase))
                 warnings.Add("⚠️ The template is still using the default name \"Custom Template\". Consider renaming it before saving.");
 
             int selectedMapSize = SelectedMapSize();
@@ -385,7 +391,7 @@ namespace Olden_Era___Template_Editor
         }
 
         private int SelectedMapSize() =>
-            CmbMapSize.SelectedItem is string sizeStr && int.TryParse(sizeStr.Split('x')[0], out int parsedSize)
+            PnlMap.CmbMapSize.SelectedItem is string sizeStr && int.TryParse(sizeStr.Split('x')[0], out int parsedSize)
                 ? parsedSize
                 : 160;
 
@@ -404,10 +410,10 @@ namespace Olden_Era___Template_Editor
 
         private void RefreshMapSizeOptions(int? requestedSize = null)
         {
-            if (CmbMapSize == null) return;
+            if (PnlMap.CmbMapSize == null) return;
 
             int selectedSize = requestedSize ?? SelectedMapSize();
-            bool includeExperimental = ChkExperimentalMapSizes?.IsChecked == true;
+            bool includeExperimental = PnlMap.ChkExperimentalMapSizes?.IsChecked == true;
             int[] sizes = includeExperimental ? KnownValues.AllMapSizes : KnownValues.MapSizes;
 
             if (!includeExperimental && KnownValues.IsExperimentalMapSize(selectedSize))
@@ -418,10 +424,10 @@ namespace Olden_Era___Template_Editor
             _isRefreshingMapSizes = true;
             try
             {
-                CmbMapSize.ItemsSource = sizes.Select(FormatMapSize).ToList();
-                CmbMapSize.SelectedItem = FormatMapSize(selectedSize);
-                if (CmbMapSize.SelectedIndex < 0)
-                    CmbMapSize.SelectedItem = FormatMapSize(160);
+                PnlMap.CmbMapSize.ItemsSource = sizes.Select(FormatMapSize).ToList();
+                PnlMap.CmbMapSize.SelectedItem = FormatMapSize(selectedSize);
+                if (PnlMap.CmbMapSize.SelectedIndex < 0)
+                    PnlMap.CmbMapSize.SelectedItem = FormatMapSize(160);
             }
             finally
             {
@@ -645,9 +651,9 @@ namespace Olden_Era___Template_Editor
 
         private void UpdateExperimentalMapSizeWarningVisibility()
         {
-            if (TxtExperimentalMapSizeWarning == null) return;
-            bool includeExperimental = ChkExperimentalMapSizes?.IsChecked == true;
-            TxtExperimentalMapSizeWarning.Visibility = includeExperimental ? Visibility.Visible : Visibility.Collapsed;
+            if (PnlMap.TxtExperimentalMapSizeWarning == null) return;
+            bool includeExperimental = PnlMap.ChkExperimentalMapSizes?.IsChecked == true;
+            PnlMap.TxtExperimentalMapSizeWarning.Visibility = includeExperimental ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdatePlayerCastleFactionVisibility()
@@ -687,9 +693,9 @@ namespace Olden_Era___Template_Editor
 
         private SettingsFile GatherSettings() => new()
         {
-            TemplateName          = TxtTemplateName.Text.Trim(),
+            TemplateName          = PnlMap.TxtTemplateName.Text.Trim(),
             MapSize               = SelectedMapSize(),
-            PlayerCount           = (int)SldPlayers.Value,
+            PlayerCount           = (int)PnlMap.SldPlayers.Value,
             NeutralZoneCount      = (int)SldNeutral.Value,
             PlayerZoneCastles     = (int)SldPlayerCastles.Value,
             NeutralZoneCastles    = (int)SldNeutralCastles.Value,
@@ -703,7 +709,7 @@ namespace Olden_Era___Template_Editor
             MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
             MinNeutralZonesBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value,
             ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
-            ExperimentalMapSizes  = ChkExperimentalMapSizes.IsChecked == true,
+            ExperimentalMapSizes  = PnlMap.ChkExperimentalMapSizes.IsChecked == true,
             PlayerZoneSize        = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
             NeutralZoneSize       = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
             HubZoneSize           = SldHubZoneSize.Value,
@@ -743,13 +749,13 @@ namespace Olden_Era___Template_Editor
 
         private void ApplySettings(SettingsFile s)
         {
-            TxtTemplateName.Text    = s.TemplateName;
+            PnlMap.TxtTemplateName.Text    = s.TemplateName;
             bool hasCustomZoneSizes = Math.Abs(s.PlayerZoneSize - 1.0) > 0.0001 || Math.Abs(s.NeutralZoneSize - 1.0) > 0.0001;
             bool needsExperimentalMapSizes = s.ExperimentalMapSizes || KnownValues.IsExperimentalMapSize(s.MapSize);
             _advancedZoneSettings = s.AdvancedMode || needsExperimentalMapSizes || hasCustomZoneSizes;
-            ChkExperimentalMapSizes.IsChecked = needsExperimentalMapSizes;
+            PnlMap.ChkExperimentalMapSizes.IsChecked = needsExperimentalMapSizes;
             RefreshMapSizeOptions(s.MapSize);
-            SldPlayers.Value        = s.PlayerCount;
+            PnlMap.SldPlayers.Value        = s.PlayerCount;
             SldNeutral.Value        = s.NeutralZoneCount;
             SldPlayerCastles.Value  = s.PlayerZoneCastles;
             SldNeutralCastles.Value = s.NeutralZoneCastles;
@@ -876,7 +882,7 @@ namespace Olden_Era___Template_Editor
             {
                 Title      = "Save Settings As",
                 Filter     = "Template Settings (*.oetgs)|*.oetgs|All files (*.*)|*.*",
-                FileName   = TxtTemplateName.Text.Trim().Length > 0 ? TxtTemplateName.Text.Trim() : "My Settings",
+                FileName   = PnlMap.TxtTemplateName.Text.Trim().Length > 0 ? PnlMap.TxtTemplateName.Text.Trim() : "My Settings",
                 DefaultExt = ".oetgs",
             };
             if (dlg.ShowDialog() == true)
@@ -910,7 +916,7 @@ namespace Olden_Era___Template_Editor
 
             string? gameTemplatesPath = FindOldenEraTemplatesPath();
 
-            string currentTemplateName = TxtTemplateName.Text.Trim();
+            string currentTemplateName = PnlMap.TxtTemplateName.Text.Trim();
 
             var dlg = new SaveFileDialog
             {
@@ -988,9 +994,9 @@ namespace Olden_Era___Template_Editor
 
         private GeneratorSettings BuildSettings() => new()
         {
-            TemplateName = TxtTemplateName.Text.Trim(),
+            TemplateName = PnlMap.TxtTemplateName.Text.Trim(),
             GameMode = CmbGameMode.SelectedItem as string ?? "Classic",
-            PlayerCount = (int)SldPlayers.Value,
+            PlayerCount = (int)PnlMap.SldPlayers.Value,
             HeroSettings = new HeroSettings
             {
                 HeroCountMin = (int)SldHeroMin.Value,
