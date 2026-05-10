@@ -203,6 +203,28 @@ When writing or renaming UI labels and hints across the Web (`OldenEra.Web/Compo
 
 The Web and WPF labels must stay in sync. After renaming a label in one host, re-grep the other host for the old text and update it (e.g. `grep -RIn "old label" src/`).
 
+## Community datamine (`CommunityData/`)
+
+The reference catalog at `src/OldenEra.Generator/CommunityData/*.json` is sourced from [alcaras/homm-olden](https://github.com/alcaras/homm-olden). Files are embedded resources read by `CommunityCatalog`.
+
+**Re-pull / refresh:**
+
+```bash
+python3 src/OldenEra.Generator/CommunityData/scripts/fetch-from-alcaras.py
+```
+
+The script fetches `docs/data.js`, `docs/skills-data.js`, and `docs/spells-data.js` from upstream, parses the JS const arrays / `window.OE_*` objects, and overwrites the seven JSON files in place. No external dependencies — pure stdlib.
+
+**When to refresh:**
+- Game patch likely changed hero/unit/spell stats. Re-pull, run tests, diff what changed.
+- Adding a new feature that needs fields not currently exposed in `CommunityCatalog` records (the records expose a subset of upstream fields; extend the record types in `CommunityCatalog.cs`, then re-pull).
+
+**Verify after refresh:**
+- `dotnet test tests/OldenEra.Generator.Tests/OldenEra.Generator.Tests.csproj --filter CommunityCatalog` should still pass. The tests assert structural invariants (108 heroes, 6 factions, every hero belongs to a known faction, etc.); a failure usually means upstream renamed a field or changed schema.
+- `git diff src/OldenEra.Generator/CommunityData/*.json` to eyeball what changed before committing.
+
+If upstream becomes unavailable, the embedded JSON keeps working — only re-fetching needs network access.
+
 ## Debugging Blazor errors
 
 The web app's "An unhandled error has occurred. Reload" banner is a generic placeholder. The actual exception is logged to the **browser DevTools console**, not the `dotnet run` terminal. When users report errors:
