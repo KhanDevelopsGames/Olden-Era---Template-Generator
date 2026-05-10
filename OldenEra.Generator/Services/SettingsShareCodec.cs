@@ -24,6 +24,11 @@ public static class SettingsShareCodec
         DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
     };
 
+    private static readonly JsonSerializerOptions LenientOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+    };
+
     public static string Encode(SettingsFile settings)
     {
         byte[] json = JsonSerializer.SerializeToUtf8Bytes(settings, JsonOptions);
@@ -73,11 +78,7 @@ public static class SettingsShareCodec
         // whole deserialize, fall back to per-field recovery.
         try
         {
-            var lenientOptions = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            };
-            var attempt = JsonSerializer.Deserialize<SettingsFile>(obj.ToJsonString(), lenientOptions);
+            var attempt = JsonSerializer.Deserialize<SettingsFile>(obj.ToJsonString(), LenientOptions);
             if (attempt is not null) return attempt;
         }
         catch
@@ -90,7 +91,7 @@ public static class SettingsShareCodec
             try
             {
                 var single = new JsonObject { [kvp.Key] = kvp.Value?.DeepClone() };
-                var partial = JsonSerializer.Deserialize<SettingsFile>(single.ToJsonString());
+                var partial = JsonSerializer.Deserialize<SettingsFile>(single.ToJsonString(), LenientOptions);
                 if (partial is null) continue;
                 CopyNonDefault(partial, result);
             }
@@ -102,6 +103,7 @@ public static class SettingsShareCodec
         return result;
     }
 
+    // Warning: relies on SettingsFile containing only value types, strings, and nullables — adding a List<> or Dictionary<> field would break the equality-based "non-default" check.
     private static void CopyNonDefault(SettingsFile src, SettingsFile dst)
     {
         var defaults = new SettingsFile();
