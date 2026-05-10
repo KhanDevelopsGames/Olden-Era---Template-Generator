@@ -51,6 +51,26 @@
                             TickFrequency="1" IsSnapToTickEnabled="True"/>
                 </Grid>
 
+                <Expander Header="Ban specific heroes" Margin="0,8,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <TextBlock Style="{StaticResource HintText}">
+                            Banned heroes are removed from the template's hero pool (emitted as globalBans.heroes).
+                        </TextBlock>
+                        <TabControl x:Name="TcHeroBans" Margin="0,4,0,0" MinHeight="180"/>
+                    </StackPanel>
+                </Expander>
+
+                <Expander Header="Pin starting hero per faction" Margin="0,4,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <TextBlock Style="{StaticResource HintText}">
+                            Optional. The .rmg.json schema does not currently expose a pinned-hero
+                            field on player Spawn objects, so this setting round-trips in .oetgs
+                            but is not emitted into the generated template.
+                        </TextBlock>
+                        <ItemsControl x:Name="IcFixedHeroes" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Expander>
+
             </StackPanel>
         </ScrollViewer>
     </Border>

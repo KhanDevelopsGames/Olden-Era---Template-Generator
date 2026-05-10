@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using OldenEra.Generator.Models;
 using OldenEra.Generator.Services;
 
@@ -143,6 +145,38 @@ public class SettingsValidatorTests
         s.ZoneCfg.PlayerZoneCastles = 2;
         var result = SettingsValidator.Validate(s);
         Assert.Contains(result.Warnings, w => w.Contains("castle per zone"));
+    }
+
+    [Fact]
+    public void Warning_WhenAllHeroesOfAFactionAreBanned()
+    {
+        var s = ValidBaseline();
+        // Pick the first faction and ban every one of its heroes.
+        var faction = CommunityCatalog.Default.Factions.First();
+        var heroes = CommunityCatalog.Default.HeroesByFaction(faction.Id).ToList();
+        Assert.NotEmpty(heroes);
+        s.HeroSettings.HeroBans = heroes.Select(h => h.Id).ToList();
+
+        var result = SettingsValidator.Validate(s);
+        Assert.True(result.IsValid); // warning, not blocker
+        Assert.Contains(result.Warnings, w => w.Contains(faction.Name) && w.Contains("banned"));
+    }
+
+    [Fact]
+    public void Blocker_WhenFixedStartingHeroIsAlsoBanned()
+    {
+        var s = ValidBaseline();
+        var faction = CommunityCatalog.Default.Factions.First();
+        var hero = CommunityCatalog.Default.HeroesByFaction(faction.Id).First();
+        s.HeroSettings.HeroBans = new List<string> { hero.Id };
+        s.HeroSettings.FixedStartingHeroByFaction = new Dictionary<string, string?>
+        {
+            [faction.Id] = hero.Id,
+        };
+
+        var result = SettingsValidator.Validate(s);
+        Assert.False(result.IsValid);
+        Assert.Contains(result.Blockers, b => b.Contains(hero.Id) && b.Contains("ban"));
     }
 
     [Fact]

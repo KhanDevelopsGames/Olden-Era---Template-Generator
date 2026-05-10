@@ -122,6 +122,18 @@ namespace OldenEra.Generator.Services
                         template.GlobalBans.Items.Add(sid);
             }
 
+            // Hero bans — emitted as globalBans.heroes (schema confirmed in
+            // shipped Arcade.rmg.json: "globalBans": { "heroes": [ ... ] }).
+            if (settings.HeroSettings.HeroBans.Count > 0)
+            {
+                template.GlobalBans ??= new GlobalBans();
+                template.GlobalBans.Heroes ??= new List<string>();
+                foreach (var sid in settings.HeroSettings.HeroBans)
+                    if (!string.IsNullOrWhiteSpace(sid)
+                        && !template.GlobalBans.Heroes.Contains(sid))
+                        template.GlobalBans.Heroes.Add(sid);
+            }
+
             // Extra content count limits — appended as extra entries.
             if (settings.Content.ContentCountLimits.Count > 0)
             {

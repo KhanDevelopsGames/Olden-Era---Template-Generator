@@ -96,6 +96,37 @@ namespace OldenEra.Generator.Services
                 warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
             }
 
+            // Hero ban / fixed-hero validation.
+            var heroBans = settings.HeroSettings.HeroBans;
+            if (heroBans.Count > 0)
+            {
+                var bansSet = new HashSet<string>(heroBans, StringComparer.OrdinalIgnoreCase);
+                var catalog = CommunityCatalog.Default;
+                foreach (var faction in catalog.Factions)
+                {
+                    var heroes = catalog.HeroesByFaction(faction.Id).ToList();
+                    if (heroes.Count == 0) continue;
+                    if (heroes.All(h => bansSet.Contains(h.Id)))
+                    {
+                        warnings.Add($"⚠️ Every hero of faction \"{faction.Name}\" is banned. The game may fail to assign a starting hero to that faction.");
+                    }
+                }
+
+                // Pinned-hero-and-banned cross-check: blocker.
+                foreach (var kv in settings.HeroSettings.FixedStartingHeroByFaction)
+                {
+                    var fixedId = kv.Value;
+                    if (string.IsNullOrWhiteSpace(fixedId)) continue;
+                    if (bansSet.Contains(fixedId))
+                    {
+                        var factionName = catalog.Factions
+                            .FirstOrDefault(f => string.Equals(f.Id, kv.Key, StringComparison.OrdinalIgnoreCase))
+                            ?.Name ?? kv.Key;
+                        blockers.Add($"Pinned starting hero \"{fixedId}\" for faction \"{factionName}\" is also in the hero ban list. Remove it from one of the two.");
+                    }
+                }
+            }
+
             return new Result(blockers, warnings);
         }
 

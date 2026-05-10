@@ -79,6 +79,10 @@ public static class SettingsMapper
                 HeroCountMin = s.HeroCountMin,
                 HeroCountMax = s.HeroCountMax,
                 HeroCountIncrement = s.HeroCountIncrement,
+                HeroBans = s.HeroBans is null ? new() : new List<string>(s.HeroBans),
+                FixedStartingHeroByFaction = s.FixedStartingHeroByFaction is null
+                    ? new()
+                    : new Dictionary<string, string?>(s.FixedStartingHeroByFaction),
             },
             Topology = s.Topology,
             RandomPortals = s.RandomPortals,
@@ -181,6 +185,8 @@ public static class SettingsMapper
             HeroCountMin = g.HeroSettings.HeroCountMin,
             HeroCountMax = g.HeroSettings.HeroCountMax,
             HeroCountIncrement = g.HeroSettings.HeroCountIncrement,
+            HeroBans = new List<string>(g.HeroSettings.HeroBans),
+            FixedStartingHeroByFaction = new Dictionary<string, string?>(g.HeroSettings.FixedStartingHeroByFaction),
             Topology = g.Topology,
             RandomPortals = g.RandomPortals,
             MaxPortalConnections = g.MaxPortalConnections,
