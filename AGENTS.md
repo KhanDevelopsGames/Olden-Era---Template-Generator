@@ -193,6 +193,16 @@ Rules:
 - Do not edit `release.yml` as part of a version bump unless the workflow itself needs a fix; keep release-mechanism changes in their own PR.
 - The `workflow_dispatch` trigger exists for re-runs and accepts a `tag` input — use it only when re-publishing an already-pushed tag, not as a substitute for tagging.
 
+## UI text sourcing
+
+When writing or renaming UI labels and hints across the Web (`OldenEra.Web/Components/*.razor`) and WPF (`OldenEra.TemplateEditor/Views/*.xaml`) panels, follow these rules:
+
+- **Player-facing terms** (heroes, factions, skills, win conditions, faction laws, astrology, gladiator arena, tournament): match the in-game label or the Olden Era wiki. Do not invent synonyms. When in doubt, copy the game's tooltip wording verbatim.
+- **Template-author terms** (guard randomization, content pools, tiers, building presets, neutral zone counts, weekly guard increment, etc.): no canonical source exists. Write plain-English hints that describe what the slider/toggle does. Do not invent new names for the underlying concept; only explain it.
+- **Reviewer flag:** any new player-facing string added without verifying the in-game wording must be marked with `<!-- TODO: verify wording against in-game tooltip -->` (Razor) or an equivalent XAML comment. Do not merge with TODOs unresolved when shipping a release.
+
+The Web and WPF labels must stay in sync. After renaming a label in one host, re-grep the other host for the old text and update it (e.g. `grep -RIn "old label" src/`).
+
 ## Debugging Blazor errors
 
 The web app's "An unhandled error has occurred. Reload" banner is a generic placeholder. The actual exception is logged to the **browser DevTools console**, not the `dotnet run` terminal. When users report errors:
