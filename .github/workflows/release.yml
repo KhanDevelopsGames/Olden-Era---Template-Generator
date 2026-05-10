@@ -35,15 +35,15 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Publish WPF editor (win-x64, self-contained)
-        run: dotnet publish src/OldenEra.TemplateEditor/OldenEra.TemplateEditor.csproj -c Release -r win-x64 -o publish
+      - name: Publish WPF editor (win-x64, self-contained, single-file)
+        run: dotnet publish src/OldenEra.TemplateEditor/OldenEra.TemplateEditor.csproj -c Release -r win-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
 
-      - name: Zip published output
+      - name: Rename executable
         shell: pwsh
         run: |
-          $zip = "OldenEraTemplateGenerator-${{ steps.tag.outputs.name }}-win-x64.zip"
-          Compress-Archive -Path publish/* -DestinationPath $zip
-          "ASSET=$zip" | Out-File -FilePath $env:GITHUB_ENV -Append
+          $exe = "OldenEraTemplateGenerator-${{ steps.tag.outputs.name }}-win-x64.exe"
+          Move-Item publish/OldenEra.TemplateEditor.exe $exe
+          "ASSET=$exe" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
