@@ -169,6 +169,29 @@ If you ever see `System.DllNotFoundException: libSkiaSharp` at runtime in the br
 
 A managed-only build will still produce a deployable site, but every Skia API call throws on first use. Always exercise the actual native call path before declaring web changes done.
 
+## Cutting a release
+
+Releases are produced by `.github/workflows/release.yml` and are triggered by pushing a `v*` tag. The workflow runs on `windows-latest`, publishes the WPF editor as a self-contained single-file `win-x64` exe, zips it as `OldenEraTemplateGenerator-<tag>-win-x64.zip`, and creates a GitHub Release with auto-generated notes.
+
+To cut a release:
+
+1. Bump `<Version>`, `<AssemblyVersion>`, and `<FileVersion>` in `Olden Era - Template Editor/Olden Era - Template Editor.csproj` to the new `X.Y.Z`. Keep all three in sync. `AssemblyVersion`/`FileVersion` use the four-part `X.Y.Z.0` form.
+2. Commit on `main`: `chore: bump version to vX.Y.Z`.
+3. Tag the commit and push:
+   ```bash
+   git tag vX.Y.Z
+   git push origin main vX.Y.Z
+   ```
+4. Watch the workflow: `gh run watch $(gh run list --workflow=release.yml --limit 1 --json databaseId -q '.[0].databaseId')`.
+5. Verify the release: `gh release view vX.Y.Z`.
+
+Rules:
+
+- The tag MUST start with `v` and match the csproj version. `v0.6.0` ↔ `<Version>0.6.0</Version>`.
+- Never re-tag an existing version. If a release is broken, bump the patch (`v0.6.1`) instead of force-pushing the tag.
+- Do not edit `release.yml` as part of a version bump unless the workflow itself needs a fix; keep release-mechanism changes in their own PR.
+- The `workflow_dispatch` trigger exists for re-runs and accepts a `tag` input — use it only when re-publishing an already-pushed tag, not as a substitute for tagging.
+
 ## Debugging Blazor errors
 
 The web app's "An unhandled error has occurred. Reload" banner is a generic placeholder. The actual exception is logged to the **browser DevTools console**, not the `dotnet run` terminal. When users report errors:
