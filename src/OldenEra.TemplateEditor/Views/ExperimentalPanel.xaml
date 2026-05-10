@@ -289,9 +289,26 @@
                 <Expander Header="Content control" Margin="0,4,0,4">
                     <StackPanel Margin="8,4,0,8">
                         <TextBlock Style="{StaticResource HintText}">
-                            Ban specific objects. SIDs can be edited as a comma-separated list.
+                            Ban specific units / objects. Pick from the catalog (grouped by faction × tier)
+                            to append a SID to the list, or edit the comma-separated list directly.
                         </TextBlock>
-                        <Label Content="Banned object SIDs (comma-separated)" Padding="5,2"/>
+                        <Label Content="Pick unit to ban (catalog)" Padding="5,2"/>
+                        <ComboBox x:Name="CmbBanUnitPicker"
+                                  IsEditable="False"
+                                  DisplayMemberPath="Display"
+                                  SelectedValuePath="Id"
+                                  SelectionChanged="CmbBanUnitPicker_SelectionChanged">
+                            <ComboBox.GroupStyle>
+                                <GroupStyle>
+                                    <GroupStyle.HeaderTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Margin="2,4,0,2"/>
+                                        </DataTemplate>
+                                    </GroupStyle.HeaderTemplate>
+                                </GroupStyle>
+                            </ComboBox.GroupStyle>
+                        </ComboBox>
+                        <Label Content="Banned object SIDs (comma-separated)" Padding="5,2" Margin="0,6,0,0"/>
                         <TextBox x:Name="TxtGlobalBans" AcceptsReturn="False" TextWrapping="Wrap" MinHeight="60" />
                         <TextBlock Style="{StaticResource HintText}" Margin="0,8,0,0">
                             Per-player count limits: one entry per line in the form
