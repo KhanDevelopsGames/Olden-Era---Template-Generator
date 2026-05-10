@@ -253,6 +253,20 @@ namespace Olden_Era___Template_Editor
             if (IsInitialized) TxtWindowTitle.Text = full;
         }
 
+        private void LstNav_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (PnlMap is null || PnlHeroes is null || PnlTopology is null
+                || PnlZones is null || PnlGameRules is null) return;
+            if (LstNav.SelectedItem is not ListBoxItem item) return;
+
+            var tag = item.Tag as string;
+            PnlMap.Visibility        = tag == "Map"           ? Visibility.Visible : Visibility.Collapsed;
+            PnlHeroes.Visibility     = tag == "Heroes"        ? Visibility.Visible : Visibility.Collapsed;
+            PnlTopology.Visibility   = tag == "Topology"      ? Visibility.Visible : Visibility.Collapsed;
+            PnlZones.Visibility      = tag == "Zones"         ? Visibility.Visible : Visibility.Collapsed;
+            PnlGameRules.Visibility  = tag == "WinConditions" ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (e.ClickCount == 2)

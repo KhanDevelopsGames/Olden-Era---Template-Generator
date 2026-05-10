@@ -12,8 +12,10 @@
         ResizeMode="CanResize"
         WindowStartupLocation="CenterScreen"
         StateChanged="Window_StateChanged"
-        Background="#1A1510"
-        FontFamily="Segoe UI, Arial, sans-serif">
+        Background="{StaticResource OeBgBrush}"
+        Foreground="{StaticResource OeTextBrush}"
+        FontFamily="{StaticResource OeFont}"
+        FontSize="13">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="32"
@@ -42,214 +44,213 @@
         </Style>
     </Window.Resources>
 
-    <!-- Outer border gives the window its themed frame -->
-    <Border BorderBrush="{StaticResource BrushBorder}" BorderThickness="1">
+    <!-- Outer border gives the window its themed frame. -->
+    <Border BorderBrush="{StaticResource OeBorderBrush}" BorderThickness="1">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="32"/>    <!-- custom title bar -->
-                <RowDefinition Height="1"/>     <!-- gold divider -->
                 <RowDefinition Height="*"/>     <!-- page content -->
             </Grid.RowDefinitions>
 
-            <!-- ════════ CUSTOM TITLE BAR ══════════════════════════════ -->
-            <Grid Grid.Row="0" Background="#0F0D09">
-                <!-- Icon + title (drag region) -->
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0"
+            <!-- Custom title bar -->
+            <Grid Grid.Row="0" Background="{StaticResource OeSurface1Brush}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0,0,0"
                             MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-                    <Image Source="pack://application:,,,/favicon.ico" Width="18" Height="18"
-                           VerticalAlignment="Center" Margin="0,0,8,0"
+                    <Image Source="pack://application:,,,/favicon.ico" Width="16" Height="16"
+                           VerticalAlignment="Center" Margin="0,0,10,0"
                            RenderOptions.BitmapScalingMode="HighQuality"/>
                     <TextBlock x:Name="TxtWindowTitle"
-                               FontSize="12" FontWeight="SemiBold"
-                               Foreground="{StaticResource BrushText}"
+                               FontSize="13" FontWeight="SemiBold"
+                               Foreground="{StaticResource OeTextBrush}"
                                VerticalAlignment="Center"/>
                 </StackPanel>
-                <!-- Caption buttons -->
+
+                <!-- Header actions: ghost-styled Open/Save buttons + caption buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
-                    <Button Content="🗕" Style="{StaticResource TitleBarButton}"
-                            ToolTip="Minimize" Click="BtnMinimize_Click"/>
-                    <Button x:Name="BtnMaximize" Content="🗖" Style="{StaticResource TitleBarButton}"
-                            ToolTip="Maximize" Click="BtnMaximize_Click"/>
-                    <Button Content="✕" Style="{StaticResource TitleBarCloseButton}"
-                            ToolTip="Close" Click="BtnClose_Click"/>
+                    <Button Content="New" Click="BtnNew_Click" Style="{StaticResource OeGhostButton}" ToolTip="Reset settings (Ctrl+N)"/>
+                    <Button Content="Open…" Click="BtnOpen_Click" Style="{StaticResource OeGhostButton}" ToolTip="Open settings (Ctrl+O)"/>
+                    <Button Content="Save" Click="BtnSave_Click" Style="{StaticResource OeGhostButton}" ToolTip="Save settings (Ctrl+S)"/>
+                    <Button Content="Save as…" Click="BtnSaveAs_Click" Style="{StaticResource OeGhostButton}" ToolTip="Save settings as (Ctrl+Shift+S)" Margin="0,0,8,0"/>
+                    <Button Content="—" Style="{StaticResource TitleBarButton}" ToolTip="Minimize" Click="BtnMinimize_Click"/>
+                    <Button x:Name="BtnMaximize" Content="▢" Style="{StaticResource TitleBarButton}" ToolTip="Maximize" Click="BtnMaximize_Click"/>
+                    <Button Content="✕" Style="{StaticResource TitleBarCloseButton}" ToolTip="Close" Click="BtnClose_Click"/>
                 </StackPanel>
             </Grid>
 
-            <!-- Gold divider line under title bar -->
-            <Rectangle Grid.Row="1" Fill="{StaticResource BrushBorder}"/>
-
-            <!-- ════════ PAGE CONTENT ═══════════════════════════════════ -->
-            <Grid Grid.Row="2" Margin="14,8,14,12">
+            <!-- Page content: 220px nav | 1fr settings | 320px preview, with WIP banner above. -->
+            <Grid Grid.Row="1" Margin="20,16,20,16">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>  <!-- toolbar -->
-                    <RowDefinition Height="6"/>
                     <RowDefinition Height="Auto"/>  <!-- WIP warning -->
-                    <RowDefinition Height="6"/>
-                    <RowDefinition Height="Auto"/>  <!-- thin divider -->
-                    <RowDefinition Height="6"/>
-                    <RowDefinition Height="*"/>     <!-- main content -->
+                    <RowDefinition Height="Auto"/>  <!-- spacer -->
+                    <RowDefinition Height="*"/>     <!-- shell -->
                 </Grid.RowDefinitions>
 
-        <!-- ════════ TOOLBAR ══════════════════════════════════════════ -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Content="📄  Reset Settings"      Margin="0,0,6,0" Click="BtnNew_Click"    Style="{StaticResource ToolbarButton}" ToolTip="New (Ctrl+N)"/>
-            <Button Content="📂  Open Settings"      Margin="0,0,6,0" Click="BtnOpen_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Open (Ctrl+O)"/>
-            <Button Content="💾  Save Settings"      Margin="0,0,6,0" Click="BtnSave_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Save (Ctrl+S)"/>
-            <Button Content="💾  Save Settings As"   Margin="0,0,0,0" Click="BtnSaveAs_Click" Style="{StaticResource ToolbarButton}" ToolTip="Save As (Ctrl+Shift+S)"/>
-                </StackPanel>
-                <!-- ════════ WIP WARNING ═══════════════════════════════════════ -->
-        <Border Grid.Row="2"
-                Background="{StaticResource BrushWarnBg}"
-                BorderBrush="{StaticResource BrushWarnBorder}"
-                BorderThickness="1" CornerRadius="3"
-                Padding="10,7">
-            <StackPanel Orientation="Vertical">
-                <TextBlock x:Name="TxtWipWarning"
-                           Foreground="{StaticResource BrushWarnText}"
-                           FontSize="11" TextWrapping="Wrap"/>
-                <TextBlock Foreground="{StaticResource BrushWarnText}"
-                           FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0">
-                    Prefer the browser?
-                    <Hyperlink x:Name="LinkWebVersion"
-                               NavigateUri="https://rannes.github.io/Olden-Era---Template-Generator/"
-                               RequestNavigate="LinkWebVersion_RequestNavigate">Try the web version</Hyperlink>.
-                </TextBlock>
-            </StackPanel>
-        </Border>
-        <!-- ════════ HEADER ════════════════════════════════════════════ -->
-        <Rectangle Grid.Row="4" Height="1" Fill="{StaticResource BrushBorder}" VerticalAlignment="Bottom"/>
-
-        <!-- ════════ MAIN CONTENT — two columns + preview ═════════════════════ -->
-        <Grid Grid.Row="6">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="260"/>
-            </Grid.ColumnDefinitions>
-
-            <TabControl x:Name="MainTabs"
-                        Grid.Column="0"
-                        Grid.ColumnSpan="3"
-                        VerticalContentAlignment="Stretch">
-                <TabItem Header="Rules">
-                <Grid Margin="0,8,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="10"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>  <!-- 1st row -->
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>  <!-- 2nd row -->
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="*"/>     <!-- 3rd row -->
-                </Grid.RowDefinitions>
-
-                <!-- TEMPLATE -->
-                <views:MapPanel Grid.Row="0" Grid.Column="0" x:Name="PnlMap"/>
-
-                <!-- HEROES -->
-                <views:HeroesPanel Grid.Row="0" Grid.Column="2" x:Name="PnlHeroes"/>
-
-                <views:WinConditionsPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" x:Name="PnlGameRules"/>
-                    </Grid>
-                </TabItem>
-
-            <TabItem Header="Layout &amp; Zones">
-            <Grid Margin="0,8,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>     <!-- Layout -->
-                    <RowDefinition Height="6"/>     
-                    <RowDefinition Height="*"/>     <!-- Zone Configuration -->
-                </Grid.RowDefinitions>
-
-                <!-- TOPOLOGY -->
-                <views:TopologyPanel Grid.Row="0" x:Name="PnlTopology"/>
-
-                <!-- ZONE CONFIGURATION -->
-                <views:ZonesPanel Grid.Row="2" x:Name="PnlZones"/>
-            </Grid>
-        </TabItem>
-    </TabControl>
-
-            <!-- ─── PREVIEW COLUMN ───────────────────────────────────── -->
-            <Grid Grid.Column="4">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>   <!-- generate button -->
-                    <RowDefinition Height="6"/>
-                    <RowDefinition Height="Auto"/>   <!-- hints / validation -->
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="*"/>      <!-- image -->
-                    <RowDefinition Height="8"/>
-                    <RowDefinition Height="Auto"/>   <!-- outdated warning -->
-                    <RowDefinition Height="6"/>
-                    <RowDefinition Height="Auto"/>   <!-- show preview checkbox -->
-                    <RowDefinition Height="6"/>
-                    <RowDefinition Height="Auto"/>   <!-- save button -->
-                </Grid.RowDefinitions>
-
-                <Button Grid.Row="0"
-                        x:Name="BtnPreview"
-                        Content="⚔  Generate Template"
-                        Style="{StaticResource GenerateButton}"
-                        Click="BtnPreview_Click"/>
-
-                <TextBlock Grid.Row="2"
-                           x:Name="TxtValidation"
-                           Foreground="{StaticResource BrushError}"
-                           FontSize="12" TextWrapping="Wrap"
-                           Visibility="Collapsed"
-                           HorizontalAlignment="Stretch" TextAlignment="Center"/>
-
-                <Border Grid.Row="4"
-                        BorderThickness="2"
-                        CornerRadius="4"
-                        BorderBrush="{StaticResource BrushBorder}"
-                        Background="#1A1410">
-                    <Image x:Name="ImgPreview"
-                           Stretch="Uniform"
-                           RenderOptions.BitmapScalingMode="HighQuality"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"/>
+                <!-- WIP warning: amber left bar, surface bg, no decorative border. -->
+                <Border Grid.Row="0"
+                        Background="{StaticResource OeWarnBgBrush}"
+                        BorderBrush="{StaticResource OeAccentBrush}"
+                        BorderThickness="3,0,0,0"
+                        Padding="14,10"
+                        Margin="0,0,0,16">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock x:Name="TxtWipWarning"
+                                   Foreground="{StaticResource OeTextBrush}"
+                                   FontSize="13" TextWrapping="Wrap"/>
+                        <TextBlock Foreground="{StaticResource OeTextDimBrush}"
+                                   FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0">
+                            Prefer the browser?
+                            <Hyperlink x:Name="LinkWebVersion"
+                                       NavigateUri="https://rannes.github.io/Olden-Era---Template-Generator/"
+                                       Foreground="{StaticResource OeAccentBrush}"
+                                       RequestNavigate="LinkWebVersion_RequestNavigate">Try the web version</Hyperlink>.
+                        </TextBlock>
+                    </StackPanel>
                 </Border>
 
-                <CheckBox Grid.Row="8"
-                          x:Name="ChkSavePreviewImage"
-                          Content="Show preview in-game"
-                          IsChecked="True"
-                          Visibility="Visible"
-                          Foreground="{StaticResource BrushText}"
-                          HorizontalAlignment="Left"/>
+                <!-- Three-column shell: nav | content | preview -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="220"/>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="24"/>
+                        <ColumnDefinition Width="320"/>
+                    </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Row="6"
-                           x:Name="TxtOutdatedWarning"
-                           Foreground="{StaticResource BrushError}"
-                           FontSize="12" TextWrapping="Wrap"
-                           Visibility="Hidden"
-                           HorizontalAlignment="Stretch" TextAlignment="Center"
-                           Text="⚠️ Settings have changed — generate a new template before saving to reflect the latest changes."/>
+                    <!-- Section nav: ListBox driving which panel is visible. -->
+                    <ListBox Grid.Column="0"
+                             x:Name="LstNav"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             Focusable="True"
+                             KeyboardNavigation.TabNavigation="Once"
+                             SelectionChanged="LstNav_SelectionChanged">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Foreground" Value="{StaticResource OeTextDimBrush}"/>
+                                <Setter Property="FontFamily" Value="{StaticResource OeFont}"/>
+                                <Setter Property="FontSize"   Value="13"/>
+                                <Setter Property="Padding"    Value="12,8"/>
+                                <Setter Property="Margin"     Value="0,1"/>
+                                <Setter Property="Cursor"     Value="Hand"/>
+                                <Setter Property="BorderThickness" Value="3,0,0,0"/>
+                                <Setter Property="BorderBrush"     Value="Transparent"/>
+                                <Setter Property="Background"      Value="Transparent"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border x:Name="Bd"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="{StaticResource OeSurface2Brush}"/>
+                                                    <Setter Property="Foreground"                  Value="{StaticResource OeTextBrush}"/>
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background"  Value="{StaticResource OeSurface2Brush}"/>
+                                                    <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource OeAccentBrush}"/>
+                                                    <Setter Property="Foreground"                  Value="{StaticResource OeTextBrush}"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBoxItem Content="Map"            Tag="Map"     IsSelected="True"/>
+                        <ListBoxItem Content="Heroes"         Tag="Heroes"/>
+                        <ListBoxItem Content="Topology"       Tag="Topology"/>
+                        <ListBoxItem Content="Zones"          Tag="Zones"/>
+                        <ListBoxItem Content="Win Conditions" Tag="WinConditions"/>
+                    </ListBox>
 
-                <Button Grid.Row="10"
-                        x:Name="BtnSaveGenerated"
-                        Content="💾  Save Template"
-                        Style="{StaticResource GenerateButton}"
-                        Visibility="Visible"
-                        IsEnabled="False"
-                        Click="BtnSaveGenerated_Click"/>
+                    <!-- Content column: each panel always exists for code-behind compatibility,
+                         but only one is Visible at a time. LstNav_SelectionChanged toggles them. -->
+                    <Grid Grid.Column="2">
+                        <views:MapPanel             x:Name="PnlMap"        Visibility="Visible"/>
+                        <views:HeroesPanel          x:Name="PnlHeroes"     Visibility="Collapsed"/>
+                        <views:TopologyPanel        x:Name="PnlTopology"   Visibility="Collapsed"/>
+                        <views:ZonesPanel           x:Name="PnlZones"      Visibility="Collapsed"/>
+                        <views:WinConditionsPanel   x:Name="PnlGameRules"  Visibility="Collapsed"/>
+                    </Grid>
+
+                    <!-- Preview column. -->
+                    <Grid Grid.Column="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>   <!-- generate button -->
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="Auto"/>   <!-- validation -->
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="*"/>      <!-- image -->
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="Auto"/>   <!-- outdated warning -->
+                            <RowDefinition Height="6"/>
+                            <RowDefinition Height="Auto"/>   <!-- show preview checkbox -->
+                            <RowDefinition Height="8"/>
+                            <RowDefinition Height="Auto"/>   <!-- save button -->
+                        </Grid.RowDefinitions>
+
+                        <Button Grid.Row="0"
+                                x:Name="BtnPreview"
+                                Content="Generate Template"
+                                Style="{StaticResource GenerateButton}"
+                                HorizontalAlignment="Stretch"
+                                Click="BtnPreview_Click"/>
+
+                        <TextBlock Grid.Row="2"
+                                   x:Name="TxtValidation"
+                                   Foreground="{StaticResource OeErrorBrush}"
+                                   FontSize="12" TextWrapping="Wrap"
+                                   Visibility="Collapsed"
+                                   HorizontalAlignment="Stretch" TextAlignment="Center"/>
+
+                        <Border Grid.Row="4"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                BorderBrush="{StaticResource OeBorderBrush}"
+                                Background="{StaticResource OeSurface1Brush}"
+                                Padding="6">
+                            <Image x:Name="ImgPreview"
+                                   Stretch="Uniform"
+                                   RenderOptions.BitmapScalingMode="HighQuality"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"/>
+                        </Border>
+
+                        <TextBlock Grid.Row="6"
+                                   x:Name="TxtOutdatedWarning"
+                                   Foreground="{StaticResource OeErrorBrush}"
+                                   FontSize="12" TextWrapping="Wrap"
+                                   Visibility="Hidden"
+                                   HorizontalAlignment="Stretch" TextAlignment="Center"
+                                   Text="Settings changed — regenerate before saving."/>
+
+                        <CheckBox Grid.Row="8"
+                                  x:Name="ChkSavePreviewImage"
+                                  Content="Show preview in-game"
+                                  IsChecked="True"
+                                  HorizontalAlignment="Left"/>
+
+                        <Button Grid.Row="10"
+                                x:Name="BtnSaveGenerated"
+                                Content="Save Template"
+                                Style="{StaticResource GenerateButton}"
+                                HorizontalAlignment="Stretch"
+                                IsEnabled="False"
+                                Click="BtnSaveGenerated_Click"/>
+                    </Grid>
+                </Grid>
+
+                <!-- Hidden combos still required by code-behind. -->
+                <ComboBox x:Name="CmbGameMode" Visibility="Collapsed"/>
+                <TextBlock x:Name="TxtAppTitle" Visibility="Collapsed"/>
             </Grid>
-
         </Grid>
-
-                    <!-- Hidden combos required by code-behind -->
-        <ComboBox Grid.Row="4" x:Name="CmbGameMode" Visibility="Collapsed"/>
-        <TextBlock Grid.Row="4" x:Name="TxtAppTitle" Visibility="Collapsed"/>
-
-
-
-            </Grid>  <!-- end page content grid -->
-        </Grid>      <!-- end outer row grid -->
-    </Border>        <!-- end window frame border -->
+    </Border>
 </Window>
