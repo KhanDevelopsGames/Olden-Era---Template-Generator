@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Resource Include="favicon.ico" />
+    <Resource Include="icon_discord.png" />
   </ItemGroup>
 
 </Project>

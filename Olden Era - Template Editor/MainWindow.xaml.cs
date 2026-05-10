@@ -2,6 +2,7 @@
 using Olden_Era___Template_Editor.Models;
 using Olden_Era___Template_Editor.Services;
 using OldenEraTemplateEditor.Models;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -16,6 +17,7 @@ namespace Olden_Era___Template_Editor
     {
         private const string GitHubApiLatestRelease = "https://api.github.com/repos/KhanDevelopsGames/Olden-Era---Template-Generator/releases/latest";
         private const string GitHubReleasesPage     = "https://github.com/KhanDevelopsGames/Olden-Era---Template-Generator/releases";
+        private const string DiscordServer = "https://discord.gg/UqT8KshsxW";
         private const int SimpleModeMaxZones = 32;
         private const int AdvancedModeMaxZones = 32;
 
@@ -1137,6 +1139,15 @@ namespace Olden_Era___Template_Editor
                 ImgPreview.Visibility = Visibility.Collapsed;
                 lblNoPreview.Visibility = Visibility.Visible;
             }
+        }
+
+        private void BtnDiscord_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = DiscordServer,
+                UseShellExecute = true
+            });
         }
     }
 }
