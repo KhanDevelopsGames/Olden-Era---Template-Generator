@@ -5,15 +5,16 @@
     <div class="oe-section-header">Topology</div>
     <p class="oe-hint">How player and neutral zones are arranged on the map.</p>
 
-    <div class="oe-topo-grid">
+    <div class="oe-topo-grid" role="radiogroup" aria-label="Topology">
         @foreach (var (topo, label, svg) in Tiles)
         {
             var isSelected = Settings.Topology == topo;
             <button type="button"
                     class="oe-topo-tile @(isSelected ? "selected" : "")"
-                    @onclick="() => Select(topo)"
-                    aria-pressed="@isSelected.ToString().ToLower()">
-                <span class="oe-topo-svg">@svg</span>
+                    role="radio"
+                    aria-checked="@isSelected.ToString().ToLower()"
+                    @onclick="() => Select(topo)">
+                <span class="oe-topo-svg" aria-hidden="true">@svg</span>
                 <span class="oe-topo-label">@label</span>
             </button>
         }

@@ -42,6 +42,9 @@
 @code {
     [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
     [Parameter] public bool ExperimentalMapSizes { get; set; }
+    // Separate from OnChanged so the parent can react to the toggle (e.g. clamp
+    // Settings.MapSize back to a non-experimental value when turning off) before
+    // the generic OnChanged fires.
     [Parameter] public EventCallback<bool> ExperimentalMapSizesChanged { get; set; }
     [Parameter] public EventCallback OnChanged { get; set; }
 

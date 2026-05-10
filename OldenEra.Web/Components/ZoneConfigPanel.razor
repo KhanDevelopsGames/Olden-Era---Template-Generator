@@ -17,9 +17,7 @@
                ValueChanged="@(v => { Settings.ZoneCfg.NeutralZoneCount = (int)v; NotifyChanged(); })" />
     @if (AdvancedMode)
     {
-        <div class="oe-hint" style="margin-left:240px;margin-top:-4px;">
-            Set per-tier counts below.
-        </div>
+        <div class="oe-row-hint">Set per-tier counts below.</div>
     }
 
     <SliderRow Label="Castles / Player Zone" WideLabel="true"

@@ -18,9 +18,10 @@
     --oe-accent:        #F59E0B;
     --oe-accent-hi:     #FBBF24;
     --oe-accent-dim:    #B45309;
-    --oe-success:       #10B981;
     --oe-error:         #EF4444;
     --oe-warn-bg:       #2A1F0A;
+    /* Ink color used on amber surfaces (primary button text, checkbox tick). */
+    --oe-on-accent:     #0B0D10;
 }
 
 html, body {
@@ -104,7 +105,7 @@ code { color: var(--oe-accent); background: var(--oe-surface-2); padding: 0 4px;
 }
 
 .oe-error {
-    background: rgba(239, 68, 68, 0.08);
+    background: color-mix(in srgb, var(--oe-error) 8%, transparent);
     color: var(--oe-text);
     border: none;
     border-left: 3px solid var(--oe-error);
@@ -244,6 +245,14 @@ code { color: var(--oe-accent); background: var(--oe-surface-2); padding: 0 4px;
 .oe-row.disabled input[type="range"] {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* Hint paragraph aligned under a wide-label .oe-row's slider track. */
+.oe-row-hint {
+    margin: -4px 0 8px 230px;
+    font-size: 12px;
+    color: var(--oe-text-dim);
+    line-height: 1.4;
 }
 
 .oe-stacked {
@@ -448,7 +457,7 @@ input[type="range"]:focus-visible::-moz-range-thumb {
     top: 1px;
     width: 5px;
     height: 9px;
-    border: solid #0B0D10;
+    border: solid var(--oe-on-accent);
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
 }
@@ -500,7 +509,7 @@ input[type="range"]:focus-visible::-moz-range-thumb {
 }
 .oe-btn.primary {
     background: var(--oe-accent);
-    color: #0B0D10;
+    color: var(--oe-on-accent);
     border-color: var(--oe-accent);
     font-weight: 600;
 }
@@ -582,7 +591,7 @@ input[type="range"]:focus-visible::-moz-range-thumb {
 #blazor-error-ui .dismiss { cursor: pointer; position: absolute; right: 0.75rem; top: 0.5rem; }
 
 .blazor-error-boundary {
-    background: rgba(239, 68, 68, 0.15);
+    background: color-mix(in srgb, var(--oe-error) 15%, transparent);
     padding: 1rem;
     color: var(--oe-text);
     border: 1px solid var(--oe-error);
