@@ -148,6 +148,19 @@ The solution contains four projects:
 - `Olden Era - Template Editor/` — WPF desktop app. Builds and runs on Windows. (`Directory.Build.props` enables `EnableWindowsTargeting=true` so the project compiles on macOS/Linux for cross-checking; tests still need Windows to execute.)
 - `Olden Era - Template Editor.Tests/` — xUnit tests. Currently `net10.0-windows`; runs on Windows only.
 
+### End-to-end (web) tests
+
+Playwright smoke tests live in `tests/e2e/`. They boot `OldenEra.Web` and exercise Generate plus the download buttons. Run locally:
+
+```bash
+cd tests/e2e
+npm install
+npx playwright install --with-deps chromium
+npm test
+```
+
+CI runs them on Ubuntu via `.github/workflows/e2e.yml`.
+
 ---
 
 ## Deployment
