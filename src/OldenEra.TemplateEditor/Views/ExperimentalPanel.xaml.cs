@@ -1,14 +1,22 @@
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using OldenEra.Generator.Models.Unfrozen;
+using OldenEra.Generator.Services;
 
 namespace OldenEra.TemplateEditor.Views;
 
 public partial class ExperimentalPanel : UserControl
 {
+    /// <summary>Row in the catalog-driven ban-unit ComboBox.</summary>
+    public sealed record BanUnitRow(string Id, string Display, string Faction);
+
     public ExperimentalPanel()
     {
         InitializeComponent();
+        PopulateBanUnitPicker();
 
         // Populate building-preset combos. Index 0 = "(default)".
         var presets = new System.Collections.Generic.List<string> { "(default)" };
@@ -57,5 +65,50 @@ public partial class ExperimentalPanel : UserControl
         bool on = ChkSingleHero.IsChecked == true;
         ChkHeroHireBan.IsEnabled = !on;
         if (on) ChkHeroHireBan.IsChecked = false;
+    }
+
+    /// <summary>
+    /// Populates the unit-ban picker with rows grouped by faction, sorted by
+    /// (tier, name). Selecting a row appends its unit id to TxtGlobalBans.
+    /// </summary>
+    private void PopulateBanUnitPicker()
+    {
+        var catalog = CommunityCatalog.Default;
+        var factionNames = catalog.Factions.ToDictionary(f => f.Id, f => f.Name,
+            System.StringComparer.OrdinalIgnoreCase);
+
+        var rows = catalog.Units
+            .OrderBy(u => u.Faction)
+            .ThenBy(u => u.Tier)
+            .ThenBy(u => u.Name, System.StringComparer.OrdinalIgnoreCase)
+            .Select(u => new BanUnitRow(
+                u.Id,
+                $"T{u.Tier}. {u.Name}" + (string.IsNullOrEmpty(u.Variant) ? "" : $" ({u.Variant})"),
+                factionNames.TryGetValue(u.Faction, out var n) ? n : u.Faction))
+            .ToList();
+
+        var view = CollectionViewSource.GetDefaultView(rows);
+        view.GroupDescriptions.Clear();
+        view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(BanUnitRow.Faction)));
+        CmbBanUnitPicker.ItemsSource = view;
+    }
+
+    private void CmbBanUnitPicker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (CmbBanUnitPicker.SelectedItem is not BanUnitRow row) return;
+        var current = (TxtGlobalBans.Text ?? string.Empty).Trim();
+        var existing = current
+            .Split(new[] { ',' }, System.StringSplitOptions.RemoveEmptyEntries)
+            .Select(s => s.Trim())
+            .Where(s => s.Length > 0)
+            .ToList();
+        if (!existing.Contains(row.Id, System.StringComparer.OrdinalIgnoreCase))
+        {
+            existing.Add(row.Id);
+            TxtGlobalBans.Text = string.Join(", ", existing);
+        }
+        // Reset selection so the same item can be re-picked next time the user
+        // clears it from the textbox.
+        CmbBanUnitPicker.SelectedIndex = -1;
     }
 }

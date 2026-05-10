@@ -73,20 +73,7 @@
     <div class="oe-hint">
         Ban specific objects, or cap how many of an object each player can have.
     </div>
-    <div class="oe-stacked">
-        <label class="oe-label">Banned objects (@Settings.Content.GlobalBans.Count selected)</label>
-        <div class="oe-ban-chips">
-            @foreach (var sid in KnownValues.ObjectSids)
-            {
-                bool banned = Settings.Content.GlobalBans.Contains(sid);
-                <button type="button"
-                        class="@($"oe-ban-chip{(banned ? " selected" : "")}")"
-                        @onclick="@(() => ToggleBan(sid))">
-                    @sid
-                </button>
-            }
-        </div>
-    </div>
+    <UnitBanGrid Settings="Settings" OnChanged="OnChanged" />
 
     <div class="oe-stacked">
         <label class="oe-label">Per-player count limits</label>
@@ -116,13 +103,6 @@
     [Parameter] public EventCallback OnChanged { get; set; }
 
     private Task NotifyChanged() => OnChanged.InvokeAsync();
-
-    private async Task ToggleBan(string sid)
-    {
-        if (!Settings.Content.GlobalBans.Remove(sid))
-            Settings.Content.GlobalBans.Add(sid);
-        await NotifyChanged();
-    }
 
     private async Task AddLimit()
     {

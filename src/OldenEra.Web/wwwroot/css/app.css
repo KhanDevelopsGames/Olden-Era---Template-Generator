@@ -299,6 +299,52 @@ code { color: var(--oe-accent); background: var(--oe-surface-2); padding: 0 4px;
     text-decoration: line-through;
 }
 
+/* ── Faction × tier ban grid ────────────────────────────── */
+.oe-faction-section {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--oe-border);
+}
+.oe-faction-section:first-of-type {
+    border-top: none;
+    padding-top: 0;
+}
+.oe-faction-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.oe-faction-name {
+    font-weight: 600;
+    color: var(--oe-text);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.oe-faction-shortcuts {
+    display: inline-flex;
+    gap: 6px;
+    font-size: 11px;
+}
+.oe-tier-row {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    align-items: start;
+    gap: 6px;
+    margin-bottom: 2px;
+}
+.oe-tier-label {
+    font-size: 11px;
+    color: var(--oe-text-dim);
+    line-height: 1.7;
+    text-align: right;
+}
+.oe-legacy-section .oe-faction-name {
+    color: #c47e2c;
+}
+
 /* ── Section panel ──────────────────────────────────────── */
 .oe-section {
     margin-bottom: 24px;

@@ -1,0 +1,145 @@
+@* Catalog-driven banned-units grid: faction × tier chips bound to GlobalBans. *@
+
+<div class="oe-stacked">
+    <label class="oe-label">Banned units (@Settings.Content.GlobalBans.Count selected)</label>
+
+    @foreach (var fg in FactionGroups)
+    {
+        <div class="oe-faction-section">
+            <div class="oe-faction-header">
+                <span class="oe-faction-name">@fg.FactionName</span>
+                <span class="oe-faction-shortcuts">
+                    <button type="button" class="oe-link-btn"
+                            @onclick="@(() => BanAllInTier(fg, 1))"
+                            title="Ban every tier-1 unit of @fg.FactionName">Ban T1</button>
+                    <button type="button" class="oe-link-btn"
+                            @onclick="@(() => BanAllInTier(fg, 7))"
+                            title="Ban every tier-7 unit of @fg.FactionName">Ban T7</button>
+                    <button type="button" class="oe-link-btn"
+                            @onclick="@(() => ClearFaction(fg))"
+                            title="Clear bans for @fg.FactionName">Clear</button>
+                </span>
+            </div>
+            @foreach (var tier in fg.Tiers)
+            {
+                <div class="oe-tier-row">
+                    <span class="oe-tier-label">T@(tier.Tier)</span>
+                    <div class="oe-ban-chips">
+                        @foreach (var unit in tier.Units)
+                        {
+                            bool banned = Settings.Content.GlobalBans.Contains(unit.Id);
+                            <button type="button"
+                                    class="@($"oe-ban-chip{(banned ? " selected" : "")}")"
+                                    title="@unit.Id"
+                                    @onclick="@(() => ToggleBan(unit.Id))">
+                                @unit.Name@(string.IsNullOrEmpty(unit.Variant) ? "" : $" ({unit.Variant})")
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (LegacyBans.Count > 0)
+    {
+        <div class="oe-faction-section oe-legacy-section">
+            <div class="oe-faction-header">
+                <span class="oe-faction-name">Legacy bans (not in catalog)</span>
+            </div>
+            <div class="oe-ban-chips">
+                @foreach (var sid in LegacyBans)
+                {
+                    <button type="button"
+                            class="oe-ban-chip selected"
+                            title="Click to remove"
+                            @onclick="@(() => ToggleBan(sid))">
+                        @sid
+                    </button>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private sealed record TierGroup(int Tier, List<UnitEntry> Units);
+    private sealed record FactionGroup(string FactionId, string FactionName, List<TierGroup> Tiers);
+
+    private List<FactionGroup> FactionGroups { get; set; } = new();
+    private HashSet<string> CatalogIds { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+    private List<string> LegacyBans => Settings.Content.GlobalBans
+        .Where(b => !CatalogIds.Contains(b))
+        .OrderBy(b => b, StringComparer.OrdinalIgnoreCase)
+        .ToList();
+
+    protected override void OnInitialized()
+    {
+        var catalog = CommunityCatalog.Default;
+        CatalogIds = catalog.Units.Select(u => u.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        // Build faction-id -> display-name map; fall back to id if absent.
+        var factionNames = catalog.Factions.ToDictionary(
+            f => f.Id, f => f.Name, StringComparer.OrdinalIgnoreCase);
+
+        // Use canonical faction order from the Factions table; append any
+        // stray faction ids that appear in units but not in the table.
+        var orderedFactionIds = catalog.Factions.Select(f => f.Id).ToList();
+        foreach (var stray in catalog.Units.Select(u => u.Faction).Distinct(StringComparer.OrdinalIgnoreCase))
+        {
+            if (!orderedFactionIds.Contains(stray, StringComparer.OrdinalIgnoreCase))
+                orderedFactionIds.Add(stray);
+        }
+
+        FactionGroups = new List<FactionGroup>();
+        foreach (var fid in orderedFactionIds)
+        {
+            var unitsInFaction = catalog.Units
+                .Where(u => string.Equals(u.Faction, fid, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            if (unitsInFaction.Count == 0) continue;
+
+            var tiers = unitsInFaction
+                .GroupBy(u => u.Tier)
+                .OrderBy(g => g.Key)
+                .Select(g => new TierGroup(
+                    g.Key,
+                    g.OrderBy(u => u.Name, StringComparer.OrdinalIgnoreCase).ToList()))
+                .ToList();
+
+            var displayName = factionNames.TryGetValue(fid, out var n) ? n : fid;
+            FactionGroups.Add(new FactionGroup(fid, displayName, tiers));
+        }
+    }
+
+    private Task NotifyChanged() => OnChanged.InvokeAsync();
+
+    private async Task ToggleBan(string sid)
+    {
+        if (!Settings.Content.GlobalBans.Remove(sid))
+            Settings.Content.GlobalBans.Add(sid);
+        await NotifyChanged();
+    }
+
+    private async Task BanAllInTier(FactionGroup fg, int tier)
+    {
+        var group = fg.Tiers.FirstOrDefault(t => t.Tier == tier);
+        if (group is null) return;
+        foreach (var u in group.Units)
+        {
+            if (!Settings.Content.GlobalBans.Contains(u.Id))
+                Settings.Content.GlobalBans.Add(u.Id);
+        }
+        await NotifyChanged();
+    }
+
+    private async Task ClearFaction(FactionGroup fg)
+    {
+        var ids = fg.Tiers.SelectMany(t => t.Units).Select(u => u.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        Settings.Content.GlobalBans.RemoveAll(b => ids.Contains(b));
+        await NotifyChanged();
+    }
+}
