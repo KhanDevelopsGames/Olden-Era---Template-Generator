@@ -8,14 +8,12 @@
                Min="25" Max="200" Step="25" Suffix="%"
                Value="Settings.FactionLawsExpPercent"
                ValueChanged="@(v => { Settings.FactionLawsExpPercent = (int)v; NotifyChanged(); })" />
-    @* TODO: verify wording against in-game tooltip *@
-    <div class="oe-hint">Adjusts the rate at which Faction Laws progress. 100% = standard pace.</div>
+    <div class="oe-hint">Scales Law Point gain used to unlock faction-wide passive upgrades.</div>
     <SliderRow Label="Astrology XP" WideLabel="true"
                Min="25" Max="200" Step="25" Suffix="%"
                Value="Settings.AstrologyExpPercent"
                ValueChanged="@(v => { Settings.AstrologyExpPercent = (int)v; NotifyChanged(); })" />
-    @* TODO: verify wording against in-game tooltip *@
-    <div class="oe-hint">Adjusts the rate at which Astrology progresses. 100% = standard pace.</div>
+    <div class="oe-hint">Scales Astrology Point gain used to unlock and upgrade neutral spells.</div>
 
     <div class="oe-row wide-label">
         <label class="oe-label">Primary win condition</label>

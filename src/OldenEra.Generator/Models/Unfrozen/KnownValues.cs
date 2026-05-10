@@ -54,19 +54,23 @@ namespace OldenEra.Generator.Models.Unfrozen
         [
             "Standard",
             "Lost Starting City",
-            //"Gladiator Arena",
+            "Gladiator Arena",
             "Hold City",
             "Tournament",
         ];
 
         /// <summary>
         /// displayWinCondition JSON values, aligned with <see cref="VictoryConditionLabels"/>.
+        /// win_condition_4 ("Gladiator Arena") is required because shipped templates
+        /// (Helltide, Symmetry) use it; without it the dropdown can't represent loaded
+        /// settings. The "Gladiator Arena" name is inferred from MainWindow code paths
+        /// that gate gladiator-arena rules on this id; verify against in-game text.
         /// </summary>
         public static readonly string[] VictoryConditionIds =
         [
             "win_condition_1",
             "win_condition_3",
-            //"win_condition_4",
+            "win_condition_4",
             "win_condition_5",
             "win_condition_6",
         ];
