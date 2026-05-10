@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 900" width="700" height="900">
+  <defs>
+    <linearGradient id="parch3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dec79a"/>
+      <stop offset="100%" stop-color="#a98a55"/>
+    </linearGradient>
+    <filter id="grain3"><feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="2" seed="5"/>
+      <feColorMatrix values="0 0 0 0 0.18  0 0 0 0 0.13  0 0 0 0 0.06  0 0 0 0.10 0"/>
+      <feComposite in2="SourceGraphic" operator="in"/></filter>
+    <radialGradient id="vignette3" cx="50%" cy="50%" r="65%">
+      <stop offset="60%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.35"/>
+    </radialGradient>
+    <linearGradient id="tokenFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a4a5e"/>
+      <stop offset="100%" stop-color="#1a242e"/>
+    </linearGradient>
+    <linearGradient id="tokenRing" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e6c878"/>
+      <stop offset="100%" stop-color="#8c6a2a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="700" height="900" fill="#0e1722"/>
+
+  <!-- Slim title bar -->
+  <rect x="0" y="0" width="700" height="64" fill="#0a121b"/>
+  <rect x="0" y="63" width="700" height="2" fill="#c89a3c"/>
+  <text x="350" y="42" text-anchor="middle"
+        font-family="'Cormorant Garamond',Georgia,serif" font-size="28" font-weight="600"
+        fill="#f0dcaa" letter-spacing="0.5">Cerb — Template 1</text>
+
+  <!-- Map area -->
+  <g transform="translate(35,84)">
+    <rect width="630" height="630" rx="10" fill="url(#parch3)"/>
+    <rect width="630" height="630" rx="10" fill="url(#parch3)" filter="url(#grain3)" opacity="0.6"/>
+    <rect width="630" height="630" rx="10" fill="url(#vignette3)"/>
+    <!-- Single elegant border -->
+    <rect x="6" y="6" width="618" height="618" rx="8" fill="none" stroke="#c89a3c" stroke-width="1.5"/>
+    <!-- Faint grid for "map" feel -->
+    <g stroke="#7a5b28" stroke-width="0.4" opacity="0.18">
+      <path d="M0 157 H630 M0 315 H630 M0 472 H630"/>
+      <path d="M157 0 V630 M315 0 V630 M472 0 V630"/>
+    </g>
+
+    <!-- Connections -->
+    <g stroke="#3a2810" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.85">
+      <path d="M315,88 L470,158"/>
+      <path d="M538,162 L578,310"/>
+      <path d="M538,470 L470,540"/>
+      <path d="M315,540 L165,470"/>
+      <path d="M88,470 L52,310"/>
+      <path d="M88,162 L165,90"/>
+    </g>
+
+    <!-- Center hold-city: minimal star inside ring -->
+    <g transform="translate(315,315)">
+      <circle r="22" fill="url(#tokenFill)" stroke="url(#tokenRing)" stroke-width="2"/>
+      <path d="M0,-11 L3.2,-3.4 L11,-3.4 L4.7,1.2 L7,9 L0,4.4 L-7,9 L-4.7,1.2 L-11,-3.4 L-3.2,-3.4 Z"
+            fill="#f0c45a"/>
+    </g>
+
+    <!-- Tokens: dark navy disc, gold ring, gold serif numeral -->
+    <g font-family="'Cormorant Garamond',Georgia,serif" font-size="24" font-weight="600"
+       fill="#f0c45a" text-anchor="middle">
+      <g transform="translate(315,88)"><circle r="22" fill="url(#tokenFill)" stroke="url(#tokenRing)" stroke-width="2"/><text y="9">1</text></g>
+      <g transform="translate(490,160)"><circle r="22" fill="url(#tokenFill)" stroke="url(#tokenRing)" stroke-width="2"/><text y="9">2</text></g>
+      <g transform="translate(560,315)"><circle r="22" fill="url(#tokenFill)" stroke="url(#tokenRing)" stroke-width="2"/><text y="9">3</text></g>
+      <g transform="translate(490,470)"><circle r="22" fill="url(#tokenFill)" stroke="url(#tokenRing)" stroke-width="2"/><text y="9">4</text></g>
+      <g transform="translate(315,540)"><circle r="22" fill="url(#tokenFill)" stroke="url(#tokenRing)" stroke-width="2"/><text y="9">5</text></g>
+      <g transform="translate(140,470)"><circle r="22" fill="url(#tokenFill)" stroke="url(#tokenRing)" stroke-width="2"/><text y="9">6</text></g>
+      <g transform="translate(70,315)"><circle r="22" fill="url(#tokenFill)" stroke="url(#tokenRing)" stroke-width="2"/><text y="9">7</text></g>
+      <g transform="translate(140,160)"><circle r="22" fill="url(#tokenFill)" stroke="url(#tokenRing)" stroke-width="2"/><text y="9">8</text></g>
+    </g>
+  </g>
+
+  <!-- Info table: airier, modern type, hairline rules -->
+  <g font-family="'Inter','Helvetica Neue',sans-serif" fill="#e6d6a8">
+    <line x1="20" y1="755" x2="680" y2="755" stroke="#3a4a5a" stroke-width="1"/>
+    <text x="30" y="788" font-size="18" font-weight="600">Map Size</text>
+    <text x="670" y="788" font-size="18" text-anchor="end" fill="#f0dcaa">C (320 × 320)</text>
+    <line x1="20" y1="803" x2="680" y2="803" stroke="#3a4a5a" stroke-width="1"/>
+    <text x="30" y="836" font-size="18" font-weight="600">Players</text>
+    <text x="670" y="836" font-size="18" text-anchor="end" fill="#f0dcaa">8</text>
+    <line x1="20" y1="851" x2="680" y2="851" stroke="#3a4a5a" stroke-width="1"/>
+    <text x="30" y="884" font-size="18" font-weight="600">Game mode</text>
+    <text x="670" y="884" font-size="18" text-anchor="end" fill="#f0dcaa">Classic</text>
+  </g>
+</svg>

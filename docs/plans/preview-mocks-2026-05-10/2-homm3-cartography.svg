@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 900" width="700" height="900">
+  <defs>
+    <radialGradient id="parch2" cx="50%" cy="45%" r="75%">
+      <stop offset="0%" stop-color="#f0dca6"/>
+      <stop offset="55%" stop-color="#d4b977"/>
+      <stop offset="100%" stop-color="#8a6a35"/>
+    </radialGradient>
+    <filter id="grain2"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="11"/>
+      <feColorMatrix values="0 0 0 0 0.20  0 0 0 0 0.13  0 0 0 0 0.05  0 0 0 0.22 0"/>
+      <feComposite in2="SourceGraphic" operator="in"/></filter>
+    <filter id="stains2"><feTurbulence type="fractalNoise" baseFrequency="0.008" numOctaves="3" seed="2"/>
+      <feColorMatrix values="0 0 0 0 0.32  0 0 0 0 0.18  0 0 0 0 0.05  0 0 0 0.45 0"/>
+      <feComposite in2="SourceGraphic" operator="in"/></filter>
+    <radialGradient id="vignette2" cx="50%" cy="50%" r="62%">
+      <stop offset="55%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#3a1f08" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="seal" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#a23a2c"/>
+      <stop offset="60%" stop-color="#6b1b13"/>
+      <stop offset="100%" stop-color="#2c0a06"/>
+    </radialGradient>
+    <linearGradient id="sealRim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8b85c"/>
+      <stop offset="100%" stop-color="#7a5018"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="700" height="900" fill="#1a0e05"/>
+
+  <!-- ornate gothic title plate -->
+  <rect x="0" y="0" width="700" height="80" fill="#11070b"/>
+  <path d="M40 40 Q 350 8 660 40" stroke="#8a6a2c" stroke-width="1.2" fill="none" opacity="0.7"/>
+  <path d="M40 50 Q 350 78 660 50" stroke="#8a6a2c" stroke-width="1.2" fill="none" opacity="0.7"/>
+  <text x="350" y="52" text-anchor="middle"
+        font-family="'UnifrakturCook','UnifrakturMaguntia',Georgia,serif"
+        font-size="34" fill="#e8c46a">Cerb — Template I</text>
+
+  <!-- Map area with deckled edge feel -->
+  <g transform="translate(35,100)">
+    <rect width="630" height="630" rx="6" fill="url(#parch2)"/>
+    <rect width="630" height="630" rx="6" fill="url(#parch2)" filter="url(#stains2)" opacity="0.85"/>
+    <rect width="630" height="630" rx="6" fill="url(#parch2)" filter="url(#grain2)" opacity="0.4"/>
+    <rect width="630" height="630" rx="6" fill="url(#vignette2)"/>
+
+    <!-- Decorative double border with corner flourishes -->
+    <rect x="10" y="10" width="610" height="610" fill="none" stroke="#5a3a14" stroke-width="2.5"/>
+    <rect x="18" y="18" width="594" height="594" fill="none" stroke="#5a3a14" stroke-width="0.8"/>
+    <!-- Corner fleur-de-lis-ish glyphs -->
+    <g fill="#5a3a14" opacity="0.85">
+      <path d="M30 30 q 8 -10 18 0 q -8 4 -18 10 z"/>
+      <path d="M600 30 q -8 -10 -18 0 q 8 4 18 10 z"/>
+      <path d="M30 600 q 8 10 18 0 q -8 -4 -18 -10 z"/>
+      <path d="M600 600 q -8 10 -18 0 q 8 -4 18 -10 z"/>
+    </g>
+
+    <!-- Compass rose, faded, top-right -->
+    <g transform="translate(540,80)" opacity="0.55" stroke="#3a200a" fill="#3a200a">
+      <circle r="32" fill="none" stroke-width="1"/>
+      <circle r="22" fill="none" stroke-width="0.6"/>
+      <path d="M0,-30 L4,0 L0,30 L-4,0 Z" stroke-width="0"/>
+      <path d="M-30,0 L0,-4 L30,0 L0,4 Z" stroke-width="0" opacity="0.7"/>
+      <text font-family="UnifrakturCook,Georgia,serif" font-size="11" text-anchor="middle" y="-36">N</text>
+    </g>
+
+    <!-- ink connection paths, slightly wobbly -->
+    <g stroke="#2a1404" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.85">
+      <path d="M315,88 q 80,38 158,75"/>
+      <path d="M540,162 q 30,75 38,150"/>
+      <path d="M538,470 q -25,45 -68,72"/>
+      <path d="M315,540 q -75,-2 -150,-70"/>
+      <path d="M88,470 q -30,-75 -38,-160"/>
+      <path d="M88,162 q 30,-45 75,-72"/>
+    </g>
+
+    <!-- Center wax seal as hold-city -->
+    <g transform="translate(315,315)">
+      <ellipse cx="2" cy="3" rx="34" ry="32" fill="#000" opacity="0.35"/>
+      <circle r="34" fill="url(#seal)" stroke="url(#sealRim)" stroke-width="2.5"/>
+      <path d="M-12,-4 L0,-16 L12,-4 L7,12 L-7,12 Z" fill="#e8b85c" opacity="0.85"/>
+    </g>
+
+    <!-- 8 wax-seal tokens with serif numerals -->
+    <g font-family="'UnifrakturCook','Cinzel',Georgia,serif" font-size="26" font-weight="700" text-anchor="middle">
+      <g transform="translate(315,90)"><ellipse cx="0" cy="4" rx="24" ry="7" fill="#000" opacity="0.4"/><circle r="24" fill="url(#seal)" stroke="url(#sealRim)" stroke-width="2.5"/><text y="9" fill="#f4d489">I</text></g>
+      <g transform="translate(490,160)"><ellipse cx="0" cy="4" rx="24" ry="7" fill="#000" opacity="0.4"/><circle r="24" fill="url(#seal)" stroke="url(#sealRim)" stroke-width="2.5"/><text y="9" fill="#f4d489">II</text></g>
+      <g transform="translate(560,315)"><ellipse cx="0" cy="4" rx="24" ry="7" fill="#000" opacity="0.4"/><circle r="24" fill="url(#seal)" stroke="url(#sealRim)" stroke-width="2.5"/><text y="9" fill="#f4d489">III</text></g>
+      <g transform="translate(490,470)"><ellipse cx="0" cy="4" rx="24" ry="7" fill="#000" opacity="0.4"/><circle r="24" fill="url(#seal)" stroke="url(#sealRim)" stroke-width="2.5"/><text y="9" fill="#f4d489">IV</text></g>
+      <g transform="translate(315,540)"><ellipse cx="0" cy="4" rx="24" ry="7" fill="#000" opacity="0.4"/><circle r="24" fill="url(#seal)" stroke="url(#sealRim)" stroke-width="2.5"/><text y="9" fill="#f4d489">V</text></g>
+      <g transform="translate(140,470)"><ellipse cx="0" cy="4" rx="24" ry="7" fill="#000" opacity="0.4"/><circle r="24" fill="url(#seal)" stroke="url(#sealRim)" stroke-width="2.5"/><text y="9" fill="#f4d489">VI</text></g>
+      <g transform="translate(70,315)"><ellipse cx="0" cy="4" rx="24" ry="7" fill="#000" opacity="0.4"/><circle r="24" fill="url(#seal)" stroke="url(#sealRim)" stroke-width="2.5"/><text y="9" fill="#f4d489">VII</text></g>
+      <g transform="translate(140,160)"><ellipse cx="0" cy="4" rx="24" ry="7" fill="#000" opacity="0.4"/><circle r="24" fill="url(#seal)" stroke="url(#sealRim)" stroke-width="2.5"/><text y="9" fill="#f4d489">VIII</text></g>
+    </g>
+  </g>
+
+  <!-- Info table - parchment-toned -->
+  <g font-family="'UnifrakturCook',Georgia,serif" fill="#e8c46a">
+    <line x1="20" y1="765" x2="680" y2="765" stroke="#5a3a14" stroke-width="1"/>
+    <text x="30" y="800" font-size="22">Map Size</text>
+    <text x="670" y="800" font-size="22" text-anchor="end" font-family="Cinzel,Georgia,serif">C (320 × 320)</text>
+    <line x1="20" y1="815" x2="680" y2="815" stroke="#5a3a14" stroke-width="1"/>
+    <text x="30" y="848" font-size="22">Players</text>
+    <text x="670" y="848" font-size="22" text-anchor="end" font-family="Cinzel,Georgia,serif">8</text>
+    <line x1="20" y1="863" x2="680" y2="863" stroke="#5a3a14" stroke-width="1"/>
+    <text x="30" y="894" font-size="22">Game Mode</text>
+    <text x="670" y="894" font-size="22" text-anchor="end" font-family="Cinzel,Georgia,serif">Classic</text>
+  </g>
+</svg>

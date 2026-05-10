@@ -10,4 +10,8 @@
   <ItemGroup>
     <PackageReference Include="SkiaSharp" Version="3.119.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Cinzel.ttf" />
+  </ItemGroup>
 </Project>

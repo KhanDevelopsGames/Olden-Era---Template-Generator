@@ -811,27 +811,32 @@ public class TemplateGeneratorTests
             Point pB = layout["Neutral-B"]; // Silver (treasure) — 3 castles
             Point pC = layout["Neutral-C"]; // Gold  (center)  — 2 castles
 
-            // Sample a corner of the canvas that is guaranteed to be background
+            // Sample a corner of the canvas — should be parchment cream, not near-black.
             int bgX = 15, bgY = 15;
-            AssertColorNear(Color.FromRgb(28, 22, 16), PixelAt(bitmap, bgX, bgY));
+            Color bg = PixelAt(bitmap, bgX, bgY);
+            Assert.True(bg.R > 150 && bg.G > 130 && bg.R > bg.B,
+                $"Expected parchment-cream background, got RGB({bg.R},{bg.G},{bg.B}).");
 
-            // The border of the Silver circle (Neutral-B) should show the silver border colour.
-            // Sample 1 px inside the circumference to avoid antialiased edge blending.
-            int bX = (int)Math.Round(pB.X + zoneRadius - 1);
-            int bY = (int)Math.Round(pB.Y);
+            // The rim of the Silver coin (Neutral-B) should show silver at its top.
+            // The rim uses a vertical gradient from RimSilver at the top to dark bronze at the bottom,
+            // so sample 1 px inside the rim at the top of the circle.
+            int bX = (int)Math.Round(pB.X);
+            int bY = (int)Math.Round(pB.Y - zoneRadius + 1);
             bX = Math.Clamp(bX, 0, bitmap.PixelWidth - 1);
             bY = Math.Clamp(bY, 0, bitmap.PixelHeight - 1);
-            AssertColorNear(Color.FromRgb(192, 192, 192), PixelAt(bitmap, bX, bY), tolerance: 30);
+            AssertColorNear(Color.FromRgb(192, 192, 192), PixelAt(bitmap, bX, bY), tolerance: 40);
 
-            // The castle-count label pixels near Neutral-B should be brighter than the plain background.
+            // The label region around Neutral-B sits on a dark bronze coin; the parchment corner does not.
+            // Count dark (coin-fill) pixels — should be much higher in the label rect.
             var bgRect    = new Int32Rect(bgX, bgY, 24, 20);
             var labelRect = new Int32Rect(
                 Math.Clamp((int)pB.X - 12, 0, bitmap.PixelWidth  - 25),
                 Math.Clamp((int)pB.Y - 10, 0, bitmap.PixelHeight - 21),
                 24, 20);
-            int lowLabelPixels    = CountBrightPixels(bitmap, bgRect);
-            int castleLabelPixels = CountBrightPixels(bitmap, labelRect);
-            Assert.True(castleLabelPixels > lowLabelPixels + 10);
+            int bgDark   = CountDarkPixels(bitmap, bgRect);
+            int coinDark = CountDarkPixels(bitmap, labelRect);
+            Assert.True(coinDark > bgDark + 50,
+                $"Expected coin region to be dominated by dark coin pixels (got {coinDark}) vs parchment corner ({bgDark}).");
         }
     }
 
@@ -958,7 +963,7 @@ public class TemplateGeneratorTests
         return Color.FromRgb(pixels[2], pixels[1], pixels[0]);
     }
 
-    private static int CountBrightPixels(BitmapSource bitmap, Int32Rect rect)
+    private static int CountDarkPixels(BitmapSource bitmap, Int32Rect rect)
     {
         int stride = rect.Width * 4;
         byte[] pixels = new byte[stride * rect.Height];
@@ -970,7 +975,7 @@ public class TemplateGeneratorTests
             byte blue = pixels[i];
             byte green = pixels[i + 1];
             byte red = pixels[i + 2];
-            if (red >= 180 && green >= 180 && blue >= 180)
+            if (red < 110 && green < 95 && blue < 80)
                 count++;
         }
 

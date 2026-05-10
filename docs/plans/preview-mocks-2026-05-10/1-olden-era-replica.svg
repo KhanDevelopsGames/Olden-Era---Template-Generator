@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 900" width="700" height="900">
+  <defs>
+    <!-- Parchment fill -->
+    <radialGradient id="parch" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#e7d6a8"/>
+      <stop offset="60%" stop-color="#cdb685"/>
+      <stop offset="100%" stop-color="#9c8757"/>
+    </radialGradient>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3"/>
+      <feColorMatrix values="0 0 0 0 0.25  0 0 0 0 0.18  0 0 0 0 0.10  0 0 0 0.18 0"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+    <filter id="stains" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="7"/>
+      <feColorMatrix values="0 0 0 0 0.30  0 0 0 0 0.20  0 0 0 0 0.08  0 0 0 0.35 0"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+    <radialGradient id="vignette" cx="50%" cy="50%" r="65%">
+      <stop offset="60%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.45"/>
+    </radialGradient>
+    <!-- Bronze token -->
+    <radialGradient id="bronze" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#7a5530"/>
+      <stop offset="55%" stop-color="#4a2f17"/>
+      <stop offset="100%" stop-color="#1f130a"/>
+    </radialGradient>
+    <linearGradient id="bronzeRim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d8a85a"/>
+      <stop offset="50%" stop-color="#9c7335"/>
+      <stop offset="100%" stop-color="#5a3a1a"/>
+    </linearGradient>
+    <filter id="tokenShadow"><feGaussianBlur stdDeviation="1.5"/></filter>
+    <!-- Title bar -->
+    <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#15202c"/>
+      <stop offset="100%" stop-color="#0a131c"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer dark frame -->
+  <rect width="700" height="900" fill="#0d1620"/>
+
+  <!-- Title bar -->
+  <rect x="0" y="0" width="700" height="70" fill="url(#bar)"/>
+  <text x="350" y="46" text-anchor="middle" font-family="Cinzel, 'Trajan Pro', Georgia, serif"
+        font-size="26" font-weight="600" fill="#e6d6a8" letter-spacing="1.2">Cerb — Template 1</text>
+
+  <!-- Parchment map area -->
+  <g transform="translate(35,90)">
+    <rect width="630" height="630" rx="14" ry="14" fill="url(#parch)"/>
+    <rect width="630" height="630" rx="14" ry="14" fill="url(#parch)" filter="url(#stains)" opacity="0.7"/>
+    <rect width="630" height="630" rx="14" ry="14" fill="url(#parch)" filter="url(#grain)" opacity="0.5"/>
+    <rect width="630" height="630" rx="14" ry="14" fill="url(#vignette)"/>
+    <!-- Inner thin border -->
+    <rect x="14" y="14" width="602" height="602" rx="10" ry="10"
+          fill="none" stroke="#6e5328" stroke-width="1.2" opacity="0.7"/>
+
+    <!-- Connection ink lines -->
+    <g stroke="#2a1a0a" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.85">
+      <path d="M315,90 L470,165"/>
+      <path d="M540,165 L580,310"/>
+      <path d="M540,470 L470,540"/>
+      <path d="M315,540 L165,470"/>
+      <path d="M90,470 L50,310"/>
+      <path d="M90,165 L165,90"/>
+    </g>
+
+    <!-- Center hold-city crest -->
+    <g transform="translate(315,315)">
+      <circle r="26" fill="url(#bronze)" stroke="url(#bronzeRim)" stroke-width="2.5"/>
+      <path d="M-10,6 L0,-10 L10,6 Z" fill="#e8c969" opacity="0.95"/>
+      <rect x="-3" y="0" width="6" height="6" fill="#1f130a"/>
+    </g>
+
+    <!-- 8 player tokens -->
+    <g font-family="Cinzel, Georgia, serif" font-size="28" font-weight="700" text-anchor="middle">
+      <!-- positions: ring of 8 -->
+      <g id="t1" transform="translate(315,90)"><ellipse cx="0" cy="3" rx="22" ry="6" fill="#000" opacity="0.35" filter="url(#tokenShadow)"/><circle r="22" fill="url(#bronze)" stroke="url(#bronzeRim)" stroke-width="2.5"/><circle r="17" fill="none" stroke="#1c0f06" stroke-width="0.8" opacity="0.6"/><text y="10" fill="#f1d990">1</text></g>
+      <g transform="translate(490,160)"><ellipse cx="0" cy="3" rx="22" ry="6" fill="#000" opacity="0.35" filter="url(#tokenShadow)"/><circle r="22" fill="url(#bronze)" stroke="url(#bronzeRim)" stroke-width="2.5"/><circle r="17" fill="none" stroke="#1c0f06" stroke-width="0.8" opacity="0.6"/><text y="10" fill="#f1d990">2</text></g>
+      <g transform="translate(560,315)"><ellipse cx="0" cy="3" rx="22" ry="6" fill="#000" opacity="0.35" filter="url(#tokenShadow)"/><circle r="22" fill="url(#bronze)" stroke="url(#bronzeRim)" stroke-width="2.5"/><circle r="17" fill="none" stroke="#1c0f06" stroke-width="0.8" opacity="0.6"/><text y="10" fill="#f1d990">3</text></g>
+      <g transform="translate(490,470)"><ellipse cx="0" cy="3" rx="22" ry="6" fill="#000" opacity="0.35" filter="url(#tokenShadow)"/><circle r="22" fill="url(#bronze)" stroke="url(#bronzeRim)" stroke-width="2.5"/><circle r="17" fill="none" stroke="#1c0f06" stroke-width="0.8" opacity="0.6"/><text y="10" fill="#f1d990">4</text></g>
+      <g transform="translate(315,540)"><ellipse cx="0" cy="3" rx="22" ry="6" fill="#000" opacity="0.35" filter="url(#tokenShadow)"/><circle r="22" fill="url(#bronze)" stroke="url(#bronzeRim)" stroke-width="2.5"/><circle r="17" fill="none" stroke="#1c0f06" stroke-width="0.8" opacity="0.6"/><text y="10" fill="#f1d990">5</text></g>
+      <g transform="translate(140,470)"><ellipse cx="0" cy="3" rx="22" ry="6" fill="#000" opacity="0.35" filter="url(#tokenShadow)"/><circle r="22" fill="url(#bronze)" stroke="url(#bronzeRim)" stroke-width="2.5"/><circle r="17" fill="none" stroke="#1c0f06" stroke-width="0.8" opacity="0.6"/><text y="10" fill="#f1d990">6</text></g>
+      <g transform="translate(70,315)"><ellipse cx="0" cy="3" rx="22" ry="6" fill="#000" opacity="0.35" filter="url(#tokenShadow)"/><circle r="22" fill="url(#bronze)" stroke="url(#bronzeRim)" stroke-width="2.5"/><circle r="17" fill="none" stroke="#1c0f06" stroke-width="0.8" opacity="0.6"/><text y="10" fill="#f1d990">7</text></g>
+      <g transform="translate(140,160)"><ellipse cx="0" cy="3" rx="22" ry="6" fill="#000" opacity="0.35" filter="url(#tokenShadow)"/><circle r="22" fill="url(#bronze)" stroke="url(#bronzeRim)" stroke-width="2.5"/><circle r="17" fill="none" stroke="#1c0f06" stroke-width="0.8" opacity="0.6"/><text y="10" fill="#f1d990">8</text></g>
+    </g>
+  </g>
+
+  <!-- Info table -->
+  <g font-family="Cinzel, Georgia, serif" fill="#e6d6a8">
+    <line x1="20" y1="755" x2="680" y2="755" stroke="#3a4a5a" stroke-width="1"/>
+    <text x="30" y="790" font-size="20" font-weight="600">Map Size</text>
+    <text x="670" y="790" font-size="20" text-anchor="end">C (320 × 320)</text>
+    <line x1="20" y1="805" x2="680" y2="805" stroke="#3a4a5a" stroke-width="1"/>
+    <text x="30" y="838" font-size="20" font-weight="600">Players</text>
+    <text x="670" y="838" font-size="20" text-anchor="end">8</text>
+    <line x1="20" y1="853" x2="680" y2="853" stroke="#3a4a5a" stroke-width="1"/>
+    <text x="30" y="886" font-size="20" font-weight="600">Game mode</text>
+    <text x="670" y="886" font-size="20" text-anchor="end">Classic</text>
+  </g>
+</svg>

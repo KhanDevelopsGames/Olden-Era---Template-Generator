@@ -26,33 +26,61 @@ namespace OldenEra.Generator.Services
         // Per-layout computed zone radius (set by LayoutZones)
         [ThreadStatic] private static double _zoneRadius;
 
-        // ── Colours (mirrors WPF TemplatePreviewPngWriter) ───────────────────────
-        private static readonly SKColor BackgroundColor = new SKColor(28, 22, 16);
-        private static readonly SKColor FrameColor      = new SKColor(143, 115, 63);
+        // ── Colours — Olden Era parchment skin ───────────────────────────────────
+        // Parchment gradient stops
+        private static readonly SKColor ParchmentLight = new SKColor(0xE7, 0xD6, 0xA8);
+        private static readonly SKColor ParchmentMid   = new SKColor(0xCD, 0xB6, 0x85);
+        private static readonly SKColor ParchmentDark  = new SKColor(0x9C, 0x87, 0x57);
+        private static readonly SKColor StainColor     = new SKColor(0x3A, 0x20, 0x10);
+        private static readonly SKColor InkBrown       = new SKColor(0x2A, 0x1A, 0x0A);
+        private static readonly SKColor FrameOuter     = new SKColor(0x8F, 0x73, 0x3F);
+        private static readonly SKColor FrameInner     = new SKColor(0x5A, 0x3A, 0x14);
 
-        // Bronze / Silver / Gold (neutrals)
-        private static readonly SKColor BronzeFill   = new SKColor(101, 67, 33);
-        private static readonly SKColor BronzeBorder = new SKColor(205, 127, 50);
-        private static readonly SKColor SilverFill   = new SKColor(72, 76, 80);
-        private static readonly SKColor SilverBorder = new SKColor(192, 192, 192);
-        private static readonly SKColor GoldFill     = new SKColor(120, 90, 20);
-        private static readonly SKColor GoldBorder   = new SKColor(255, 210, 50);
+        // Coin
+        private static readonly SKColor CoinFillCenter = new SKColor(0x7A, 0x55, 0x30);
+        private static readonly SKColor CoinFillEdge   = new SKColor(0x1F, 0x13, 0x0A);
+        private static readonly SKColor CoinRimDark    = new SKColor(0x5A, 0x3A, 0x1A);
+        private static readonly SKColor CoinInnerRing  = new SKColor(0x1C, 0x0F, 0x06);
 
-        // Spawn (player)
-        private static readonly SKColor SpawnFill   = new SKColor(42, 90, 50);
-        private static readonly SKColor SpawnBorder = new SKColor(100, 200, 120);
+        // Rim accents (top stop of the rim gradient)
+        private static readonly SKColor RimSpawn       = new SKColor(0xD8, 0xA8, 0x5A);
+        private static readonly SKColor RimHub         = new SKColor(0xCF, 0xA8, 0x6B);
+        private static readonly SKColor RimBronze      = new SKColor(0xCD, 0x7F, 0x32);
+        private static readonly SKColor RimSilver      = new SKColor(0xC0, 0xC0, 0xC0);
+        private static readonly SKColor RimGold        = new SKColor(0xFF, 0xD2, 0x32);
+        private static readonly SKColor HoldCityGold   = new SKColor(0xFF, 0xD7, 0x00);
 
-        // Hub
-        private static readonly SKColor HubFill   = new SKColor(55, 80, 95);
-        private static readonly SKColor HubBorder = new SKColor(130, 180, 200);
+        // Numeral / icon ink
+        private static readonly SKColor NumeralCream   = new SKColor(0xF1, 0xD9, 0x90);
 
         // Connection lines
-        private static readonly SKColor DirectLineColor = new SKColor(180, 145, 60);
-        // Portal: SKColor uses (r,g,b,a) — original WPF Color.FromArgb(180,90,170,210)
-        private static readonly SKColor PortalLineColor = new SKColor(90, 170, 210, 180);
+        private static readonly SKColor DirectLineColor = new SKColor(0x2A, 0x1A, 0x0A);
+        private static readonly SKColor PortalLineColor = new SKColor(0x2C, 0x4F, 0x6A, 200);
 
-        // Highlight golden colour for hold-city
-        private static readonly SKColor HoldCityGold = new SKColor(255, 215, 0);
+        // Lazy-loaded serif typeface (Cinzel, embedded)
+        private static SKTypeface? _serifTypeface;
+        private static SKTypeface SerifTypeface
+        {
+            get
+            {
+                if (_serifTypeface != null) return _serifTypeface;
+                try
+                {
+                    var asm = typeof(TemplatePreviewRenderer).Assembly;
+                    using var stream = asm.GetManifestResourceStream("OldenEra.Generator.Resources.Cinzel.ttf");
+                    if (stream != null)
+                    {
+                        _serifTypeface = SKTypeface.FromStream(stream);
+                    }
+                }
+                catch
+                {
+                    // fall through to default
+                }
+                _serifTypeface ??= SKTypeface.Default;
+                return _serifTypeface;
+            }
+        }
 
         /// <summary>
         /// Renders a 700x700 PNG preview of the template. Returns the encoded PNG bytes.
@@ -73,24 +101,17 @@ namespace OldenEra.Generator.Services
         // ── Main draw ────────────────────────────────────────────────────────────
         private static void DrawPreview(SKCanvas canvas, RmgTemplate template, MapTopology topology)
         {
-            // Background
-            using (var bgPaint = new SKPaint { Color = BackgroundColor, IsAntialias = true, Style = SKPaintStyle.Fill })
-                canvas.DrawRect(new SKRect(0, 0, Width, Height), bgPaint);
-
-            // Frame (rounded rectangle stroke)
-            using (var framePaint = new SKPaint
-            {
-                Color = FrameColor, IsAntialias = true,
-                Style = SKPaintStyle.Stroke, StrokeWidth = 3
-            })
-                canvas.DrawRoundRect(new SKRect(8, 8, Width - 8, Height - 8), 8, 8, framePaint);
+            int seed = (template.Name ?? string.Empty).GetHashCode();
+            DrawParchmentBackground(canvas, seed);
+            DrawCompassRose(canvas);
+            DrawFrame(canvas);
 
             Variant? variant = template.Variants?.FirstOrDefault();
             List<Zone> zones = variant?.Zones ?? new List<Zone>();
             if (zones.Count == 0)
             {
-                using var font = new SKFont(SKTypeface.Default, 24f) { Edging = SKFontEdging.Antialias, Subpixel = true };
-                using var paint = new SKPaint { Color = SKColors.White, IsAntialias = true };
+                using var font = new SKFont(SerifTypeface, 24f) { Edging = SKFontEdging.Antialias, Subpixel = true };
+                using var paint = new SKPaint { Color = InkBrown, IsAntialias = true };
                 DrawText(canvas, template.Name ?? string.Empty, Width / 2f, Height / 2f, font, paint, centered: true);
                 return;
             }
@@ -107,6 +128,193 @@ namespace OldenEra.Generator.Services
                 DrawZone(canvas, zone, positions[zone.Name]);
             foreach (Zone zone in orderedZones.Where(z => z.Name.StartsWith("Spawn-", StringComparison.Ordinal)))
                 DrawZone(canvas, zone, positions[zone.Name]);
+        }
+
+        // ── Background, frame, compass ───────────────────────────────────────────
+
+        private static void DrawParchmentBackground(SKCanvas canvas, int seed)
+        {
+            // Base radial gradient — slightly above center to feel like top-lit parchment
+            var center = new SKPoint(Width / 2f, Height * 0.45f);
+            float radius = (float)Math.Sqrt(Width * Width + Height * Height) / 2f;
+            using (var shader = SKShader.CreateRadialGradient(
+                center, radius,
+                new[] { ParchmentLight, ParchmentMid, ParchmentDark },
+                new[] { 0f, 0.6f, 1f },
+                SKShaderTileMode.Clamp))
+            using (var paint = new SKPaint { Shader = shader, IsAntialias = true })
+            {
+                canvas.DrawRect(new SKRect(0, 0, Width, Height), paint);
+            }
+
+            // Stains — deterministic from seed
+            var rng = new Random(seed == 0 ? 1 : seed);
+            int stainCount = 8;
+            for (int i = 0; i < stainCount; i++)
+            {
+                float cx = (float)(rng.NextDouble() * Width);
+                float cy = (float)(rng.NextDouble() * Height);
+                float r  = 60f + (float)(rng.NextDouble() * 80f);
+                byte alpha = (byte)(20 + rng.Next(70)); // 20..89
+                using var paint = new SKPaint
+                {
+                    Color = StainColor.WithAlpha(alpha),
+                    IsAntialias = true,
+                    Style = SKPaintStyle.Fill,
+                    MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 28f),
+                };
+                canvas.DrawCircle(cx, cy, r, paint);
+            }
+
+            // Vignette — transparent center to dark edges
+            using (var vig = SKShader.CreateRadialGradient(
+                new SKPoint(Width / 2f, Height / 2f),
+                radius,
+                new[] { new SKColor(0, 0, 0, 0), new SKColor(0, 0, 0, 0), new SKColor(0, 0, 0, 115) },
+                new[] { 0f, 0.6f, 1f },
+                SKShaderTileMode.Clamp))
+            using (var paint = new SKPaint { Shader = vig, IsAntialias = true })
+            {
+                canvas.DrawRect(new SKRect(0, 0, Width, Height), paint);
+            }
+        }
+
+        private static void DrawFrame(SKCanvas canvas)
+        {
+            using (var p = new SKPaint
+            {
+                Color = FrameOuter, IsAntialias = true,
+                Style = SKPaintStyle.Stroke, StrokeWidth = 1.0f,
+            })
+                canvas.DrawRect(new SKRect(8, 8, Width - 8, Height - 8), p);
+
+            using (var p = new SKPaint
+            {
+                Color = FrameInner, IsAntialias = true,
+                Style = SKPaintStyle.Stroke, StrokeWidth = 2.5f,
+            })
+                canvas.DrawRect(new SKRect(22, 22, Width - 22, Height - 22), p);
+
+            using (var p = new SKPaint
+            {
+                Color = FrameInner, IsAntialias = true,
+                Style = SKPaintStyle.Stroke, StrokeWidth = 0.8f,
+            })
+                canvas.DrawRect(new SKRect(30, 30, Width - 30, Height - 30), p);
+        }
+
+        private static void DrawCompassRose(SKCanvas canvas)
+        {
+            float cx = Width - 90f;
+            float cy = 90f;
+            float r  = 38f;
+            byte a   = 64; // ~25%
+
+            using (var p = new SKPaint
+            {
+                Color = StainColor.WithAlpha(a),
+                IsAntialias = true,
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 1f,
+            })
+                canvas.DrawCircle(cx, cy, r, p);
+
+            using (var p = new SKPaint
+            {
+                Color = StainColor.WithAlpha(a),
+                IsAntialias = true,
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 0.6f,
+            })
+                canvas.DrawCircle(cx, cy, r * 0.7f, p);
+
+            // Vertical N-S diamond
+            using (var p = new SKPaint { Color = StainColor.WithAlpha(140), IsAntialias = true, Style = SKPaintStyle.Fill })
+            using (var path = new SKPath())
+            {
+                path.MoveTo(cx, cy - r * 0.95f);
+                path.LineTo(cx + 4, cy);
+                path.LineTo(cx, cy + r * 0.95f);
+                path.LineTo(cx - 4, cy);
+                path.Close();
+                canvas.DrawPath(path, p);
+            }
+
+            // Horizontal E-W diamond
+            using (var p = new SKPaint { Color = StainColor.WithAlpha(100), IsAntialias = true, Style = SKPaintStyle.Fill })
+            using (var path = new SKPath())
+            {
+                path.MoveTo(cx - r * 0.95f, cy);
+                path.LineTo(cx, cy - 4);
+                path.LineTo(cx + r * 0.95f, cy);
+                path.LineTo(cx, cy + 4);
+                path.Close();
+                canvas.DrawPath(path, p);
+            }
+
+            // "N" glyph above outer ring
+            using (var font = new SKFont(SerifTypeface, 13f) { Edging = SKFontEdging.Antialias, Subpixel = true })
+            using (var p = new SKPaint { Color = StainColor.WithAlpha(160), IsAntialias = true })
+            {
+                DrawText(canvas, "N", cx, cy - r - 6, font, p, centered: true);
+            }
+        }
+
+        // ── Coin token primitive ─────────────────────────────────────────────────
+
+        private static void DrawCoin(SKCanvas canvas, SKPoint center, float radius,
+                                     SKColor rimTopColor, float rimWidth)
+        {
+            // Drop shadow
+            using (var shadowPaint = new SKPaint
+            {
+                Color = new SKColor(0, 0, 0, 90),
+                IsAntialias = true,
+                Style = SKPaintStyle.Fill,
+                MaskFilter = SKMaskFilter.CreateBlur(SKBlurStyle.Normal, 1.8f),
+            })
+            {
+                canvas.DrawOval(new SKRect(center.X - radius * 0.95f, center.Y + radius - 3,
+                                           center.X + radius * 0.95f, center.Y + radius + 3), shadowPaint);
+            }
+
+            // Base radial-fill: 35% offset from center for the highlight
+            var fillCenter = new SKPoint(center.X - radius * 0.30f, center.Y - radius * 0.35f);
+            using (var shader = SKShader.CreateRadialGradient(
+                fillCenter, radius * 1.2f,
+                new[] { CoinFillCenter, CoinFillEdge },
+                new[] { 0f, 1f },
+                SKShaderTileMode.Clamp))
+            using (var paint = new SKPaint { Shader = shader, IsAntialias = true, Style = SKPaintStyle.Fill })
+            {
+                canvas.DrawCircle(center, radius, paint);
+            }
+
+            // Inner engraved ring
+            using (var inner = new SKPaint
+            {
+                Color = CoinInnerRing.WithAlpha(150),
+                IsAntialias = true,
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = 0.8f,
+            })
+                canvas.DrawCircle(center, radius * 0.77f, inner);
+
+            // Rim — vertical linear gradient (rimTopColor → CoinRimDark)
+            using (var rimShader = SKShader.CreateLinearGradient(
+                new SKPoint(center.X, center.Y - radius),
+                new SKPoint(center.X, center.Y + radius),
+                new[] { rimTopColor, CoinRimDark },
+                new[] { 0f, 1f },
+                SKShaderTileMode.Clamp))
+            using (var rim = new SKPaint
+            {
+                Shader = rimShader,
+                IsAntialias = true,
+                Style = SKPaintStyle.Stroke,
+                StrokeWidth = rimWidth,
+            })
+                canvas.DrawCircle(center, radius, rim);
         }
 
         // ── Connections ──────────────────────────────────────────────────────────
@@ -369,7 +577,7 @@ namespace OldenEra.Generator.Services
             List<(double Lo, double Hi)> gaps, bool isPortal)
         {
             SKColor baseColor = isPortal ? PortalLineColor : DirectLineColor;
-            float strokeW     = isPortal ? 2.0f : 3.0f;
+            float strokeW     = isPortal ? 2.0f : 2.5f;
 
             double totalLen = PolylineLength(poly);
             if (totalLen < 0.001) return;
@@ -450,7 +658,7 @@ namespace OldenEra.Generator.Services
                 IsAntialias = true,
                 Style = SKPaintStyle.Stroke,
                 StrokeWidth = strokeW,
-                StrokeCap = SKStrokeCap.Butt,
+                StrokeCap = SKStrokeCap.Round,
             };
 
             var tList = tEvents.ToList();
@@ -497,7 +705,8 @@ namespace OldenEra.Generator.Services
                 IsAntialias = true,
                 Style = SKPaintStyle.Stroke,
                 Color = isPortal ? PortalLineColor : DirectLineColor,
-                StrokeWidth = isPortal ? 2f : 3f,
+                StrokeWidth = isPortal ? 2f : 2.5f,
+                StrokeCap = SKStrokeCap.Round,
             };
 
             if (!hasCurve)
@@ -583,35 +792,31 @@ namespace OldenEra.Generator.Services
             bool isHoldCity = IsHoldCityZone(zone);
             int  castles    = CastleCount(zone);
 
-            SKColor fillColor;
-            SKColor outlineColor;
-            float   outlineWidth;
-
-            if (isNeutral)
-            {
-                (fillColor, outlineColor, outlineWidth) = NeutralTierStyle(zone);
-            }
-            else if (isHub)
-            {
-                fillColor = HubFill; outlineColor = HubBorder; outlineWidth = 2f;
-            }
-            else // spawn
-            {
-                fillColor = SpawnFill; outlineColor = SpawnBorder; outlineWidth = 2.5f;
-            }
+            SKColor rimColor;
+            float   rimWidth = 2.5f;
 
             if (isHoldCity)
             {
-                outlineColor = HoldCityGold;
-                outlineWidth = 3.5f;
+                rimColor = HoldCityGold;
+                rimWidth = 3.5f;
+            }
+            else if (isNeutral)
+            {
+                rimColor = NeutralTierRim(zone);
+            }
+            else if (isHub)
+            {
+                rimColor = RimHub;
+                rimWidth = 2.5f;
+            }
+            else // spawn
+            {
+                rimColor = RimSpawn;
             }
 
             double drawRadius = isHub ? Math.Max(_zoneRadius, HubRadiusMin) : _zoneRadius;
 
-            using (var fillPaint = new SKPaint { Color = fillColor, IsAntialias = true, Style = SKPaintStyle.Fill })
-                canvas.DrawCircle(pt.X, pt.Y, (float)drawRadius, fillPaint);
-            using (var outPaint = new SKPaint { Color = outlineColor, IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = outlineWidth })
-                canvas.DrawCircle(pt.X, pt.Y, (float)drawRadius, outPaint);
+            DrawCoin(canvas, pt, (float)drawRadius, rimColor, rimWidth);
 
             if (isHoldCity)
             {
@@ -630,8 +835,8 @@ namespace OldenEra.Generator.Services
             }
             else if (isHub)
             {
-                using var font = new SKFont(SKTypeface.Default, (float)(drawRadius * 1.1)) { Edging = SKFontEdging.Antialias, Subpixel = true };
-                using var paint = new SKPaint { Color = SKColors.White, IsAntialias = true };
+                using var font = new SKFont(SerifTypeface, (float)(drawRadius * 0.85)) { Edging = SKFontEdging.Antialias, Subpixel = true };
+                using var paint = new SKPaint { Color = NumeralCream, IsAntialias = true };
                 DrawText(canvas, "Hub", pt.X, pt.Y, font, paint, centered: true);
             }
         }
@@ -641,41 +846,23 @@ namespace OldenEra.Generator.Services
 
         private static void DrawHoldCityIcon(SKCanvas canvas, SKPoint centre, double r)
         {
-            double iconSize = r * 1.35;
-            DrawHouseIcon(canvas, centre, iconSize, HoldCityGold);
-
-            // Star badge top-right
-            float bx = (float)(centre.X + r * 0.62);
-            float by = (float)(centre.Y - r * 0.62);
-            float br = (float)(r * 0.30);
-
-            using (var bgPaint = new SKPaint { Color = new SKColor(80, 60, 0), IsAntialias = true, Style = SKPaintStyle.Fill })
-                canvas.DrawCircle(bx, by, br, bgPaint);
-            using (var bord = new SKPaint { Color = HoldCityGold, IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = 1.2f })
-                canvas.DrawCircle(bx, by, br, bord);
-
-            // Star path (5-pointed) — explicit geometry so we don't depend on glyph fonts.
-            using var starPath = BuildStarPath(bx, by, br * 0.95f, br * 0.42f, 5);
-            using var starPaint = new SKPaint { Color = HoldCityGold, IsAntialias = true, Style = SKPaintStyle.Fill };
-            canvas.DrawPath(starPath, starPaint);
-        }
-
-        private static SKPath BuildStarPath(float cx, float cy, float outerR, float innerR, int points)
-        {
-            var p = new SKPath();
-            double step = Math.PI / points;
-            double angle = -Math.PI / 2.0;
-            for (int i = 0; i < points * 2; i++)
+            // Crest pediment: small triangle above the house roof
+            float pedW = (float)(r * 0.8);
+            float pedH = (float)(r * 0.28);
+            float pedTop = (float)(centre.Y - r * 0.95);
+            using (var paint = new SKPaint { Color = HoldCityGold, IsAntialias = true, Style = SKPaintStyle.Fill })
+            using (var path = new SKPath())
             {
-                double r = (i % 2 == 0) ? outerR : innerR;
-                float x = (float)(cx + Math.Cos(angle) * r);
-                float y = (float)(cy + Math.Sin(angle) * r);
-                if (i == 0) p.MoveTo(x, y);
-                else        p.LineTo(x, y);
-                angle += step;
+                path.MoveTo(centre.X, pedTop);
+                path.LineTo(centre.X + pedW / 2f, pedTop + pedH);
+                path.LineTo(centre.X - pedW / 2f, pedTop + pedH);
+                path.Close();
+                canvas.DrawPath(path, paint);
             }
-            p.Close();
-            return p;
+
+            // House
+            double iconSize = r * 1.25;
+            DrawHouseIcon(canvas, new SKPoint(centre.X, (float)(centre.Y + r * 0.10)), iconSize, HoldCityGold);
         }
 
         private static void DrawCastleBadge(SKCanvas canvas, SKPoint zoneCentre, double r, int castles)
@@ -684,18 +871,18 @@ namespace OldenEra.Generator.Services
             float by = (float)(zoneCentre.Y + r * 0.72);
             float br = (float)(r * 0.70);
 
-            using (var bg = new SKPaint { Color = new SKColor(28, 60, 35), IsAntialias = true, Style = SKPaintStyle.Fill })
+            using (var bg = new SKPaint { Color = CoinFillEdge, IsAntialias = true, Style = SKPaintStyle.Fill })
                 canvas.DrawCircle(bx, by, br, bg);
-            using (var bord = new SKPaint { Color = SpawnBorder, IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = 1.5f })
+            using (var bord = new SKPaint { Color = RimSpawn, IsAntialias = true, Style = SKPaintStyle.Stroke, StrokeWidth = 1.5f })
                 canvas.DrawCircle(bx, by, br, bord);
 
             float iconSize = br * 0.60f;
-            float fontSize = br * 1.05f;
+            float fontSize = br * 1.0f;
 
-            DrawHouseIcon(canvas, new SKPoint(bx - br * 0.32f, by + 0.5f), iconSize, new SKColor(160, 230, 170));
+            DrawHouseIcon(canvas, new SKPoint(bx - br * 0.32f, by + 0.5f), iconSize, NumeralCream);
 
-            using var font = new SKFont(SKTypeface.Default, fontSize) { Edging = SKFontEdging.Antialias, Subpixel = true, Embolden = true };
-            using var paint = new SKPaint { Color = new SKColor(200, 245, 210), IsAntialias = true };
+            using var font = new SKFont(SerifTypeface, fontSize) { Edging = SKFontEdging.Antialias, Subpixel = true };
+            using var paint = new SKPaint { Color = NumeralCream, IsAntialias = true };
             DrawText(canvas, castles.ToString(CultureInfo.InvariantCulture), bx + br * 0.40f, by + 0.5f, font, paint, centered: true);
         }
 
@@ -707,15 +894,15 @@ namespace OldenEra.Generator.Services
             float fontSize = (float)(_zoneRadius * 0.62);
             float gap     = (float)(_zoneRadius * 0.12);
 
-            using var font = new SKFont(SKTypeface.Default, fontSize) { Edging = SKFontEdging.Antialias, Subpixel = true, Embolden = true };
+            using var font = new SKFont(SerifTypeface, fontSize) { Edging = SKFontEdging.Antialias, Subpixel = true };
             float textW  = font.MeasureText(countStr);
             float totalW = iconW + gap + textW;
 
             float startX = pt.X - totalW / 2f;
 
-            DrawHouseIcon(canvas, new SKPoint(startX + iconW / 2f, pt.Y + 0.5f), iconW, new SKColor(220, 220, 200));
+            DrawHouseIcon(canvas, new SKPoint(startX + iconW / 2f, pt.Y + 0.5f), iconW, NumeralCream);
 
-            using var paint = new SKPaint { Color = SKColors.White, IsAntialias = true };
+            using var paint = new SKPaint { Color = NumeralCream, IsAntialias = true };
             DrawText(canvas, countStr, startX + iconW + gap + textW / 2f, pt.Y + 0.5f, font, paint, centered: true);
         }
 
@@ -748,14 +935,14 @@ namespace OldenEra.Generator.Services
             canvas.DrawRect(new SKRect(left, roofBt, right, bottom), paint);
         }
 
-        private static (SKColor Fill, SKColor Outline, float OutlineWidth) NeutralTierStyle(Zone zone)
+        private static SKColor NeutralTierRim(Zone zone)
         {
             var pool = zone.GuardedContentPool?.FirstOrDefault() ?? string.Empty;
             if (pool.Contains("_t4_") || pool.Contains("_t5_"))
-                return (GoldFill, GoldBorder, 2.5f);
+                return RimGold;
             if (pool.Contains("_t2_") || pool.Contains("_t1_"))
-                return (BronzeFill, BronzeBorder, 2.5f);
-            return (SilverFill, SilverBorder, 2.5f);
+                return RimBronze;
+            return RimSilver;
         }
 
         private static void DrawPlayerNumber(SKCanvas canvas, Zone zone, SKPoint centre, double r)
@@ -770,8 +957,8 @@ namespace OldenEra.Generator.Services
                     label = number;
             }
 
-            using var font = new SKFont(SKTypeface.Default, (float)(r * 1.05)) { Edging = SKFontEdging.Antialias, Subpixel = true, Embolden = true };
-            using var paint = new SKPaint { Color = new SKColor(160, 230, 170), IsAntialias = true };
+            using var font = new SKFont(SerifTypeface, (float)(r * 0.95)) { Edging = SKFontEdging.Antialias, Subpixel = true };
+            using var paint = new SKPaint { Color = NumeralCream, IsAntialias = true };
             DrawText(canvas, label, centre.X, centre.Y, font, paint, centered: true);
         }
 
