@@ -29,6 +29,20 @@ public class SettingsShareCodecTests
         Assert.Equal(5, decoded.PlayerCount);
     }
 
+    [Fact]
+    public void Decode_recovers_other_fields_when_one_has_wrong_type()
+    {
+        // playerCount as a string instead of int — should be skipped, not fatal.
+        string json = """{"templateName":"Survivor","playerCount":"not-an-int","mapSize":192}""";
+        string encoded = EncodeRawJson(json);
+
+        var decoded = SettingsShareCodec.TryDecode(encoded, out var status);
+        Assert.Equal(SettingsShareCodec.DecodeStatus.Ok, status);
+        Assert.NotNull(decoded);
+        Assert.Equal("Survivor", decoded!.TemplateName);
+        Assert.Equal(192, decoded.MapSize);
+    }
+
     private static string EncodeRawJson(string json)
     {
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
