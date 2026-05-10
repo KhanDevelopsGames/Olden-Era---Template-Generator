@@ -656,13 +656,24 @@
                             </Border>
 
                             <!-- Value overrides (kept as free-text) -->
-                            <Label Content="Value overrides (one per line: sid=guardValue)" Padding="0,0,0,2"
-                                   Foreground="#E8D5A3" FontSize="12"/>
-                            <TextBox x:Name="TxtValueOverrides"
-                                     AcceptsReturn="True" Height="68" TextWrapping="NoWrap"
-                                     VerticalScrollBarVisibility="Auto"
-                                     FontFamily="Consolas" FontSize="11"
-                                     TextChanged="BansOverrides_TextChanged"/>
+                            <TextBlock Text="Value overrides (one per line: sid=guardValue)"
+                                       Foreground="#E8D5A3" FontSize="12" Margin="0,0,0,4"/>
+                            <Border Background="#2C2619" BorderBrush="#5A4A28" BorderThickness="1">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Left" x:Name="BtnPickValueOverride"
+                                            Content="+" Width="28"
+                                            Click="BtnPickValueOverride_Click"
+                                            Background="#1E1A10" BorderBrush="#7A6A48" BorderThickness="0,0,1,0"
+                                            Foreground="#C8B87A" FontSize="16"
+                                            VerticalAlignment="Stretch" Cursor="Hand"/>
+                                    <TextBox x:Name="TxtValueOverrides"
+                                             AcceptsReturn="True" Height="68" TextWrapping="NoWrap"
+                                             VerticalScrollBarVisibility="Auto"
+                                             Background="Transparent" BorderThickness="0"
+                                             FontFamily="Consolas" FontSize="11"
+                                             TextChanged="BansOverrides_TextChanged"/>
+                                </DockPanel>
+                            </Border>
                         </StackPanel>
                     </Border>
                 </DockPanel>

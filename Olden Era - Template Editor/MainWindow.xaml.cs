@@ -466,6 +466,27 @@ namespace Olden_Era___Template_Editor
             MarkDirty();
         }
 
+        private void BtnPickValueOverride_Click(object sender, RoutedEventArgs e)
+        {
+            // Collect SIDs already in the text box so the picker hides them
+            var existing = TxtValueOverrides.Text
+                .Split('\n')
+                .Select(l => { var eq = l.IndexOf('='); return eq > 0 ? l[..eq].Trim() : ""; })
+                .Where(s => s.Length > 0)
+                .ToHashSet();
+
+            var picker = new ValueOverridePickerWindow(existing) { Owner = this };
+            if (picker.ShowDialog() == true && picker.ResultLines.Count > 0)
+            {
+                var current = TxtValueOverrides.Text.TrimEnd('\r', '\n');
+                var appended = string.Join("\n", picker.ResultLines);
+                TxtValueOverrides.Text = string.IsNullOrEmpty(current)
+                    ? appended
+                    : current + "\n" + appended;
+                MarkDirty();
+            }
+        }
+
         // ── Ban list picker helpers ───────────────────────────────────────────────
 
         /// <summary>Builds a BanEntry from an artifact ID using the catalog, or a plain fallback entry.</summary>
