@@ -202,12 +202,33 @@
         if (CurrentVersion is not null)
             VersionLabel = FormatVersion(CurrentVersion);
 
-        // Load persisted settings BEFORE first render so the form is populated
-        // immediately. If nothing is stored we just keep the defaults.
-        var stored = await SettingsStore.LoadAsync();
-        if (stored is not null)
+        SettingsFile? sourceOfTruth = null;
+
+        // 1. Share link in fragment wins.
+        string hash = await Js.InvokeAsync<string>("oeShare.getHash");
+        if (hash.StartsWith("s=", StringComparison.Ordinal))
         {
-            var (mapped, advanced, experimental) = SettingsMapper.FromFile(stored);
+            var fromUrl = SettingsShareCodec.TryDecode(hash[2..], out var status);
+            if (fromUrl is not null)
+            {
+                sourceOfTruth = fromUrl;
+                if (status != SettingsShareCodec.DecodeStatus.Ok)
+                {
+                    ShareToast = "Some settings in the link couldn't be loaded — using defaults for those.";
+                }
+            }
+            else
+            {
+                ShareToast = "Share link was invalid — loading your saved settings instead.";
+            }
+        }
+
+        // 2. Otherwise localStorage.
+        sourceOfTruth ??= await SettingsStore.LoadAsync();
+
+        if (sourceOfTruth is not null)
+        {
+            var (mapped, advanced, experimental) = SettingsMapper.FromFile(sourceOfTruth);
             Settings = mapped;
             AdvancedMode = advanced;
             ExperimentalMapSizes = experimental;
@@ -215,8 +236,6 @@
         _hasLoadedFromStorage = true;
 
         Validate();
-
-        // Fire-and-forget update check — never blocks the UI.
         _ = CheckForUpdatesAsync();
     }
 
