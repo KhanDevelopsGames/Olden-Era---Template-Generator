@@ -1,13 +1,13 @@
 using OldenEra.Generator.Models;
 using OldenEra.Generator.Models.Unfrozen;
 using OldenEra.Generator.Services;
-using OldenEra.Generator.Tests.Support;
 
 namespace OldenEra.Generator.Tests;
 
 public class EmittedIdValidationTests
 {
-    private static readonly GameDataIdCatalog Catalog = GameDataIdCatalog.LoadFromRepo();
+    private static readonly GameDataCatalog Catalog =
+        GameDataCatalog.LoadFromDirectory(RepoPaths.GeneratorDataRoot());
 
     [Fact]
     public void Catalog_LoadsNonEmpty_ForEachCategory()
@@ -93,13 +93,13 @@ public class EmittedIdValidationTests
             {
                 if (!string.IsNullOrEmpty(zone.Layout)
                     && !inlineLayoutIds.Contains(zone.Layout)
-                    && !Catalog.Contains(IdCategory.ZoneLayout, zone.Layout))
+                    && !Catalog.Contains(GameDataCategory.ZoneLayout, zone.Layout))
                 {
                     failures.Add($"{zone.Name}.layout = '{zone.Layout}' (not shipped, not defined inline)");
                 }
-                CheckIds(zone.GuardedContentPool, IdCategory.ContentPool, zone.Name, nameof(zone.GuardedContentPool), failures);
-                CheckIds(zone.UnguardedContentPool, IdCategory.ContentPool, zone.Name, nameof(zone.UnguardedContentPool), failures);
-                CheckIds(zone.ResourcesContentPool, IdCategory.ContentPool, zone.Name, nameof(zone.ResourcesContentPool), failures);
+                CheckIds(zone.GuardedContentPool, GameDataCategory.ContentPool, zone.Name, nameof(zone.GuardedContentPool), failures);
+                CheckIds(zone.UnguardedContentPool, GameDataCategory.ContentPool, zone.Name, nameof(zone.UnguardedContentPool), failures);
+                CheckIds(zone.ResourcesContentPool, GameDataCategory.ContentPool, zone.Name, nameof(zone.ResourcesContentPool), failures);
             }
         }
 
@@ -108,7 +108,7 @@ public class EmittedIdValidationTests
         {
             foreach (var item in group.Content ?? [])
             {
-                CheckIds(item.IncludeLists, IdCategory.ContentList, $"mandatory:{group.Name}", nameof(item.IncludeLists), failures);
+                CheckIds(item.IncludeLists, GameDataCategory.ContentList, $"mandatory:{group.Name}", nameof(item.IncludeLists), failures);
             }
         }
 
@@ -120,7 +120,7 @@ public class EmittedIdValidationTests
         }
     }
 
-    private static void CheckIds(IEnumerable<string>? ids, IdCategory category, string ownerName, string fieldName, List<string> failures)
+    private static void CheckIds(IEnumerable<string>? ids, GameDataCategory category, string ownerName, string fieldName, List<string> failures)
     {
         if (ids is null) return;
         foreach (string id in ids)

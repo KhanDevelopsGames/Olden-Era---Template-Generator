@@ -14,10 +14,10 @@ namespace OldenEra.Generator.Services
         // Each player zone gets 5 guard connections to the center (same as JCC).
         private const int ConnectionsPerZone = 1;
         private const double DefaultGuardRandomization = 0.05;
-        private const string SpawnLayoutName = "zone_layout_spawns";
-        private const string SideLayoutName = "zone_layout_sides";
-        private const string TreasureLayoutName = "zone_layout_treasure_zone";
-        private const string CenterLayoutName = "zone_layout_center";
+        private const string SpawnLayoutName = KnownIds.ZoneLayouts.Spawn;
+        private const string SideLayoutName = KnownIds.ZoneLayouts.Sides;
+        private const string TreasureLayoutName = KnownIds.ZoneLayouts.TreasureZone;
+        private const string CenterLayoutName = KnownIds.ZoneLayouts.Center;
 
         // Labels used to name zones, up to the advanced-mode maximum of 32 total zones.
         public static readonly string[] ZoneLetters =
@@ -2438,9 +2438,9 @@ namespace OldenEra.Generator.Services
             "classic_template_pool_random_unguarded_t5_stat",
             "classic_template_pool_random_unguarded_t5_magic",
         ];
-        private static readonly string[] GeneralResourcesPoor   = ["content_pool_general_resources_start_zone_poor"];
-        private static readonly string[] GeneralResourcesMedium = ["content_pool_general_resources_start_zone_medium"];
-        private static readonly string[] GeneralResourcesRich   = ["content_pool_general_resources_start_zone_rich"];
+        private static readonly string[] GeneralResourcesPoor   = [KnownIds.GeneralResourcePools.StartZonePoor];
+        private static readonly string[] GeneralResourcesMedium = [KnownIds.GeneralResourcePools.StartZoneMedium];
+        private static readonly string[] GeneralResourcesRich   = [KnownIds.GeneralResourcePools.StartZoneRich];
 
         private static NeutralZoneProfile GetNeutralZoneProfile(NeutralZoneQuality quality) => quality switch
         {
