@@ -5,9 +5,11 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
                 <TextBlock Text="Heroes" Style="{StaticResource SectionHeader}"/>
+                <TextBlock Text="Maximum heroes a player may hire; increases with each captured castle."
+                           TextWrapping="Wrap" Foreground="#888" FontStyle="Italic" Margin="5,2,5,8"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="185"/>
+                        <ColumnDefinition Width="210"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -19,7 +21,7 @@
                     </Grid.RowDefinitions>
 
                     <DockPanel Grid.Row="0" Grid.Column="0">
-                        <Label Content="Initial hero cap" Padding="5,2" DockPanel.Dock="Left"/>
+                        <Label Content="Heroes per player (min)" Padding="5,2" DockPanel.Dock="Left"/>
                         <TextBlock x:Name="TxtHeroMin" Text="4" DockPanel.Dock="Right"
                                    HorizontalAlignment="Right" VerticalAlignment="Center"
                                    Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
@@ -29,7 +31,7 @@
                             TickFrequency="1" IsSnapToTickEnabled="True"/>
 
                     <DockPanel Grid.Row="2" Grid.Column="0">
-                        <Label Content="Max hero cap" Padding="5,2" DockPanel.Dock="Left"/>
+                        <Label Content="Heroes per player (max)" Padding="5,2" DockPanel.Dock="Left"/>
                         <TextBlock x:Name="TxtHeroMax" Text="8" DockPanel.Dock="Right"
                                    HorizontalAlignment="Right" VerticalAlignment="Center"
                                    Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
@@ -39,7 +41,7 @@
                             TickFrequency="1" IsSnapToTickEnabled="True"/>
 
                     <DockPanel Grid.Row="4" Grid.Column="0">
-                        <Label Content="Increase cap / castle" Padding="5,2" DockPanel.Dock="Left"/>
+                        <Label Content="Bonus heroes per extra castle" Padding="5,2" DockPanel.Dock="Left"/>
                         <TextBlock x:Name="TxtHeroIncrement" Text="1" DockPanel.Dock="Right"
                                    HorizontalAlignment="Right" VerticalAlignment="Center"
                                    Margin="0,0,4,0" Style="{StaticResource ValueText}"/>

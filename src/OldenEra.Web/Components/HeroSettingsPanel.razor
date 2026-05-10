@@ -2,18 +2,19 @@
 
 <div class="oe-section">
     <div class="oe-section-header">Heroes</div>
+    <div class="oe-hint">Maximum heroes a player may hire; increases with each captured castle.</div>
 
-    <SliderRow Label="Initial hero cap"
+    <SliderRow Label="Heroes per player (min)"
                Min="1" Max="12" Step="1"
                Value="Settings.HeroSettings.HeroCountMin"
                ValueChanged="@(v => { Settings.HeroSettings.HeroCountMin = (int)v; NotifyChanged(); })" />
 
-    <SliderRow Label="Max hero cap"
+    <SliderRow Label="Heroes per player (max)"
                Min="1" Max="12" Step="1"
                Value="Settings.HeroSettings.HeroCountMax"
                ValueChanged="@(v => { Settings.HeroSettings.HeroCountMax = (int)v; NotifyChanged(); })" />
 
-    <SliderRow Label="Increase cap / castle"
+    <SliderRow Label="Bonus heroes per extra castle"
                Min="0" Max="10" Step="1"
                Value="Settings.HeroSettings.HeroCountIncrement"
                ValueChanged="@(v => { Settings.HeroSettings.HeroCountIncrement = (int)v; NotifyChanged(); })" />
