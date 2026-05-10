@@ -396,6 +396,18 @@ input[type="range"]::-moz-range-thumb {
     display: flex;
     gap: 8px;
     margin: 10px 0 4px 0;
+    align-items: center;
+}
+
+.oe-toast {
+    margin-left: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--oe-bg-3, #2a2a2a);
+    border: 1px solid var(--oe-border-dim);
+    border-radius: 0.25rem;
+    color: var(--oe-text);
+    font-size: 0.85em;
+    opacity: 0.9;
 }
 
 /* -- Modal ---------------------------------------------------------- */

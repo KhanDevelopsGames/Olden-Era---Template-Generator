@@ -30,6 +30,11 @@
     <div class="oe-toolbar">
         <button class="oe-btn" @onclick="OpenSettingsClick">📂 Open settings…</button>
         <button class="oe-btn" @onclick="SaveSettingsClick">💾 Save settings…</button>
+        <button class="oe-btn" @onclick="ShareSettingsClick">🔗 Share link</button>
+        @if (!string.IsNullOrEmpty(ShareToast))
+        {
+            <span class="oe-toast">@ShareToast</span>
+        }
         <InputFile id="oeOpenSettingsFile" OnChange="OnSettingsFileSelected"
                    accept=".oetgs,application/json"
                    style="display:none" />
@@ -493,9 +498,45 @@
         await Downloader.DownloadAsync($"{name}.png", "image/png", PreviewPng);
     }
 
+    // -- Share link --------------------------------------------------------
+
+    private string ShareToast = "";
+    private System.Threading.CancellationTokenSource? _toastCts;
+
+    private async Task ShareSettingsClick()
+    {
+        var snapshot = SettingsMapper.ToFile(Settings, AdvancedMode, ExperimentalMapSizes);
+        string encoded = SettingsShareCodec.Encode(snapshot);
+        if (encoded.Length > SettingsShareCodec.MaxEncodedLength)
+        {
+            await FlashToast("Settings too large to share via URL.");
+            return;
+        }
+        string url = await Js.InvokeAsync<string>("oeShare.buildShareUrl", encoded);
+        bool copied = await Js.InvokeAsync<bool>("oeShare.copy", url);
+        await FlashToast(copied ? "Link copied to clipboard." : "Couldn't copy — select the URL bar to copy manually.");
+        await Js.InvokeVoidAsync("oeShare.setHash", "s=" + encoded);
+    }
+
+    private async Task FlashToast(string msg)
+    {
+        _toastCts?.Cancel();
+        _toastCts?.Dispose();
+        var cts = new System.Threading.CancellationTokenSource();
+        _toastCts = cts;
+        ShareToast = msg;
+        StateHasChanged();
+        try { await Task.Delay(2500, cts.Token); } catch (TaskCanceledException) { return; }
+        if (cts.IsCancellationRequested) return;
+        ShareToast = "";
+        StateHasChanged();
+    }
+
     public void Dispose()
     {
         _saveCts?.Cancel();
         _saveCts?.Dispose();
+        _toastCts?.Cancel();
+        _toastCts?.Dispose();
     }
 }

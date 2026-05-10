@@ -24,3 +24,35 @@ window.oeDownloader = {
         }
     }
 };
+
+window.oeShare = {
+    getHash: function () {
+        return (window.location.hash || "").replace(/^#/, "");
+    },
+    setHash: function (value) {
+        const url = new URL(window.location.href);
+        url.hash = value ? "#" + value : "";
+        history.replaceState(null, "", url.toString());
+    },
+    buildShareUrl: function (encoded) {
+        const url = new URL(window.location.href);
+        url.hash = "#s=" + encoded;
+        return url.toString();
+    },
+    copy: async function (text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(text);
+            return true;
+        }
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        let ok = false;
+        try { ok = document.execCommand("copy"); } catch { ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+    },
+};
