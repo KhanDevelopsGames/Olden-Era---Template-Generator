@@ -57,6 +57,36 @@
             }
         </div>
     </details>
+
+    <details class="oe-stacked" style="margin-top: 12px;">
+        <summary class="oe-label" style="cursor: pointer;">
+            Pin starting hero per faction
+        </summary>
+        <div class="oe-hint">
+            Optional. UI-only at this time: the .rmg.json schema does not currently
+            expose a pinned-hero field on player Spawn objects, so this setting is
+            saved in your <code>.oetgs</code> file but not emitted into the
+            generated template.
+        </div>
+
+        @foreach (var faction in Catalog.Factions)
+        {
+            var current = GetFixedHero(faction.Id);
+            <div class="oe-row" style="grid-template-columns: 140px 1fr;">
+                <label class="oe-label" style="margin: 0;">@faction.Name</label>
+                <select value="@current"
+                        @onchange="@(e => OnFixedHeroChanged(faction.Id, e))">
+                    <option value="">(Random)</option>
+                    @foreach (var hero in Catalog.HeroesByFaction(faction.Id)
+                                                  .Where(h => !Settings.HeroSettings.HeroBans.Contains(h.Id))
+                                                  .OrderBy(h => h.Name))
+                    {
+                        <option value="@hero.Id">@hero.Name@(string.IsNullOrWhiteSpace(hero.Specialty) ? "" : $" — {hero.Specialty}")</option>
+                    }
+                </select>
+            </div>
+        }
+    </details>
 </div>
 
 @code {
@@ -72,6 +102,30 @@
     {
         if (!Settings.HeroSettings.HeroBans.Remove(heroId))
             Settings.HeroSettings.HeroBans.Add(heroId);
+
+        // Clear any pin that points at a now-banned hero so the validator stays clean.
+        if (Settings.HeroSettings.HeroBans.Contains(heroId))
+        {
+            foreach (var key in Settings.HeroSettings.FixedStartingHeroByFaction.Keys.ToList())
+            {
+                if (string.Equals(Settings.HeroSettings.FixedStartingHeroByFaction[key], heroId, StringComparison.OrdinalIgnoreCase))
+                    Settings.HeroSettings.FixedStartingHeroByFaction[key] = null;
+            }
+        }
+        await NotifyChanged();
+    }
+
+    private string GetFixedHero(string factionId)
+    {
+        return Settings.HeroSettings.FixedStartingHeroByFaction.TryGetValue(factionId, out var v) && v is not null
+            ? v
+            : "";
+    }
+
+    private async Task OnFixedHeroChanged(string factionId, ChangeEventArgs e)
+    {
+        var v = e.Value?.ToString();
+        Settings.HeroSettings.FixedStartingHeroByFaction[factionId] = string.IsNullOrEmpty(v) ? null : v;
         await NotifyChanged();
     }
 }

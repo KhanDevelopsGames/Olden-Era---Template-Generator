@@ -39,6 +39,20 @@ namespace OldenEra.Generator.Models
         /// shipped templates (Arcade.rmg.json).
         /// </summary>
         public List<string> HeroBans { get; set; } = new();
+
+        /// <summary>
+        /// Pinned starting hero per faction. Key is the faction id
+        /// (e.g. <c>"temple"</c>), value is a hero id from the catalog,
+        /// or <c>null</c>/missing for "random".
+        /// </summary>
+        /// <remarks>
+        /// UI-only at this time: the .rmg.json schema does not declare a
+        /// pinned-hero shape on player Spawn MainObjects (audit of 232
+        /// Spawn entries across shipped templates: zero references). The
+        /// setting round-trips in <c>.oetgs</c> so it is preserved when the
+        /// schema later supports it; for now no JSON is emitted.
+        /// </remarks>
+        public Dictionary<string, string?> FixedStartingHeroByFaction { get; set; } = new();
     }
 
     public class AdvancedSettings

@@ -111,6 +111,20 @@ namespace OldenEra.Generator.Services
                         warnings.Add($"⚠️ Every hero of faction \"{faction.Name}\" is banned. The game may fail to assign a starting hero to that faction.");
                     }
                 }
+
+                // Pinned-hero-and-banned cross-check: blocker.
+                foreach (var kv in settings.HeroSettings.FixedStartingHeroByFaction)
+                {
+                    var fixedId = kv.Value;
+                    if (string.IsNullOrWhiteSpace(fixedId)) continue;
+                    if (bansSet.Contains(fixedId))
+                    {
+                        var factionName = catalog.Factions
+                            .FirstOrDefault(f => string.Equals(f.Id, kv.Key, StringComparison.OrdinalIgnoreCase))
+                            ?.Name ?? kv.Key;
+                        blockers.Add($"Pinned starting hero \"{fixedId}\" for faction \"{factionName}\" is also in the hero ban list. Remove it from one of the two.");
+                    }
+                }
             }
 
             return new Result(blockers, warnings);
