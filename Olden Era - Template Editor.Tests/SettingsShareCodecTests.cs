@@ -81,6 +81,36 @@ public class SettingsShareCodecTests
         Assert.Equal(SettingsShareCodec.DecodeStatus.MalformedBase64, status);
     }
 
+    [Fact]
+    public void Round_trip_through_SettingsMapper_preserves_all_settings()
+    {
+        var settings = new GeneratorSettings
+        {
+            TemplateName = "Full Loop",
+            MapSize = 192,
+            PlayerCount = 6,
+            Topology = MapTopology.HubAndSpoke,
+            RandomPortals = true,
+            MaxPortalConnections = 4,
+        };
+        settings.ZoneCfg.NeutralZoneCount = 8;
+        settings.ZoneCfg.HubZoneSize = 1.5;
+
+        var file = SettingsMapper.ToFile(settings, advancedMode: true, experimentalMapSizes: false);
+
+        string encoded = SettingsShareCodec.Encode(file);
+        var decoded = SettingsShareCodec.TryDecode(encoded, out _);
+        Assert.NotNull(decoded);
+
+        var (mapped, advanced, _) = SettingsMapper.FromFile(decoded!);
+        Assert.Equal("Full Loop", mapped.TemplateName);
+        Assert.Equal(192, mapped.MapSize);
+        Assert.Equal(6, mapped.PlayerCount);
+        Assert.Equal(MapTopology.HubAndSpoke, mapped.Topology);
+        Assert.True(advanced);
+        Assert.Equal(8, mapped.ZoneCfg.NeutralZoneCount);
+    }
+
     private static string EncodeRawJson(string json)
     {
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
