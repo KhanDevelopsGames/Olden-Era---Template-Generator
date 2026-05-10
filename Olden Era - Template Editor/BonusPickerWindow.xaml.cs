@@ -11,12 +11,22 @@ namespace Olden_Era___Template_Editor
         public BonusEntry?       Result  { get; private set; }
         public List<BonusEntry>  Results { get; private set; } = [];
 
-        public BonusPickerWindow()
+        private readonly HashSet<string> _existingKeys;
+        private readonly HashSet<string> _existingItemIds;
+
+        public BonusPickerWindow(IEnumerable<BonusEntry>? existingBonuses = null)
         {
             InitializeComponent();
             CmbType.SelectedIndex     = 0;
             CmbReceiver.SelectedIndex = 0;
             CmbSpell.SelectedIndex    = 0;
+
+            var existing = existingBonuses?.ToList() ?? [];
+            _existingKeys    = existing.Select(b => b.ToString()).ToHashSet();
+            _existingItemIds = existing
+                .Where(b => b.PresetType == BonusPresetType.StartingItem)
+                .Select(b => b.Param)
+                .ToHashSet();
         }
 
         // ── Helpers ──────────────────────────────────────────────────────────────
@@ -69,7 +79,7 @@ namespace Olden_Era___Template_Editor
         {
             var entries = KnownValues.BannableItems
                 .Select(b => new BanEntry { Id = b.Id, DisplayName = b.DisplayName, Category = b.Category });
-            var picker = new ItemPickerWindow(entries, [], "Pick Starting Item") { Owner = this };
+            var picker = new ItemPickerWindow(entries, _existingItemIds, "Pick Starting Item") { Owner = this };
             if (picker.ShowDialog() != true) return;
 
             if (picker.SelectedIds.Count > 1)
@@ -140,13 +150,21 @@ namespace Olden_Era___Template_Editor
                     break;
             }
 
-            Result = new BonusEntry
+            var candidate = new BonusEntry
             {
                 PresetType     = type,
                 ReceiverFilter = receiver,
                 Param          = param,
                 Param2         = param2,
             };
+
+            if (_existingKeys.Contains(candidate.ToString()))
+            {
+                MessageBox.Show("This bonus has already been added.", "Duplicate", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            Result       = candidate;
             Results      = [Result];
             DialogResult = true;
         }

@@ -571,7 +571,7 @@ namespace Olden_Era___Template_Editor
 
         private void BtnAddBonus_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new BonusPickerWindow { Owner = this };
+            var picker = new BonusPickerWindow(_bonuses) { Owner = this };
             if (picker.ShowDialog() == true)
             {
                 foreach (var entry in picker.Results)
