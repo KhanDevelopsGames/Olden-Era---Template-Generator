@@ -199,9 +199,10 @@ namespace OldenEra.Generator.Services
 
             foreach (var mo in zone.MainObjects)
             {
-                bool isCity = mo.Type == "City" || mo.Type == "AbandonedOutpost";
-                if (!isCity) continue;
-                bool isSpawnCity = mo.Type == "City" && mo.Spawn is { Length: > 0 };
+                // Player Spawn objects + Cities + AbandonedOutposts all carry buildingsConstructionSid.
+                bool isCityLike = mo.Type == "City" || mo.Type == "AbandonedOutpost" || mo.Type == "Spawn";
+                if (!isCityLike) continue;
+                bool isSpawnCity = mo.Type == "Spawn" || (mo.Type == "City" && mo.Spawn is { Length: > 0 });
 
                 if (isPlayerZone || isSpawnCity)
                 {

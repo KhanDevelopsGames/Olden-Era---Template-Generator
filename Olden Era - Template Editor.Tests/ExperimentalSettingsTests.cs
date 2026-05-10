@@ -154,16 +154,24 @@ public class ExperimentalSettingsTests
                 PlayerZonePreset = "rich_buildings_construction",
                 NeutralZonePreset = "poor_buildings_construction",
             },
+            ZoneCfg = new ZoneConfiguration { NeutralZoneCount = 1, NeutralZoneCastles = 1 },
         };
         var template = TemplateGenerator.Generate(s);
-        var cities = template.Variants![0].Zones!
+        // Player-zone Spawn objects pick up the player preset.
+        var spawns = template.Variants![0].Zones!
             .SelectMany(z => z.MainObjects ?? new List<MainObject>())
-            .Where(m => m.Type == "City")
+            .Where(m => m.Type == "Spawn")
             .ToList();
-        Assert.NotEmpty(cities);
-        Assert.All(cities, m => Assert.True(
-            m.BuildingsConstructionSid == "rich_buildings_construction"
-         || m.BuildingsConstructionSid == "poor_buildings_construction"));
+        Assert.NotEmpty(spawns);
+        Assert.All(spawns, m => Assert.Equal("rich_buildings_construction", m.BuildingsConstructionSid));
+
+        // Neutral City objects pick up the neutral preset.
+        var neutralCities = template.Variants![0].Zones!
+            .SelectMany(z => z.MainObjects ?? new List<MainObject>())
+            .Where(m => m.Type == "City" && string.IsNullOrEmpty(m.Spawn))
+            .ToList();
+        Assert.NotEmpty(neutralCities);
+        Assert.All(neutralCities, m => Assert.Equal("poor_buildings_construction", m.BuildingsConstructionSid));
     }
 
     [Fact]
