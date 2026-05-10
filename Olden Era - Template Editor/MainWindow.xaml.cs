@@ -62,6 +62,42 @@ namespace Olden_Era___Template_Editor
             PnlTopology.SldHubZoneSize.ValueChanged += Slider_ValueChanged;
             PnlTopology.SldHubCastles.ValueChanged += Slider_ValueChanged;
 
+            // Zones panel — slider events.
+            PnlZones.SldNeutral.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldPlayerCastles.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralCastles.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldResourceDensity.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldStructureDensity.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralStackStrength.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldBorderGuardStrength.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldPlayerZoneSize.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralZoneSize.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldGuardRandomization.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralLowNoCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralLowCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralMediumNoCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralMediumCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralHighNoCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldNeutralHighCastle.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldMinNeutralBetweenPlayers.ValueChanged += Slider_ValueChanged;
+            PnlZones.SldMaxPortals.ValueChanged += SldMaxPortals_ValueChanged;
+
+            // Zones panel — checkbox events.
+            PnlZones.ChkAdvancedZoneSettings.Checked   += BtnAdvancedZoneSettings_Click;
+            PnlZones.ChkAdvancedZoneSettings.Unchecked += BtnAdvancedZoneSettings_Click;
+            PnlZones.ChkMatchPlayerCastleFactions.Checked   += ChkOption_Changed;
+            PnlZones.ChkMatchPlayerCastleFactions.Unchecked += ChkOption_Changed;
+            PnlZones.ChkGenerateRoads.Checked   += ChkOption_Changed;
+            PnlZones.ChkGenerateRoads.Unchecked += ChkOption_Changed;
+            PnlZones.ChkSpawnFootholds.Checked   += ChkOption_Changed;
+            PnlZones.ChkSpawnFootholds.Unchecked += ChkOption_Changed;
+            PnlZones.ChkBalancedZonePlacement.Checked   += ChkOption_Changed;
+            PnlZones.ChkBalancedZonePlacement.Unchecked += ChkOption_Changed;
+            PnlZones.ChkNoDirectPlayerConn.Checked   += ChkOption_Changed;
+            PnlZones.ChkNoDirectPlayerConn.Unchecked += ChkOption_Changed;
+            PnlZones.ChkRandomPortals.Checked   += ChkRandomPortals_Changed;
+            PnlZones.ChkRandomPortals.Unchecked += ChkRandomPortals_Changed;
+
             // Clamp startup size to the available work area so the window never
             // overflows the screen at high-DPI scaling (e.g. 125 %, 150 %, 200 %).
             var area = SystemParameters.WorkArea;
@@ -249,27 +285,27 @@ namespace Olden_Era___Template_Editor
             PnlHeroes.TxtHeroMin.Text = ((int)PnlHeroes.SldHeroMin.Value).ToString();
             PnlHeroes.TxtHeroMax.Text = ((int)PnlHeroes.SldHeroMax.Value).ToString();
             PnlHeroes.TxtHeroIncrement.Text = ((int)PnlHeroes.SldHeroIncrement.Value).ToString();
-            TxtNeutral.Text = ((int)SldNeutral.Value).ToString();
-            TxtPlayerCastles.Text = ((int)SldPlayerCastles.Value).ToString();
-            TxtNeutralCastles.Text = ((int)SldNeutralCastles.Value).ToString();
-            TxtResourceDensity.Text = $"{(int)SldResourceDensity.Value}%";
-            TxtStructureDensity.Text = $"{(int)SldStructureDensity.Value}%";
-            TxtNeutralStackStrength.Text = $"{(int)SldNeutralStackStrength.Value}%";
-            TxtBorderGuardStrength.Text = $"{(int)SldBorderGuardStrength.Value}%";
+            PnlZones.TxtNeutral.Text = ((int)PnlZones.SldNeutral.Value).ToString();
+            PnlZones.TxtPlayerCastles.Text = ((int)PnlZones.SldPlayerCastles.Value).ToString();
+            PnlZones.TxtNeutralCastles.Text = ((int)PnlZones.SldNeutralCastles.Value).ToString();
+            PnlZones.TxtResourceDensity.Text = $"{(int)PnlZones.SldResourceDensity.Value}%";
+            PnlZones.TxtStructureDensity.Text = $"{(int)PnlZones.SldStructureDensity.Value}%";
+            PnlZones.TxtNeutralStackStrength.Text = $"{(int)PnlZones.SldNeutralStackStrength.Value}%";
+            PnlZones.TxtBorderGuardStrength.Text = $"{(int)PnlZones.SldBorderGuardStrength.Value}%";
             TxtFactionLawsExp.Text = $"{(int)SldFactionLawsExp.Value}%";
             TxtAstrologyExp.Text = $"{(int)SldAstrologyExp.Value}%";
-            TxtNeutralLowNoCastle.Text = ((int)SldNeutralLowNoCastle.Value).ToString();
-            TxtNeutralLowCastle.Text = ((int)SldNeutralLowCastle.Value).ToString();
-            TxtNeutralMediumNoCastle.Text = ((int)SldNeutralMediumNoCastle.Value).ToString();
-            TxtNeutralMediumCastle.Text = ((int)SldNeutralMediumCastle.Value).ToString();
-            TxtNeutralHighNoCastle.Text = ((int)SldNeutralHighNoCastle.Value).ToString();
-            TxtNeutralHighCastle.Text = ((int)SldNeutralHighCastle.Value).ToString();
-            TxtMinNeutralBetweenPlayers.Text = ((int)SldMinNeutralBetweenPlayers.Value).ToString();
-            TxtPlayerZoneSize.Text = $"{SldPlayerZoneSize.Value:F2}x";
-            TxtNeutralZoneSize.Text = $"{SldNeutralZoneSize.Value:F2}x";
+            PnlZones.TxtNeutralLowNoCastle.Text = ((int)PnlZones.SldNeutralLowNoCastle.Value).ToString();
+            PnlZones.TxtNeutralLowCastle.Text = ((int)PnlZones.SldNeutralLowCastle.Value).ToString();
+            PnlZones.TxtNeutralMediumNoCastle.Text = ((int)PnlZones.SldNeutralMediumNoCastle.Value).ToString();
+            PnlZones.TxtNeutralMediumCastle.Text = ((int)PnlZones.SldNeutralMediumCastle.Value).ToString();
+            PnlZones.TxtNeutralHighNoCastle.Text = ((int)PnlZones.SldNeutralHighNoCastle.Value).ToString();
+            PnlZones.TxtNeutralHighCastle.Text = ((int)PnlZones.SldNeutralHighCastle.Value).ToString();
+            PnlZones.TxtMinNeutralBetweenPlayers.Text = ((int)PnlZones.SldMinNeutralBetweenPlayers.Value).ToString();
+            PnlZones.TxtPlayerZoneSize.Text = $"{PnlZones.SldPlayerZoneSize.Value:F2}x";
+            PnlZones.TxtNeutralZoneSize.Text = $"{PnlZones.SldNeutralZoneSize.Value:F2}x";
             PnlTopology.TxtHubZoneSize.Text = $"{PnlTopology.SldHubZoneSize.Value:F2}x";
             PnlTopology.TxtHubCastles.Text = ((int)PnlTopology.SldHubCastles.Value).ToString();
-            TxtGuardRandomization.Text = $"{(int)SldGuardRandomization.Value}%";
+            PnlZones.TxtGuardRandomization.Text = $"{(int)PnlZones.SldGuardRandomization.Value}%";
             TxtLostStartCityDay.Text = ((int)SldLostStartCityDay.Value).ToString();
             TxtCityHoldDays.Text = ((int)SldCityHoldDays.Value).ToString();
             TxtGladiatorDelay.Text = ((int)SldGladiatorDelay.Value).ToString();
@@ -332,20 +368,20 @@ namespace Olden_Era___Template_Editor
 
             if (totalZones > 10)
             {
-                int playerCastles = (int)SldPlayerCastles.Value;
-                int neutralCastles = _advancedZoneSettings ? 0 : (int)SldNeutralCastles.Value;
+                int playerCastles = (int)PnlZones.SldPlayerCastles.Value;
+                int neutralCastles = _advancedZoneSettings ? 0 : (int)PnlZones.SldNeutralCastles.Value;
                 if (playerCastles > 1 || neutralCastles > 1)
                     warnings.Add("⚠️ Using more than 1 castle per zone with more than 10 total zones may cause the game to freeze when generating the map. Consider reducing the number of castles.");
             }
 
-            int minNeutralBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value;
+            int minNeutralBetweenPlayers = (int)PnlZones.SldMinNeutralBetweenPlayers.Value;
             if (_advancedZoneSettings && minNeutralBetweenPlayers > 0)
             {
                 var separationSettings = new GeneratorSettings
                 {
                     PlayerCount = players,
                     Topology = selectedTopology,
-                    RandomPortals = ChkRandomPortals.IsChecked == true,
+                    RandomPortals = PnlZones.ChkRandomPortals.IsChecked == true,
                     MinNeutralZonesBetweenPlayers = minNeutralBetweenPlayers
                 };
 
@@ -364,7 +400,7 @@ namespace Olden_Era___Template_Editor
                 }
             }
 
-            if (ChkNoDirectPlayerConn.IsChecked == true && neutral == 0)
+            if (PnlZones.ChkNoDirectPlayerConn.IsChecked == true && neutral == 0)
             {
                 SetValidationText("\"Connect via neutral zones only\" requires at least one neutral zone. Add a neutral zone or disable this option.");
                 BtnPreview.IsEnabled = false;
@@ -390,14 +426,14 @@ namespace Olden_Era___Template_Editor
         private int TotalNeutralZonesFromUi()
         {
             if (!_advancedZoneSettings)
-                return (int)SldNeutral.Value;
+                return (int)PnlZones.SldNeutral.Value;
 
-            return (int)SldNeutralLowNoCastle.Value
-                + (int)SldNeutralLowCastle.Value
-                + (int)SldNeutralMediumNoCastle.Value
-                + (int)SldNeutralMediumCastle.Value
-                + (int)SldNeutralHighNoCastle.Value
-                + (int)SldNeutralHighCastle.Value;
+            return (int)PnlZones.SldNeutralLowNoCastle.Value
+                + (int)PnlZones.SldNeutralLowCastle.Value
+                + (int)PnlZones.SldNeutralMediumNoCastle.Value
+                + (int)PnlZones.SldNeutralMediumCastle.Value
+                + (int)PnlZones.SldNeutralHighNoCastle.Value
+                + (int)PnlZones.SldNeutralHighCastle.Value;
         }
 
         private int SelectedMapSize() =>
@@ -457,8 +493,8 @@ namespace Olden_Era___Template_Editor
             // Isolate option is only meaningful for Random and Chain topologies.
             var topo = idx >= 0 && idx < TopologyOptions.Length ? TopologyOptions[idx].Topology : MapTopology.Default;
             bool isolateApplicable = topo is MapTopology.Random;
-            ChkNoDirectPlayerConn.Visibility = isolateApplicable ? Visibility.Visible : Visibility.Collapsed;
-            if (!isolateApplicable) ChkNoDirectPlayerConn.IsChecked = false;
+            PnlZones.ChkNoDirectPlayerConn.Visibility = isolateApplicable ? Visibility.Visible : Visibility.Collapsed;
+            if (!isolateApplicable) PnlZones.ChkNoDirectPlayerConn.IsChecked = false;
             UpdateIsolateDescVisibility();
             UpdateAdvancedZoneSettingsVisibility();
             PnlTopology.PnlHubZoneSize.Visibility = topo == MapTopology.HubAndSpoke ? Visibility.Visible : Visibility.Collapsed;
@@ -491,7 +527,7 @@ namespace Olden_Era___Template_Editor
         private void ChkRandomPortals_Changed(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
-            PnlMaxPortals.Visibility = ChkRandomPortals.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
+            PnlZones.PnlMaxPortals.Visibility = PnlZones.ChkRandomPortals.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
             MarkDirty();
             Validate();
         }
@@ -499,7 +535,7 @@ namespace Olden_Era___Template_Editor
         private void SldMaxPortals_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (!IsInitialized) return;
-            LblMaxPortals.Text = ((int)SldMaxPortals.Value).ToString();
+            PnlZones.LblMaxPortals.Text = ((int)PnlZones.SldMaxPortals.Value).ToString();
             MarkDirty();
         }
 
@@ -516,13 +552,13 @@ namespace Olden_Era___Template_Editor
         private void BtnAdvancedZoneSettings_Click(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
-            _advancedZoneSettings = ChkAdvancedZoneSettings.IsChecked == true;
-            if (_advancedZoneSettings && TotalAdvancedNeutralZonesFromSliders() == 0 && (int)SldNeutral.Value > 0)
+            _advancedZoneSettings = PnlZones.ChkAdvancedZoneSettings.IsChecked == true;
+            if (_advancedZoneSettings && TotalAdvancedNeutralZonesFromSliders() == 0 && (int)PnlZones.SldNeutral.Value > 0)
             {
-                if ((int)SldNeutralCastles.Value > 0)
-                    SldNeutralMediumCastle.Value = SldNeutral.Value;
+                if ((int)PnlZones.SldNeutralCastles.Value > 0)
+                    PnlZones.SldNeutralMediumCastle.Value = PnlZones.SldNeutral.Value;
                 else
-                    SldNeutralMediumNoCastle.Value = SldNeutral.Value;
+                    PnlZones.SldNeutralMediumNoCastle.Value = PnlZones.SldNeutral.Value;
             }
 
             UpdateAdvancedZoneSettingsVisibility();
@@ -541,23 +577,23 @@ namespace Olden_Era___Template_Editor
         }
 
         private int TotalAdvancedNeutralZonesFromSliders() =>
-            (int)SldNeutralLowNoCastle.Value
-            + (int)SldNeutralLowCastle.Value
-            + (int)SldNeutralMediumNoCastle.Value
-            + (int)SldNeutralMediumCastle.Value
-            + (int)SldNeutralHighNoCastle.Value
-            + (int)SldNeutralHighCastle.Value;
+            (int)PnlZones.SldNeutralLowNoCastle.Value
+            + (int)PnlZones.SldNeutralLowCastle.Value
+            + (int)PnlZones.SldNeutralMediumNoCastle.Value
+            + (int)PnlZones.SldNeutralMediumCastle.Value
+            + (int)PnlZones.SldNeutralHighNoCastle.Value
+            + (int)PnlZones.SldNeutralHighCastle.Value;
 
         private void UpdateAdvancedZoneSettingsVisibility()
         {
-            if (PnlAdvancedNeutralZones == null) return;
+            if (PnlZones.PnlAdvancedNeutralZones == null) return;
             bool advanced = _advancedZoneSettings;
-            PnlAdvancedNeutralZones.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
-            PnlAdvancedZoneSizes.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
-            PnlSimpleNeutralCountLabel.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
-            SldNeutral.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
-            if (ChkAdvancedZoneSettings != null)
-                ChkAdvancedZoneSettings.IsChecked = advanced;
+            PnlZones.PnlAdvancedNeutralZones.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+            PnlZones.PnlAdvancedZoneSizes.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+            PnlZones.PnlSimpleNeutralCountLabel.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
+            PnlZones.SldNeutral.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
+            if (PnlZones.ChkAdvancedZoneSettings != null)
+                PnlZones.ChkAdvancedZoneSettings.IsChecked = advanced;
         }
 
         private void CmbVictory_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -668,33 +704,33 @@ namespace Olden_Era___Template_Editor
 
         private void UpdatePlayerCastleFactionVisibility()
         {
-            if (PnlPlayerCastleFactionOption == null || SldPlayerCastles == null) return;
-            bool hasExtraCastles = (int)SldPlayerCastles.Value > 1;
-            PnlPlayerCastleFactionOption.Visibility = hasExtraCastles ? Visibility.Visible : Visibility.Collapsed;
+            if (PnlZones.PnlPlayerCastleFactionOption == null || PnlZones.SldPlayerCastles == null) return;
+            bool hasExtraCastles = (int)PnlZones.SldPlayerCastles.Value > 1;
+            PnlZones.PnlPlayerCastleFactionOption.Visibility = hasExtraCastles ? Visibility.Visible : Visibility.Collapsed;
             if (!hasExtraCastles)
-                ChkMatchPlayerCastleFactions.IsChecked = false;
+                PnlZones.ChkMatchPlayerCastleFactions.IsChecked = false;
         }
 
         private void UpdateIsolateDescVisibility()
         {
-            if (TxtIsolateDesc == null || ChkNoDirectPlayerConn == null) return;
-            TxtIsolateDesc.Visibility = ChkNoDirectPlayerConn.IsChecked == true && ChkNoDirectPlayerConn.Visibility == Visibility.Visible
+            if (PnlZones.TxtIsolateDesc == null || PnlZones.ChkNoDirectPlayerConn == null) return;
+            PnlZones.TxtIsolateDesc.Visibility = PnlZones.ChkNoDirectPlayerConn.IsChecked == true && PnlZones.ChkNoDirectPlayerConn.Visibility == Visibility.Visible
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
 
         private void UpdateRoadsHintVisibility()
         {
-            if (TxtRoadsHint == null || ChkGenerateRoads == null || SldNeutralCastles == null) return;
-            TxtRoadsHint.Visibility = ChkGenerateRoads.IsChecked == true && (int)SldNeutralCastles.Value == 0
+            if (PnlZones.TxtRoadsHint == null || PnlZones.ChkGenerateRoads == null || PnlZones.SldNeutralCastles == null) return;
+            PnlZones.TxtRoadsHint.Visibility = PnlZones.ChkGenerateRoads.IsChecked == true && (int)PnlZones.SldNeutralCastles.Value == 0
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
 
         private void UpdateBalancedZonePlacementDescVisibility()
         {
-            if (TxtBalancedZonePlacementDesc == null || ChkBalancedZonePlacement == null) return;
-            TxtBalancedZonePlacementDesc.Visibility = ChkBalancedZonePlacement.IsChecked == true
+            if (PnlZones.TxtBalancedZonePlacementDesc == null || PnlZones.ChkBalancedZonePlacement == null) return;
+            PnlZones.TxtBalancedZonePlacementDesc.Visibility = PnlZones.ChkBalancedZonePlacement.IsChecked == true
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
@@ -706,38 +742,38 @@ namespace Olden_Era___Template_Editor
             TemplateName          = PnlMap.TxtTemplateName.Text.Trim(),
             MapSize               = SelectedMapSize(),
             PlayerCount           = (int)PnlMap.SldPlayers.Value,
-            NeutralZoneCount      = (int)SldNeutral.Value,
-            PlayerZoneCastles     = (int)SldPlayerCastles.Value,
-            NeutralZoneCastles    = (int)SldNeutralCastles.Value,
+            NeutralZoneCount      = (int)PnlZones.SldNeutral.Value,
+            PlayerZoneCastles     = (int)PnlZones.SldPlayerCastles.Value,
+            NeutralZoneCastles    = (int)PnlZones.SldNeutralCastles.Value,
             AdvancedMode          = _advancedZoneSettings,
-            NeutralLowNoCastleCount = (int)SldNeutralLowNoCastle.Value,
-            NeutralLowCastleCount = (int)SldNeutralLowCastle.Value,
-            NeutralMediumNoCastleCount = (int)SldNeutralMediumNoCastle.Value,
-            NeutralMediumCastleCount = (int)SldNeutralMediumCastle.Value,
-            NeutralHighNoCastleCount = (int)SldNeutralHighNoCastle.Value,
-            NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
-            MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
-            MinNeutralZonesBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value,
-            ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
+            NeutralLowNoCastleCount = (int)PnlZones.SldNeutralLowNoCastle.Value,
+            NeutralLowCastleCount = (int)PnlZones.SldNeutralLowCastle.Value,
+            NeutralMediumNoCastleCount = (int)PnlZones.SldNeutralMediumNoCastle.Value,
+            NeutralMediumCastleCount = (int)PnlZones.SldNeutralMediumCastle.Value,
+            NeutralHighNoCastleCount = (int)PnlZones.SldNeutralHighNoCastle.Value,
+            NeutralHighCastleCount = (int)PnlZones.SldNeutralHighCastle.Value,
+            MatchPlayerCastleFactions = PnlZones.ChkMatchPlayerCastleFactions.IsChecked == true,
+            MinNeutralZonesBetweenPlayers = (int)PnlZones.SldMinNeutralBetweenPlayers.Value,
+            ExperimentalBalancedZonePlacement = PnlZones.ChkBalancedZonePlacement.IsChecked == true,
             ExperimentalMapSizes  = PnlMap.ChkExperimentalMapSizes.IsChecked == true,
-            PlayerZoneSize        = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
-            NeutralZoneSize       = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
+            PlayerZoneSize        = _advancedZoneSettings ? PnlZones.SldPlayerZoneSize.Value : 1.0,
+            NeutralZoneSize       = _advancedZoneSettings ? PnlZones.SldNeutralZoneSize.Value : 1.0,
             HubZoneSize           = PnlTopology.SldHubZoneSize.Value,
             HubZoneCastles        = (int)PnlTopology.SldHubCastles.Value,
-            GuardRandomization    = SldGuardRandomization.Value / 100.0,
+            GuardRandomization    = PnlZones.SldGuardRandomization.Value / 100.0,
             HeroCountMin          = (int)PnlHeroes.SldHeroMin.Value,
             HeroCountMax          = (int)PnlHeroes.SldHeroMax.Value,
             HeroCountIncrement    = (int)PnlHeroes.SldHeroIncrement.Value,
             Topology              = TopologyOptions[PnlTopology.CmbTopology.SelectedIndex].Topology,
-            RandomPortals         = ChkRandomPortals.IsChecked == true,
-            MaxPortalConnections  = (int)SldMaxPortals.Value,
-            SpawnRemoteFootholds  = ChkSpawnFootholds.IsChecked == true,
-            GenerateRoads         = ChkGenerateRoads.IsChecked == true,
-            NoDirectPlayerConn    = ChkNoDirectPlayerConn.IsChecked == true,
-            ResourceDensityPercent = (int)SldResourceDensity.Value,
-            StructureDensityPercent = (int)SldStructureDensity.Value,
-            NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
-            BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
+            RandomPortals         = PnlZones.ChkRandomPortals.IsChecked == true,
+            MaxPortalConnections  = (int)PnlZones.SldMaxPortals.Value,
+            SpawnRemoteFootholds  = PnlZones.ChkSpawnFootholds.IsChecked == true,
+            GenerateRoads         = PnlZones.ChkGenerateRoads.IsChecked == true,
+            NoDirectPlayerConn    = PnlZones.ChkNoDirectPlayerConn.IsChecked == true,
+            ResourceDensityPercent = (int)PnlZones.SldResourceDensity.Value,
+            StructureDensityPercent = (int)PnlZones.SldStructureDensity.Value,
+            NeutralStackStrengthPercent = (int)PnlZones.SldNeutralStackStrength.Value,
+            BorderGuardStrengthPercent = (int)PnlZones.SldBorderGuardStrength.Value,
             VictoryCondition = CmbVictory.SelectedIndex >= 0 && CmbVictory.SelectedIndex < KnownValues.VictoryConditionIds.Length
                 ? KnownValues.VictoryConditionIds[CmbVictory.SelectedIndex]
                 : "win_condition_1",
@@ -766,38 +802,38 @@ namespace Olden_Era___Template_Editor
             PnlMap.ChkExperimentalMapSizes.IsChecked = needsExperimentalMapSizes;
             RefreshMapSizeOptions(s.MapSize);
             PnlMap.SldPlayers.Value        = s.PlayerCount;
-            SldNeutral.Value        = s.NeutralZoneCount;
-            SldPlayerCastles.Value  = s.PlayerZoneCastles;
-            SldNeutralCastles.Value = s.NeutralZoneCastles;
-            SldNeutralLowNoCastle.Value = s.NeutralLowNoCastleCount;
-            SldNeutralLowCastle.Value = s.NeutralLowCastleCount;
-            SldNeutralMediumNoCastle.Value = s.NeutralMediumNoCastleCount;
-            SldNeutralMediumCastle.Value = s.NeutralMediumCastleCount;
-            SldNeutralHighNoCastle.Value = s.NeutralHighNoCastleCount;
-            SldNeutralHighCastle.Value = s.NeutralHighCastleCount;
-            ChkMatchPlayerCastleFactions.IsChecked = s.MatchPlayerCastleFactions;
-            SldMinNeutralBetweenPlayers.Value = s.MinNeutralZonesBetweenPlayers;
-            ChkBalancedZonePlacement.IsChecked = s.ExperimentalBalancedZonePlacement;
-            SldPlayerZoneSize.Value = Math.Clamp(s.PlayerZoneSize, 0.1, 2.0);
-            SldNeutralZoneSize.Value = Math.Clamp(s.NeutralZoneSize, 0.1, 2.0);
+            PnlZones.SldNeutral.Value        = s.NeutralZoneCount;
+            PnlZones.SldPlayerCastles.Value  = s.PlayerZoneCastles;
+            PnlZones.SldNeutralCastles.Value = s.NeutralZoneCastles;
+            PnlZones.SldNeutralLowNoCastle.Value = s.NeutralLowNoCastleCount;
+            PnlZones.SldNeutralLowCastle.Value = s.NeutralLowCastleCount;
+            PnlZones.SldNeutralMediumNoCastle.Value = s.NeutralMediumNoCastleCount;
+            PnlZones.SldNeutralMediumCastle.Value = s.NeutralMediumCastleCount;
+            PnlZones.SldNeutralHighNoCastle.Value = s.NeutralHighNoCastleCount;
+            PnlZones.SldNeutralHighCastle.Value = s.NeutralHighCastleCount;
+            PnlZones.ChkMatchPlayerCastleFactions.IsChecked = s.MatchPlayerCastleFactions;
+            PnlZones.SldMinNeutralBetweenPlayers.Value = s.MinNeutralZonesBetweenPlayers;
+            PnlZones.ChkBalancedZonePlacement.IsChecked = s.ExperimentalBalancedZonePlacement;
+            PnlZones.SldPlayerZoneSize.Value = Math.Clamp(s.PlayerZoneSize, 0.1, 2.0);
+            PnlZones.SldNeutralZoneSize.Value = Math.Clamp(s.NeutralZoneSize, 0.1, 2.0);
             PnlTopology.SldHubZoneSize.Value = Math.Clamp(s.HubZoneSize, 0.25, 3.0);
             PnlTopology.SldHubCastles.Value = Math.Clamp(s.HubZoneCastles, 0, 4);
-            SldGuardRandomization.Value = GuardRandomizationPercent(s.GuardRandomization);
+            PnlZones.SldGuardRandomization.Value = GuardRandomizationPercent(s.GuardRandomization);
             PnlHeroes.SldHeroMin.Value        = s.HeroCountMin;
             PnlHeroes.SldHeroMax.Value        = s.HeroCountMax;
             PnlHeroes.SldHeroIncrement.Value  = s.HeroCountIncrement;
             int topoIdx = Array.FindIndex(TopologyOptions, t => t.Topology == s.Topology);
             if (topoIdx >= 0) PnlTopology.CmbTopology.SelectedIndex = topoIdx;
-            ChkRandomPortals.IsChecked        = s.RandomPortals;
-            SldMaxPortals.Value               = Math.Clamp(s.MaxPortalConnections, 1, 32);
-            PnlMaxPortals.Visibility          = s.RandomPortals ? Visibility.Visible : Visibility.Collapsed;
-            ChkSpawnFootholds.IsChecked       = s.SpawnRemoteFootholds;
-            ChkGenerateRoads.IsChecked        = s.GenerateRoads;
-            ChkNoDirectPlayerConn.IsChecked   = s.NoDirectPlayerConn;
-            SldResourceDensity.Value          = s.EffectiveResourceDensityPercent;
-            SldStructureDensity.Value         = s.EffectiveStructureDensityPercent;
-            SldNeutralStackStrength.Value     = s.NeutralStackStrengthPercent;
-            SldBorderGuardStrength.Value      = s.BorderGuardStrengthPercent;
+            PnlZones.ChkRandomPortals.IsChecked        = s.RandomPortals;
+            PnlZones.SldMaxPortals.Value               = Math.Clamp(s.MaxPortalConnections, 1, 32);
+            PnlZones.PnlMaxPortals.Visibility          = s.RandomPortals ? Visibility.Visible : Visibility.Collapsed;
+            PnlZones.ChkSpawnFootholds.IsChecked       = s.SpawnRemoteFootholds;
+            PnlZones.ChkGenerateRoads.IsChecked        = s.GenerateRoads;
+            PnlZones.ChkNoDirectPlayerConn.IsChecked   = s.NoDirectPlayerConn;
+            PnlZones.SldResourceDensity.Value          = s.EffectiveResourceDensityPercent;
+            PnlZones.SldStructureDensity.Value         = s.EffectiveStructureDensityPercent;
+            PnlZones.SldNeutralStackStrength.Value     = s.NeutralStackStrengthPercent;
+            PnlZones.SldBorderGuardStrength.Value      = s.BorderGuardStrengthPercent;
             int victoryIdx = Array.IndexOf(KnownValues.VictoryConditionIds, s.VictoryCondition);
             CmbVictory.SelectedIndex = victoryIdx >= 0 ? victoryIdx : 0;
             SldFactionLawsExp.Value = Math.Clamp(s.FactionLawsExpPercent, 25, 200);
@@ -1027,38 +1063,38 @@ namespace Olden_Era___Template_Editor
             },
             ZoneCfg = new ZoneConfiguration
             {
-                NeutralZoneCount = (int)SldNeutral.Value,
-                PlayerZoneCastles = (int)SldPlayerCastles.Value,
-                NeutralZoneCastles = (int)SldNeutralCastles.Value,
-                ResourceDensityPercent = (int)SldResourceDensity.Value,
-                StructureDensityPercent = (int)SldStructureDensity.Value,
-                NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,
-                BorderGuardStrengthPercent = (int)SldBorderGuardStrength.Value,
+                NeutralZoneCount = (int)PnlZones.SldNeutral.Value,
+                PlayerZoneCastles = (int)PnlZones.SldPlayerCastles.Value,
+                NeutralZoneCastles = (int)PnlZones.SldNeutralCastles.Value,
+                ResourceDensityPercent = (int)PnlZones.SldResourceDensity.Value,
+                StructureDensityPercent = (int)PnlZones.SldStructureDensity.Value,
+                NeutralStackStrengthPercent = (int)PnlZones.SldNeutralStackStrength.Value,
+                BorderGuardStrengthPercent = (int)PnlZones.SldBorderGuardStrength.Value,
                 HubZoneSize = PnlTopology.SldHubZoneSize.Value,
                 HubZoneCastles = (int)PnlTopology.SldHubCastles.Value,
                 Advanced = new AdvancedSettings
                 {
                     Enabled = _advancedZoneSettings,
-                    NeutralLowNoCastleCount = (int)SldNeutralLowNoCastle.Value,
-                    NeutralLowCastleCount = (int)SldNeutralLowCastle.Value,
-                    NeutralMediumNoCastleCount = (int)SldNeutralMediumNoCastle.Value,
-                    NeutralMediumCastleCount = (int)SldNeutralMediumCastle.Value,
-                    NeutralHighNoCastleCount = (int)SldNeutralHighNoCastle.Value,
-                    NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
-                    PlayerZoneSize = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
-                    NeutralZoneSize = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
-                    GuardRandomization = _advancedZoneSettings ? SldGuardRandomization.Value / 100.0 : 0.05,
+                    NeutralLowNoCastleCount = (int)PnlZones.SldNeutralLowNoCastle.Value,
+                    NeutralLowCastleCount = (int)PnlZones.SldNeutralLowCastle.Value,
+                    NeutralMediumNoCastleCount = (int)PnlZones.SldNeutralMediumNoCastle.Value,
+                    NeutralMediumCastleCount = (int)PnlZones.SldNeutralMediumCastle.Value,
+                    NeutralHighNoCastleCount = (int)PnlZones.SldNeutralHighNoCastle.Value,
+                    NeutralHighCastleCount = (int)PnlZones.SldNeutralHighCastle.Value,
+                    PlayerZoneSize = _advancedZoneSettings ? PnlZones.SldPlayerZoneSize.Value : 1.0,
+                    NeutralZoneSize = _advancedZoneSettings ? PnlZones.SldNeutralZoneSize.Value : 1.0,
+                    GuardRandomization = _advancedZoneSettings ? PnlZones.SldGuardRandomization.Value / 100.0 : 0.05,
                 }
             },
             // Neutral zones between players can be influenced by advanced zone settings, but is functionally independent.
-            MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)SldMinNeutralBetweenPlayers.Value : 0,
-            MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
-            ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
-            NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
-            RandomPortals = ChkRandomPortals.IsChecked == true,
-            MaxPortalConnections = (int)SldMaxPortals.Value,
-            SpawnRemoteFootholds = ChkSpawnFootholds.IsChecked == true,
-            GenerateRoads = ChkGenerateRoads.IsChecked == true,
+            MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)PnlZones.SldMinNeutralBetweenPlayers.Value : 0,
+            MatchPlayerCastleFactions = PnlZones.ChkMatchPlayerCastleFactions.IsChecked == true,
+            ExperimentalBalancedZonePlacement = PnlZones.ChkBalancedZonePlacement.IsChecked == true,
+            NoDirectPlayerConnections = PnlZones.ChkNoDirectPlayerConn.IsChecked == true,
+            RandomPortals = PnlZones.ChkRandomPortals.IsChecked == true,
+            MaxPortalConnections = (int)PnlZones.SldMaxPortals.Value,
+            SpawnRemoteFootholds = PnlZones.ChkSpawnFootholds.IsChecked == true,
+            GenerateRoads = PnlZones.ChkGenerateRoads.IsChecked == true,
             Topology = PnlTopology.CmbTopology.SelectedIndex >= 0 ? TopologyOptions[PnlTopology.CmbTopology.SelectedIndex].Topology : MapTopology.Default,
             FactionLawsExpPercent = (int)SldFactionLawsExp.Value,
             AstrologyExpPercent = (int)SldAstrologyExp.Value,
