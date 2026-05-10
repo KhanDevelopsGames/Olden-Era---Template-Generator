@@ -1346,8 +1346,8 @@ namespace Olden_Era___Template_Editor.Services
             double totalLen = PolylineLength(poly);
             if (totalLen < 0.001) return;
 
-            const double FadeExtraPx  = 18.0;  // fade ramp length on each side of the gap
-            const int    FadeSteps    = 20;     // micro-segments per fade ramp
+            const double FadeExtraPx  = 14.0;  // fade ramp length on each side of the gap
+            const int    FadeSteps    = 50;     // micro-segments per fade ramp
 
             // Expand each gap into (fadeStart, gapLo, gapHi, fadeEnd) in arc-t space
             var zones = gaps.Select(g => (
