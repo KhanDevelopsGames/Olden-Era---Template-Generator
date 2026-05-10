@@ -244,33 +244,45 @@ TemplateGenerator → uses override when non-null, else default behavior
 
 ---
 
-## Item 4 — Real hero settings (BLOCKED: precondition check required)
+## Item 4 — Real hero settings
 
-### Precondition
+### Status (updated 2026-05-10)
 
-`find "Olden Era - Template Editor/GameData/" -iname "*hero*"` returns **zero results** at brainstorming time. The shipped `GeneratorData/` (content_pools, content_lists, encounter_templates, zone_layouts, generator_*.json) does **not** contain hero IDs or faction-to-hero mappings.
+**Item 4(a) — structural metadata: SHIPPED** in `src/OldenEra.Generator/Services/HeroCatalog.cs`. Six factions, SID-pattern helper (`BuildSid("Temple", 1) → "human_hero_1"`), might/magic split. No hero names — see licence note below.
 
-**Executor must confirm this before starting Item 4.** Re-run:
+**Item 4(b) — UI for hero ban list / fixed starting hero / faction filter: NOT STARTED.** Net-new feature work, depends on UX decisions.
 
-```
-find "Olden Era - Template Editor/GameData" -iname "*hero*"
-grep -ril "hero_" "Olden Era - Template Editor/GameData"
-```
+### What research found
 
-If still empty, Item 4 is **blocked** until a hero list file is added to the repo. Two viable unblockers:
+The `find ... -iname "*hero*"` precondition still returns zero — the shipped `GameData/` does not contain a hero list. However, datamining communities have published the data:
 
-1. Author `Olden Era - Template Editor/GameData/GeneratorData/heroes/heroes.json` by hand (or extract from the game's data) with shape:
-   ```json
-   [
-     { "id": "hero_temple_paladin_01", "faction": "temple", "displayName": "..." },
-     ...
-   ]
-   ```
-2. Reverse-engineer hero IDs from existing pool/list JSON if any pickup or building references them. Spot-check via `grep -r "\"sid\"\s*:\s*\"hero_" "Olden Era - Template Editor/GameData"` first.
+- **alcaras/homm-olden** (https://github.com/alcaras/homm-olden) — full 108-hero catalog regenerated 2026-05-10 from the game's shipped `Core.zip`. **License: none (i.e. all rights reserved)**, so we cannot bundle their JSON without permission.
+- The game's **own** SID format is `<unitKey>_hero_<n>`, not the speculative `hero_<faction>_<class>_<n>` this plan originally assumed. There is no class token.
 
-Do **not** invent hero IDs.
+Faction display names vs internal SID prefixes:
 
-### Goal (once unblocked)
+| Display | SID prefix |
+|---|---|
+| Temple | `human` |
+| Necropolis | `necro` |
+| Grove | `nature` |
+| Hive | `demon` |
+| Schism | `unfrozen` |
+| Dungeon | `dungeon` |
+
+Each faction has 18 stock heroes (indices 1–9 might, 10–18 magic).
+
+### What ships
+
+`HeroCatalog` exposes only the parts that are facts (faction list, SID format, count, might/magic split). Hero **names** are localized strings the game owns; bundling them would need either:
+
+- An explicit licence from Unfrozen Studios, or
+- A licence on a derived dataset (alcaras/homm-olden currently has none), or
+- A run-time extraction from the user's own `HeroesOldenEra_Data/StreamingAssets/Core.zip` (no redistribution).
+
+### Item 4(b) — when ready
+
+### Goal
 
 `HeroSettingsPanel.razor` exposes:
 
