@@ -1,0 +1,80 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!--
+        Modern dark theme — WPF mirror of OldenEra.Web/wwwroot/css/app.css.
+        Brush keys (e.g. OeBgBrush) map one-to-one to the CSS oe-* tokens.
+        Legacy Brush*/Style aliases at the bottom keep MainWindow.xaml
+        building during the per-section refactor (B5..B11) and disappear
+        when MedievalTheme.xaml is removed (B12).
+    -->
+
+    <!-- ── Tokens ─────────────────────────────────────────────────── -->
+    <SolidColorBrush x:Key="OeBgBrush"           Color="#0B0D10"/>
+    <SolidColorBrush x:Key="OeSurface1Brush"     Color="#14171C"/>
+    <SolidColorBrush x:Key="OeSurface2Brush"     Color="#1B1F26"/>
+    <SolidColorBrush x:Key="OeSurface3Brush"     Color="#232831"/>
+    <SolidColorBrush x:Key="OeBorderBrush"       Color="#2A2F39"/>
+    <SolidColorBrush x:Key="OeBorderStrongBrush" Color="#3A4150"/>
+    <SolidColorBrush x:Key="OeTextBrush"         Color="#E6E8EB"/>
+    <SolidColorBrush x:Key="OeTextDimBrush"      Color="#9098A3"/>
+    <SolidColorBrush x:Key="OeTextMuteBrush"     Color="#5F6671"/>
+    <SolidColorBrush x:Key="OeAccentBrush"       Color="#F59E0B"/>
+    <SolidColorBrush x:Key="OeAccentHiBrush"     Color="#FBBF24"/>
+    <SolidColorBrush x:Key="OeAccentDimBrush"    Color="#B45309"/>
+    <SolidColorBrush x:Key="OeOnAccentBrush"     Color="#0B0D10"/>
+    <SolidColorBrush x:Key="OeErrorBrush"        Color="#EF4444"/>
+    <SolidColorBrush x:Key="OeWarnBgBrush"       Color="#2A1F0A"/>
+
+    <FontFamily x:Key="OeFont">Segoe UI Variable, Segoe UI</FontFamily>
+    <sys:Double x:Key="OeFontSize">13</sys:Double>
+    <sys:Double x:Key="OeFontSizeLabel">12</sys:Double>
+    <sys:Double x:Key="OeFontSizeSection">15</sys:Double>
+    <sys:Double x:Key="OeFontSizeTitle">20</sys:Double>
+
+    <!-- Legacy aliases — see file header. Removed once nothing references them. -->
+    <SolidColorBrush x:Key="BrushBorder"     Color="#2A2F39"/>
+    <SolidColorBrush x:Key="BrushError"      Color="#EF4444"/>
+    <SolidColorBrush x:Key="BrushText"       Color="#E6E8EB"/>
+    <SolidColorBrush x:Key="BrushTextDim"    Color="#9098A3"/>
+    <SolidColorBrush x:Key="BrushWarnBg"     Color="#2A1F0A"/>
+    <SolidColorBrush x:Key="BrushWarnBorder" Color="#F59E0B"/>
+    <SolidColorBrush x:Key="BrushWarnText"   Color="#E6E8EB"/>
+    <SolidColorBrush x:Key="BrushPanel"      Color="#14171C"/>
+    <SolidColorBrush x:Key="BrushInput"      Color="#1B1F26"/>
+    <SolidColorBrush x:Key="BrushGold"       Color="#F59E0B"/>
+    <SolidColorBrush x:Key="BrushGoldDim"    Color="#B45309"/>
+
+    <Style x:Key="SectionBorder" TargetType="Border">
+        <Setter Property="Background"      Value="Transparent"/>
+        <Setter Property="BorderBrush"     Value="{StaticResource OeBorderBrush}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Padding"         Value="0,0,0,16"/>
+        <Setter Property="Margin"          Value="0,0,0,16"/>
+    </Style>
+
+    <Style x:Key="SectionHeader" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource OeTextBrush}"/>
+        <Setter Property="FontFamily" Value="{StaticResource OeFont}"/>
+        <Setter Property="FontSize"   Value="{StaticResource OeFontSizeSection}"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin"     Value="0,0,0,12"/>
+    </Style>
+
+    <Style x:Key="ValueText" TargetType="TextBlock">
+        <Setter Property="Foreground"          Value="{StaticResource OeTextDimBrush}"/>
+        <Setter Property="FontFamily"          Value="Cascadia Mono, Consolas, monospace"/>
+        <Setter Property="FontSize"            Value="12"/>
+        <Setter Property="VerticalAlignment"   Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="MinWidth"            Value="40"/>
+    </Style>
+
+    <!-- Action button placeholders. Real styling lands in B3. -->
+    <Style x:Key="GenerateButton"      TargetType="Button"/>
+    <Style x:Key="ToolbarButton"       TargetType="Button"/>
+    <Style x:Key="TitleBarButton"      TargetType="Button"/>
+    <Style x:Key="TitleBarCloseButton" TargetType="Button"/>
+
+</ResourceDictionary>
