@@ -32,6 +32,13 @@ namespace OldenEra.Generator.Models
         public int HeroCountMin { get; set; } = 4;
         public int HeroCountMax { get; set; } = 8;
         public int HeroCountIncrement { get; set; } = 1;
+
+        /// <summary>
+        /// Hero IDs (e.g. <c>"human_hero_3"</c>) banned from the template.
+        /// Emitted into <c>globalBans.heroes</c>; matches the schema seen in
+        /// shipped templates (Arcade.rmg.json).
+        /// </summary>
+        public List<string> HeroBans { get; set; } = new();
     }
 
     public class AdvancedSettings

@@ -19,5 +19,13 @@ namespace OldenEra.Generator.Models.Unfrozen
     {
         [JsonPropertyName("items")]
         public List<string>? Items { get; set; }
+
+        /// <summary>Banned hero SIDs. Matches the shape used by Arcade.rmg.json.</summary>
+        [JsonPropertyName("heroes")]
+        public List<string>? Heroes { get; set; }
+
+        /// <summary>Banned neutral-magic SIDs. Schema sibling of <see cref="Items"/> / <see cref="Heroes"/>.</summary>
+        [JsonPropertyName("magics")]
+        public List<string>? Magics { get; set; }
     }
 }

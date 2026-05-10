@@ -51,6 +51,15 @@
                             TickFrequency="1" IsSnapToTickEnabled="True"/>
                 </Grid>
 
+                <Expander Header="Ban specific heroes" Margin="0,8,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <TextBlock Style="{StaticResource HintText}">
+                            Banned heroes are removed from the template's hero pool (emitted as globalBans.heroes).
+                        </TextBlock>
+                        <TabControl x:Name="TcHeroBans" Margin="0,4,0,0" MinHeight="180"/>
+                    </StackPanel>
+                </Expander>
+
             </StackPanel>
         </ScrollViewer>
     </Border>

@@ -1,4 +1,4 @@
-@* Hero count min / max / increment. *@
+@* Hero count min / max / increment, plus per-faction ban list. *@
 
 <div class="oe-section">
     <div class="oe-section-header">Heroes</div>
@@ -18,11 +18,60 @@
                Min="0" Max="10" Step="1"
                Value="Settings.HeroSettings.HeroCountIncrement"
                ValueChanged="@(v => { Settings.HeroSettings.HeroCountIncrement = (int)v; NotifyChanged(); })" />
+
+    <details class="oe-stacked" style="margin-top: 12px;">
+        <summary class="oe-label" style="cursor: pointer;">
+            Ban specific heroes (@Settings.HeroSettings.HeroBans.Count selected)
+        </summary>
+        <div class="oe-hint">
+            Banned heroes are removed from the template's hero pool
+            (emitted as <code>globalBans.heroes</code>).
+        </div>
+
+        <div class="oe-tier-tabs" role="tablist">
+            @foreach (var faction in Catalog.Factions)
+            {
+                <button type="button"
+                        class="@($"oe-tier-tab{(ActiveFactionId == faction.Id ? " active" : "")}")"
+                        role="tab"
+                        aria-selected="@(ActiveFactionId == faction.Id ? "true" : "false")"
+                        @onclick="@(() => ActiveFactionId = faction.Id)">
+                    @faction.Name
+                </button>
+            }
+        </div>
+
+        <div class="oe-ban-chips">
+            @foreach (var hero in Catalog.HeroesByFaction(ActiveFactionId).OrderBy(h => h.Name))
+            {
+                bool banned = Settings.HeroSettings.HeroBans.Contains(hero.Id);
+                var tooltip = string.IsNullOrWhiteSpace(hero.Specialty)
+                    ? hero.Id
+                    : $"{hero.Specialty}: {hero.SpecialtyDescription ?? ""}".Trim().TrimEnd(':');
+                <button type="button"
+                        class="@($"oe-ban-chip{(banned ? " selected" : "")}")"
+                        title="@tooltip"
+                        @onclick="@(() => ToggleHeroBan(hero.Id))">
+                    @hero.Name
+                </button>
+            }
+        </div>
+    </details>
 </div>
 
 @code {
     [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
     [Parameter] public EventCallback OnChanged { get; set; }
 
+    private static CommunityCatalog Catalog => CommunityCatalog.Default;
+    private string ActiveFactionId { get; set; } = Catalog.Factions.FirstOrDefault()?.Id ?? "temple";
+
     private Task NotifyChanged() => OnChanged.InvokeAsync();
+
+    private async Task ToggleHeroBan(string heroId)
+    {
+        if (!Settings.HeroSettings.HeroBans.Remove(heroId))
+            Settings.HeroSettings.HeroBans.Add(heroId);
+        await NotifyChanged();
+    }
 }
