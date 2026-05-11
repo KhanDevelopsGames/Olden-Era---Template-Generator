@@ -135,6 +135,18 @@ namespace OldenEra.Generator.Services
                         template.GlobalBans.Heroes.Add(sid);
             }
 
+            // Spell bans — emitted as globalBans.magics. Mirrors the hero-bans
+            // block; ids pass through without validation, same as hero/item bans.
+            if (settings.HeroSettings.BannedSpells.Count > 0)
+            {
+                template.GlobalBans ??= new GlobalBans();
+                template.GlobalBans.Magics ??= new List<string>();
+                foreach (var sid in settings.HeroSettings.BannedSpells)
+                    if (!string.IsNullOrWhiteSpace(sid)
+                        && !template.GlobalBans.Magics.Contains(sid))
+                        template.GlobalBans.Magics.Add(sid);
+            }
+
             // Extra content count limits — appended as extra entries.
             if (settings.Content.ContentCountLimits.Count > 0)
             {
