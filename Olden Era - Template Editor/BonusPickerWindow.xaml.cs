@@ -13,18 +13,23 @@ namespace Olden_Era___Template_Editor
 
         private readonly HashSet<string> _existingKeys;
         private readonly HashSet<string> _existingItemIds;
+        private readonly HashSet<string> _existingSpellIds;
+        private bool                     _spellMakeFree;
 
         public BonusPickerWindow(IEnumerable<BonusEntry>? existingBonuses = null)
         {
             InitializeComponent();
             CmbType.SelectedIndex     = 0;
             CmbReceiver.SelectedIndex = 0;
-            CmbSpell.SelectedIndex    = 0;
 
             var existing = existingBonuses?.ToList() ?? [];
-            _existingKeys    = existing.Select(b => b.ToString()).ToHashSet();
-            _existingItemIds = existing
+            _existingKeys     = existing.Select(b => b.ToString()).ToHashSet();
+            _existingItemIds  = existing
                 .Where(b => b.PresetType == BonusPresetType.StartingItem)
+                .Select(b => b.Param)
+                .ToHashSet();
+            _existingSpellIds = existing
+                .Where(b => b.PresetType == BonusPresetType.Spell)
                 .Select(b => b.Param)
                 .ToHashSet();
         }
@@ -68,11 +73,30 @@ namespace Olden_Era___Template_Editor
             }
         }
 
-        private void CmbSpell_Changed(object sender, SelectionChangedEventArgs e)
+        private void BtnPickSpell_Click(object sender, RoutedEventArgs e)
         {
-            if (!IsInitialized) return;
-            var tag = (string)((ComboBoxItem)CmbSpell.SelectedItem).Tag;
-            TxtSpellCustom.Visibility = string.IsNullOrEmpty(tag) ? Visibility.Visible : Visibility.Collapsed;
+            var picker = new SpellPickerWindow(_existingSpellIds) { Owner = this };
+            if (picker.ShowDialog() != true) return;
+
+            if (picker.SelectedIds.Count > 1)
+            {
+                var receiver = SelectedReceiver;
+                Results = picker.SelectedIds
+                    .Select(id => new BonusEntry
+                    {
+                        PresetType     = BonusPresetType.Spell,
+                        ReceiverFilter = receiver,
+                        Param          = id,
+                        Param2         = picker.MakeFree ? "1" : "0",
+                    })
+                    .ToList();
+                DialogResult = true;
+            }
+            else if (picker.SelectedIds.Count == 1)
+            {
+                TxtSpell.Text  = picker.SelectedIds[0];
+                _spellMakeFree = picker.MakeFree;
+            }
         }
 
         private void BtnPickItem_Click(object sender, RoutedEventArgs e)
@@ -115,14 +139,13 @@ namespace Olden_Era___Template_Editor
                     break;
 
                 case BonusPresetType.Spell:
-                    var spellTag = (string)((ComboBoxItem)CmbSpell.SelectedItem).Tag;
-                    param = string.IsNullOrEmpty(spellTag) ? TxtSpellCustom.Text.Trim() : spellTag;
+                    param = TxtSpell.Text.Trim();
                     if (string.IsNullOrEmpty(param))
                     {
-                        MessageBox.Show("Enter a spell ID.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        MessageBox.Show("Pick a spell first.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
-                    param2 = ChkMakeFree.IsChecked == true ? "1" : "0";
+                    param2 = _spellMakeFree ? "1" : "0";
                     break;
 
                 case BonusPresetType.UnitMultiplier:

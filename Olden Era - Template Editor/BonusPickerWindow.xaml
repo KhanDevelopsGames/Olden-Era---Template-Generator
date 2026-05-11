@@ -56,24 +56,16 @@
                 <!-- Spell -->
                 <StackPanel x:Name="PnlSpell" Visibility="Collapsed" Margin="0,8,0,0">
                     <TextBlock Text="Spell" Foreground="#9A8A6A" FontSize="11" Margin="0,0,0,3"/>
-                    <ComboBox x:Name="CmbSpell" Height="28"
-                              SelectionChanged="CmbSpell_Changed"
-                              Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28">
-                        <ComboBoxItem Tag="neutral_magic_town_portal"      Content="Town Portal"/>
-                        <ComboBoxItem Tag="neutral_magic_dimension_door"   Content="Dimension Door"/>
-                        <ComboBoxItem Tag="neutral_magic_shadow_form"      Content="Shadow Form"/>
-                        <ComboBoxItem Tag="neutral_magic_light_gate"       Content="Light Gate"/>
-                        <ComboBoxItem Tag="neutral_magic_pocket_dimension" Content="Pocket Dimension"/>
-                        <ComboBoxItem Tag="" Content="Custom…"/>
-                    </ComboBox>
-                    <TextBox x:Name="TxtSpellCustom" Margin="0,4,0,0" Height="26"
-                             Visibility="Collapsed"
-                             Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28"
-                             CaretBrush="#C9A84C" Padding="6,0"
-                             FontFamily="Consolas" FontSize="11"/>
-                    <CheckBox x:Name="ChkMakeFree" Margin="0,8,0,0"
-                              Content="Make this spell free (zero cast cost)"
-                              Foreground="#E8D5A3"/>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="Pick…" Width="64"
+                                Height="26" Margin="6,0,0,0" Click="BtnPickSpell_Click"
+                                Background="#1E1A10" BorderBrush="#7A6A48"
+                                Foreground="#C8B87A" FontSize="12" Cursor="Hand"/>
+                        <TextBox x:Name="TxtSpell" Height="26" IsReadOnly="True"
+                                 Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28"
+                                 CaretBrush="#C9A84C" Padding="6,0"
+                                 FontFamily="Consolas" FontSize="11"/>
+                    </DockPanel>
                 </StackPanel>
 
                 <!-- Unit Multiplier -->
