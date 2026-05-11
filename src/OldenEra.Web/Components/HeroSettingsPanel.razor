@@ -87,6 +87,45 @@
             </div>
         }
     </details>
+
+    <details class="oe-stacked" style="margin-top: 12px;">
+        <summary class="oe-label" style="cursor: pointer;">
+            Ban specific spells (@Settings.HeroSettings.BannedSpells.Count selected)
+        </summary>
+        <div class="oe-hint">
+            Banned spells are removed from mage guilds, shrines, and pandora boxes
+            (emitted as <code>globalBans.magics</code>).
+        </div>
+
+        <div class="oe-tier-tabs" role="tablist">
+            @foreach (var school in SpellSchools)
+            {
+                <button type="button"
+                        class="@($"oe-tier-tab{(ActiveSchool == school ? " active" : "")}")"
+                        role="tab"
+                        aria-selected="@(ActiveSchool == school ? "true" : "false")"
+                        @onclick="@(() => ActiveSchool = school)">
+                    @FriendlySchool(school)
+                </button>
+            }
+        </div>
+
+        <div class="oe-ban-chips">
+            @foreach (var spell in SpellsBySchool(ActiveSchool))
+            {
+                bool banned = Settings.HeroSettings.BannedSpells.Contains(spell.Id);
+                var tooltip = string.IsNullOrWhiteSpace(spell.Description)
+                    ? $"T{spell.Tier} · {FriendlySchool(spell.School)}"
+                    : spell.Description;
+                <button type="button"
+                        class="@($"oe-ban-chip{(banned ? " selected" : "")}")"
+                        title="@tooltip"
+                        @onclick="@(() => ToggleSpellBan(spell.Id))">
+                    @($"T{spell.Tier}. {spell.Name}")
+                </button>
+            }
+        </div>
+    </details>
 </div>
 
 @code {
@@ -126,6 +165,46 @@
     {
         var v = e.Value?.ToString();
         Settings.HeroSettings.FixedStartingHeroByFaction[factionId] = string.IsNullOrEmpty(v) ? null : v;
+        await NotifyChanged();
+    }
+
+    private string ActiveSchool { get; set; } = SpellSchools.FirstOrDefault() ?? "day";
+
+    private static readonly string[] SpellSchools =
+        CommunityCatalog.Default.Spells
+            .Select(s => s.School ?? "")
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(SchoolOrder)
+            .ToArray();
+
+    private static IEnumerable<SpellEntry> SpellsBySchool(string school) =>
+        CommunityCatalog.Default.Spells
+            .Where(s => string.Equals(s.School, school, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(s => s.Tier)
+            .ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase);
+
+    private static int SchoolOrder(string school) => school?.ToLowerInvariant() switch
+    {
+        "day" => 0,
+        "night" => 1,
+        "arcane" => 2,
+        "primal" => 3,
+        _ => 99,
+    };
+
+    private static string FriendlySchool(string school) => school?.ToLowerInvariant() switch
+    {
+        "day" => "Day",
+        "night" => "Night",
+        "arcane" => "Arcane",
+        "primal" => "Primal",
+        _ => string.IsNullOrEmpty(school) ? "Other" : char.ToUpper(school[0]) + school[1..],
+    };
+
+    private async Task ToggleSpellBan(string spellId)
+    {
+        if (!Settings.HeroSettings.BannedSpells.Remove(spellId))
+            Settings.HeroSettings.BannedSpells.Add(spellId);
         await NotifyChanged();
     }
 }
