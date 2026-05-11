@@ -41,6 +41,12 @@ namespace OldenEra.Generator.Models
         public List<string> HeroBans { get; set; } = new();
 
         /// <summary>
+        /// Spell IDs (e.g. <c>"spell.fly"</c>) banned from the template.
+        /// Emitted into <c>globalBans.magics</c>; sibling of <see cref="HeroBans"/>.
+        /// </summary>
+        public List<string> BannedSpells { get; set; } = new();
+
+        /// <summary>
         /// Pinned starting hero per faction. Key is the faction id
         /// (e.g. <c>"temple"</c>), value is a hero id from the catalog,
         /// or <c>null</c>/missing for "random".
