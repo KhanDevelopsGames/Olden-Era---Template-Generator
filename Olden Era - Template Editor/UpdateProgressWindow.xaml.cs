@@ -15,6 +15,16 @@ namespace Olden_Era___Template_Editor
         public UpdateProgressWindow()
         {
             InitializeComponent();
+            Loaded += (_, _) =>
+            {
+                if (Owner != null)
+                    Owner.IsEnabled = false;
+            };
+            Closed += (_, _) =>
+            {
+                if (Owner != null)
+                    Owner.IsEnabled = true;
+            };
         }
 
         public void SetTitle(string title) => TitleText.Text = title;
