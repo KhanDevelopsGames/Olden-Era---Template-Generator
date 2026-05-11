@@ -37,6 +37,14 @@ public static class SettingsMapper
                 ObstaclesFill = s.TerrainObstaclesFill,
                 LakesFill = s.TerrainLakesFill,
             },
+            BordersRoads = new BordersRoadsSettings
+            {
+                CornerRadius = s.BorderCornerRadius,
+                ObstaclesWidth = s.BorderObstaclesWidth,
+                WaterBorderEnabled = s.WaterBorderEnabled,
+                WaterWidth = s.WaterWidth,
+                RoadType = string.IsNullOrEmpty(s.RoadType) ? null : s.RoadType
+            },
             BuildingPresets = new BuildingPresetSettings
             {
                 PlayerZonePreset = s.BuildingPresetPlayer ?? "",
@@ -220,6 +228,11 @@ public static class SettingsMapper
             DesertionValue = g.DesertionValue,
             TerrainObstaclesFill = g.Terrain.ObstaclesFill,
             TerrainLakesFill = g.Terrain.LakesFill,
+            BorderCornerRadius   = g.BordersRoads.CornerRadius,
+            BorderObstaclesWidth = g.BordersRoads.ObstaclesWidth,
+            WaterBorderEnabled   = g.BordersRoads.WaterBorderEnabled,
+            WaterWidth           = g.BordersRoads.WaterWidth,
+            RoadType             = g.BordersRoads.RoadType ?? "",
             BuildingPresetPlayer = g.BuildingPresets.PlayerZonePreset,
             BuildingPresetNeutral = g.BuildingPresets.NeutralZonePreset,
             ZoneGuardWeeklyIncrement = g.GuardProgression.ZoneGuardWeeklyIncrement,
