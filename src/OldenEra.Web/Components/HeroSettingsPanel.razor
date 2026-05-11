@@ -98,7 +98,7 @@
         </div>
 
         <div class="oe-tier-tabs" role="tablist">
-            @foreach (var school in SpellSchools)
+            @foreach (var school in Catalog.SpellSchools)
             {
                 <button type="button"
                         class="@($"oe-tier-tab{(ActiveSchool == school ? " active" : "")}")"
@@ -168,7 +168,6 @@
         await NotifyChanged();
     }
 
-    private static IReadOnlyList<string> SpellSchools => Catalog.SpellSchools;
     private string ActiveSchool { get; set; } = Catalog.SpellSchools.FirstOrDefault() ?? "day";
 
     private static IEnumerable<SpellEntry> SpellsBySchool(string school) =>
