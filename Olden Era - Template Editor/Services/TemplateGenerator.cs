@@ -1207,7 +1207,7 @@ namespace Olden_Era___Template_Editor.Services
                     int ga = ZoneQualityGroup(la, playerLetters, neutralByLetter);
                     int gb = ZoneQualityGroup(lb, playerLetters, neutralByLetter);
                     int lo = Math.Min(ga, gb), hi = Math.Max(ga, gb);
-                    if (hi - lo <= 1) return true;
+                    if (hi - lo <= 2) return true;
                     // Allow a group skip only when every group in between is absent.
                     for (int g = lo + 1; g < hi; g++)
                         if (presentGroups.Contains(g)) return false;
@@ -1301,10 +1301,17 @@ namespace Olden_Era___Template_Editor.Services
         }
 
         /// <summary>
-        /// Returns the quality group used for adjacency filtering and bridge penalty:
-        ///   0 = player, 1 = low, 2 = medium, 3 = high.
-        /// City zones are promoted one full quality level (low-city → 2, medium-city → 3)
-        /// so they are treated as bridges between quality bands for connectivity purposes.
+        /// Returns the quality group used for adjacency filtering and bridge penalty.
+        /// Uses a doubled scale so city sub-tiers can be represented without fractions:
+        ///   0  = player
+        ///   2  = low plain
+        ///   3  = low city         (between low-plain and medium-plain)
+        ///   4  = medium plain
+        ///   5  = medium city      (between medium-plain and high-plain)
+        ///   6  = high plain
+        ///   7  = high city
+        /// Adjacency is allowed when |ga - gb| &lt;= 2 (one full quality step or one city sub-step).
+        /// This prevents e.g. low-city (3) connecting directly to high-city (7): gap = 4 > 2.
         /// </summary>
         private static int ZoneQualityGroup(
             string letter,
@@ -1312,13 +1319,13 @@ namespace Olden_Era___Template_Editor.Services
             Dictionary<string, NeutralZonePlan> neutralByLetter)
         {
             if (playerLetters.Contains(letter)) return 0;
-            if (!neutralByLetter.TryGetValue(letter, out var plan)) return 1;
+            if (!neutralByLetter.TryGetValue(letter, out var plan)) return 2;
             bool isCity = plan.CastleCount > 0;
             return plan.Quality switch
             {
-                NeutralZoneQuality.High   => 3,            // high-plain and high-city both group 3
-                NeutralZoneQuality.Medium => isCity ? 3 : 2, // medium-city promoted to high group
-                _                         => isCity ? 2 : 1  // low-city promoted to medium group
+                NeutralZoneQuality.High   => isCity ? 7 : 6,
+                NeutralZoneQuality.Medium => isCity ? 5 : 4,
+                _                         => isCity ? 3 : 2
             };
         }
 
