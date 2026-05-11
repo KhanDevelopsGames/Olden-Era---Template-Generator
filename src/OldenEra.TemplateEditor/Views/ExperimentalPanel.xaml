@@ -242,9 +242,9 @@
 
                             <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ChkWaterBorderEnabled" Content="Water border" Margin="5,4,0,2"/>
 
-                            <Label    Grid.Row="3" Grid.Column="0" Content="Water width" Padding="5,2"/>
-                            <Slider   Grid.Row="3" Grid.Column="1" x:Name="SldWaterWidth" Minimum="1" Maximum="10" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"/>
-                            <TextBlock Grid.Row="3" Grid.Column="2" x:Name="TxtWaterWidth" Text="4" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+                            <Label    Grid.Row="3" Grid.Column="0" Content="Water width" Padding="5,2" IsEnabled="{Binding IsChecked, ElementName=ChkWaterBorderEnabled}"/>
+                            <Slider   Grid.Row="3" Grid.Column="1" x:Name="SldWaterWidth" Minimum="1" Maximum="10" Value="4" TickFrequency="1" IsSnapToTickEnabled="True" IsEnabled="{Binding IsChecked, ElementName=ChkWaterBorderEnabled}"/>
+                            <TextBlock Grid.Row="3" Grid.Column="2" x:Name="TxtWaterWidth" Text="4" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}" IsEnabled="{Binding IsChecked, ElementName=ChkWaterBorderEnabled}"/>
 
                             <Label    Grid.Row="4" Grid.Column="0" Content="Road type" Padding="5,2"/>
                             <ComboBox Grid.Row="4" Grid.Column="1" x:Name="CmbRoadType"/>
