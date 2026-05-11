@@ -62,6 +62,7 @@ public static class ContentItemGroup
         ContentIds.RandomHire6,
         ContentIds.RandomHire7,
         IncludeListIds.RandomHiresAllTier,
+        IncludeListIds.RandomHiresAllTierWeighted,
         ContentIds.MercenaryGuild,
         /* Guarded unit banks */
         IncludeListIds.RandomGuardedUnitBank,
@@ -122,6 +123,7 @@ public static class ContentItemGroup
     /* Hero improvement structures */
     public static readonly List<SidMapping> HeroImprovementStructures = new()
     {
+        IncludeListIds.HeroImprovementUncommon,
         IncludeListIds.HeroStatsAndSkillsTier1,
         ContentIds.StingingSword,
         ContentIds.ArmoryAutomaton,

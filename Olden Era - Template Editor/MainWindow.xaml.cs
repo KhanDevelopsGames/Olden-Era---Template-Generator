@@ -111,13 +111,24 @@ namespace Olden_Era___Template_Editor
             _playerZoneMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemEpic));
 
             // ── Hiring — low-tier × 2 + high-tier × 1 + full pool × 1 (Kerberos + Universe blend). ──
-            _playerZoneMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier, count: 2, isGroup: true));
-            _playerZoneMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier, isGroup: true));
-            _playerZoneMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresAllTier, isGroup: true));
+            _playerZoneMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier, count: 2));
+            _playerZoneMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier));
+            _playerZoneMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresAllTier));
 
             // ── Guarded resource banks — tier 1 × 2 + tier 2 × 1 (Exodus pattern). ──
-            _playerZoneMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier1, count: 2, isGroup: true));
-            _playerZoneMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier2, isGroup: true));
+            _playerZoneMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier1, count: 2));
+            _playerZoneMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier2));
+
+            // ── Utility buildings (Blitz/Kerberos/Exodus pattern). ──
+            _playerZoneMandatoryContent.utilityStructures.Add(CreateZoneContentItem(ContentIds.Watchtower));
+            _playerZoneMandatoryContent.utilityStructures.Add(CreateZoneContentItem(ContentIds.Market, roadDistance: "Near"));
+            _playerZoneMandatoryContent.utilityStructures.Add(CreateZoneContentItem(ContentIds.ManaWell, roadDistance: "Near"));
+            
+            // ── Hero training — tier-2 stat building (fort/university/orb_observatory) ──
+            //    + uncommon hero bank (university/wise_owl/tree_of_knowledge) (Blitz/Exodus pattern).
+            _playerZoneMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier2));
+            _playerZoneMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroImprovementUncommon));
+
         }
 
         private void PopulateZoneContentMenu(ComboBox comboBox, ComboBox comboBoxSticky, List<SidMapping> contentGroup)
@@ -913,14 +924,7 @@ namespace Olden_Era___Template_Editor
             if (mapping == null)
                 return;
             
-            if(mapping.Sid.ToLower().Contains(IncludeListIds.Identifier)) 
-            {
-                collection.Add(CreateZoneContentItem(mapping, isGroup: true));
-            }
-            else
-            {
-                collection.Add(CreateZoneContentItem(mapping, isGroup: false));
-            }
+            collection.Add(CreateZoneContentItem(mapping));
             MarkDirty();
         }
 
@@ -994,8 +998,14 @@ namespace Olden_Era___Template_Editor
             MarkDirty();
         }
 
-        private static ZoneContentItemUI CreateZoneContentItem(SidMapping preset, int count = 1, bool isGuarded = true, bool nearCastle = false, string roadDistance = "Any", bool isGroup = false)
+        private static ZoneContentItemUI CreateZoneContentItem(SidMapping preset, int count = 1, bool isGuarded = true, bool nearCastle = false, string roadDistance = "Any")
         {
+            bool isGroup = false;
+            if(preset.Sid.ToLower().Contains(IncludeListIds.Identifier))
+            {
+                // Mark the content item as an include list group for proper generation.
+                isGroup = true;
+            }
             return new ZoneContentItemUI
             {
                 SidMapping = preset,
@@ -1462,6 +1472,7 @@ namespace Olden_Era___Template_Editor
 
             foreach (var contentItem in contentItems)
             {
+                /* We need to parse the "real" content item data to get the SID for our mapping. Grouped entries from IncludeListIds have their "sid" as name of the include list. */
                 bool isGroup = contentItem.IncludeLists is { Count: > 0 };
                 string? sid = isGroup
                     ? contentItem.IncludeLists![0]
@@ -1481,7 +1492,6 @@ namespace Olden_Era___Template_Editor
 
                 var key = new PlayerZoneContentKey(
                     sidMapping.Sid,
-                    isGroup,
                     isMine,
                     isGuarded,
                     nearCastle,
@@ -1508,8 +1518,7 @@ namespace Olden_Era___Template_Editor
                     count: kvp.Value,
                     isGuarded: kvp.Key.IsGuarded,
                     nearCastle: kvp.Key.NearCastle,
-                    roadDistance: kvp.Key.RoadDistance,
-                    isGroup: kvp.Key.IsGroup);
+                    roadDistance: kvp.Key.RoadDistance);
 
                 if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.Mines))
                 {
@@ -1572,7 +1581,6 @@ namespace Olden_Era___Template_Editor
 
         private readonly record struct PlayerZoneContentKey(
             string Sid,
-            bool IsGroup,
             bool IsMine,
             bool IsGuarded,
             bool NearCastle,

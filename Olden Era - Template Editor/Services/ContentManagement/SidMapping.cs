@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -19,14 +20,14 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
         public static readonly SidMapping BeerFountain = new() { Sid = "beer_fountain", Name = "Beer Fountain" };
         public static readonly SidMapping BorealCall = new() { Sid = "boreal_call", Name = "Boreal Call" };
         public static readonly SidMapping CelestialSphere = new() { Sid = "celestial_sphere", Name = "Celestial Sphere" };
-        public static readonly SidMapping AltarOfMagic1 = new() { Sid = "altar_of_magic_1", Name = "Altar Of Magic 1" };
-        public static readonly SidMapping AltarOfMagic2 = new() { Sid = "altar_of_magic_2", Name = "Altar Of Magic 2" };
-        public static readonly SidMapping AltarOfMagic3 = new() { Sid = "altar_of_magic_3", Name = "Altar Of Magic 3" };
-        public static readonly SidMapping AltarOfMagic4 = new() { Sid = "altar_of_magic_4", Name = "Altar Of Magic 4" };
-        public static readonly SidMapping MagicAmplifier1 = new() { Sid = "magic_amplifier_1", Name = "Magic Amplifier 1" };
-        public static readonly SidMapping MagicAmplifier2 = new() { Sid = "magic_amplifier_2", Name = "Magic Amplifier 2" };
-        public static readonly SidMapping MagicAmplifier3 = new() { Sid = "magic_amplifier_3", Name = "Magic Amplifier 3" };
-        public static readonly SidMapping MagicAmplifier4 = new() { Sid = "magic_amplifier_4", Name = "Magic Amplifier 4" };
+        public static readonly SidMapping AltarOfMagic1 = new() { Sid = "altar_of_magic_1", Name = "Nightshade Shrine" };
+        public static readonly SidMapping AltarOfMagic2 = new() { Sid = "altar_of_magic_2", Name = "Daylight Shrine" };
+        public static readonly SidMapping AltarOfMagic3 = new() { Sid = "altar_of_magic_3", Name = "Arcane Shrine" };
+        public static readonly SidMapping AltarOfMagic4 = new() { Sid = "altar_of_magic_4", Name = "Primal Shrine" };
+        public static readonly SidMapping MagicAmplifier1 = new() { Sid = "magic_amplifier_1", Name = "Nightshade Amplifier" };
+        public static readonly SidMapping MagicAmplifier2 = new() { Sid = "magic_amplifier_2", Name = "Daylight Amplifier" };
+        public static readonly SidMapping MagicAmplifier3 = new() { Sid = "magic_amplifier_3", Name = "Arcane Amplifier" };
+        public static readonly SidMapping MagicAmplifier4 = new() { Sid = "magic_amplifier_4", Name = "Primal Amplifier" };
         public static readonly SidMapping Chimerologist = new() { Sid = "chimerologist", Name = "Chimerologist" };
         public static readonly SidMapping Circus = new() { Sid = "circus", Name = "Circus" };
         public static readonly SidMapping CollegeOfWonder = new() { Sid = "college_of_wonder", Name = "College Of Wonder" };
@@ -146,6 +147,7 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
         public static readonly SidMapping RandomHiresLowTier = new() { Sid = "content_list_building_random_hires_low_tier", Name = "Random Hires Low Tier" };
         public static readonly SidMapping RandomHiresHighTier = new() { Sid = "content_list_building_random_hires_high_tier", Name = "Random Hires High Tier" };
         public static readonly SidMapping RandomHiresAllTier = new() { Sid = "basic_content_list_building_random_hires", Name = "Random Hires Any Tier" };
+        public static readonly SidMapping RandomHiresAllTierWeighted = new() { Sid = "content_list_building_random_hires", Name = "Random Hires Any Tier (Weighted)" };
         public static readonly SidMapping ResourceBanksTier1 = new() { Sid = "basic_content_list_building_guarded_resource_banks_tier_1", Name = "Resource Banks T1" };
         public static readonly SidMapping ResourceBanksTier2 = new() { Sid = "basic_content_list_building_guarded_resource_banks_tier_2", Name = "Resource Banks T2" };
         public static readonly SidMapping GuardedBanksTier1 = new() { Sid = "basic_content_list_building_guarded_resource_banks_tier_1", Name = "Guarded Banks T1" };
@@ -163,10 +165,7 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
         public static readonly SidMapping HeroStatsAndSkillsTier3 = new() { Sid = "basic_content_list_building_hero_stats_and_skills_tier_3", Name = "Random Hero Stat/Skill Tier 3" };
         public static readonly SidMapping MagicBuildingsTier1 = new() { Sid = "basic_content_list_building_magic_tier_1", Name = "Random Magic Building Tier 1" };
         public static readonly SidMapping MagicBuildingsTier2 = new() { Sid = "basic_content_list_building_magic_tier_2", Name = "Random Magic Building Tier 2" };
-
-
-        
-        
+        public static readonly SidMapping HeroImprovementUncommon = new() { Sid = "content_list_building_uncommon_hero_banks", Name = "Uncommon Hero Improvement" };
     }
 
     public static class GlobalContent
