@@ -776,6 +776,11 @@ namespace OldenEra.TemplateEditor
             DesertionValue      = ParseInt(PnlExperimental.TxtDesertionValue.Text),
             TerrainObstaclesFill = PnlExperimental.SldTerrainObstacles.Value / 100.0,
             TerrainLakesFill     = PnlExperimental.SldTerrainLakes.Value / 100.0,
+            BorderCornerRadius   = PnlExperimental.SldBorderCornerRadius.Value == 0 ? (double?)null : PnlExperimental.SldBorderCornerRadius.Value / 100.0,
+            BorderObstaclesWidth = (int)PnlExperimental.SldBorderObstaclesWidth.Value == 3 ? (int?)null : (int)PnlExperimental.SldBorderObstaclesWidth.Value,
+            WaterBorderEnabled   = PnlExperimental.ChkWaterBorderEnabled.IsChecked == true,
+            WaterWidth           = (int)PnlExperimental.SldWaterWidth.Value,
+            RoadType             = PnlExperimental.CmbRoadType.SelectedIndex <= 0 ? "" : (PnlExperimental.CmbRoadType.SelectedItem as string) ?? "",
             BuildingPresetPlayer = PresetFromCombo(PnlExperimental.CmbPlayerPreset),
             BuildingPresetNeutral = PresetFromCombo(PnlExperimental.CmbNeutralPreset),
             ZoneGuardWeeklyIncrement = PnlExperimental.SldZoneGuardWeekly.Value / 100.0,
@@ -915,6 +920,13 @@ namespace OldenEra.TemplateEditor
             PnlExperimental.TxtDesertionValue.Text = s.DesertionValue.ToString();
             PnlExperimental.SldTerrainObstacles.Value = Math.Clamp(s.TerrainObstaclesFill * 100.0, 0, 80);
             PnlExperimental.SldTerrainLakes.Value = Math.Clamp(s.TerrainLakesFill * 100.0, 0, 80);
+            PnlExperimental.SldBorderCornerRadius.Value   = Math.Clamp((s.BorderCornerRadius ?? 0) * 100.0, 0, 100);
+            PnlExperimental.SldBorderObstaclesWidth.Value = Math.Clamp(s.BorderObstaclesWidth ?? 3, 0, 10);
+            PnlExperimental.ChkWaterBorderEnabled.IsChecked = s.WaterBorderEnabled;
+            PnlExperimental.SldWaterWidth.Value           = Math.Clamp(s.WaterWidth <= 0 ? 4 : s.WaterWidth, 1, 10);
+            PnlExperimental.CmbRoadType.SelectedIndex     = string.IsNullOrEmpty(s.RoadType)
+                ? 0
+                : Math.Max(0, (PnlExperimental.CmbRoadType.ItemsSource as System.Collections.Generic.IList<string>)?.IndexOf(s.RoadType) ?? 0);
             SetPresetCombo(PnlExperimental.CmbPlayerPreset, s.BuildingPresetPlayer);
             SetPresetCombo(PnlExperimental.CmbNeutralPreset, s.BuildingPresetNeutral);
             PnlExperimental.SldZoneGuardWeekly.Value = Math.Clamp(s.ZoneGuardWeeklyIncrement * 100.0, 0, 50);
@@ -1280,6 +1292,16 @@ namespace OldenEra.TemplateEditor
             {
                 ObstaclesFill = PnlExperimental.SldTerrainObstacles.Value / 100.0,
                 LakesFill = PnlExperimental.SldTerrainLakes.Value / 100.0,
+            },
+            BordersRoads = new BordersRoadsSettings
+            {
+                CornerRadius = PnlExperimental.SldBorderCornerRadius.Value == 0 ? (double?)null : PnlExperimental.SldBorderCornerRadius.Value / 100.0,
+                ObstaclesWidth = (int)PnlExperimental.SldBorderObstaclesWidth.Value == 3 ? (int?)null : (int)PnlExperimental.SldBorderObstaclesWidth.Value,
+                WaterBorderEnabled = PnlExperimental.ChkWaterBorderEnabled.IsChecked == true,
+                WaterWidth = (int)PnlExperimental.SldWaterWidth.Value,
+                RoadType = PnlExperimental.CmbRoadType.SelectedIndex <= 0
+                    ? null
+                    : (PnlExperimental.CmbRoadType.SelectedItem as string) is { Length: > 0 } rt ? rt : null
             },
             BuildingPresets = new BuildingPresetSettings
             {

@@ -213,6 +213,45 @@
                     </StackPanel>
                 </Expander>
 
+                <!-- ── Map borders & roads ─────────────────────────────── -->
+                <Expander Header="Map borders &amp; roads" Margin="0,4,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <TextBlock Style="{StaticResource HintText}">
+                            Override the generator's border + road defaults. Off / "Default" = unchanged.
+                        </TextBlock>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="185"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="40"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Label    Grid.Row="0" Grid.Column="0" Content="Corner radius (%)" Padding="5,2"/>
+                            <Slider   Grid.Row="0" Grid.Column="1" x:Name="SldBorderCornerRadius" Minimum="0" Maximum="100" Value="0" TickFrequency="5" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="0" Grid.Column="2" x:Name="TxtBorderCornerRadius" Text="0" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+
+                            <Label    Grid.Row="1" Grid.Column="0" Content="Obstacle width" Padding="5,2"/>
+                            <Slider   Grid.Row="1" Grid.Column="1" x:Name="SldBorderObstaclesWidth" Minimum="0" Maximum="10" Value="3" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="1" Grid.Column="2" x:Name="TxtBorderObstaclesWidth" Text="3" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+
+                            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" x:Name="ChkWaterBorderEnabled" Content="Water border" Margin="5,4,0,2"/>
+
+                            <Label    Grid.Row="3" Grid.Column="0" Content="Water width" Padding="5,2"/>
+                            <Slider   Grid.Row="3" Grid.Column="1" x:Name="SldWaterWidth" Minimum="1" Maximum="10" Value="4" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                            <TextBlock Grid.Row="3" Grid.Column="2" x:Name="TxtWaterWidth" Text="4" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ValueText}"/>
+
+                            <Label    Grid.Row="4" Grid.Column="0" Content="Road type" Padding="5,2"/>
+                            <ComboBox Grid.Row="4" Grid.Column="1" x:Name="CmbRoadType"/>
+                        </Grid>
+                    </StackPanel>
+                </Expander>
+
                 <!-- ── Building presets ────────────────────────────────────── -->
                 <Expander Header="Building presets" Margin="0,4,0,4">
                     <StackPanel Margin="8,4,0,8">

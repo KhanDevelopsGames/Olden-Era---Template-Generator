@@ -60,6 +60,12 @@ public partial class ExperimentalPanel : UserControl
         CmbBonusSpell.ItemsSource = spells;
         CmbBonusSpell.SelectedIndex = 0;
 
+        // Populate road-type combo. Index 0 = "(default)" (no override).
+        var roadTypes = new System.Collections.Generic.List<string> { "(default)" };
+        roadTypes.AddRange(KnownValues.RoadTypes);
+        CmbRoadType.ItemsSource = roadTypes;
+        CmbRoadType.SelectedIndex = 0;
+
         // Live label updates for sliders.
         SldBonusGold.ValueChanged       += (_, _) => TxtBonusGold.Text       = ((int)SldBonusGold.Value).ToString();
         SldBonusWood.ValueChanged       += (_, _) => TxtBonusWood.Text       = ((int)SldBonusWood.Value).ToString();
@@ -75,6 +81,9 @@ public partial class ExperimentalPanel : UserControl
 
         SldTerrainObstacles.ValueChanged    += (_, _) => TxtTerrainObstacles.Text    = ((int)SldTerrainObstacles.Value).ToString();
         SldTerrainLakes.ValueChanged        += (_, _) => TxtTerrainLakes.Text        = ((int)SldTerrainLakes.Value).ToString();
+        SldBorderCornerRadius.ValueChanged    += (_, _) => TxtBorderCornerRadius.Text    = ((int)SldBorderCornerRadius.Value).ToString();
+        SldBorderObstaclesWidth.ValueChanged  += (_, _) => TxtBorderObstaclesWidth.Text  = ((int)SldBorderObstaclesWidth.Value).ToString();
+        SldWaterWidth.ValueChanged            += (_, _) => TxtWaterWidth.Text            = ((int)SldWaterWidth.Value).ToString();
         SldZoneGuardWeekly.ValueChanged     += (_, _) => TxtZoneGuardWeekly.Text     = ((int)SldZoneGuardWeekly.Value).ToString();
         SldConnectionGuardWeekly.ValueChanged += (_, _) => TxtConnectionGuardWeekly.Text = ((int)SldConnectionGuardWeekly.Value).ToString();
         SldNeutralGuardChance.ValueChanged  += (_, _) => TxtNeutralGuardChance.Text  = ((int)SldNeutralGuardChance.Value).ToString();
