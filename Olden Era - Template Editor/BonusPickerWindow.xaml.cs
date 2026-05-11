@@ -14,7 +14,6 @@ namespace Olden_Era___Template_Editor
         private readonly HashSet<string> _existingKeys;
         private readonly HashSet<string> _existingItemIds;
         private readonly HashSet<string> _existingSpellIds;
-        private bool                     _spellMakeFree;
 
         public BonusPickerWindow(IEnumerable<BonusEntry>? existingBonuses = null)
         {
@@ -94,8 +93,8 @@ namespace Olden_Era___Template_Editor
             }
             else if (picker.SelectedIds.Count == 1)
             {
-                TxtSpell.Text  = picker.SelectedIds[0];
-                _spellMakeFree = picker.MakeFree;
+                TxtSpell.Text         = picker.SelectedIds[0];
+                ChkMakeFree.IsChecked = picker.MakeFree;
             }
         }
 
@@ -145,7 +144,7 @@ namespace Olden_Era___Template_Editor
                         MessageBox.Show("Pick a spell first.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
-                    param2 = _spellMakeFree ? "1" : "0";
+                    param2 = ChkMakeFree.IsChecked == true ? "1" : "0";
                     break;
 
                 case BonusPresetType.UnitMultiplier:

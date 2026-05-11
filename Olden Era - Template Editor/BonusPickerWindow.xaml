@@ -66,6 +66,9 @@
                                  CaretBrush="#C9A84C" Padding="6,0"
                                  FontFamily="Consolas" FontSize="11"/>
                     </DockPanel>
+                    <CheckBox x:Name="ChkMakeFree" Margin="0,8,0,0"
+                              Content="Make this spell free (zero cast cost)"
+                              Foreground="#E8D5A3"/>
                 </StackPanel>
 
                 <!-- Unit Multiplier -->

@@ -44,10 +44,12 @@ namespace Olden_Era___Template_Editor
             ["neutral"] = 0, ["day"] = 1, ["night"] = 2, ["space"] = 3, ["primal"] = 4,
         };
 
-        public SpellPickerWindow(IEnumerable<string>? alreadyPicked = null)
+        public SpellPickerWindow(IEnumerable<string>? alreadyPicked = null, bool showMakeFree = true)
         {
             InitializeComponent();
             _alreadyPicked = alreadyPicked?.ToHashSet() ?? [];
+            if (!showMakeFree)
+                ChkMakeFree.Visibility = Visibility.Collapsed;
             RefreshTree(string.Empty);
             TxtSearch.Focus();
         }

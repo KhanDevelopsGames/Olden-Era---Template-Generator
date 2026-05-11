@@ -578,9 +578,9 @@ namespace Olden_Era___Template_Editor
         /// <summary>Builds a BanEntry from a spell ID using the catalog, or a plain fallback entry.</summary>
         private static BanEntry MagicEntryFromId(string id)
         {
-            var known = System.Array.Find(KnownValues.BannableMagics, m => m.Id == id);
+            var known = System.Array.Find(KnownValues.KnownSpells, s => s.Id == id);
             if (known != null)
-                return new BanEntry { Id = id, DisplayName = known.DisplayName, Category = "Spell" };
+                return new BanEntry { Id = id, DisplayName = known.Name, Category = "Spell" };
             return new BanEntry { Id = id, DisplayName = KnownValues.SidToDisplayName(id), Category = "Spell" };
         }
 
@@ -614,9 +614,7 @@ namespace Olden_Era___Template_Editor
 
         private void BtnAddBannedMagic_Click(object sender, RoutedEventArgs e)
         {
-            var entries = KnownValues.BannableMagics
-                .Select(m => new BanEntry { Id = m.Id, DisplayName = m.DisplayName, Category = "Spell" });
-            var picker = new ItemPickerWindow(entries, _bannedMagics.Select(b => b.Id), "Add Banned Spell") { Owner = this };
+            var picker = new SpellPickerWindow(_bannedMagics.Select(b => b.Id), showMakeFree: false) { Owner = this };
             if (picker.ShowDialog() == true)
             {
                 foreach (var id in picker.SelectedIds)
