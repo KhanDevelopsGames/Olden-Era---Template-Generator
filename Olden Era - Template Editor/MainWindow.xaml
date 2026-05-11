@@ -98,12 +98,15 @@
             <Button Content="💾  Save Settings As"   Margin="0,0,0,0" Click="BtnSaveAs_Click" Style="{StaticResource ToolbarButton}" ToolTip="Save As (Ctrl+Shift+S)"/>
         </StackPanel>
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-            <Button Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource ToolbarButton}" ToolTip="Check out the project on GitHub. Download the latest release or contribute to the development" Click="BtnGithub_Click">
+            <Button  Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource ToolbarButton}" ToolTip="Check out the project on GitHub. Download the latest release or contribute to the development" Click="BtnPatchNotes_Click">
+                <Label>🖉 Patch Notes</Label>
+            </Button>
+            <Button Margin="8,0,0,0" Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource ToolbarButton}" ToolTip="Check out the project on GitHub. Download the latest release or contribute to the development" Click="BtnGithub_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image RenderOptions.BitmapScalingMode="HighQuality" Height="20" Width="20" Source="/icon_github.png"></Image>
                     <Label Margin="8,0,0,0">View on GitHub</Label>
                 </StackPanel>
-            </Button>
+            </Button>            
             <Button Margin="8,0,0,0" Width="90" Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource ToolbarButton}" ToolTip="Join our discord server to give feedback or share templates" Click="BtnDiscord_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image RenderOptions.BitmapScalingMode="HighQuality" Height="20" Width="20" Source="/icon_discord.png"></Image>

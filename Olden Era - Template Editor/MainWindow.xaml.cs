@@ -1748,6 +1748,15 @@ namespace Olden_Era___Template_Editor
             });
         }
 
+        private void BtnPatchNotes_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = GitHubReleasesPage,
+                UseShellExecute = true
+            });
+        }
+
         private void BtnGithub_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo
