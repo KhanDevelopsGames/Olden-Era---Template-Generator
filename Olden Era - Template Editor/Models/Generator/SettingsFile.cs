@@ -1,4 +1,5 @@
 using OldenEraTemplateEditor.Models;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Olden_Era___Template_Editor.Models
@@ -63,6 +64,8 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("bannedMagics")]       public string BannedMagics                 { get; set; } = "";
         [JsonPropertyName("valueOverrides")]     public string ValueOverridesText           { get; set; } = "";
         [JsonPropertyName("bonuses")]            public string BonusesJson                  { get; set; } = "";
+        [JsonPropertyName("playerZoneMandatoryContent")] public List<ContentItem>? PlayerZoneMandatoryContent { get; set; }
+
         // Legacy setting from v0.2 and earlier; when present, it seeds both split density sliders.
         [JsonPropertyName("contentDensity")]    public int?    ContentDensityPercent        { get; set; }
 
