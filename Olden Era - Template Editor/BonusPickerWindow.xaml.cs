@@ -48,7 +48,6 @@ namespace Olden_Era___Template_Editor
             if (!IsInitialized) return;
             var type = SelectedType;
 
-            PnlTownPortal.Visibility = type == BonusPresetType.TownPortalFree    ? Visibility.Visible : Visibility.Collapsed;
             PnlSpell.Visibility      = type == BonusPresetType.Spell              ? Visibility.Visible : Visibility.Collapsed;
             PnlMultiplier.Visibility = type == BonusPresetType.UnitMultiplier     ? Visibility.Visible : Visibility.Collapsed;
             PnlMovement.Visibility   = type == BonusPresetType.MovementBonus      ? Visibility.Visible : Visibility.Collapsed;
@@ -134,9 +133,6 @@ namespace Olden_Era___Template_Editor
 
             switch (type)
             {
-                case BonusPresetType.TownPortalFree:
-                    break;
-
                 case BonusPresetType.Spell:
                     param = TxtSpell.Text.Trim();
                     if (string.IsNullOrEmpty(param))

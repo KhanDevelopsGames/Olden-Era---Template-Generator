@@ -44,15 +44,11 @@ namespace OldenEraTemplateEditor.Models
             _                                               => PresetType.ToString(),
         };
 
-        private static string SpellLabel(string sid) => sid switch
+        private static string SpellLabel(string sid)
         {
-            "neutral_magic_town_portal"      => "Town Portal",
-            "neutral_magic_dimension_door"   => "Dimension Door",
-            "neutral_magic_shadow_form"      => "Shadow Form",
-            "neutral_magic_light_gate"       => "Light Gate",
-            "neutral_magic_pocket_dimension" => "Pocket Dimension",
-            _ => sid,
-        };
+            var known = System.Array.Find(KnownValues.KnownSpells, s => s.Id == sid);
+            return known?.Name ?? sid;
+        }
 
         private static readonly Brush MagicDotBrush    = CreateFrozenBrush(Color.FromRgb(147, 112, 219));
         private static readonly Brush CombatDotBrush   = CreateFrozenBrush(Color.FromRgb(205,  92,  92));

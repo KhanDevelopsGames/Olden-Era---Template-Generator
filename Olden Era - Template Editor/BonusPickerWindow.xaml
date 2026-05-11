@@ -27,7 +27,6 @@
                 <ComboBox x:Name="CmbType" Height="28"
                           SelectionChanged="CmbType_Changed"
                           Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28">
-                    <ComboBoxItem Tag="0" Content="Town Portal (free)"/>
                     <ComboBoxItem Tag="1" Content="Spell"/>
                     <ComboBoxItem Tag="2" Content="Unit Multiplier"/>
                     <ComboBoxItem Tag="3" Content="Movement Bonus"/>
@@ -48,13 +47,8 @@
 
                 <!-- ── Dynamic parameter panels ── -->
 
-                <!-- Town Portal: info label only -->
-                <TextBlock x:Name="PnlTownPortal" Margin="0,10,0,0"
-                           Text="Grants Town Portal to the starting hero and makes it free (zero cost)."
-                           TextWrapping="Wrap" Foreground="#9A8A6A" FontStyle="Italic"/>
-
                 <!-- Spell -->
-                <StackPanel x:Name="PnlSpell" Visibility="Collapsed" Margin="0,8,0,0">
+                <StackPanel x:Name="PnlSpell" Margin="0,8,0,0">
                     <TextBlock Text="Spell" Foreground="#9A8A6A" FontSize="11" Margin="0,0,0,3"/>
                     <DockPanel>
                         <Button DockPanel.Dock="Right" Content="Pick…" Width="64"
