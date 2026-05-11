@@ -87,6 +87,12 @@ namespace OldenEra.Generator.Models
         [JsonPropertyName("terrainObstaclesFill")] public double TerrainObstaclesFill       { get; set; } = 0.0;
         [JsonPropertyName("terrainLakesFill")]     public double TerrainLakesFill           { get; set; } = 0.0;
 
+        [JsonPropertyName("borderCornerRadius")]   public double? BorderCornerRadius   { get; set; }
+        [JsonPropertyName("borderObstaclesWidth")] public int?    BorderObstaclesWidth { get; set; }
+        [JsonPropertyName("waterBorderEnabled")]   public bool    WaterBorderEnabled   { get; set; } = false;
+        [JsonPropertyName("waterWidth")]           public int     WaterWidth           { get; set; } = 4;
+        [JsonPropertyName("roadType")]             public string  RoadType             { get; set; } = "";
+
         [JsonPropertyName("buildingPresetPlayer")]  public string BuildingPresetPlayer      { get; set; } = "";
         [JsonPropertyName("buildingPresetNeutral")] public string BuildingPresetNeutral     { get; set; } = "";
 
