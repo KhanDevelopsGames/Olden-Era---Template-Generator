@@ -172,6 +172,20 @@ namespace OldenEra.Generator.Models
         public bool UnitMultiplierStartHeroOnly { get; set; } = false;
     }
 
+    public class BordersRoadsSettings
+    {
+        /// <summary>Variant.Border.CornerRadius override. null = generator default (0.0).</summary>
+        public double? CornerRadius { get; set; }
+        /// <summary>Variant.Border.ObstaclesWidth override. null = generator default (3).</summary>
+        public int? ObstaclesWidth { get; set; }
+        /// <summary>If true, water border is applied with WaterWidth. Default WaterType "water grass".</summary>
+        public bool WaterBorderEnabled { get; set; } = false;
+        /// <summary>Width of water border. Only used when WaterBorderEnabled is true.</summary>
+        public int WaterWidth { get; set; } = 4;
+        /// <summary>Road.Type override applied to every road. null = generator default ("Dirt").</summary>
+        public string? RoadType { get; set; }
+    }
+
     public class GeneratorSettings
     {
         public string TemplateName { get; set; } = "Custom Template";
@@ -211,6 +225,7 @@ namespace OldenEra.Generator.Models
         public NeutralCitySettings NeutralCities { get; set; } = new NeutralCitySettings();
         public ContentControlSettings Content { get; set; } = new ContentControlSettings();
         public StartingBonusSettings Bonuses { get; set; } = new StartingBonusSettings();
+        public BordersRoadsSettings BordersRoads { get; set; } = new BordersRoadsSettings();
     }
 
     public enum NeutralZoneQuality
