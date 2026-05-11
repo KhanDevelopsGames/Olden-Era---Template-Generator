@@ -156,17 +156,10 @@ public partial class HeroesPanel : UserControl
         TcSpellBans.Items.Clear();
         _spellBanCheckBoxes.Clear();
 
-        var schools = CommunityCatalog.Default.Spells
-            .Select(s => s.School ?? "")
-            .Distinct(System.StringComparer.OrdinalIgnoreCase)
-            .OrderBy(SchoolOrder)
-            .ToList();
-
-        foreach (var school in schools)
+        foreach (var school in CommunityCatalog.Default.SpellSchools)
         {
             var stack = new StackPanel { Margin = new Thickness(6) };
-            var spells = CommunityCatalog.Default.Spells
-                .Where(s => string.Equals(s.School, school, System.StringComparison.OrdinalIgnoreCase))
+            var spells = CommunityCatalog.Default.SpellsBySchool(school)
                 .OrderBy(s => s.Tier)
                 .ThenBy(s => s.Name, System.StringComparer.OrdinalIgnoreCase);
 
@@ -177,7 +170,7 @@ public partial class HeroesPanel : UserControl
                     Content = $"T{spell.Tier}. {spell.Name}",
                     Margin = new Thickness(2),
                     ToolTip = string.IsNullOrWhiteSpace(spell.Description)
-                        ? $"T{spell.Tier} · {FriendlySchool(spell.School)}"
+                        ? $"T{spell.Tier} · {CommunityCatalog.FriendlySpellSchool(spell.School)}"
                         : spell.Description,
                     Tag = spell.Id,
                 };
@@ -190,27 +183,9 @@ public partial class HeroesPanel : UserControl
                 MaxHeight = 240,
                 Content = stack,
             };
-            TcSpellBans.Items.Add(new TabItem { Header = FriendlySchool(school), Content = scroll });
+            TcSpellBans.Items.Add(new TabItem { Header = CommunityCatalog.FriendlySpellSchool(school), Content = scroll });
         }
     }
-
-    private static int SchoolOrder(string school) => school?.ToLowerInvariant() switch
-    {
-        "day" => 0,
-        "night" => 1,
-        "arcane" => 2,
-        "primal" => 3,
-        _ => 99,
-    };
-
-    private static string FriendlySchool(string school) => school?.ToLowerInvariant() switch
-    {
-        "day" => "Day",
-        "night" => "Night",
-        "arcane" => "Arcane",
-        "primal" => "Primal",
-        _ => string.IsNullOrEmpty(school) ? "Other" : char.ToUpper(school[0]) + school[1..],
-    };
 
     /// <summary>Read the UI state into a flat list of banned spell ids.</summary>
     public List<string> GetBannedSpells()

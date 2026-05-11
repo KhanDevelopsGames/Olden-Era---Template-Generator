@@ -36,6 +36,13 @@ namespace OldenEra.Generator.Services
             Skills = skills;
             Subclasses = subclasses;
             Factions = factions;
+
+            _spellSchools = new Lazy<IReadOnlyList<string>>(() =>
+                Spells.Select(s => s.School ?? "")
+                      .Distinct(StringComparer.OrdinalIgnoreCase)
+                      .OrderBy(SpellSchoolOrder)
+                      .ThenBy(s => s, StringComparer.OrdinalIgnoreCase)
+                      .ToList());
         }
 
         private static readonly Lazy<CommunityCatalog> _instance = new(LoadFromEmbedded);
@@ -83,6 +90,33 @@ namespace OldenEra.Generator.Services
 
         public IEnumerable<UnitEntry> UnitsByFaction(string factionId) =>
             Units.Where(u => string.Equals(u.Faction, factionId, StringComparison.OrdinalIgnoreCase));
+
+        // ── Spell school taxonomy ────────────────────────────────────────────
+
+        /// <summary>
+        /// Distinct spell schools in canonical display order
+        /// (Day, Night, Arcane, Primal, then any others alphabetically).
+        /// </summary>
+        public IReadOnlyList<string> SpellSchools => _spellSchools.Value;
+        private readonly Lazy<IReadOnlyList<string>> _spellSchools;
+
+        public static int SpellSchoolOrder(string? school) => school?.ToLowerInvariant() switch
+        {
+            "day" => 0,
+            "night" => 1,
+            "arcane" => 2,
+            "primal" => 3,
+            _ => 99,
+        };
+
+        public static string FriendlySpellSchool(string? school) => school?.ToLowerInvariant() switch
+        {
+            "day" => "Day",
+            "night" => "Night",
+            "arcane" => "Arcane",
+            "primal" => "Primal",
+            _ => string.IsNullOrEmpty(school) ? "Other" : char.ToUpper(school[0]) + school[1..],
+        };
     }
 
     public sealed record FactionEntry(

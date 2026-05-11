@@ -10,7 +10,7 @@
     }
     @foreach (var group in Grouped)
     {
-        <optgroup label="@FriendlySchool(group.Key)">
+        <optgroup label="@CommunityCatalog.FriendlySpellSchool(group.Key)">
             @foreach (var spell in group)
             {
                 <option value="@spell.Id">@($"T{spell.Tier}. {spell.Name}")</option>
@@ -31,7 +31,7 @@
 
     private static readonly IReadOnlyList<IGrouping<string, SpellEntry>> Grouped =
         AllSpells
-            .OrderBy(s => SchoolOrder(s.School))
+            .OrderBy(s => CommunityCatalog.SpellSchoolOrder(s.School))
             .ThenBy(s => s.Tier)
             .ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase)
             .GroupBy(s => s.School, StringComparer.OrdinalIgnoreCase)
@@ -43,22 +43,4 @@
         Value = v;
         await ValueChanged.InvokeAsync(v);
     }
-
-    private static int SchoolOrder(string school) => school?.ToLowerInvariant() switch
-    {
-        "day" => 0,
-        "night" => 1,
-        "arcane" => 2,
-        "primal" => 3,
-        _ => 99,
-    };
-
-    private static string FriendlySchool(string school) => school?.ToLowerInvariant() switch
-    {
-        "day" => "Day",
-        "night" => "Night",
-        "arcane" => "Arcane",
-        "primal" => "Primal",
-        _ => string.IsNullOrEmpty(school) ? "Other" : char.ToUpper(school[0]) + school[1..],
-    };
 }

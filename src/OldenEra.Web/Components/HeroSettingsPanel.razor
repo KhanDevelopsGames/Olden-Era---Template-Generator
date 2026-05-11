@@ -105,7 +105,7 @@
                         role="tab"
                         aria-selected="@(ActiveSchool == school ? "true" : "false")"
                         @onclick="@(() => ActiveSchool = school)">
-                    @FriendlySchool(school)
+                    @CommunityCatalog.FriendlySpellSchool(school)
                 </button>
             }
         </div>
@@ -115,7 +115,7 @@
             {
                 bool banned = Settings.HeroSettings.BannedSpells.Contains(spell.Id);
                 var tooltip = string.IsNullOrWhiteSpace(spell.Description)
-                    ? $"T{spell.Tier} · {FriendlySchool(spell.School)}"
+                    ? $"T{spell.Tier} · {CommunityCatalog.FriendlySpellSchool(spell.School)}"
                     : spell.Description;
                 <button type="button"
                         class="@($"oe-ban-chip{(banned ? " selected" : "")}")"
@@ -168,38 +168,13 @@
         await NotifyChanged();
     }
 
-    private string ActiveSchool { get; set; } = SpellSchools.FirstOrDefault() ?? "day";
-
-    private static readonly string[] SpellSchools =
-        CommunityCatalog.Default.Spells
-            .Select(s => s.School ?? "")
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(SchoolOrder)
-            .ToArray();
+    private static IReadOnlyList<string> SpellSchools => Catalog.SpellSchools;
+    private string ActiveSchool { get; set; } = Catalog.SpellSchools.FirstOrDefault() ?? "day";
 
     private static IEnumerable<SpellEntry> SpellsBySchool(string school) =>
-        CommunityCatalog.Default.Spells
-            .Where(s => string.Equals(s.School, school, StringComparison.OrdinalIgnoreCase))
+        Catalog.SpellsBySchool(school)
             .OrderBy(s => s.Tier)
             .ThenBy(s => s.Name, StringComparer.OrdinalIgnoreCase);
-
-    private static int SchoolOrder(string school) => school?.ToLowerInvariant() switch
-    {
-        "day" => 0,
-        "night" => 1,
-        "arcane" => 2,
-        "primal" => 3,
-        _ => 99,
-    };
-
-    private static string FriendlySchool(string school) => school?.ToLowerInvariant() switch
-    {
-        "day" => "Day",
-        "night" => "Night",
-        "arcane" => "Arcane",
-        "primal" => "Primal",
-        _ => string.IsNullOrEmpty(school) ? "Other" : char.ToUpper(school[0]) + school[1..],
-    };
 
     private async Task ToggleSpellBan(string spellId)
     {
