@@ -1270,8 +1270,16 @@ namespace Olden_Era___Template_Editor.Services
         }
 
         /// <summary>
-        /// Returns the tier rank of a zone: 0 = player, 1 = low neutral, 2 = medium neutral, 3 = high neutral.
-        /// Used to assign concentric ring radii and to filter Delaunay edges.
+        /// Returns the tier rank of a zone:
+        ///   0 = player
+        ///   1 = low neutral (no castle)
+        ///   2 = low neutral city
+        ///   3 = medium neutral (no castle)
+        ///   4 = medium neutral city
+        ///   5 = high neutral (no castle)
+        ///   6 = high neutral city
+        /// City variants rank one step above their plain counterpart so they are placed
+        /// on their own concentric ring, further from players than plain zones of the same quality.
         /// </summary>
         private static int ZoneTierRank(
             string letter,
@@ -1280,11 +1288,12 @@ namespace Olden_Era___Template_Editor.Services
         {
             if (playerLetters.Contains(letter)) return 0;
             if (!neutralByLetter.TryGetValue(letter, out var plan)) return 1;
+            bool isCity = plan.CastleCount > 0;
             return plan.Quality switch
             {
-                NeutralZoneQuality.High   => 3,
-                NeutralZoneQuality.Medium => 2,
-                _                         => 1
+                NeutralZoneQuality.High   => isCity ? 6 : 5,
+                NeutralZoneQuality.Medium => isCity ? 4 : 3,
+                _                         => isCity ? 2 : 1
             };
         }
 
@@ -1296,20 +1305,25 @@ namespace Olden_Era___Template_Editor.Services
             int count = orderedLetters.Count;
             if (count == 0) return [];
 
-            // Each quality tier lives on its own concentric ring.
-            // The radial gaps are large enough to prevent Delaunay from ever bridging
-            // non-adjacent tiers geometrically (the edge filter below is the hard guarantee;
-            // the rings ensure the preview looks correct too).
-            //   Tier 0 – players  : outermost  (radius 0.38)
-            //   Tier 1 – low      : next inward (radius 0.27)
-            //   Tier 2 – medium   : next inward (radius 0.16)
-            //   Tier 3 – high     : innermost   (radius 0.06)
+            // Each quality sub-tier lives on its own concentric ring.
+            // The radial gaps prevent Delaunay from bridging non-adjacent tiers geometrically
+            // (the edge filter is the hard guarantee; rings keep the preview correct too).
+            //   Tier 0 – players        : outermost  (radius 0.42)
+            //   Tier 1 – low            : (radius 0.35)
+            //   Tier 2 – low city       : (radius 0.28)
+            //   Tier 3 – medium         : (radius 0.21)
+            //   Tier 4 – medium city    : (radius 0.14)
+            //   Tier 5 – high           : (radius 0.08)
+            //   Tier 6 – high city      : innermost  (radius 0.03)
             static double TierRadius(int tier) => tier switch
             {
-                0 => 0.38,
-                1 => 0.27,
-                2 => 0.16,
-                _ => 0.06
+                0 => 0.42,
+                1 => 0.35,
+                2 => 0.28,
+                3 => 0.21,
+                4 => 0.14,
+                5 => 0.08,
+                _ => 0.03
             };
 
             // Group letters by tier so we can space each ring evenly.
