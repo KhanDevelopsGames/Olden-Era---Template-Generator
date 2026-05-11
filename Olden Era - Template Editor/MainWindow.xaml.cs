@@ -194,22 +194,167 @@ namespace Olden_Era___Template_Editor
                 if (!Version.TryParse(tag, out Version? latestVersion)) return;
                 if (currentVersion == null || latestVersion <= currentVersion) return;
 
+                // Prefer an .exe installer asset, then a .zip, then fall back to browser.
+                var asset = release.Assets?.FirstOrDefault(a =>
+                    a.BrowserDownloadUrl != null &&
+                    a.Name?.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) == true)
+                    ?? release.Assets?.FirstOrDefault(a =>
+                    a.BrowserDownloadUrl != null &&
+                    a.Name?.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) == true);
+
                 // A newer version exists — prompt on the UI thread.
+                bool userAccepted = false;
                 Dispatcher.Invoke(() =>
                 {
+                    string downloadNote = asset != null
+                        ? "The update will be downloaded and launched automatically."
+                        : "No installer asset was found. The releases page will be opened instead.";
+
                     var result = MessageBox.Show(
                         $"A new version is available: {FormatVersion(latestVersion)}\n" +
                         $"You are running: {FormatVersion(currentVersion)}\n\n" +
-                        "Open the releases page to download the update?",
+                        downloadNote + "\n\nUpdate now?",
                         "Update Available",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Information);
 
-                    if (result == MessageBoxResult.Yes)
-                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(GitHubReleasesPage) { UseShellExecute = true });
+                    userAccepted = result == MessageBoxResult.Yes;
                 });
+
+                if (!userAccepted) return;
+
+                if (asset?.BrowserDownloadUrl == null)
+                {
+                    // No downloadable asset — open browser as fallback.
+                    Process.Start(new ProcessStartInfo(GitHubReleasesPage) { UseShellExecute = true });
+                    return;
+                }
+
+                await DownloadAndLaunchUpdateAsync(asset, latestVersion);
             }
             catch { /* Network unavailable or API error — silently ignore. */ }
+        }
+
+        private async Task DownloadAndLaunchUpdateAsync(GitHubReleaseAsset asset, Version latestVersion)
+        {
+            string ext        = Path.GetExtension(asset.Name ?? ".exe");
+            string tempPath   = Path.Combine(Path.GetTempPath(), $"OldenEraUpdate_{latestVersion}{ext}");
+            string versionStr = FormatVersion(latestVersion);
+
+            UpdateProgressWindow? progressWindow = null;
+            Dispatcher.Invoke(() =>
+            {
+                progressWindow = new UpdateProgressWindow { Owner = this };
+                progressWindow.SetTitle($"Downloading update {versionStr}…");
+                progressWindow.SetStatus("Connecting…");
+                progressWindow.Show();
+            });
+
+            try
+            {
+                using var download = await Http.GetAsync(asset.BrowserDownloadUrl, HttpCompletionOption.ResponseHeadersRead);
+                download.EnsureSuccessStatusCode();
+
+                long? total = download.Content.Headers.ContentLength;
+                await using var src = await download.Content.ReadAsStreamAsync();
+                await using var dst = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, useAsync: true);
+
+                byte[] buffer     = new byte[81920];
+                long   downloaded = 0;
+                int    read;
+                int    lastPct    = -1;
+                while ((read = await src.ReadAsync(buffer)) > 0)
+                {
+                    await dst.WriteAsync(buffer.AsMemory(0, read));
+                    downloaded += read;
+                    if (total > 0)
+                    {
+                        int pct = (int)(downloaded * 100 / total.Value);
+                        if (pct != lastPct)
+                        {
+                            lastPct = pct;
+                            Dispatcher.Invoke(() =>
+                            {
+                                progressWindow?.SetProgress(pct);
+                                progressWindow?.SetStatus($"{pct}%  ({downloaded / 1024:N0} KB / {total.Value / 1024:N0} KB)");
+                            });
+                        }
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() => progressWindow?.SetStatus($"{downloaded / 1024:N0} KB downloaded…"));
+                    }
+                }
+            }
+            catch
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    progressWindow?.Close();
+                    MessageBox.Show(
+                        "Download failed. The releases page will be opened instead.",
+                        "Update Failed",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    Process.Start(new ProcessStartInfo(GitHubReleasesPage) { UseShellExecute = true });
+                });
+                return;
+            }
+
+            // Replace the running exe with the downloaded file using a batch script
+            // (the running exe cannot be overwritten directly while the process holds it).
+            bool isExeReplacement = ext.Equals(".exe", StringComparison.OrdinalIgnoreCase)
+                                    && asset.Name?.Contains("setup", StringComparison.OrdinalIgnoreCase) == false
+                                    && asset.Name?.Contains("install", StringComparison.OrdinalIgnoreCase) == false;
+
+            string currentExe = Environment.ProcessPath ?? Process.GetCurrentProcess().MainModule?.FileName ?? string.Empty;
+
+            if (isExeReplacement && !string.IsNullOrEmpty(currentExe))
+            {
+                // Write a small batch script that waits for this process to exit,
+                // copies the downloaded exe over the original, then restarts it.
+                string batPath = Path.Combine(Path.GetTempPath(), "OldenEraUpdater.bat");
+                int    pid     = Environment.ProcessId;
+                string batContent =
+                    $"@echo off\r\n" +
+                    $":WAIT\r\n" +
+                    $"tasklist /FI \"PID eq {pid}\" 2>NUL | find \"{pid}\" >NUL\r\n" +
+                    $"if not errorlevel 1 ( timeout /t 1 /nobreak >NUL & goto WAIT )\r\n" +
+                    $"copy /Y \"{tempPath}\" \"{currentExe}\"\r\n" +
+                    $"start \"\" \"{currentExe}\"\r\n" +
+                    $"del \"{tempPath}\"\r\n" +
+                    $"del \"%~f0\"\r\n";
+
+                await File.WriteAllTextAsync(batPath, batContent);
+
+                Dispatcher.Invoke(() =>
+                {
+                    progressWindow?.SetStatus("Installing…");
+                    progressWindow?.SetProgress(100);
+                });
+
+                Process.Start(new ProcessStartInfo("cmd.exe", $"/C \"{batPath}\"")
+                {
+                    CreateNoWindow  = true,
+                    UseShellExecute = false,
+                });
+
+                Dispatcher.Invoke(() =>
+                {
+                    progressWindow?.Close();
+                    Application.Current.Shutdown();
+                });
+            }
+            else
+            {
+                // It's an installer or a zip — just launch it and exit.
+                Dispatcher.Invoke(() =>
+                {
+                    progressWindow?.Close();
+                    Process.Start(new ProcessStartInfo(tempPath) { UseShellExecute = true });
+                    Application.Current.Shutdown();
+                });
+            }
         }
 
         // Formats a Version as "vMajor.Minor" or "vMajor.Minor.Build" when build > 0.
@@ -221,6 +366,18 @@ namespace Olden_Era___Template_Editor
         {
             [JsonPropertyName("tag_name")]
             public string? TagName { get; set; }
+
+            [JsonPropertyName("assets")]
+            public List<GitHubReleaseAsset>? Assets { get; set; }
+        }
+
+        private sealed class GitHubReleaseAsset
+        {
+            [JsonPropertyName("name")]
+            public string? Name { get; set; }
+
+            [JsonPropertyName("browser_download_url")]
+            public string? BrowserDownloadUrl { get; set; }
         }
 
         private void MarkDirty()
