@@ -14,6 +14,10 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="8"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="4"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="8"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="8"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="8"/>
@@ -21,9 +25,28 @@
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0" Grid.Column="0" Content="Template Name"/>
                     <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtTemplateName" Text="Custom Template"/>
-                    <Label Grid.Row="2" Grid.Column="0" Content="Map Size"/>
-                    <ComboBox x:Name="CmbMapSize" Grid.Row="2" Grid.Column="1"/>
-                    <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2">
+                    <Label Grid.Row="2" Grid.Column="0" Content="Seed"/>
+                    <DockPanel Grid.Row="2" Grid.Column="1" LastChildFill="True">
+                        <Button x:Name="BtnRandomizeSeed"
+                                DockPanel.Dock="Right"
+                                Content="&#x1F3B2;"
+                                Margin="4,0,0,0"
+                                Padding="6,0"
+                                MinWidth="28"
+                                Click="BtnRandomizeSeed_Click"
+                                ToolTip="Generate a new random seed (reproducible output for the same seed)"/>
+                        <TextBox x:Name="TxtSeed"
+                                 ToolTip="Optional integer seed. Leave blank for non-deterministic generation."/>
+                    </DockPanel>
+                    <TextBlock Grid.Row="4" Grid.Column="1"
+                               x:Name="TxtSeedUsed"
+                               Foreground="{StaticResource OeTextDimBrush}"
+                               FontSize="11"
+                               TextWrapping="Wrap"
+                               Text=""/>
+                    <Label Grid.Row="6" Grid.Column="0" Content="Map Size"/>
+                    <ComboBox x:Name="CmbMapSize" Grid.Row="6" Grid.Column="1"/>
+                    <StackPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2">
                         <CheckBox x:Name="ChkExperimentalMapSizes"
                                   Content="Experimental large map sizes"
                                   Margin="0,6,0,0"
@@ -36,13 +59,13 @@
                                    Visibility="Collapsed"
                                    Text="Adds 256x256 through 512x512. Official templates top out at 240x240, so larger maps may fail, freeze, or behave unpredictably in game."/>
                     </StackPanel>
-                    <DockPanel Grid.Row="6" Grid.Column="0">
+                    <DockPanel Grid.Row="10" Grid.Column="0">
                         <Label Content="Players" DockPanel.Dock="Left"/>
                         <TextBlock x:Name="TxtPlayers" Text="2" DockPanel.Dock="Right"
                                    HorizontalAlignment="Right" VerticalAlignment="Center"
                                    Margin="0,0,4,0" Style="{StaticResource ValueText}"/>
                     </DockPanel>
-                    <Slider Grid.Row="6" Grid.Column="1" x:Name="SldPlayers"
+                    <Slider Grid.Row="10" Grid.Column="1" x:Name="SldPlayers"
                             Minimum="2" Maximum="8" Value="2"
                             TickFrequency="1" IsSnapToTickEnabled="True"/>
                 </Grid>
