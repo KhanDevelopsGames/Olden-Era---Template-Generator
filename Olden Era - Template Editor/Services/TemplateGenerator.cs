@@ -1191,8 +1191,11 @@ namespace Olden_Era___Template_Editor.Services
             if (settings.ExperimentalBalancedZonePlacement)
             {
                 var playerSet = playerLetters.ToHashSet(StringComparer.Ordinal);
-                var presentTiers = allLetters
-                    .Select(l => ZoneTierRank(l, playerLetters, neutralByLetter))
+                // Use quality groups (0=player,1=low,2=medium,3=high) for the adjacency
+                // filter so that plain and city variants of the same quality can freely
+                // border each other and the adjacent quality tier.
+                var presentGroups = allLetters
+                    .Select(l => ZoneQualityGroup(l, playerLetters, neutralByLetter))
                     .ToHashSet();
 
                 pairs = pairs.Where(p =>
@@ -1201,13 +1204,13 @@ namespace Olden_Era___Template_Editor.Services
                     // Always strip player↔player edges from Delaunay in balanced mode.
                     // EnsureFullConnectivity will re-add them only if truly unavoidable.
                     if (playerSet.Contains(la) && playerSet.Contains(lb)) return false;
-                    int ta = ZoneTierRank(la, playerLetters, neutralByLetter);
-                    int tb = ZoneTierRank(lb, playerLetters, neutralByLetter);
-                    int lo = Math.Min(ta, tb), hi = Math.Max(ta, tb);
+                    int ga = ZoneQualityGroup(la, playerLetters, neutralByLetter);
+                    int gb = ZoneQualityGroup(lb, playerLetters, neutralByLetter);
+                    int lo = Math.Min(ga, gb), hi = Math.Max(ga, gb);
                     if (hi - lo <= 1) return true;
-                    // Allow a tier skip only when every tier in between is absent.
-                    for (int t = lo + 1; t < hi; t++)
-                        if (presentTiers.Contains(t)) return false;
+                    // Allow a group skip only when every group in between is absent.
+                    for (int g = lo + 1; g < hi; g++)
+                        if (presentGroups.Contains(g)) return false;
                     return true;
                 }).ToList();
             }
@@ -1270,16 +1273,16 @@ namespace Olden_Era___Template_Editor.Services
         }
 
         /// <summary>
-        /// Returns the tier rank of a zone:
+        /// Returns the tier rank of a zone used for concentric ring placement:
         ///   0 = player
         ///   1 = low neutral (no castle)
-        ///   2 = low neutral city
+        ///   2 = low neutral city      — own ring between low-plain and medium-plain
         ///   3 = medium neutral (no castle)
-        ///   4 = medium neutral city
+        ///   4 = medium neutral city   — own ring between medium-plain and high-plain
         ///   5 = high neutral (no castle)
-        ///   6 = high neutral city
-        /// City variants rank one step above their plain counterpart so they are placed
-        /// on their own concentric ring, further from players than plain zones of the same quality.
+        ///   6 = high neutral city     — innermost ring
+        /// Each city variant has its own ring visually distinct from both the plain zone
+        /// of the same quality and the plain zone of the next quality.
         /// </summary>
         private static int ZoneTierRank(
             string letter,
@@ -1297,6 +1300,28 @@ namespace Olden_Era___Template_Editor.Services
             };
         }
 
+        /// <summary>
+        /// Returns the quality group used for adjacency filtering and bridge penalty:
+        ///   0 = player, 1 = low, 2 = medium, 3 = high.
+        /// City zones are promoted one full quality level (low-city → 2, medium-city → 3)
+        /// so they are treated as bridges between quality bands for connectivity purposes.
+        /// </summary>
+        private static int ZoneQualityGroup(
+            string letter,
+            List<string> playerLetters,
+            Dictionary<string, NeutralZonePlan> neutralByLetter)
+        {
+            if (playerLetters.Contains(letter)) return 0;
+            if (!neutralByLetter.TryGetValue(letter, out var plan)) return 1;
+            bool isCity = plan.CastleCount > 0;
+            return plan.Quality switch
+            {
+                NeutralZoneQuality.High   => 3,            // high-plain and high-city both group 3
+                NeutralZoneQuality.Medium => isCity ? 3 : 2, // medium-city promoted to high group
+                _                         => isCity ? 2 : 1  // low-city promoted to medium group
+            };
+        }
+
         private static List<(double X, double Y)> BuildBalancedRandomPositions(
             List<string> orderedLetters,
             List<string> playerLetters,
@@ -1305,16 +1330,16 @@ namespace Olden_Era___Template_Editor.Services
             int count = orderedLetters.Count;
             if (count == 0) return [];
 
-            // Each quality sub-tier lives on its own concentric ring.
-            // The radial gaps prevent Delaunay from bridging non-adjacent tiers geometrically
-            // (the edge filter is the hard guarantee; rings keep the preview correct too).
-            //   Tier 0 – players        : outermost  (radius 0.42)
-            //   Tier 1 – low            : (radius 0.35)
-            //   Tier 2 – low city       : (radius 0.28)
-            //   Tier 3 – medium         : (radius 0.21)
-            //   Tier 4 – medium city    : (radius 0.14)
-            //   Tier 5 – high           : (radius 0.08)
-            //   Tier 6 – high city      : innermost  (radius 0.03)
+            // Zones are placed on concentric rings by tier rank (7 distinct rings).
+            // City zones sit on their own ring between the plain zone of the same quality
+            // and the plain zone of the next quality — visually distinct from both.
+            //   Tier 0 – players          : outermost  (radius 0.42)
+            //   Tier 1 – low plain        : (radius 0.35)
+            //   Tier 2 – low city         : (radius 0.28)
+            //   Tier 3 – medium plain     : (radius 0.21)
+            //   Tier 4 – medium city      : (radius 0.14)
+            //   Tier 5 – high plain       : (radius 0.08)
+            //   Tier 6 – high city        : innermost  (radius 0.03)
             static double TierRadius(int tier) => tier switch
             {
                 0 => 0.42,
@@ -1957,11 +1982,11 @@ namespace Olden_Era___Template_Editor.Services
             int BridgePenalty(int idxA, int idxB)
             {
                 if (neutralByLetter == null) return 0;
-                int ta = ZoneTierRank(allLetters[idxA], playerLetters, neutralByLetter);
-                int tb = ZoneTierRank(allLetters[idxB], playerLetters, neutralByLetter);
-                if (ta == 0 && tb == 0) return 100; // player↔player: last resort
-                int gap = Math.Abs(ta - tb);
-                return gap; // 0 = same tier, 1 = adjacent, 2+ = skipping tiers
+                int ga = ZoneQualityGroup(allLetters[idxA], playerLetters, neutralByLetter);
+                int gb = ZoneQualityGroup(allLetters[idxB], playerLetters, neutralByLetter);
+                if (ga == 0 && gb == 0) return 100; // player↔player: last resort
+                int gap = Math.Abs(ga - gb);
+                return gap; // 0 = same group, 1 = adjacent, 2+ = skipping groups
             }
 
             // Iteratively merge the closest pair of components until the graph is connected.
