@@ -932,14 +932,14 @@
                                                     Style="{StaticResource ToolbarButton}"
                                                     Click="BtnAddTreasureContent_Click"/>
                                         </DockPanel>
-                                        <!-- Random Hires -->
-                                        <DockPanel x:Name="StickyRandomHires" Visibility="Collapsed">
-                                            <TextBlock Text="◆  Random Hires"
+                                        <!-- Unit Recruitment -->
+                                        <DockPanel x:Name="StickyUnitRecruitment" Visibility="Collapsed">
+                                            <TextBlock Text="◆  Unit Recruitment"
                                                        Style="{StaticResource SectionHeader}"
                                                        VerticalAlignment="Center"
                                                        Margin="0,0,10,0"
                                                        DockPanel.Dock="Left"/>
-                                            <ComboBox x:Name="CmbRandomHireContentPresetSticky"
+                                            <ComboBox x:Name="CmbUnitRecruitmentContentPresetSticky"
                                                       Width="170"
                                                       DockPanel.Dock="Left"/>
                                             <Button Content="Add Content"
@@ -947,7 +947,7 @@
                                                     HorizontalAlignment="Left"
                                                     Margin="8,0,0,0"
                                                     Style="{StaticResource ToolbarButton}"
-                                                    Click="BtnAddRandomHireContent_Click"/>
+                                                    Click="BtnAddUnitRecruitmentContent_Click"/>
                                         </DockPanel>
                                         <!-- Resource Banks -->
                                         <DockPanel x:Name="StickyResourceBanks" Visibility="Collapsed">
@@ -966,14 +966,14 @@
                                                     Style="{StaticResource ToolbarButton}"
                                                     Click="BtnAddResourceBankContent_Click"/>
                                         </DockPanel>
-                                        <!-- Storage Structures -->
-                                        <DockPanel x:Name="StickyStorageStructures" Visibility="Collapsed">
-                                            <TextBlock Text="◆  Storage Structures"
+                                        <!-- Utility Structures -->
+                                        <DockPanel x:Name="StickyUtilityStructures" Visibility="Collapsed">
+                                            <TextBlock Text="◆  Utility Structures"
                                                        Style="{StaticResource SectionHeader}"
                                                        VerticalAlignment="Center"
                                                        Margin="0,0,10,0"
                                                        DockPanel.Dock="Left"/>
-                                            <ComboBox x:Name="CmbStorageStructureContentPresetSticky"
+                                            <ComboBox x:Name="CmbUtilityStructureContentPresetSticky"
                                                       Width="170"
                                                       DockPanel.Dock="Left"/>
                                             <Button Content="Add Content"
@@ -981,7 +981,24 @@
                                                     HorizontalAlignment="Left"
                                                     Margin="8,0,0,0"
                                                     Style="{StaticResource ToolbarButton}"
-                                                    Click="BtnAddStorageStructureContent_Click"/>
+                                                    Click="BtnAddUtilityStructureContent_Click"/>
+                                        </DockPanel>
+                                        <!-- Hero Improvement Structures -->
+                                        <DockPanel x:Name="StickyHeroImprovementStructures" Visibility="Collapsed">
+                                            <TextBlock Text="◆  Hero Improvement Structures"
+                                                       Style="{StaticResource SectionHeader}"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,10,0"
+                                                       DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHeroImprovementContentPresetSticky"
+                                                      Width="170"
+                                                      DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content"
+                                                    Width="100"
+                                                    HorizontalAlignment="Left"
+                                                    Margin="8,0,0,0"
+                                                    Style="{StaticResource ToolbarButton}"
+                                                    Click="BtnAddHeroImprovementContent_Click"/>
                                         </DockPanel>
                                     </Grid>
                                     <ScrollViewer x:Name="PlayerZonesScrollViewer"
@@ -1157,7 +1174,7 @@
                                                                            VerticalAlignment="Center"
                                                                            Margin="0,0,6,0"/>
                                                                 <Slider Grid.Column="1"
-                                                                        Minimum="0" Maximum="10"
+                                                                    Minimum="0" Maximum="8"
                                                                         Value="{Binding Count}"
                                                                         TickFrequency="1" IsSnapToTickEnabled="True"/>
                                                             </Grid>
@@ -1188,24 +1205,24 @@
 
                                             <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
                                             <DockPanel Margin="0,8,0,10">
-                                                <TextBlock x:Name="TxtHeaderRandomHires"
-                                                           Text="◆  Random Hires"
+                                                <TextBlock x:Name="TxtHeaderUnitRecruitment"
+                                                       Text="◆  Unit Recruitment"
                                                            Style="{StaticResource SectionHeader}"
                                                            VerticalAlignment="Center"
                                                            Margin="0,0,10,0"
                                                            DockPanel.Dock="Left"/>
-                                                <ComboBox x:Name="CmbRandomHireContentPreset"
+                                                <ComboBox x:Name="CmbUnitRecruitmentContentPreset"
                                                           Width="170"
                                                           DockPanel.Dock="Left"/>
-                                                <Button x:Name="BtnAddRandomHireContent"
+                                                <Button x:Name="BtnAddUnitRecruitmentContent"
                                                         Content="Add Content"
                                                         Width="100"
                                                         HorizontalAlignment="Left"
                                                         Margin="8,0,0,0"
                                                         Style="{StaticResource ToolbarButton}"
-                                                        Click="BtnAddRandomHireContent_Click"/>
+                                                    Click="BtnAddUnitRecruitmentContent_Click"/>
                                             </DockPanel>
-                                            <ItemsControl x:Name="RandomHiresControl" ItemsSource="{Binding RandomHireContentItems}">
+                                                <ItemsControl x:Name="UnitRecruitmentControl" ItemsSource="{Binding UnitRecruitmentContentItems}">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <StackPanel/>
@@ -1254,7 +1271,7 @@
                                                                            VerticalAlignment="Center"
                                                                            Margin="0,0,6,0"/>
                                                                 <Slider Grid.Column="1"
-                                                                        Minimum="0" Maximum="10"
+                                                                    Minimum="0" Maximum="8"
                                                                         Value="{Binding Count}"
                                                                         TickFrequency="1" IsSnapToTickEnabled="True"/>
                                                             </Grid>
@@ -1351,7 +1368,7 @@
                                                                            VerticalAlignment="Center"
                                                                            Margin="0,0,6,0"/>
                                                                 <Slider Grid.Column="1"
-                                                                        Minimum="0" Maximum="10"
+                                                                    Minimum="0" Maximum="8"
                                                                         Value="{Binding Count}"
                                                                         TickFrequency="1" IsSnapToTickEnabled="True"/>
                                                             </Grid>
@@ -1382,24 +1399,24 @@
 
                                             <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
                                             <DockPanel Margin="0,8,0,10">
-                                                <TextBlock x:Name="TxtHeaderStorageStructures"
-                                                           Text="◆  Storage Structures"
+                                                <TextBlock x:Name="TxtHeaderUtilityStructures"
+                                                       Text="◆  Utility Structures"
                                                            Style="{StaticResource SectionHeader}"
                                                            VerticalAlignment="Center"
                                                            Margin="0,0,10,0"
                                                            DockPanel.Dock="Left"/>
-                                                <ComboBox x:Name="CmbStorageStructureContentPreset"
+                                                <ComboBox x:Name="CmbUtilityStructureContentPreset"
                                                           Width="170"
                                                           DockPanel.Dock="Left"/>
-                                                <Button x:Name="BtnAddStorageStructureContent"
+                                                <Button x:Name="BtnAddUtilityStructureContent"
                                                         Content="Add Content"
                                                         Width="100"
                                                         HorizontalAlignment="Left"
                                                         Margin="8,0,0,0"
                                                         Style="{StaticResource ToolbarButton}"
-                                                        Click="BtnAddStorageStructureContent_Click"/>
+                                                    Click="BtnAddUtilityStructureContent_Click"/>
                                             </DockPanel>
-                                            <ItemsControl x:Name="StorageStructuresControl" ItemsSource="{Binding StorageStructureContentItems}">
+                                                <ItemsControl x:Name="UtilityStructuresControl" ItemsSource="{Binding UtilityStructureContentItems}">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
                                                         <StackPanel/>
@@ -1448,7 +1465,104 @@
                                                                            VerticalAlignment="Center"
                                                                            Margin="0,0,6,0"/>
                                                                 <Slider Grid.Column="1"
-                                                                        Minimum="0" Maximum="10"
+                                                                    Minimum="0" Maximum="8"
+                                                                        Value="{Binding Count}"
+                                                                        TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                            </Grid>
+                                                            <StackPanel Grid.Row="0" Grid.Column="4"
+                                                                        Orientation="Horizontal"
+                                                                        VerticalAlignment="Center">
+                                                                <CheckBox Content="Guarded"
+                                                                          IsChecked="{Binding IsGuarded}"
+                                                                          Margin="0,0,12,0"/>
+                                                                <TextBlock Text="Road"
+                                                                           VerticalAlignment="Center"
+                                                                           Margin="0,0,6,0"/>
+                                                                <ComboBox Width="120"
+                                                                          SelectedValuePath="Content"
+                                                                          SelectedValue="{Binding RoadDistance}">
+                                                                    <ComboBoxItem Content="Any"/>
+                                                                    <ComboBoxItem Content="Next To"/>
+                                                                    <ComboBoxItem Content="Near"/>
+                                                                    <ComboBoxItem Content="Medium"/>
+                                                                    <ComboBoxItem Content="Far"/>
+                                                                    <ComboBoxItem Content="Very Far"/>
+                                                                </ComboBox>
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+
+                                            <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                            <DockPanel Margin="0,8,0,10">
+                                                <TextBlock x:Name="TxtHeaderHeroImprovementStructures"
+                                                       Text="◆  Hero Improvement Structures"
+                                                           Style="{StaticResource SectionHeader}"
+                                                           VerticalAlignment="Center"
+                                                           Margin="0,0,10,0"
+                                                           DockPanel.Dock="Left"/>
+                                                <ComboBox x:Name="CmbHeroImprovementContentPreset"
+                                                          Width="170"
+                                                          DockPanel.Dock="Left"/>
+                                                <Button x:Name="BtnAddHeroImprovementContent"
+                                                        Content="Add Content"
+                                                        Width="100"
+                                                        HorizontalAlignment="Left"
+                                                        Margin="8,0,0,0"
+                                                        Style="{StaticResource ToolbarButton}"
+                                                    Click="BtnAddHeroImprovementContent_Click"/>
+                                            </DockPanel>
+                                            <ItemsControl x:Name="HeroImprovementStructuresControl" ItemsSource="{Binding HeroImprovementStructureContentItems}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="200"/>
+                                                                <ColumnDefinition Width="8"/>
+                                                                <ColumnDefinition Width="200"/>
+                                                                <ColumnDefinition Width="8"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto"/>
+                                                                <RowDefinition Height="8"/>
+                                                            </Grid.RowDefinitions>
+                                                            <Grid Grid.Row="0" Grid.Column="0">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="30"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <Button Grid.Column="0"
+                                                                        Content="x"
+                                                                        Width="20" Height="16"
+                                                                        Margin="4,0,0,0" Padding="0"
+                                                                        FontSize="10"
+                                                                        ToolTip="Remove content"
+                                                                        Style="{StaticResource ToolbarButton}"
+                                                                        Click="BtnRemoveZoneContent_Click"/>
+                                                                <TextBlock Grid.Column="1"
+                                                                           Text="{Binding SidMapping.Name}"
+                                                                           VerticalAlignment="Center"
+                                                                           TextTrimming="CharacterEllipsis"/>
+                                                            </Grid>
+                                                            <Grid Grid.Row="0" Grid.Column="2">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Grid.Column="0"
+                                                                           Text="{Binding Count, StringFormat={}{0:0}}"
+                                                                           Style="{StaticResource ValueText}"
+                                                                           VerticalAlignment="Center"
+                                                                           Margin="0,0,6,0"/>
+                                                                <Slider Grid.Column="1"
+                                                                    Minimum="0" Maximum="8"
                                                                         Value="{Binding Count}"
                                                                         TickFrequency="1" IsSnapToTickEnabled="True"/>
                                                             </Grid>

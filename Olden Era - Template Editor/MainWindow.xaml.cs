@@ -82,9 +82,10 @@ namespace Olden_Era___Template_Editor
             {
                 MineContentItems = _playerZoneMandatoryContent.mines,
                 TreasureContentItems = _playerZoneMandatoryContent.treasures,
-                RandomHireContentItems = _playerZoneMandatoryContent.randomHires,
+                UnitRecruitmentContentItems = _playerZoneMandatoryContent.unitRecruitment,
                 ResourceBankContentItems = _playerZoneMandatoryContent.resourceBanks,
-                StorageStructureContentItems = _playerZoneMandatoryContent.storageStructures
+                UtilityStructureContentItems = _playerZoneMandatoryContent.utilityStructures,
+                HeroImprovementStructureContentItems = _playerZoneMandatoryContent.heroImprovementStructures
             };
             // Fire-and-forget background update check — never blocks the UI.
             _ = CheckForUpdateAsync(version);
@@ -110,9 +111,9 @@ namespace Olden_Era___Template_Editor
             _playerZoneMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemEpic));
 
             // ── Hiring — low-tier × 2 + high-tier × 1 + full pool × 1 (Kerberos + Universe blend). ──
-            _playerZoneMandatoryContent.randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier, count: 2, isGroup: true));
-            _playerZoneMandatoryContent.randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier, isGroup: true));
-            _playerZoneMandatoryContent.randomHires.Add(CreateZoneContentItem(IncludeListIds.RandomHiresAllTier, isGroup: true));
+            _playerZoneMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier, count: 2, isGroup: true));
+            _playerZoneMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier, isGroup: true));
+            _playerZoneMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresAllTier, isGroup: true));
 
             // ── Guarded resource banks — tier 1 × 2 + tier 2 × 1 (Exodus pattern). ──
             _playerZoneMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier1, count: 2, isGroup: true));
@@ -140,12 +141,14 @@ namespace Olden_Era___Template_Editor
             PopulateZoneContentMenu(CmbZoneContentPreset, CmbZoneContentPresetSticky, ContentItemGroup.Mines);
             /* Populate the Treasures dropdown menu */
             PopulateZoneContentMenu(CmbTreasureContentPreset, CmbTreasureContentPresetSticky, ContentItemGroup.Treasures);
-            /* Populate the Random Hires dropdown menu */
-            PopulateZoneContentMenu(CmbRandomHireContentPreset, CmbRandomHireContentPresetSticky, ContentItemGroup.HireStructures);
+            /* Populate the Unit Recruitment dropdown menu */
+            PopulateZoneContentMenu(CmbUnitRecruitmentContentPreset, CmbUnitRecruitmentContentPresetSticky, ContentItemGroup.UnitRecruitment);
              /* Populate the Resource Banks dropdown menu */
             PopulateZoneContentMenu(CmbResourceBankContentPreset, CmbResourceBankContentPresetSticky, ContentItemGroup.ResourceBanks);
-            /* Populate the Storage Structures dropdown menu */
-            PopulateZoneContentMenu(CmbStorageStructureContentPreset, CmbStorageStructureContentPresetSticky, ContentItemGroup.StorageStructures);
+            /* Populate the Utility Structures dropdown menu */
+            PopulateZoneContentMenu(CmbUtilityStructureContentPreset, CmbUtilityStructureContentPresetSticky, ContentItemGroup.UtilityStructures);
+            /* Populate the Hero Improvement Structures dropdown menu */
+            PopulateZoneContentMenu(CmbHeroImprovementContentPreset, CmbHeroImprovementContentPresetSticky, ContentItemGroup.HeroImprovementStructures);
         }
 
         private async Task CheckForUpdateAsync(Version? currentVersion)
@@ -937,12 +940,12 @@ namespace Olden_Era___Template_Editor
             AddZoneContentItemFromName(_playerZoneMandatoryContent.treasures, name);
         }
 
-        private void BtnAddRandomHireContent_Click(object sender, RoutedEventArgs e)
+        private void BtnAddUnitRecruitmentContent_Click(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
 
-            string name = (FindName("CmbRandomHireContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;      
-            AddZoneContentItemFromName(_playerZoneMandatoryContent.randomHires, name);
+            string name = (FindName("CmbUnitRecruitmentContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_playerZoneMandatoryContent.unitRecruitment, name);
         }
 
         private void BtnAddResourceBankContent_Click(object sender, RoutedEventArgs e)
@@ -953,12 +956,20 @@ namespace Olden_Era___Template_Editor
             AddZoneContentItemFromName(_playerZoneMandatoryContent.resourceBanks, name);   
         }
 
-        private void BtnAddStorageStructureContent_Click(object sender, RoutedEventArgs e)
+        private void BtnAddUtilityStructureContent_Click(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
 
-            string name = (FindName("CmbStorageStructureContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
-            AddZoneContentItemFromName(_playerZoneMandatoryContent.storageStructures, name);
+            string name = (FindName("CmbUtilityStructureContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_playerZoneMandatoryContent.utilityStructures, name);
+        }
+
+        private void BtnAddHeroImprovementContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+
+            string name = (FindName("CmbHeroImprovementContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_playerZoneMandatoryContent.heroImprovementStructures, name);
         }
 
         private void BtnRemoveZoneContent_Click(object sender, RoutedEventArgs e)
@@ -1446,7 +1457,7 @@ namespace Olden_Era___Template_Editor
                 InitializeDefaultPlayerZoneContents();
                 return;
             }
-
+            /* Categorize the content items */
             var groupedItems = new Dictionary<PlayerZoneContentKey, int>();
 
             foreach (var contentItem in contentItems)
@@ -1485,7 +1496,7 @@ namespace Olden_Era___Template_Editor
                     groupedItems[key] = 1;
                 }
             }
-
+            /* Add categorized content items to proper content lists */
             foreach (var kvp in groupedItems)
             {
                 SidMapping? sidMapping = GlobalContent.GetBySid(kvp.Key.Sid);
@@ -1500,23 +1511,27 @@ namespace Olden_Era___Template_Editor
                     roadDistance: kvp.Key.RoadDistance,
                     isGroup: kvp.Key.IsGroup);
 
-                if (kvp.Key.IsMine)
+                if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.Mines))
                 {
                     _playerZoneMandatoryContent.mines.Add(uiItem);
                 }
-                else if (IsRandomHireSid(kvp.Key.Sid))
+                else if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.UnitRecruitment))
                 {
-                    _playerZoneMandatoryContent.randomHires.Add(uiItem);
+                    _playerZoneMandatoryContent.unitRecruitment.Add(uiItem);
                 }
-                else if (IsResourceBankSid(kvp.Key.Sid))
+                else if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.ResourceBanks))
                 {
                     _playerZoneMandatoryContent.resourceBanks.Add(uiItem);
                 }
-                else if (IsStorageStructureSid(kvp.Key.Sid))
+                else if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.UtilityStructures))
                 {
-                    _playerZoneMandatoryContent.storageStructures.Add(uiItem);
+                    _playerZoneMandatoryContent.utilityStructures.Add(uiItem);
                 }
-                else
+                else if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.HeroImprovementStructures))
+                {
+                    _playerZoneMandatoryContent.heroImprovementStructures.Add(uiItem);
+                }
+                else if(IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.Treasures))
                 {
                     _playerZoneMandatoryContent.treasures.Add(uiItem);
                 }
@@ -1550,15 +1565,10 @@ namespace Olden_Era___Template_Editor
 
         private static bool IsDistance(double min, double max, DistanceVariation preset)
             => Math.Abs(min - preset.Min) < 0.0001 && Math.Abs(max - preset.Max) < 0.0001;
-
-        private static bool IsRandomHireSid(string sid)
-            => ContentItemGroup.HireStructures.Any(item => string.Equals(item.Sid, sid, StringComparison.OrdinalIgnoreCase));
-
-        private static bool IsResourceBankSid(string sid)
-            => ContentItemGroup.ResourceBanks.Any(item => string.Equals(item.Sid, sid, StringComparison.OrdinalIgnoreCase));
-
-        private static bool IsStorageStructureSid(string sid)
-            => ContentItemGroup.StorageStructures.Any(item => string.Equals(item.Sid, sid, StringComparison.OrdinalIgnoreCase));
+        
+        /* Helper function for checking if a SID belongs to a content item group */
+        private static bool IsContentItemGroupSid(string sid, List<SidMapping> groupItems)
+            => groupItems.Any(item => string.Equals(item.Sid, sid, StringComparison.OrdinalIgnoreCase));
 
         private readonly record struct PlayerZoneContentKey(
             string Sid,
@@ -1662,9 +1672,10 @@ namespace Olden_Era___Template_Editor
             // whose top edge has scrolled above the viewport top.
             var headers = new[]
             {
-                (Element: TxtHeaderStorageStructures, Sticky: StickyStorageStructures),
+                (Element: TxtHeaderHeroImprovementStructures, Sticky: StickyHeroImprovementStructures),
+                (Element: TxtHeaderUtilityStructures, Sticky: StickyUtilityStructures),
                 (Element: TxtHeaderResourceBanks, Sticky: StickyResourceBanks),
-                (Element: TxtHeaderRandomHires,   Sticky: StickyRandomHires),
+                (Element: TxtHeaderUnitRecruitment, Sticky: StickyUnitRecruitment),
                 (Element: TxtHeaderTreasures,     Sticky: StickyTreasures),
                 (Element: TxtHeaderMines,         Sticky: StickyMines),
             };
@@ -1690,9 +1701,10 @@ namespace Olden_Era___Template_Editor
             StickyHeaderPanel.Visibility   = Visibility.Visible;
             StickyMines.Visibility         = Visibility.Collapsed;
             StickyTreasures.Visibility     = Visibility.Collapsed;
-            StickyRandomHires.Visibility   = Visibility.Collapsed;
+            StickyUnitRecruitment.Visibility = Visibility.Collapsed;
             StickyResourceBanks.Visibility = Visibility.Collapsed;
-            StickyStorageStructures.Visibility = Visibility.Collapsed;
+            StickyUtilityStructures.Visibility = Visibility.Collapsed;
+            StickyHeroImprovementStructures.Visibility = Visibility.Collapsed;
             active.Visibility              = Visibility.Visible;
         }
 

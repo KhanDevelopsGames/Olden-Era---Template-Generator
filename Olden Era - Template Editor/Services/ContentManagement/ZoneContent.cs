@@ -9,19 +9,20 @@ public class ZoneMandatoryContent
 {
         public readonly ObservableCollection<ZoneContentItemUI> mines = new();
         public readonly ObservableCollection<ZoneContentItemUI> treasures = new();
-        public readonly ObservableCollection<ZoneContentItemUI> randomHires = new();
+        public readonly ObservableCollection<ZoneContentItemUI> unitRecruitment = new();
         public readonly ObservableCollection<ZoneContentItemUI> resourceBanks = new();
-    public readonly ObservableCollection<ZoneContentItemUI> storageStructures = new();
-
+        public readonly ObservableCollection<ZoneContentItemUI> utilityStructures = new();
+        public readonly ObservableCollection<ZoneContentItemUI> heroImprovementStructures = new();
         private IEnumerable<ObservableCollection<ZoneContentItemUI>> Collections
         {
             get
             {
                 yield return mines;
                 yield return treasures;
-                yield return randomHires;
+                yield return unitRecruitment;
                 yield return resourceBanks;
-                yield return storageStructures;
+                yield return utilityStructures;
+                yield return heroImprovementStructures;
             }
         }
 
