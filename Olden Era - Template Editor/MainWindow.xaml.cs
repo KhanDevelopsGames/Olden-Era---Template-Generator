@@ -242,9 +242,11 @@ namespace Olden_Era___Template_Editor
             string versionStr = FormatVersion(latestVersion);
 
             UpdateProgressWindow? progressWindow = null;
+            CancellationToken ct = default;
             Dispatcher.Invoke(() =>
             {
                 progressWindow = new UpdateProgressWindow { Owner = this };
+                ct = progressWindow.CancellationToken;
                 progressWindow.SetTitle($"Downloading update {versionStr}…");
                 progressWindow.SetStatus("Connecting…");
                 progressWindow.Show();
@@ -252,20 +254,20 @@ namespace Olden_Era___Template_Editor
 
             try
             {
-                using var download = await Http.GetAsync(asset.BrowserDownloadUrl, HttpCompletionOption.ResponseHeadersRead);
+                using var download = await Http.GetAsync(asset.BrowserDownloadUrl, HttpCompletionOption.ResponseHeadersRead, ct);
                 download.EnsureSuccessStatusCode();
 
                 long? total = download.Content.Headers.ContentLength;
-                await using var src = await download.Content.ReadAsStreamAsync();
+                await using var src = await download.Content.ReadAsStreamAsync(ct);
                 await using var dst = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, useAsync: true);
 
                 byte[] buffer     = new byte[81920];
                 long   downloaded = 0;
                 int    read;
                 int    lastPct    = -1;
-                while ((read = await src.ReadAsync(buffer)) > 0)
+                while ((read = await src.ReadAsync(buffer, ct)) > 0)
                 {
-                    await dst.WriteAsync(buffer.AsMemory(0, read));
+                    await dst.WriteAsync(buffer.AsMemory(0, read), ct);
                     downloaded += read;
                     if (total > 0)
                     {
@@ -286,11 +288,17 @@ namespace Olden_Era___Template_Editor
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                try { if (File.Exists(tempPath)) File.Delete(tempPath); } catch { /* best effort */ }
+                Dispatcher.Invoke(() => progressWindow?.ForceClose());
+                return;
+            }
             catch
             {
                 Dispatcher.Invoke(() =>
                 {
-                    progressWindow?.Close();
+                    progressWindow?.ForceClose();
                     MessageBox.Show(
                         "Download failed. The releases page will be opened instead.",
                         "Update Failed",
@@ -341,7 +349,7 @@ namespace Olden_Era___Template_Editor
 
                 Dispatcher.Invoke(() =>
                 {
-                    progressWindow?.Close();
+                    progressWindow?.ForceClose();
                     Application.Current.Shutdown();
                 });
             }
@@ -350,7 +358,7 @@ namespace Olden_Era___Template_Editor
                 // It's an installer or a zip — just launch it and exit.
                 Dispatcher.Invoke(() =>
                 {
-                    progressWindow?.Close();
+                    progressWindow?.ForceClose();
                     Process.Start(new ProcessStartInfo(tempPath) { UseShellExecute = true });
                     Application.Current.Shutdown();
                 });

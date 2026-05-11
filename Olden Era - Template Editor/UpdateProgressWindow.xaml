@@ -4,16 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Update Progress" Height="160" Width="420"
-        WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        Title="Update Progress" Height="200" Width="420"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Closing="Window_Closing">
     <Grid Margin="12">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock x:Name="TitleText" Grid.Row="0" FontWeight="SemiBold" Margin="0,0,0,6"/>
         <TextBlock x:Name="StatusText" Grid.Row="1" Margin="0,0,0,8"/>
-        <ProgressBar x:Name="ProgressBar" Grid.Row="2" Height="20" Minimum="0" Maximum="100"/>
+        <ProgressBar x:Name="ProgressBar" Grid.Row="2" Height="20" Minimum="0" Maximum="100" Margin="0,0,0,10"/>
+        <Button x:Name="CancelButton" Grid.Row="3" Content="Cancel" Width="80" HorizontalAlignment="Right"
+                Click="CancelButton_Click"/>
     </Grid>
 </Window>
