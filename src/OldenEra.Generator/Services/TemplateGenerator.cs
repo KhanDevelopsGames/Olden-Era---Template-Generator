@@ -184,6 +184,8 @@ namespace OldenEra.Generator.Services
                     }
                 }
             }
+
+            ApplyBordersAndRoads(template, settings.BordersRoads);
         }
 
         private static void ApplyExperimentalToZone(
@@ -236,6 +238,29 @@ namespace OldenEra.Generator.Services
                         mo.GuardChance = neutralChance;
                     if (neutralPct != 100 && mo.GuardValue is int gv)
                         mo.GuardValue = (int)System.Math.Round(gv * (neutralPct / 100.0));
+                }
+            }
+        }
+
+        private static void ApplyBordersAndRoads(RmgTemplate template, BordersRoadsSettings br)
+        {
+            if (template.Variants is null) return;
+            foreach (var variant in template.Variants)
+            {
+                if (variant.Border is { } border)
+                {
+                    if (br.CornerRadius.HasValue) border.CornerRadius = br.CornerRadius.Value;
+                    if (br.ObstaclesWidth.HasValue) border.ObstaclesWidth = br.ObstaclesWidth.Value;
+                    if (br.WaterBorderEnabled) border.WaterWidth = br.WaterWidth;
+                }
+
+                if (br.RoadType is { Length: > 0 } rt && variant.Zones is not null)
+                {
+                    foreach (var zone in variant.Zones)
+                    {
+                        if (zone.Roads is null) continue;
+                        foreach (var road in zone.Roads) road.Type = rt;
+                    }
                 }
             }
         }

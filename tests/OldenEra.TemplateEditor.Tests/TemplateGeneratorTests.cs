@@ -908,6 +908,23 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
+    public void BordersAndRoads_CornerRadiusOverride_AppliedToEveryVariant()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            MapSize = 160,
+            Topology = MapTopology.Random,
+            BordersRoads = { CornerRadius = 0.5 }
+        };
+
+        var template = TemplateGenerator.Generate(settings);
+
+        foreach (var variant in template.Variants!)
+            Assert.Equal(0.5, variant.Border!.CornerRadius);
+    }
+
+    [Fact]
     public void Generate_ConnectionsReferToGeneratedZones()
     {
         var settings = new GeneratorSettings
