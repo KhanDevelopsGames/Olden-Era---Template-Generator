@@ -49,6 +49,7 @@ namespace OldenEra.Generator.Models
         [JsonPropertyName("heroMax")]           public int     HeroCountMax           { get; set; } = 8;
         [JsonPropertyName("heroIncrement")]     public int     HeroCountIncrement     { get; set; } = 1;
         [JsonPropertyName("heroBans")]          public List<string> HeroBans          { get; set; } = new();
+        [JsonPropertyName("bannedSpells")]      public List<string> BannedSpells      { get; set; } = new();
         [JsonPropertyName("fixedStartingHeroByFaction")] public Dictionary<string, string?> FixedStartingHeroByFaction { get; set; } = new();
         [JsonPropertyName("topology")]          public MapTopology Topology           { get; set; } = MapTopology.Random;
         [JsonPropertyName("randomPortals")]     public bool    RandomPortals          { get; set; } = false;

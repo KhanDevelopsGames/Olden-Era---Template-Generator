@@ -71,4 +71,18 @@ public class SpellBansTests
         Assert.Single(template.GlobalBans!.Magics!);
         Assert.Equal("spell.fly", template.GlobalBans.Magics![0]);
     }
+
+    [Fact]
+    public void SettingsFile_RoundTrips_BannedSpells()
+    {
+        var g = new GeneratorSettings();
+        g.HeroSettings.BannedSpells = new List<string> { "spell.fly", "spell.town_portal" };
+
+        var file = SettingsMapper.ToFile(g, advancedMode: false, experimentalMapSizes: false);
+        var roundTripped = SettingsMapper.FromFile(file).Settings;
+
+        Assert.Equal(
+            new[] { "spell.fly", "spell.town_portal" },
+            roundTripped.HeroSettings.BannedSpells.ToArray());
+    }
 }
