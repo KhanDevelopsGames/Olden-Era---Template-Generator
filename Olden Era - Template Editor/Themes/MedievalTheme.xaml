@@ -113,7 +113,7 @@
                         <ToggleButton x:Name="ToggleButton"
                                       IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay,
                                                   RelativeSource={RelativeSource TemplatedParent}}"
-                                      Focusable="False" ClickMode="Press">
+                                      Focusable="False">
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="ToggleButton">
                                     <Border x:Name="Bd"
@@ -125,6 +125,8 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="20"/>
                                             </Grid.ColumnDefinitions>
+                                            <!-- Add a transparent background to column 0 so it is hit-testable -->
+                                            <Rectangle Grid.Column="0" Fill="Transparent"/>
                                             <!-- arrow -->
                                             <Path Grid.Column="1"
                                                   Data="M 0 0 L 6 6 L 12 0 Z"
@@ -166,7 +168,7 @@
                         <Popup x:Name="PART_Popup"
                                Placement="Bottom"
                                IsOpen="{TemplateBinding IsDropDownOpen}"
-                               AllowsTransparency="True"
+                               AllowsTransparency="False"
                                Focusable="False"
                                PopupAnimation="Slide">
                             <Border x:Name="DropDownBorder"
