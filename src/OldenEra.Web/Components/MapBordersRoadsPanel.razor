@@ -1,0 +1,54 @@
+@using OldenEra.Generator.Models
+@using OldenEra.Generator.Models.Unfrozen
+
+<ExperimentalCard Key="map-borders-roads" Title="Map borders & roads">
+    <div class="oe-hint">
+        Override the generator's border + road defaults. Off / "Default" = unchanged.
+    </div>
+
+    <SliderRow Label="Corner radius" WideLabel="true"
+               Min="0" Max="100" Step="5" Suffix="%"
+               Value="(int)Math.Round((Settings.BordersRoads.CornerRadius ?? 0) * 100)"
+               ValueChanged="@(v => { Settings.BordersRoads.CornerRadius = v == 0 ? (double?)null : v / 100.0; NotifyChanged(); })" />
+
+    <SliderRow Label="Obstacle width" WideLabel="true"
+               Min="0" Max="10" Step="1"
+               Value="Settings.BordersRoads.ObstaclesWidth ?? 3"
+               ValueChanged="@(v => { Settings.BordersRoads.ObstaclesWidth = (int)v == 3 ? (int?)null : (int)v; NotifyChanged(); })" />
+
+    <div class="oe-stacked">
+        <label class="oe-label">
+            <input type="checkbox"
+                   checked="@Settings.BordersRoads.WaterBorderEnabled"
+                   @onchange="@(e => { Settings.BordersRoads.WaterBorderEnabled = (bool)e.Value!; NotifyChanged(); })" />
+            Water border
+        </label>
+    </div>
+
+    @if (Settings.BordersRoads.WaterBorderEnabled)
+    {
+        <SliderRow Label="Water width" WideLabel="true"
+                   Min="1" Max="10" Step="1"
+                   Value="Settings.BordersRoads.WaterWidth"
+                   ValueChanged="@(v => { Settings.BordersRoads.WaterWidth = (int)v; NotifyChanged(); })" />
+    }
+
+    <div class="oe-stacked">
+        <label class="oe-label">Road type</label>
+        <select value="@(Settings.BordersRoads.RoadType ?? "")"
+                @onchange="@(e => { var s = (string?)e.Value; Settings.BordersRoads.RoadType = string.IsNullOrEmpty(s) ? null : s; NotifyChanged(); })">
+            <option value="">Default (Dirt)</option>
+            @foreach (var rt in KnownValues.RoadTypes)
+            {
+                <option value="@rt">@rt</option>
+            }
+        </select>
+    </div>
+</ExperimentalCard>
+
+@code {
+    [Parameter, EditorRequired] public GeneratorSettings Settings { get; set; } = default!;
+    [Parameter] public EventCallback OnChanged { get; set; }
+
+    private Task NotifyChanged() => OnChanged.InvokeAsync();
+}
