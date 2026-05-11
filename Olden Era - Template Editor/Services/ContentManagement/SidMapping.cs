@@ -37,12 +37,12 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
         public static readonly SidMapping JoustingRange = new() { Sid = "jousting_range", Name = "Jousting Range" };
         public static readonly SidMapping ManaWell = new() { Sid = "mana_well", Name = "Mana Well" };
         public static readonly SidMapping Market = new() { Sid = "market", Name = "Market" };
-        public static readonly SidMapping MineCrystals = new() { Sid = "mine_crystals", Name = "Mine Crystals" };
-        public static readonly SidMapping MineGemstones = new() { Sid = "mine_gemstones", Name = "Mine Gemstones" };
-        public static readonly SidMapping MineGold = new() { Sid = "mine_gold", Name = "Mine Gold" };
-        public static readonly SidMapping MineMercury = new() { Sid = "mine_mercury", Name = "Mine Mercury" };
-        public static readonly SidMapping MineOre = new() { Sid = "mine_ore", Name = "Mine Ore" };
-        public static readonly SidMapping MineWood = new() { Sid = "mine_wood", Name = "Mine Wood" };
+        public static readonly SidMapping MineCrystals = new() { Sid = "mine_crystals", Name = "Crystal Vein" };
+        public static readonly SidMapping MineGemstones = new() { Sid = "mine_gemstones", Name = "Gem Mound" };
+        public static readonly SidMapping MineGold = new() { Sid = "mine_gold", Name = "Gold Mine" };
+        public static readonly SidMapping MineMercury = new() { Sid = "mine_mercury", Name = "Mercury Fissure" };
+        public static readonly SidMapping MineOre = new() { Sid = "mine_ore", Name = "Ore Mine" };
+        public static readonly SidMapping MineWood = new() { Sid = "mine_wood", Name = "Sawmill" };
         public static readonly SidMapping Mirage = new() { Sid = "mirage", Name = "Mirage" };
         public static readonly SidMapping MontyHall = new() { Sid = "monty_hall", Name = "Monty Hall" };
         public static readonly SidMapping MysteriousStone = new() { Sid = "mysterious_stone", Name = "Mysterious Stone" };
@@ -84,10 +84,19 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
         public static readonly SidMapping Watchtower = new() { Sid = "watchtower", Name = "Watchtower" };
         public static readonly SidMapping WindRose = new() { Sid = "wind_rose", Name = "Wind Rose" };
         public static readonly SidMapping WiseOwl = new() { Sid = "wise_owl", Name = "Wise Owl" };
+        public static readonly SidMapping StorageWood = new() { Sid = "storage_wood", Name = "Wood Storage" };
+        public static readonly SidMapping StorageOre = new() { Sid = "storage_ore", Name = "Ore Storage" };
+        public static readonly SidMapping StorageGold = new() { Sid = "storage_gold", Name = "Gold Storage" };
+        public static readonly SidMapping StorageMercury = new() { Sid = "storage_mercury", Name = "Mercury Storage" };
+        public static readonly SidMapping StorageCrystals = new() { Sid = "storage_crystals", Name = "Crystals Storage" };
+        public static readonly SidMapping StorageGemstones = new() { Sid = "storage_gemstones", Name = "Gemstones Storage" };
+        public static readonly SidMapping StorageDust = new() { Sid = "storage_dust", Name = "Dust Storage" };
     }
 
     public static class IncludeListIds
     {
+        /* string identifier for include lists, to properly handle content item creation. (These are not real SID values of content items, but names of their include lists) */
+        public static readonly string Identifier = "content";
         public static IReadOnlyList<SidMapping> GetAll() => SidReflection.GetSidMappings(typeof(IncludeListIds));
 
         public static readonly SidMapping RandomHiresLowTier = new() { Sid = "content_list_building_random_hires_low_tier", Name = "Random Hires Low Tier" };
@@ -95,6 +104,7 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
         public static readonly SidMapping RandomHiresAllTier = new() { Sid = "basic_content_list_building_random_hires", Name = "Random Hires All Tier" };
         public static readonly SidMapping ResourceBanksTier1 = new() { Sid = "basic_content_list_building_guarded_resource_banks_tier_1", Name = "Resource Banks T1" };
         public static readonly SidMapping ResourceBanksTier2 = new() { Sid = "basic_content_list_building_guarded_resource_banks_tier_2", Name = "Resource Banks T2" };
+        public static readonly SidMapping StorageBanks = new() { Sid = "basic_content_list_basic_storage", Name = "Random Basic Storage" };
     }
 
     public static class GlobalContent

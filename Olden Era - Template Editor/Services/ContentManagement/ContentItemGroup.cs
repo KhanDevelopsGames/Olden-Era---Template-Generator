@@ -12,6 +12,18 @@ public static class ContentItemGroup
         ContentIds.MineGemstones,
         ContentIds.AlchemyLab
     };
+    /* ContentIds of storage structures - weekly reward for visiting */
+    public static readonly List<SidMapping> StorageStructures = new()
+    {
+        ContentIds.StorageWood,
+        ContentIds.StorageOre,
+        ContentIds.StorageGold,
+        ContentIds.StorageMercury,
+        ContentIds.StorageCrystals,
+        ContentIds.StorageGemstones,
+        ContentIds.StorageDust,
+        IncludeListIds.StorageBanks
+    };
     /* ContentIds of treasures */
     public static readonly List<SidMapping> Treasures = new() {
         ContentIds.MythicScrollBox,
@@ -21,7 +33,7 @@ public static class ContentItemGroup
         ContentIds.RandomItemLegendary
     };
     /* Random hire buildings matching the player faction */
-    public static readonly List<SidMapping> HireBuildings = new()
+    public static readonly List<SidMapping> HireStructures = new()
     {
         ContentIds.RandomHire1,
         ContentIds.RandomHire2,

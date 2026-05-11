@@ -96,10 +96,10 @@ public static class ZoneContentManager
 
         content.AddRange([
             // Mines — full rare set + gold + alchemy lab (Yin Yang/Staircase t3 pattern).
-            ContentPresets.MineCrystals_NextToRoad(),
-            ContentPresets.MineMercury_NextToRoad(),
-            ContentPresets.MineGemstones_NextToRoad(),
-            ContentPresets.AlchemyLab_NearRoad(),
+            ContentItemBuilder.Create(ContentIds.MineCrystals.Sid).WithName("name_mine_crystals").Mine().RoadDistance(DistancePresets.NextTo).Build(),
+            ContentItemBuilder.Create(ContentIds.MineMercury.Sid).WithName("name_mine_mercury").Mine().RoadDistance(DistancePresets.NextTo).Build(),
+            ContentItemBuilder.Create(ContentIds.MineGemstones.Sid).WithName("name_mine_gemstones").Mine().RoadDistance(DistancePresets.NextTo).Build(),
+            ContentItemBuilder.Create(ContentIds.AlchemyLab.Sid).WithName("name_alchemy_lab").Mine().RoadDistance(DistancePresets.NextTo).Build(),
             ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().RoadDistance(DistancePresets.Near).Build(),
             // Utility — watchtower (guarded) + vision building (tier 1 only: flattering_mirror/watchtower).
             // wind_rose (full map reveal) lives in tier_2 and belongs exclusively in high zones.
@@ -185,7 +185,7 @@ public static class ZoneContentManager
             new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
             new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
             // Mines — gold-heavy with full rare set.
-            ContentPresets.MineGold_NearCrossroads(),
+            ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().AddRule(RulePresets.CrossroadsDistance(DistancePresets.Near)).Build(),
             ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().Build(),
             ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().Build(),
             ContentItemBuilder.Create(ContentIds.MineCrystals.Sid).Mine().Build(),
