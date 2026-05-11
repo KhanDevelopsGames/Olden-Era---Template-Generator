@@ -129,6 +129,10 @@ namespace Olden_Era___Template_Editor
             }
             CmbZoneContentPreset.ItemsSource = mineNames;
             CmbZoneContentPreset.SelectedIndex = 0;
+            CmbZoneContentPresetSticky.ItemsSource = mineNames;
+            CmbZoneContentPresetSticky.SelectedIndex = 0;
+            CmbZoneContentPreset.SelectionChanged       += (_, _) => CmbZoneContentPresetSticky.SelectedIndex = CmbZoneContentPreset.SelectedIndex;
+            CmbZoneContentPresetSticky.SelectionChanged += (_, _) => CmbZoneContentPreset.SelectedIndex       = CmbZoneContentPresetSticky.SelectedIndex;
 
             /* Populate the Treasures dropdown menu */
             var treasurePresetNames = new List<string>();
@@ -138,6 +142,10 @@ namespace Olden_Era___Template_Editor
             }
             CmbTreasureContentPreset.ItemsSource = treasurePresetNames;
             CmbTreasureContentPreset.SelectedIndex = 0;
+            CmbTreasureContentPresetSticky.ItemsSource = treasurePresetNames;
+            CmbTreasureContentPresetSticky.SelectedIndex = 0;
+            CmbTreasureContentPreset.SelectionChanged       += (_, _) => CmbTreasureContentPresetSticky.SelectedIndex = CmbTreasureContentPreset.SelectedIndex;
+            CmbTreasureContentPresetSticky.SelectionChanged += (_, _) => CmbTreasureContentPreset.SelectedIndex       = CmbTreasureContentPresetSticky.SelectedIndex;
 
             /* Populate the Random Hires dropdown menu */
             var randomHirePresetNames = new List<string>();
@@ -147,6 +155,10 @@ namespace Olden_Era___Template_Editor
             }
             CmbRandomHireContentPreset.ItemsSource = randomHirePresetNames;
             CmbRandomHireContentPreset.SelectedIndex = 0;
+            CmbRandomHireContentPresetSticky.ItemsSource = randomHirePresetNames;
+            CmbRandomHireContentPresetSticky.SelectedIndex = 0;
+            CmbRandomHireContentPreset.SelectionChanged       += (_, _) => CmbRandomHireContentPresetSticky.SelectedIndex = CmbRandomHireContentPreset.SelectedIndex;
+            CmbRandomHireContentPresetSticky.SelectionChanged += (_, _) => CmbRandomHireContentPreset.SelectedIndex       = CmbRandomHireContentPresetSticky.SelectedIndex;
 
              /* Populate the Resource Banks dropdown menu */
             var resourceBankPresetNames = new List<string>();
@@ -156,6 +168,10 @@ namespace Olden_Era___Template_Editor
             }
             CmbResourceBankContentPreset.ItemsSource = resourceBankPresetNames;
             CmbResourceBankContentPreset.SelectedIndex = 0;
+            CmbResourceBankContentPresetSticky.ItemsSource = resourceBankPresetNames;
+            CmbResourceBankContentPresetSticky.SelectedIndex = 0;
+            CmbResourceBankContentPreset.SelectionChanged       += (_, _) => CmbResourceBankContentPresetSticky.SelectedIndex = CmbResourceBankContentPreset.SelectedIndex;
+            CmbResourceBankContentPresetSticky.SelectionChanged += (_, _) => CmbResourceBankContentPreset.SelectedIndex       = CmbResourceBankContentPresetSticky.SelectedIndex;
         }
 
         private async Task CheckForUpdateAsync(Version? currentVersion)
@@ -1517,6 +1533,46 @@ namespace Olden_Era___Template_Editor
                 lblNoPreview.Visibility = Visibility.Visible;
             }
         }
+
+        private void PlayerZonesScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            // Walk headers from last to first; show the sticky row for the last one
+            // whose top edge has scrolled above the viewport top.
+            var headers = new[]
+            {
+                (Element: TxtHeaderResourceBanks, Sticky: StickyResourceBanks),
+                (Element: TxtHeaderRandomHires,   Sticky: StickyRandomHires),
+                (Element: TxtHeaderTreasures,     Sticky: StickyTreasures),
+                (Element: TxtHeaderMines,         Sticky: StickyMines),
+            };
+
+            System.Windows.Controls.DockPanel? active = null;
+            foreach (var (element, sticky) in headers)
+            {
+                var pos = element.TranslatePoint(new System.Windows.Point(0, 0), PlayerZonesScrollViewer);
+                if (pos.Y < 0)
+                {
+                    active = sticky;
+                    break;
+                }
+            }
+
+            // If nothing has scrolled out of view, hide the sticky panel entirely (no duplication).
+            if (active == null)
+            {
+                StickyHeaderPanel.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            StickyHeaderPanel.Visibility   = Visibility.Visible;
+            StickyMines.Visibility         = Visibility.Collapsed;
+            StickyTreasures.Visibility     = Visibility.Collapsed;
+            StickyRandomHires.Visibility   = Visibility.Collapsed;
+            StickyResourceBanks.Visibility = Visibility.Collapsed;
+            active.Visibility              = Visibility.Visible;
+        }
+
+
 
         private void BtnDiscord_Click(object sender, RoutedEventArgs e)
         {
