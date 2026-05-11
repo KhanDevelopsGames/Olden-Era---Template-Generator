@@ -308,7 +308,6 @@ namespace Olden_Era___Template_Editor
                 });
                 return;
             }
-
             // Replace the running exe with the downloaded file using a batch script
             // (the running exe cannot be overwritten directly while the process holds it).
             bool isExeReplacement = ext.Equals(".exe", StringComparison.OrdinalIgnoreCase)
@@ -316,6 +315,7 @@ namespace Olden_Era___Template_Editor
                                     && asset.Name?.Contains("install", StringComparison.OrdinalIgnoreCase) == false;
 
             string currentExe = Environment.ProcessPath ?? Process.GetCurrentProcess().MainModule?.FileName ?? string.Empty;
+
 
             if (isExeReplacement && !string.IsNullOrEmpty(currentExe))
             {
