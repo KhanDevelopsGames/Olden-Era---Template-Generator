@@ -609,14 +609,14 @@ namespace Olden_Era___Template_Editor.Services
             var gaps = AssignNeutralZonesToGaps(neutralZones, capacities, preferInteriorGaps: true);
             var ordered = new List<string>(playerLetters.Count + neutralZones.Count);
 
-            ordered.AddRange(OrderEdgeGap(gaps[0], highQualityNearPlayer: true).Select(zone => zone.Letter));
+            ordered.AddRange(OrderEdgeGap(gaps[0], playerAtEnd: true).Select(zone => zone.Letter));
             for (int i = 0; i < playerLetters.Count; i++)
             {
                 ordered.Add(playerLetters[i]);
                 var gap = gaps[i + 1];
                 bool trailingEdge = i == playerLetters.Count - 1;
                 ordered.AddRange((trailingEdge
-                    ? OrderEdgeGap(gap, highQualityNearPlayer: false)
+                    ? OrderEdgeGap(gap, playerAtEnd: false)
                     : OrderNeutralsWithinGap(gap)).Select(zone => zone.Letter));
             }
 
@@ -711,33 +711,41 @@ namespace Olden_Era___Template_Editor.Services
             if (count <= 1)
                 return [.. neutralZones];
 
+            // Sort ascending: lowest quality first.
+            // Then fill from the outside in, placing the lowest zones at the player-adjacent
+            // ends and the highest zones in the centre.  This produces a symmetric gradient:
+            //   player → low → medium → high → … → high → medium → low → player
             var sorted = neutralZones
-                .OrderByDescending(NeutralZoneBalanceScore)
+                .OrderBy(NeutralZoneBalanceScore)
                 .ThenBy(zone => zone.Letter, StringComparer.Ordinal)
                 .ToList();
-            var slots = new NeutralZonePlan[count];
-            var positions = Enumerable.Range(0, count)
-                .OrderBy(position => Math.Abs(position - (count - 1) / 2.0))
-                .ThenBy(position => position)
-                .ToList();
 
-            for (int i = 0; i < sorted.Count; i++)
-                slots[positions[i]] = sorted[i];
+            var slots = new NeutralZonePlan[count];
+            int lo = 0, hi = count - 1;
+            for (int i = 0; i < count; i++)
+            {
+                if (i % 2 == 0)
+                    slots[lo++] = sorted[i];
+                else
+                    slots[hi--] = sorted[i];
+            }
 
             return slots.ToList();
         }
 
-        private static List<NeutralZonePlan> OrderEdgeGap(List<NeutralZonePlan> neutralZones, bool highQualityNearPlayer)
+        private static List<NeutralZonePlan> OrderEdgeGap(List<NeutralZonePlan> neutralZones, bool playerAtEnd)
         {
+            // Always place low-quality neutrals nearest the player: player → low → medium → high.
+            // playerAtEnd=true  (leading gap):  the player follows this list, so low must be last → reverse.
+            // playerAtEnd=false (trailing gap): the player precedes this list, so low must be first → ascending.
             var ordered = neutralZones
                 .OrderBy(zone => NeutralZoneBalanceScore(zone))
                 .ThenBy(zone => zone.Letter, StringComparer.Ordinal)
                 .ToList();
 
-            if (highQualityNearPlayer)
-                return ordered;
+            if (playerAtEnd)
+                ordered.Reverse();
 
-            ordered.Reverse();
             return ordered;
         }
 
@@ -1176,6 +1184,53 @@ namespace Olden_Era___Template_Editor.Services
             // are the correct proxy for zones that physically border each other on the map.
             var pairs = DelaunayEdges(pos);
 
+            // When balanced placement is active, strip any edge that skips a tier.
+            // Allowed: player↔low, low↔medium, medium↔high (adjacent tiers only).
+            // If an intermediate tier is entirely absent from the map the skip is permitted
+            // so the graph remains connectable. EnsureFullConnectivity handles any gaps.
+            if (settings.ExperimentalBalancedZonePlacement)
+            {
+                var presentTiers = allLetters
+                    .Select(l => ZoneTierRank(l, playerLetters, neutralByLetter))
+                    .ToHashSet();
+
+                pairs = pairs.Where(p =>
+                {
+                    int ta = ZoneTierRank(allLetters[p.A], playerLetters, neutralByLetter);
+                    int tb = ZoneTierRank(allLetters[p.B], playerLetters, neutralByLetter);
+                    int lo = Math.Min(ta, tb), hi = Math.Max(ta, tb);
+                    if (hi - lo <= 1) return true;
+                    // Allow a tier skip only when every tier in between is absent.
+                    for (int t = lo + 1; t < hi; t++)
+                        if (presentTiers.Contains(t)) return false;
+                    return true;
+                }).ToList();
+            }
+
+            // When balanced placement is active, strip any edge that skips a tier.
+            // Allowed: player↔low, low↔medium, medium↔high (adjacent tiers only).
+            // If an intermediate tier is entirely absent the skip is permitted so the
+            // graph can still be connected.  EnsureFullConnectivity handles any gaps.
+            if (settings.ExperimentalBalancedZonePlacement)
+            {
+                var presentTiers = allLetters
+                    .Select(l => ZoneTierRank(l, playerLetters, neutralByLetter))
+                    .ToHashSet();
+
+                pairs = pairs.Where(p =>
+                {
+                    int ta = ZoneTierRank(allLetters[p.A], playerLetters, neutralByLetter);
+                    int tb = ZoneTierRank(allLetters[p.B], playerLetters, neutralByLetter);
+                    int lo = Math.Min(ta, tb), hi = Math.Max(ta, tb);
+                    // Allow same-tier or adjacent-tier edges unconditionally.
+                    if (hi - lo <= 1) return true;
+                    // Allow a skip only when every tier in between is absent.
+                    for (int t = lo + 1; t < hi; t++)
+                        if (presentTiers.Contains(t)) return false;
+                    return true;
+                }).ToList();
+            }
+
             // Build connection name lookup per zone index.
             var connsByZone = Enumerable.Range(0, count).ToDictionary(i => i, _ => new List<string>());
             var connections = new List<Connection>();
@@ -1232,6 +1287,25 @@ namespace Olden_Era___Template_Editor.Services
             return MakeVariant(playerLetters, allLetters[0], count, zones, connections);
         }
 
+        /// <summary>
+        /// Returns the tier rank of a zone: 0 = player, 1 = low neutral, 2 = medium neutral, 3 = high neutral.
+        /// Used to assign concentric ring radii and to filter Delaunay edges.
+        /// </summary>
+        private static int ZoneTierRank(
+            string letter,
+            List<string> playerLetters,
+            Dictionary<string, NeutralZonePlan> neutralByLetter)
+        {
+            if (playerLetters.Contains(letter)) return 0;
+            if (!neutralByLetter.TryGetValue(letter, out var plan)) return 1;
+            return plan.Quality switch
+            {
+                NeutralZoneQuality.High   => 3,
+                NeutralZoneQuality.Medium => 2,
+                _                         => 1
+            };
+        }
+
         private static List<(double X, double Y)> BuildBalancedRandomPositions(
             List<string> orderedLetters,
             List<string> playerLetters,
@@ -1240,25 +1314,51 @@ namespace Olden_Era___Template_Editor.Services
             int count = orderedLetters.Count;
             if (count == 0) return [];
 
-            var playerSet = playerLetters.ToHashSet(StringComparer.Ordinal);
-            var positions = new List<(double X, double Y)>(count);
+            // Each quality tier lives on its own concentric ring.
+            // The radial gaps are large enough to prevent Delaunay from ever bridging
+            // non-adjacent tiers geometrically (the edge filter below is the hard guarantee;
+            // the rings ensure the preview looks correct too).
+            //   Tier 0 – players  : outermost  (radius 0.38)
+            //   Tier 1 – low      : next inward (radius 0.27)
+            //   Tier 2 – medium   : next inward (radius 0.16)
+            //   Tier 3 – high     : innermost   (radius 0.06)
+            static double TierRadius(int tier) => tier switch
+            {
+                0 => 0.38,
+                1 => 0.27,
+                2 => 0.16,
+                _ => 0.06
+            };
+
+            // Group letters by tier so we can space each ring evenly.
+            var byTier = new Dictionary<int, List<int>>(); // tier → indices into orderedLetters
             for (int i = 0; i < count; i++)
             {
-                string letter = orderedLetters[i];
-                bool isPlayer = playerSet.Contains(letter);
-                double angle = 2.0 * Math.PI * i / count;
-                double jitter = isPlayer ? 0.0 : ((i % 3) - 1) * 0.018;
-
-                double radius = 0.43;
-                if (!isPlayer && neutralByLetter.TryGetValue(letter, out var neutralZone))
-                    radius = 0.30 + NeutralZoneBalanceScore(neutralZone) * 0.035 + (i % 2) * 0.012;
-
-                positions.Add((
-                    Math.Clamp(0.5 + Math.Cos(angle + jitter) * radius, 0.05, 0.95),
-                    Math.Clamp(0.5 + Math.Sin(angle + jitter) * radius, 0.05, 0.95)));
+                int tier = ZoneTierRank(orderedLetters[i], playerLetters, neutralByLetter);
+                if (!byTier.TryGetValue(tier, out var lst)) byTier[tier] = lst = [];
+                lst.Add(i);
             }
 
-            return positions;
+            var positions = new (double X, double Y)[count];
+            foreach (var (tier, indices) in byTier)
+            {
+                double radius = TierRadius(tier);
+                int n = indices.Count;
+                // Offset each ring by half a step relative to the previous tier so that
+                // adjacent-tier zones interleave angularly and form clean Delaunay edges.
+                double offset = tier * (n > 0 ? Math.PI / n : 0.0);
+                for (int j = 0; j < n; j++)
+                {
+                    double angle  = 2.0 * Math.PI * j / n + offset;
+                    // Tiny jitter to avoid degenerate collinear/cocircular Delaunay cases.
+                    double jitter = (j % 3 - 1) * 0.008;
+                    positions[indices[j]] = (
+                        Math.Clamp(0.5 + Math.Cos(angle + jitter) * radius, 0.05, 0.95),
+                        Math.Clamp(0.5 + Math.Sin(angle + jitter) * radius, 0.05, 0.95));
+                }
+            }
+
+            return [.. positions];
         }
 
         // ── Delaunay triangulation (Bowyer-Watson) ────────────────────────────────

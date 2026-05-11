@@ -878,7 +878,7 @@
             </Grid>
         </TabItem>
 
-        <TabItem Header="Customize Zone Content">
+        <TabItem Header="Customize Zone Content [EXPERIMENTAL]">
             <Grid Margin="0,8,0,0">
                 <DockPanel>
                     <Border DockPanel.Dock="Top"
