@@ -877,6 +877,37 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
+    public void BordersAndRoads_DefaultSettings_KeepsHardcodedBorderAndRoadValues()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            MapSize = 160,
+            Topology = MapTopology.Random
+        };
+
+        var template = TemplateGenerator.Generate(settings);
+
+        Assert.NotNull(template.Variants);
+        foreach (var variant in template.Variants!)
+        {
+            Assert.NotNull(variant.Border);
+            Assert.Equal(0.0, variant.Border!.CornerRadius);
+            Assert.Equal(3, variant.Border.ObstaclesWidth);
+            Assert.Equal(0, variant.Border.WaterWidth);
+            Assert.Equal("water grass", variant.Border.WaterType);
+
+            Assert.NotNull(variant.Zones);
+            foreach (var zone in variant.Zones!)
+            {
+                if (zone.Roads is null) continue;
+                foreach (var road in zone.Roads)
+                    Assert.Null(road.Type);
+            }
+        }
+    }
+
+    [Fact]
     public void Generate_ConnectionsReferToGeneratedZones()
     {
         var settings = new GeneratorSettings
