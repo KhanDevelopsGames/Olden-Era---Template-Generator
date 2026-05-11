@@ -83,7 +83,7 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
         public static readonly SidMapping Stables = new() { Sid = "stables", Name = "Stables" };
         public static readonly SidMapping Tavern = new() { Sid = "tavern", Name = "Tavern" };
         public static readonly SidMapping TearOfTruth = new() { Sid = "tear_of_truth", Name = "Tear Of Truth" };
-        public static readonly SidMapping TheGorge = new() { Sid = "the_gorge", Name = "The Gorge" };
+        public static readonly SidMapping TheGorge = new() { Sid = "the_gorge", Name = "Carrion Pile" }; // Mismatch from SID, but that's the name shown in-game.
         public static readonly SidMapping TownGate = new() { Sid = "town_gate", Name = "Town Gate" };
         public static readonly SidMapping TreeOfAbundance = new() { Sid = "tree_of_abundance", Name = "Tree Of Abundance" };
         public static readonly SidMapping TroglodyteThrone = new() { Sid = "troglodyte_throne", Name = "Troglodyte Throne" };
