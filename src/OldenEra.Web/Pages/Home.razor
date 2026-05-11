@@ -130,6 +130,20 @@
 
             <PreviewPanel PngBytes="PreviewPng" />
 
+            @if (GeneratedTemplate is not null)
+            {
+                <div class="oe-hint oe-seed-used">
+                    @if (Settings.Seed.HasValue)
+                    {
+                        <text>Seed used: <code>@Settings.Seed.Value</code></text>
+                    }
+                    else
+                    {
+                        <text>Seed used: (random — set a seed to reproduce)</text>
+                    }
+                </div>
+            }
+
             <button class="oe-btn"
                     disabled="@(GeneratedTemplate is null || PreviewPng is null)"
                     @onclick="DownloadMap">

@@ -178,6 +178,11 @@ namespace OldenEra.Generator.Models
         public string GameMode { get; set; } = "Classic";
         public int PlayerCount { get; set; } = 2;
         public int MapSize { get; set; } = 160;
+
+        /// <summary>
+        /// Optional deterministic seed. Null = non-deterministic (system random).
+        /// </summary>
+        public int? Seed { get; set; } = null;
         public HeroSettings HeroSettings { get; set; } = new HeroSettings();
 
         public bool NoDirectPlayerConnections { get; set; } = false;

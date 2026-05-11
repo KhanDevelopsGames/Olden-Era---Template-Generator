@@ -425,6 +425,15 @@ code { color: var(--oe-accent); background: var(--oe-surface-2); padding: 0 4px;
 
 .oe-stacked label.oe-label { color: var(--oe-text-dim); font-size: 13px; }
 
+.oe-seed-row {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+}
+
+.oe-seed-row input[type="number"] { flex: 1 1 auto; min-width: 0; }
+.oe-seed-row .oe-seed-dice { flex: 0 0 auto; padding: 4px 10px; }
+
 input[type="text"],
 input[type="number"],
 select,

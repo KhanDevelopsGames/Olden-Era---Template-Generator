@@ -29,6 +29,7 @@ namespace OldenEra.Generator.Services
         ];
         public static RmgTemplate Generate(GeneratorSettings settings)
         {
+            var rng = settings.Seed.HasValue ? new Random(settings.Seed.Value) : new Random();
             var playerLetters = ZoneLetters.Take(settings.PlayerCount).ToList();
             var neutralZones = BuildNeutralZonePlan(settings);
 
@@ -69,7 +70,7 @@ namespace OldenEra.Generator.Services
                 SizeX = settings.MapSize,
                 SizeZ = settings.MapSize,
                 GameRules = BuildGameRules(settings, effectiveVictoryCondition),
-                Variants = [BuildVariant(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter, useCityHold && settings.Topology == MapTopology.HubAndSpoke)],
+                Variants = [BuildVariant(settings, playerLetters, neutralZones, tuning, rng, holdCityNeutralLetter, useCityHold && settings.Topology == MapTopology.HubAndSpoke)],
                 ZoneLayouts = BuildZoneLayouts(),
                 MandatoryContent = BuildAllMandatoryContent(playerLetters, neutralZones, settings),
                 ContentCountLimits = BuildAllContentCountLimits(),
@@ -1002,10 +1003,10 @@ namespace OldenEra.Generator.Services
 
         // ── Variant ──────────────────────────────────────────────────────────────
 
-        private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null, bool hubIsHoldCity = false)
+        private static Variant BuildVariant(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, Random rng, string? holdCityNeutralLetter = null, bool hubIsHoldCity = false)
         {
             // Always shuffle player letters so players are not always at the same geometric positions.
-            playerLetters = [.. playerLetters.OrderBy(_ => Random.Shared.Next())];
+            playerLetters = [.. playerLetters.OrderBy(_ => rng.Next())];
 
             bool isTournament = settings.TournamentRules.Enabled || settings.GameEndConditions.VictoryCondition == "win_condition_6";
             if (isTournament)
@@ -1016,16 +1017,16 @@ namespace OldenEra.Generator.Services
                         $"Tournament mode requires exactly 2 players, but {playerLetters.Count} were configured.",
                         nameof(settings));
                 }
-                return BuildVariantTournament(settings, playerLetters, neutralZones, tuning);
+                return BuildVariantTournament(settings, playerLetters, neutralZones, tuning, rng);
             }
 
             return settings.Topology switch
             {
-                MapTopology.HubAndSpoke => BuildVariantHubAndSpoke(settings, playerLetters, neutralZones, tuning, hubIsHoldCity),
-                MapTopology.Chain       => BuildVariantChain(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
-                MapTopology.SharedWeb   => BuildVariantSharedWeb(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
-                MapTopology.Random      => BuildVariantRandom(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
-                _                       => BuildVariantDefault(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
+                MapTopology.HubAndSpoke => BuildVariantHubAndSpoke(settings, playerLetters, neutralZones, tuning, rng, hubIsHoldCity),
+                MapTopology.Chain       => BuildVariantChain(settings, playerLetters, neutralZones, tuning, rng, holdCityNeutralLetter),
+                MapTopology.SharedWeb   => BuildVariantSharedWeb(settings, playerLetters, neutralZones, tuning, rng, holdCityNeutralLetter),
+                MapTopology.Random      => BuildVariantRandom(settings, playerLetters, neutralZones, tuning, rng, holdCityNeutralLetter),
+                _                       => BuildVariantDefault(settings, playerLetters, neutralZones, tuning, rng, holdCityNeutralLetter),
             };
         }
 
@@ -1044,7 +1045,8 @@ namespace OldenEra.Generator.Services
             GeneratorSettings settings,
             List<string> playerLetters,
             List<NeutralZonePlan> neutralZones,
-            GenerationTuning tuning)
+            GenerationTuning tuning,
+            Random rng)
         {
             var neutralByLetter = neutralZones.ToDictionary(z => z.Letter);
 
@@ -1063,7 +1065,6 @@ namespace OldenEra.Generator.Services
 
             // Randomize the chain order, but use the same permutation for both players
             // so each cluster has an identical slot structure (mirrored layout).
-            var rng = new Random();
             int maxSlots = Math.Max(neutralsForPlayer[0].Count, neutralsForPlayer[1].Count);
             var slotOrder = Enumerable.Range(0, maxSlots).OrderBy(_ => rng.Next()).ToList();
             for (int p = 0; p < 2; p++)
@@ -1355,7 +1356,7 @@ namespace OldenEra.Generator.Services
 
         // ── Topology: Default (Ring) ──────────────────────────────────────────────
 
-        private static Variant BuildVariantDefault(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null)
+        private static Variant BuildVariantDefault(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, Random rng, string? holdCityNeutralLetter = null)
         {
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
             var orderedLetters = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: true);
@@ -1395,7 +1396,7 @@ namespace OldenEra.Generator.Services
             var connections = new List<Connection>();
             connections.AddRange(BuildRingConnections(playerLetters, orderedLetters, tuning, isolate));
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning, settings.MaxPortalConnections));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning, rng, settings.MaxPortalConnections));
 
             if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, orderedLetters[0], outerCount, zones, connections);
@@ -1403,9 +1404,8 @@ namespace OldenEra.Generator.Services
 
         // ── Topology: Random Proximity ────────────────────────────────────────────
 
-        private static Variant BuildVariantRandom(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null)
+        private static Variant BuildVariantRandom(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, Random rng, string? holdCityNeutralLetter = null)
         {
-            var rng = new Random();
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
             var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
             // Shuffle zones so player/neutral order is random.
@@ -1480,7 +1480,7 @@ namespace OldenEra.Generator.Services
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning, settings.MaxPortalConnections));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning, rng, settings.MaxPortalConnections));
 
             if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             EnsureFullConnectivity(playerLetters, allLetters, pos, zones, connections, tuning);
@@ -1598,7 +1598,7 @@ namespace OldenEra.Generator.Services
 
         // ── Topology: Hub & Spoke ─────────────────────────────────────────────────
 
-        private static Variant BuildVariantHubAndSpoke(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, bool hubIsHoldCity = false)
+        private static Variant BuildVariantHubAndSpoke(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, Random rng, bool hubIsHoldCity = false)
         {
             // A central "Hub" zone connects to every outer zone.
             // Outer zones are players + neutrals arranged around the hub.
@@ -1698,14 +1698,14 @@ namespace OldenEra.Generator.Services
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, outerLetters, tuning, settings.MaxPortalConnections));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, outerLetters, tuning, rng, settings.MaxPortalConnections));
 
             return MakeVariant(playerLetters, outerLetters[0], outerLetters.Count + 1, zones, connections);
         }
 
         // ── Topology: Chain ───────────────────────────────────────────────────────
 
-        private static Variant BuildVariantChain(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null)
+        private static Variant BuildVariantChain(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, Random rng, string? holdCityNeutralLetter = null)
         {
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
             var orderedLetters = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: false);
@@ -1762,7 +1762,7 @@ namespace OldenEra.Generator.Services
             }
 
             if (settings.RandomPortals)
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning, settings.MaxPortalConnections));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning, rng, settings.MaxPortalConnections));
 
             if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             return MakeVariant(playerLetters, orderedLetters[0], count, zones, connections);
@@ -1770,7 +1770,7 @@ namespace OldenEra.Generator.Services
 
         // ── Topology: Shared Web ──────────────────────────────────────────────────
 
-        private static Variant BuildVariantSharedWeb(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null)
+        private static Variant BuildVariantSharedWeb(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, Random rng, string? holdCityNeutralLetter = null)
         {
             // Each player connects to two neutral zones.
             // Neutral zones are arranged in a ring connecting all players.
@@ -1880,7 +1880,7 @@ namespace OldenEra.Generator.Services
             if (settings.RandomPortals)
             {
                 var allLetters = playerLetters.Concat(neutrals).ToList();
-                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning, settings.MaxPortalConnections));
+                connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning, rng, settings.MaxPortalConnections));
             }
 
             bool isolateWeb = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
@@ -2564,14 +2564,13 @@ namespace OldenEra.Generator.Services
         /// that does NOT lead to its immediate ring neighbours.
         /// </summary>
         private static IEnumerable<Connection> BuildRandomPortalConnections(
-            List<string> playerLetters, List<string> orderedLetters, GenerationTuning tuning, int maxCount = 32)
+            List<string> playerLetters, List<string> orderedLetters, GenerationTuning tuning, Random rng, int maxCount = 32)
         {
             int count = orderedLetters.Count;
             if (count < 2) yield break; // Need at least 2 zones for a portal.
 
             // Build a derangement where zone[i] -> zone[dest[i]] and dest[i] is never an
             // immediate neighbour (i-1, i, i+1 mod count).
-            var rng = new Random();
             int[] dest = BuildNonAdjacentDerangement(count, rng);
 
             // Shuffle which zones get portals so limiting the count picks random zones,

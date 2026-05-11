@@ -20,6 +20,20 @@
         </select>
     </div>
 
+    <div class="oe-stacked">
+        <label class="oe-label" for="seed">Seed</label>
+        <div class="oe-seed-row">
+            <input id="seed" type="number"
+                   title="Optional integer seed. Leave blank for non-deterministic generation."
+                   value="@SeedText"
+                   @oninput="OnSeedInput" />
+            <button type="button"
+                    class="oe-btn oe-seed-dice"
+                    title="Generate a new random seed (reproducible output for the same seed)"
+                    @onclick="RandomizeSeed">🎲</button>
+        </div>
+    </div>
+
     <label class="oe-check">
         <input type="checkbox" checked="@ExperimentalMapSizes"
                @onchange="OnExperimentalCheckboxChanged" />
@@ -63,6 +77,21 @@
     private async Task OnTemplateNameInput(ChangeEventArgs e)
     {
         Settings.TemplateName = e.Value?.ToString() ?? "";
+        await OnChanged.InvokeAsync();
+    }
+
+    private string SeedText => Settings.Seed?.ToString() ?? "";
+
+    private async Task OnSeedInput(ChangeEventArgs e)
+    {
+        var raw = e.Value?.ToString();
+        Settings.Seed = int.TryParse(raw, out var v) ? v : (int?)null;
+        await OnChanged.InvokeAsync();
+    }
+
+    private async Task RandomizeSeed()
+    {
+        Settings.Seed = Random.Shared.Next(0, int.MaxValue);
         await OnChanged.InvokeAsync();
     }
 

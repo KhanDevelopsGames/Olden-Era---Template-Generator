@@ -156,6 +156,7 @@ namespace OldenEra.TemplateEditor
             _ = CheckForUpdateAsync(version);
 
             PnlMap.TxtTemplateName.TextChanged += (_, _) => { MarkDirtyNameOnly(); Validate(); };
+            PnlMap.TxtSeed.TextChanged += (_, _) => { MarkDirty(); Validate(); };
             UpdateTitle();
             TxtWindowTitle.Text = Title;
         }
@@ -714,6 +715,7 @@ namespace OldenEra.TemplateEditor
         private SettingsFile GatherSettings() => new()
         {
             TemplateName          = PnlMap.TxtTemplateName.Text.Trim(),
+            Seed                  = int.TryParse(PnlMap.TxtSeed.Text, out var gatheredSeed) ? gatheredSeed : (int?)null,
             MapSize               = SelectedMapSize(),
             PlayerCount           = (int)PnlMap.SldPlayers.Value,
             NeutralZoneCount      = (int)PnlZones.SldNeutral.Value,
@@ -843,6 +845,7 @@ namespace OldenEra.TemplateEditor
         private void ApplySettings(SettingsFile s)
         {
             PnlMap.TxtTemplateName.Text    = s.TemplateName;
+            PnlMap.TxtSeed.Text            = s.Seed?.ToString() ?? "";
             bool hasCustomZoneSizes = Math.Abs(s.PlayerZoneSize - 1.0) > 0.0001 || Math.Abs(s.NeutralZoneSize - 1.0) > 0.0001;
             bool needsExperimentalMapSizes = s.ExperimentalMapSizes || KnownValues.IsExperimentalMapSize(s.MapSize);
             _advancedZoneSettings = s.AdvancedMode || needsExperimentalMapSizes || hasCustomZoneSizes;
@@ -1109,6 +1112,9 @@ namespace OldenEra.TemplateEditor
             ImgPreview.Source = WpfPreviewAdapter.ToBitmapImage(previewPng);
             LblNoPreview.Content = "?";
             BtnSaveGenerated.Visibility = Visibility.Visible;
+            PnlMap.TxtSeedUsed.Text = settings.Seed.HasValue
+                ? $"Seed used: {settings.Seed.Value}"
+                : "Seed used: (random — set a seed to reproduce)";
             UpdateOutdatedWarning();
             Validate(); // refresh warnings now that template is up to date
         }
@@ -1198,6 +1204,7 @@ namespace OldenEra.TemplateEditor
         private GeneratorSettings BuildSettings() => new()
         {
             TemplateName = PnlMap.TxtTemplateName.Text.Trim(),
+            Seed = int.TryParse(PnlMap.TxtSeed.Text, out var builtSeed) ? builtSeed : (int?)null,
             GameMode = CmbGameMode.SelectedItem as string ?? "Classic",
             PlayerCount = (int)PnlMap.SldPlayers.Value,
             HeroSettings = new HeroSettings
