@@ -742,6 +742,7 @@ namespace OldenEra.TemplateEditor
             HeroCountIncrement    = (int)PnlHeroes.SldHeroIncrement.Value,
             HeroBans              = PnlHeroes.GetHeroBans(),
             FixedStartingHeroByFaction = PnlHeroes.GetFixedStartingHeroByFaction(),
+            BannedSpells          = PnlHeroes.GetBannedSpells(),
             Topology              = TopologyOptions[PnlTopology.CmbTopology.SelectedIndex].Topology,
             RandomPortals         = PnlZones.ChkRandomPortals.IsChecked == true,
             MaxPortalConnections  = (int)PnlZones.SldMaxPortals.Value,
@@ -873,6 +874,7 @@ namespace OldenEra.TemplateEditor
             PnlHeroes.SldHeroMax.Value        = s.HeroCountMax;
             PnlHeroes.SldHeroIncrement.Value  = s.HeroCountIncrement;
             PnlHeroes.ApplyHeroSelection(s.HeroBans, s.FixedStartingHeroByFaction);
+            PnlHeroes.ApplyBannedSpells(s.BannedSpells);
             int topoIdx = Array.FindIndex(TopologyOptions, t => t.Topology == s.Topology);
             if (topoIdx >= 0) PnlTopology.CmbTopology.SelectedIndex = topoIdx;
             PnlZones.ChkRandomPortals.IsChecked        = s.RandomPortals;
@@ -1214,6 +1216,7 @@ namespace OldenEra.TemplateEditor
                 HeroCountIncrement = (int)PnlHeroes.SldHeroIncrement.Value,
                 HeroBans = PnlHeroes.GetHeroBans(),
                 FixedStartingHeroByFaction = PnlHeroes.GetFixedStartingHeroByFaction(),
+                BannedSpells = PnlHeroes.GetBannedSpells(),
             },
             MapSize = SelectedMapSize(),
             GameEndConditions = new GameEndConditions

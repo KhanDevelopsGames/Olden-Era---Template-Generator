@@ -79,6 +79,15 @@
                     </StackPanel>
                 </Expander>
 
+                <Expander Header="Ban specific spells" Margin="0,4,0,4">
+                    <StackPanel Margin="8,4,0,8">
+                        <TextBlock Style="{StaticResource HintText}">
+                            Banned spells are removed from mage guilds, shrines, and pandora boxes (emitted as globalBans.magics).
+                        </TextBlock>
+                        <TabControl x:Name="TcSpellBans" Margin="0,4,0,0" MinHeight="180"/>
+                    </StackPanel>
+                </Expander>
+
             </StackPanel>
         </ScrollViewer>
     </Border>
