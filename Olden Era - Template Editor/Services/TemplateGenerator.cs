@@ -1190,41 +1190,22 @@ namespace Olden_Era___Template_Editor.Services
             // so the graph remains connectable. EnsureFullConnectivity handles any gaps.
             if (settings.ExperimentalBalancedZonePlacement)
             {
+                var playerSet = playerLetters.ToHashSet(StringComparer.Ordinal);
                 var presentTiers = allLetters
                     .Select(l => ZoneTierRank(l, playerLetters, neutralByLetter))
                     .ToHashSet();
 
                 pairs = pairs.Where(p =>
                 {
-                    int ta = ZoneTierRank(allLetters[p.A], playerLetters, neutralByLetter);
-                    int tb = ZoneTierRank(allLetters[p.B], playerLetters, neutralByLetter);
+                    string la = allLetters[p.A], lb = allLetters[p.B];
+                    // Always strip player↔player edges from Delaunay in balanced mode.
+                    // EnsureFullConnectivity will re-add them only if truly unavoidable.
+                    if (playerSet.Contains(la) && playerSet.Contains(lb)) return false;
+                    int ta = ZoneTierRank(la, playerLetters, neutralByLetter);
+                    int tb = ZoneTierRank(lb, playerLetters, neutralByLetter);
                     int lo = Math.Min(ta, tb), hi = Math.Max(ta, tb);
                     if (hi - lo <= 1) return true;
                     // Allow a tier skip only when every tier in between is absent.
-                    for (int t = lo + 1; t < hi; t++)
-                        if (presentTiers.Contains(t)) return false;
-                    return true;
-                }).ToList();
-            }
-
-            // When balanced placement is active, strip any edge that skips a tier.
-            // Allowed: player↔low, low↔medium, medium↔high (adjacent tiers only).
-            // If an intermediate tier is entirely absent the skip is permitted so the
-            // graph can still be connected.  EnsureFullConnectivity handles any gaps.
-            if (settings.ExperimentalBalancedZonePlacement)
-            {
-                var presentTiers = allLetters
-                    .Select(l => ZoneTierRank(l, playerLetters, neutralByLetter))
-                    .ToHashSet();
-
-                pairs = pairs.Where(p =>
-                {
-                    int ta = ZoneTierRank(allLetters[p.A], playerLetters, neutralByLetter);
-                    int tb = ZoneTierRank(allLetters[p.B], playerLetters, neutralByLetter);
-                    int lo = Math.Min(ta, tb), hi = Math.Max(ta, tb);
-                    // Allow same-tier or adjacent-tier edges unconditionally.
-                    if (hi - lo <= 1) return true;
-                    // Allow a skip only when every tier in between is absent.
                     for (int t = lo + 1; t < hi; t++)
                         if (presentTiers.Contains(t)) return false;
                     return true;
@@ -1283,7 +1264,8 @@ namespace Olden_Era___Template_Editor.Services
                 connections.AddRange(BuildRandomPortalConnections(playerLetters, allLetters, tuning, settings.MaxPortalConnections));
 
             if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
-            EnsureFullConnectivity(playerLetters, allLetters, pos, zones, connections, tuning);
+            EnsureFullConnectivity(playerLetters, allLetters, pos, zones, connections, tuning,
+                settings.ExperimentalBalancedZonePlacement ? neutralByLetter : null);
             return MakeVariant(playerLetters, allLetters[0], count, zones, connections);
         }
 
@@ -1898,7 +1880,8 @@ namespace Olden_Era___Template_Editor.Services
             List<(double X, double Y)> pos,
             List<Zone> zones,
             List<Connection> connections,
-            GenerationTuning tuning)
+            GenerationTuning tuning,
+            Dictionary<string, NeutralZonePlan>? neutralByLetter = null)
         {
             if (allLetters.Count <= 1) return;
 
@@ -1949,6 +1932,24 @@ namespace Olden_Era___Template_Editor.Services
                 return components;
             }
 
+            // Returns a penalty score for bridging two zone indices.
+            // Lower = preferred.  When balanced placement is not active, all bridges cost 0
+            // (pure-distance selection is preserved).
+            // Penalty tiers:
+            //   0 – same tier or adjacent tier (ideal, always allowed)
+            //   N – tier gap of N (skipping intermediate tiers; allowed only if those tiers
+            //       are absent, otherwise this candidate will be outscored by a real bridge)
+            //   100 – player ↔ player (last resort)
+            int BridgePenalty(int idxA, int idxB)
+            {
+                if (neutralByLetter == null) return 0;
+                int ta = ZoneTierRank(allLetters[idxA], playerLetters, neutralByLetter);
+                int tb = ZoneTierRank(allLetters[idxB], playerLetters, neutralByLetter);
+                if (ta == 0 && tb == 0) return 100; // player↔player: last resort
+                int gap = Math.Abs(ta - tb);
+                return gap; // 0 = same tier, 1 = adjacent, 2+ = skipping tiers
+            }
+
             // Iteratively merge the closest pair of components until the graph is connected.
             var connNameSet = connections
                 .Select(c => c.Name)
@@ -1960,10 +1961,10 @@ namespace Olden_Era___Template_Editor.Services
                 var components = FindComponents(adj, allLetters.Count);
                 if (components.Count <= 1) break;
 
-                // Find the pair of nodes (one from component 0, one from any other component)
-                // with the smallest Euclidean distance.
-                var mainComp = new HashSet<int>(components[0]);
+                // Find the best bridge: primary key = tier-skip penalty (lowest first),
+                // secondary key = Euclidean distance (shortest first).
                 int bestA = -1, bestB = -1;
+                int bestPenalty = int.MaxValue;
                 double bestDist = double.MaxValue;
 
                 foreach (int a in components[0])
@@ -1972,10 +1973,16 @@ namespace Olden_Era___Template_Editor.Services
                     {
                         foreach (int b in otherComp)
                         {
+                            int penalty = BridgePenalty(a, b);
                             double dx = pos[a].X - pos[b].X;
                             double dy = pos[a].Y - pos[b].Y;
                             double dist = dx * dx + dy * dy;
-                            if (dist < bestDist) { bestDist = dist; bestA = a; bestB = b; }
+                            if (penalty < bestPenalty || (penalty == bestPenalty && dist < bestDist))
+                            {
+                                bestPenalty = penalty;
+                                bestDist    = dist;
+                                bestA = a; bestB = b;
+                            }
                         }
                     }
                 }
