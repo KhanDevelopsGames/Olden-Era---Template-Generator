@@ -249,4 +249,43 @@ public class ExperimentalSettingsTests
         Assert.Equal(4, back.Bonuses.Resources["wood"]);
         Assert.Equal(3, back.Bonuses.HeroSpellpower);
     }
+
+    [Fact]
+    public void SettingsMapper_BordersRoads_RoundTrips()
+    {
+        var original = new GeneratorSettings
+        {
+            BordersRoads = new BordersRoadsSettings
+            {
+                CornerRadius = 0.3,
+                ObstaclesWidth = 5,
+                WaterBorderEnabled = true,
+                WaterWidth = 7,
+                RoadType = "Stone"
+            }
+        };
+
+        var file = SettingsMapper.ToFile(original, advancedMode: false, experimentalMapSizes: false);
+        var (restored, _, _, _) = SettingsMapper.FromFile(file);
+
+        Assert.Equal(0.3, restored.BordersRoads.CornerRadius);
+        Assert.Equal(5, restored.BordersRoads.ObstaclesWidth);
+        Assert.True(restored.BordersRoads.WaterBorderEnabled);
+        Assert.Equal(7, restored.BordersRoads.WaterWidth);
+        Assert.Equal("Stone", restored.BordersRoads.RoadType);
+    }
+
+    [Fact]
+    public void SettingsMapper_BordersRoads_DefaultsRoundTripAsUnset()
+    {
+        var original = new GeneratorSettings();
+
+        var file = SettingsMapper.ToFile(original, advancedMode: false, experimentalMapSizes: false);
+        var (restored, _, _, _) = SettingsMapper.FromFile(file);
+
+        Assert.Null(restored.BordersRoads.CornerRadius);
+        Assert.Null(restored.BordersRoads.ObstaclesWidth);
+        Assert.False(restored.BordersRoads.WaterBorderEnabled);
+        Assert.Null(restored.BordersRoads.RoadType);
+    }
 }
