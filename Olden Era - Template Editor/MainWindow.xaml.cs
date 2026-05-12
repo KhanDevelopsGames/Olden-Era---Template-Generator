@@ -50,6 +50,7 @@ namespace Olden_Era___Template_Editor
 
         private static readonly (MapTopology Topology, string Label, string Description)[] TopologyOptions =
         [
+            (MapTopology.Balanced,    "Balanced",      "Zones are placed on concentric rings by quality tier. Players are on the outer ring; neutral zones form inner rings. Each zone connects to neighbouring zones across adjacent rings."),
             (MapTopology.Random,      "Random",        "Zones are placed at random positions. Each zone connects to all zones that border it — no fixed structure."),
             (MapTopology.Default,     "Ring",          "All zones are arranged in a circle. Each zone connects to the two zones next to it."),
             (MapTopology.HubAndSpoke, "Hub",   "All zones connect to a shared central hub. Players never border each other directly."),
@@ -141,6 +142,10 @@ namespace Olden_Era___Template_Editor
             }
             CmbZoneContentPreset.ItemsSource = mineNames;
             CmbZoneContentPreset.SelectedIndex = 0;
+            CmbZoneContentPresetSticky.ItemsSource = mineNames;
+            CmbZoneContentPresetSticky.SelectedIndex = 0;
+            CmbZoneContentPreset.SelectionChanged       += (_, _) => CmbZoneContentPresetSticky.SelectedIndex = CmbZoneContentPreset.SelectedIndex;
+            CmbZoneContentPresetSticky.SelectionChanged += (_, _) => CmbZoneContentPreset.SelectedIndex       = CmbZoneContentPresetSticky.SelectedIndex;
 
             /* Populate the Treasures dropdown menu */
             var treasurePresetNames = new List<string>();
@@ -150,6 +155,10 @@ namespace Olden_Era___Template_Editor
             }
             CmbTreasureContentPreset.ItemsSource = treasurePresetNames;
             CmbTreasureContentPreset.SelectedIndex = 0;
+            CmbTreasureContentPresetSticky.ItemsSource = treasurePresetNames;
+            CmbTreasureContentPresetSticky.SelectedIndex = 0;
+            CmbTreasureContentPreset.SelectionChanged       += (_, _) => CmbTreasureContentPresetSticky.SelectedIndex = CmbTreasureContentPreset.SelectedIndex;
+            CmbTreasureContentPresetSticky.SelectionChanged += (_, _) => CmbTreasureContentPreset.SelectedIndex       = CmbTreasureContentPresetSticky.SelectedIndex;
 
             /* Populate the Random Hires dropdown menu */
             var randomHirePresetNames = new List<string>();
@@ -159,6 +168,10 @@ namespace Olden_Era___Template_Editor
             }
             CmbRandomHireContentPreset.ItemsSource = randomHirePresetNames;
             CmbRandomHireContentPreset.SelectedIndex = 0;
+            CmbRandomHireContentPresetSticky.ItemsSource = randomHirePresetNames;
+            CmbRandomHireContentPresetSticky.SelectedIndex = 0;
+            CmbRandomHireContentPreset.SelectionChanged       += (_, _) => CmbRandomHireContentPresetSticky.SelectedIndex = CmbRandomHireContentPreset.SelectedIndex;
+            CmbRandomHireContentPresetSticky.SelectionChanged += (_, _) => CmbRandomHireContentPreset.SelectedIndex       = CmbRandomHireContentPresetSticky.SelectedIndex;
 
              /* Populate the Resource Banks dropdown menu */
             var resourceBankPresetNames = new List<string>();
@@ -168,6 +181,10 @@ namespace Olden_Era___Template_Editor
             }
             CmbResourceBankContentPreset.ItemsSource = resourceBankPresetNames;
             CmbResourceBankContentPreset.SelectedIndex = 0;
+            CmbResourceBankContentPresetSticky.ItemsSource = resourceBankPresetNames;
+            CmbResourceBankContentPresetSticky.SelectedIndex = 0;
+            CmbResourceBankContentPreset.SelectionChanged       += (_, _) => CmbResourceBankContentPresetSticky.SelectedIndex = CmbResourceBankContentPreset.SelectedIndex;
+            CmbResourceBankContentPresetSticky.SelectionChanged += (_, _) => CmbResourceBankContentPreset.SelectedIndex       = CmbResourceBankContentPresetSticky.SelectedIndex;
         }
 
         private async Task CheckForUpdateAsync(Version? currentVersion)
@@ -190,22 +207,175 @@ namespace Olden_Era___Template_Editor
                 if (!Version.TryParse(tag, out Version? latestVersion)) return;
                 if (currentVersion == null || latestVersion <= currentVersion) return;
 
+                // Prefer an .exe installer asset, then a .zip, then fall back to browser.
+                var asset = release.Assets?.FirstOrDefault(a =>
+                    a.BrowserDownloadUrl != null &&
+                    a.Name?.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) == true)
+                    ?? release.Assets?.FirstOrDefault(a =>
+                    a.BrowserDownloadUrl != null &&
+                    a.Name?.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) == true);
+
                 // A newer version exists — prompt on the UI thread.
+                bool userAccepted = false;
                 Dispatcher.Invoke(() =>
                 {
+                    string downloadNote = asset != null
+                        ? "The update will be downloaded and launched automatically."
+                        : "No installer asset was found. The releases page will be opened instead.";
+
                     var result = MessageBox.Show(
                         $"A new version is available: {FormatVersion(latestVersion)}\n" +
                         $"You are running: {FormatVersion(currentVersion)}\n\n" +
-                        "Open the releases page to download the update?",
+                        downloadNote + "\n\nUpdate now?",
                         "Update Available",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Information);
 
-                    if (result == MessageBoxResult.Yes)
-                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(GitHubReleasesPage) { UseShellExecute = true });
+                    userAccepted = result == MessageBoxResult.Yes;
                 });
+
+                if (!userAccepted) return;
+
+                if (asset?.BrowserDownloadUrl == null)
+                {
+                    // No downloadable asset — open browser as fallback.
+                    Process.Start(new ProcessStartInfo(GitHubReleasesPage) { UseShellExecute = true });
+                    return;
+                }
+
+                await DownloadAndLaunchUpdateAsync(asset, latestVersion);
             }
             catch { /* Network unavailable or API error — silently ignore. */ }
+        }
+
+        private async Task DownloadAndLaunchUpdateAsync(GitHubReleaseAsset asset, Version latestVersion)
+        {
+            string ext        = Path.GetExtension(asset.Name ?? ".exe");
+            string tempPath   = Path.Combine(Path.GetTempPath(), $"OldenEraUpdate_{latestVersion}{ext}");
+            string versionStr = FormatVersion(latestVersion);
+
+            UpdateProgressWindow? progressWindow = null;
+            CancellationToken ct = default;
+            Dispatcher.Invoke(() =>
+            {
+                progressWindow = new UpdateProgressWindow { Owner = this };
+                ct = progressWindow.CancellationToken;
+                progressWindow.SetTitle($"Downloading update {versionStr}…");
+                progressWindow.SetStatus("Connecting…");
+                progressWindow.Show();
+            });
+
+            try
+            {
+                using var download = await Http.GetAsync(asset.BrowserDownloadUrl, HttpCompletionOption.ResponseHeadersRead, ct);
+                download.EnsureSuccessStatusCode();
+
+                long? total = download.Content.Headers.ContentLength;
+                await using var src = await download.Content.ReadAsStreamAsync(ct);
+                await using var dst = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, useAsync: true);
+
+                byte[] buffer     = new byte[81920];
+                long   downloaded = 0;
+                int    read;
+                int    lastPct    = -1;
+                while ((read = await src.ReadAsync(buffer, ct)) > 0)
+                {
+                    await dst.WriteAsync(buffer.AsMemory(0, read), ct);
+                    downloaded += read;
+                    if (total > 0)
+                    {
+                        int pct = (int)(downloaded * 100 / total.Value);
+                        if (pct != lastPct)
+                        {
+                            lastPct = pct;
+                            Dispatcher.Invoke(() =>
+                            {
+                                progressWindow?.SetProgress(pct);
+                                progressWindow?.SetStatus($"{pct}%  ({downloaded / 1024:N0} KB / {total.Value / 1024:N0} KB)");
+                            });
+                        }
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() => progressWindow?.SetStatus($"{downloaded / 1024:N0} KB downloaded…"));
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                try { if (File.Exists(tempPath)) File.Delete(tempPath); } catch { /* best effort */ }
+                Dispatcher.Invoke(() => progressWindow?.ForceClose());
+                return;
+            }
+            catch
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    progressWindow?.ForceClose();
+                    MessageBox.Show(
+                        "Download failed. The releases page will be opened instead.",
+                        "Update Failed",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
+                    Process.Start(new ProcessStartInfo(GitHubReleasesPage) { UseShellExecute = true });
+                });
+                return;
+            }
+            // Replace the running exe with the downloaded file using a batch script
+            // (the running exe cannot be overwritten directly while the process holds it).
+            bool isExeReplacement = ext.Equals(".exe", StringComparison.OrdinalIgnoreCase)
+                                    && asset.Name?.Contains("setup", StringComparison.OrdinalIgnoreCase) == false
+                                    && asset.Name?.Contains("install", StringComparison.OrdinalIgnoreCase) == false;
+
+            string currentExe = Environment.ProcessPath ?? Process.GetCurrentProcess().MainModule?.FileName ?? string.Empty;
+
+
+            if (isExeReplacement && !string.IsNullOrEmpty(currentExe))
+            {
+                // Write a small batch script that waits for this process to exit,
+                // copies the downloaded exe over the original, then restarts it.
+                string batPath = Path.Combine(Path.GetTempPath(), "OldenEraUpdater.bat");
+                int    pid     = Environment.ProcessId;
+                string batContent =
+                    $"@echo off\r\n" +
+                    $":WAIT\r\n" +
+                    $"tasklist /FI \"PID eq {pid}\" 2>NUL | find \"{pid}\" >NUL\r\n" +
+                    $"if not errorlevel 1 ( timeout /t 1 /nobreak >NUL & goto WAIT )\r\n" +
+                    $"copy /Y \"{tempPath}\" \"{currentExe}\"\r\n" +
+                    $"start \"\" \"{currentExe}\"\r\n" +
+                    $"del \"{tempPath}\"\r\n" +
+                    $"del \"%~f0\"\r\n";
+
+                await File.WriteAllTextAsync(batPath, batContent);
+
+                Dispatcher.Invoke(() =>
+                {
+                    progressWindow?.SetStatus("Installing…");
+                    progressWindow?.SetProgress(100);
+                });
+
+                Process.Start(new ProcessStartInfo("cmd.exe", $"/C \"{batPath}\"")
+                {
+                    CreateNoWindow  = true,
+                    UseShellExecute = false,
+                });
+
+                Dispatcher.Invoke(() =>
+                {
+                    progressWindow?.ForceClose();
+                    Application.Current.Shutdown();
+                });
+            }
+            else
+            {
+                // It's an installer or a zip — just launch it and exit.
+                Dispatcher.Invoke(() =>
+                {
+                    progressWindow?.ForceClose();
+                    Process.Start(new ProcessStartInfo(tempPath) { UseShellExecute = true });
+                    Application.Current.Shutdown();
+                });
+            }
         }
 
         // Formats a Version as "vMajor.Minor" or "vMajor.Minor.Build" when build > 0.
@@ -217,6 +387,18 @@ namespace Olden_Era___Template_Editor
         {
             [JsonPropertyName("tag_name")]
             public string? TagName { get; set; }
+
+            [JsonPropertyName("assets")]
+            public List<GitHubReleaseAsset>? Assets { get; set; }
+        }
+
+        private sealed class GitHubReleaseAsset
+        {
+            [JsonPropertyName("name")]
+            public string? Name { get; set; }
+
+            [JsonPropertyName("browser_download_url")]
+            public string? BrowserDownloadUrl { get; set; }
         }
 
         private void MarkDirty()
@@ -417,10 +599,8 @@ namespace Olden_Era___Template_Editor
                 };
 
                 if (!TemplateGenerator.CanHonorNeutralSeparation(separationSettings, neutral))
-                    warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
+                        warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
             }
-            if(selectedTopology == MapTopology.Random && ChkBalancedZonePlacement.IsChecked == true && totalZones >= 24)
-                warnings.Add("Balanced zone placement may produce unexpected results with the random map layout and more than 24 total zones.");
 
             bool cityHoldActive = ChkCityHold.IsChecked == true;
             if (cityHoldActive)
@@ -687,7 +867,6 @@ namespace Olden_Era___Template_Editor
         {
             if (!IsInitialized) return;
             UpdateIsolateDescVisibility();
-            UpdateBalancedZonePlacementDescVisibility();
             UpdatePlayerCastleFactionVisibility();
             UpdateWinConditionDetailVisibility();
             MarkDirty();
@@ -888,14 +1067,6 @@ namespace Olden_Era___Template_Editor
                 : Visibility.Collapsed;
         }
 
-        private void UpdateBalancedZonePlacementDescVisibility()
-        {
-            if (TxtBalancedZonePlacementDesc == null || ChkBalancedZonePlacement == null) return;
-            TxtBalancedZonePlacementDesc.Visibility = ChkBalancedZonePlacement.IsChecked == true
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-        }
-
         private void BtnAddMineContent_Click(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
@@ -1024,7 +1195,6 @@ namespace Olden_Era___Template_Editor
             NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
             MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
             MinNeutralZonesBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value,
-            ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
             ExperimentalMapSizes  = ChkExperimentalMapSizes.IsChecked == true,
             PlayerZoneSize        = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
             NeutralZoneSize       = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
@@ -1089,7 +1259,6 @@ namespace Olden_Era___Template_Editor
             SldNeutralHighCastle.Value = s.NeutralHighCastleCount;
             ChkMatchPlayerCastleFactions.IsChecked = s.MatchPlayerCastleFactions;
             SldMinNeutralBetweenPlayers.Value = s.MinNeutralZonesBetweenPlayers;
-            ChkBalancedZonePlacement.IsChecked = s.ExperimentalBalancedZonePlacement;
             SldPlayerZoneSize.Value = Math.Clamp(s.PlayerZoneSize, 0.1, 2.0);
             SldNeutralZoneSize.Value = Math.Clamp(s.NeutralZoneSize, 0.1, 2.0);
             SldHubZoneSize.Value = Math.Clamp(s.HubZoneSize, 0.25, 3.0);
@@ -1135,7 +1304,6 @@ namespace Olden_Era___Template_Editor
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
-            UpdateBalancedZonePlacementDescVisibility();
             UpdateWinConditionDetailVisibility();
         }
 
@@ -1364,7 +1532,6 @@ namespace Olden_Era___Template_Editor
             // Neutral zones between players can be influenced by advanced zone settings, but is functionally independent.
             MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)SldMinNeutralBetweenPlayers.Value : 0,
             MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
-            ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
             NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
             RandomPortals = ChkRandomPortals.IsChecked == true,
             MaxPortalConnections = (int)SldMaxPortals.Value,
@@ -1680,11 +1847,60 @@ namespace Olden_Era___Template_Editor
             }
         }
 
+        private void PlayerZonesScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            // Walk headers from last to first; show the sticky row for the last one
+            // whose top edge has scrolled above the viewport top.
+            var headers = new[]
+            {
+                (Element: TxtHeaderResourceBanks, Sticky: StickyResourceBanks),
+                (Element: TxtHeaderRandomHires,   Sticky: StickyRandomHires),
+                (Element: TxtHeaderTreasures,     Sticky: StickyTreasures),
+                (Element: TxtHeaderMines,         Sticky: StickyMines),
+            };
+
+            System.Windows.Controls.DockPanel? active = null;
+            foreach (var (element, sticky) in headers)
+            {
+                var pos = element.TranslatePoint(new System.Windows.Point(0, 0), PlayerZonesScrollViewer);
+                if (pos.Y < 0)
+                {
+                    active = sticky;
+                    break;
+                }
+            }
+
+            // If nothing has scrolled out of view, hide the sticky panel entirely (no duplication).
+            if (active == null)
+            {
+                StickyHeaderPanel.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            StickyHeaderPanel.Visibility   = Visibility.Visible;
+            StickyMines.Visibility         = Visibility.Collapsed;
+            StickyTreasures.Visibility     = Visibility.Collapsed;
+            StickyRandomHires.Visibility   = Visibility.Collapsed;
+            StickyResourceBanks.Visibility = Visibility.Collapsed;
+            active.Visibility              = Visibility.Visible;
+        }
+
+
+
         private void BtnDiscord_Click(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo
             {
                 FileName = DiscordServer,
+                UseShellExecute = true
+            });
+        }
+
+        private void BtnPatchNotes_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = GitHubReleasesPage,
                 UseShellExecute = true
             });
         }
