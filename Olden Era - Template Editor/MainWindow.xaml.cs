@@ -42,6 +42,7 @@ namespace Olden_Era___Template_Editor
 
         private static readonly (MapTopology Topology, string Label, string Description)[] TopologyOptions =
         [
+            (MapTopology.Balanced,    "Balanced",      "Zones are placed on concentric rings by quality tier. Players are on the outer ring; neutral zones form inner rings. Each zone connects to neighbouring zones across adjacent rings."),
             (MapTopology.Random,      "Random",        "Zones are placed at random positions. Each zone connects to all zones that border it — no fixed structure."),
             (MapTopology.Default,     "Ring",          "All zones are arranged in a circle. Each zone connects to the two zones next to it."),
             (MapTopology.HubAndSpoke, "Hub",   "All zones connect to a shared central hub. Players never border each other directly."),
@@ -75,7 +76,6 @@ namespace Olden_Era___Template_Editor
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
-            UpdateBalancedZonePlacementDescVisibility();
             InitializeZoneContentPresets();
             InitializeDefaultPlayerZoneContents();
             DataContext = new
@@ -296,7 +296,6 @@ namespace Olden_Era___Template_Editor
                 });
                 return;
             }
-
             // Replace the running exe with the downloaded file using a batch script
             // (the running exe cannot be overwritten directly while the process holds it).
             bool isExeReplacement = ext.Equals(".exe", StringComparison.OrdinalIgnoreCase)
@@ -304,6 +303,7 @@ namespace Olden_Era___Template_Editor
                                     && asset.Name?.Contains("install", StringComparison.OrdinalIgnoreCase) == false;
 
             string currentExe = Environment.ProcessPath ?? Process.GetCurrentProcess().MainModule?.FileName ?? string.Empty;
+
 
             if (isExeReplacement && !string.IsNullOrEmpty(currentExe))
             {
@@ -574,10 +574,8 @@ namespace Olden_Era___Template_Editor
                 };
 
                 if (!TemplateGenerator.CanHonorNeutralSeparation(separationSettings, neutral))
-                    warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
+                        warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
             }
-            if(selectedTopology == MapTopology.Random && ChkBalancedZonePlacement.IsChecked == true && totalZones >= 24)
-                warnings.Add("Balanced zone placement may produce unexpected results with the random map layout and more than 24 total zones.");
 
             bool cityHoldActive = ChkCityHold.IsChecked == true;
             if (cityHoldActive)
@@ -706,7 +704,6 @@ namespace Olden_Era___Template_Editor
         {
             if (!IsInitialized) return;
             UpdateIsolateDescVisibility();
-            UpdateBalancedZonePlacementDescVisibility();
             UpdatePlayerCastleFactionVisibility();
             UpdateWinConditionDetailVisibility();
             MarkDirty();
@@ -1036,7 +1033,6 @@ namespace Olden_Era___Template_Editor
             NeutralHighCastleCount = (int)SldNeutralHighCastle.Value,
             MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
             MinNeutralZonesBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value,
-            ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
             ExperimentalMapSizes  = ChkExperimentalMapSizes.IsChecked == true,
             PlayerZoneSize        = _advancedZoneSettings ? SldPlayerZoneSize.Value : 1.0,
             NeutralZoneSize       = _advancedZoneSettings ? SldNeutralZoneSize.Value : 1.0,
@@ -1097,7 +1093,6 @@ namespace Olden_Era___Template_Editor
             SldNeutralHighCastle.Value = s.NeutralHighCastleCount;
             ChkMatchPlayerCastleFactions.IsChecked = s.MatchPlayerCastleFactions;
             SldMinNeutralBetweenPlayers.Value = s.MinNeutralZonesBetweenPlayers;
-            ChkBalancedZonePlacement.IsChecked = s.ExperimentalBalancedZonePlacement;
             SldPlayerZoneSize.Value = Math.Clamp(s.PlayerZoneSize, 0.1, 2.0);
             SldNeutralZoneSize.Value = Math.Clamp(s.NeutralZoneSize, 0.1, 2.0);
             SldHubZoneSize.Value = Math.Clamp(s.HubZoneSize, 0.25, 3.0);
@@ -1139,7 +1134,6 @@ namespace Olden_Era___Template_Editor
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
-            UpdateBalancedZonePlacementDescVisibility();
             UpdateWinConditionDetailVisibility();
         }
 
@@ -1368,7 +1362,6 @@ namespace Olden_Era___Template_Editor
             // Neutral zones between players can be influenced by advanced zone settings, but is functionally independent.
             MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)SldMinNeutralBetweenPlayers.Value : 0,
             MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
-            ExperimentalBalancedZonePlacement = ChkBalancedZonePlacement.IsChecked == true,
             NoDirectPlayerConnections = ChkNoDirectPlayerConn.IsChecked == true,
             RandomPortals = ChkRandomPortals.IsChecked == true,
             MaxPortalConnections = (int)SldMaxPortals.Value,

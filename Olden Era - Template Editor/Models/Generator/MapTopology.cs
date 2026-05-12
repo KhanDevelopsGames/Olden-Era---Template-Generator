@@ -15,6 +15,9 @@ namespace Olden_Era___Template_Editor.Models
         SharedWeb,
 
         /// <summary>Zones are placed at random positions; each zone connects to all zones that border it based on proximity.</summary>
-        Random
+        Random,
+
+        /// <summary>Zones are placed on concentric rings by quality tier; each zone connects to neighbouring zones across adjacent rings.</summary>
+        Balanced
     }
 }
