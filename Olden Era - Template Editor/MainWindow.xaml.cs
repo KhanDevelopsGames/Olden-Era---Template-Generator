@@ -904,14 +904,6 @@ namespace Olden_Era___Template_Editor
                 : Visibility.Collapsed;
         }
 
-        private void UpdateBalancedZonePlacementDescVisibility()
-        {
-            if (TxtBalancedZonePlacementDesc == null || ChkBalancedZonePlacement == null) return;
-            TxtBalancedZonePlacementDesc.Visibility = ChkBalancedZonePlacement.IsChecked == true
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-        }
-
         private void AddZoneContentItemFromName(ObservableCollection<ZoneContentItemUI> collection, string name)
         {
             if (string.IsNullOrWhiteSpace(name))
