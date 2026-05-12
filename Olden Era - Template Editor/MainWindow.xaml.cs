@@ -84,7 +84,6 @@ namespace Olden_Era___Template_Editor
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
-            UpdateBalancedZonePlacementDescVisibility();
 
             // Wire ban-list ObservableCollections to the ListBoxes.
             LbBannedItems.ItemsSource  = _bannedItems;
