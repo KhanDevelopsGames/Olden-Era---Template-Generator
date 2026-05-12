@@ -159,8 +159,9 @@ namespace Olden_Era___Template_Editor.Services
         {
             // For structured topologies use the simple ring layout — it already
             // matches the actual in-game arrangement perfectly.
-            // Only Random topology uses the Kamada-Kawai solver to infer placement.
-            if (topology != MapTopology.Random)
+            // Random and Balanced topologies use GeneratorPosition stamps; Balanced
+            // uses the ring-snap pass while Random falls back to the Kamada-Kawai solver.
+            if (topology != MapTopology.Random && topology != MapTopology.Balanced)
                 return LayoutZonesRing(zones, connections);
 
             int n = zones.Count;

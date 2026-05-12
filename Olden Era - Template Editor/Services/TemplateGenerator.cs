@@ -101,8 +101,6 @@ namespace Olden_Era___Template_Editor.Services
             var options = new List<string>();
             if (settings.NoDirectPlayerConnections)
                 options.Add("isolated player starts");
-            if (settings.ExperimentalBalancedZonePlacement)
-                options.Add("balanced zone placement");
             if (settings.RandomPortals)
                 options.Add("random portals");
             if (!settings.SpawnRemoteFootholds)
@@ -128,6 +126,7 @@ namespace Olden_Era___Template_Editor.Services
             MapTopology.Chain => "Chain",
             MapTopology.SharedWeb => "Shared Web",
             MapTopology.Random => "Random",
+            MapTopology.Balanced => "Balanced",
             _ => topology.ToString()
         };
 
@@ -316,15 +315,11 @@ namespace Olden_Era___Template_Editor.Services
                 }
 
                 case MapTopology.Random:
+                case MapTopology.Balanced:
                 {
-                    // Delaunay adjacency is computed from random positions at generation
-                    // time and can't be reproduced exactly during the pick phase.
-                    // We use the balanced ring ordering as the best structural proxy:
-                    // BuildBalancedRingLetters places players evenly around a circle and
-                    // fills gaps with neutrals in quality order, which closely matches the
-                    // ring-like adjacency that Delaunay produces on those positions.
-                    // For non-balanced random placement the same ring proxy is used, since
-                    // any position-independent approximation is equivalent in expectation.
+                    // Delaunay adjacency is computed from positions at generation time and
+                    // can't be reproduced exactly during the pick phase. Use the balanced
+                    // ring ordering as the best structural proxy for both topologies.
                     var ordered = BuildOrderedLetters(settings, playerLetters, neutralZones, isRing: true);
                     int rn = ordered.Count;
                     for (int i = 0; i < rn; i++)
@@ -512,7 +507,7 @@ namespace Olden_Era___Template_Editor.Services
                 MapTopology.Chain => neutralZoneCount >= (settings.PlayerCount - 1) * min,
                 MapTopology.HubAndSpoke => min <= 1,
                 MapTopology.SharedWeb => min <= 1 && neutralZoneCount >= 1,
-                _ => false,
+                _ => false, // Random and Balanced use position-based adjacency, no fixed separation guarantee
             };
         }
 
@@ -520,7 +515,6 @@ namespace Olden_Era___Template_Editor.Services
         {
             var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
 
-            if (settings.ExperimentalBalancedZonePlacement)
             {
                 int honoredSeparation = settings.MinNeutralZonesBetweenPlayers > 0
                     && CanHonorNeutralSeparation(settings, neutralLetters.Count)
@@ -778,6 +772,7 @@ namespace Olden_Era___Template_Editor.Services
                 MapTopology.Chain       => BuildVariantChain(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
                 MapTopology.SharedWeb   => BuildVariantSharedWeb(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
                 MapTopology.Random      => BuildVariantRandom(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
+                MapTopology.Balanced    => BuildVariantBalanced(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
                 _                       => BuildVariantDefault(settings, playerLetters, neutralZones, tuning, holdCityNeutralLetter),
             };
         }
@@ -1156,44 +1151,62 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Topology: Random Proximity ────────────────────────────────────────────
 
+        // ── Topology: Random Proximity ────────────────────────────────────────────
+
         private static Variant BuildVariantRandom(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null)
         {
             var rng = new Random();
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
             var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
-            // Shuffle zones so player/neutral order is random.
-            var allLetters = settings.ExperimentalBalancedZonePlacement
-                ? BuildBalancedRingLetters(playerLetters, neutralZones, minNeutralZonesBetweenPlayers: 0)
-                : playerLetters.Concat(neutralLetters).OrderBy(_ => rng.Next()).ToList();
+            // Shuffle zones so player/neutral order is fully random.
+            var allLetters = playerLetters.Concat(neutralLetters).OrderBy(_ => rng.Next()).ToList();
+            var pos = allLetters.Select(_ => (rng.NextDouble() * 0.9 + 0.05, rng.NextDouble() * 0.9 + 0.05)).ToList();
+
+            var pairs = DelaunayEdges(pos);
+            return BuildVariantFromDelaunay(settings, playerLetters, neutralZones, neutralByLetter,
+                allLetters, pos, pairs, filterByTier: false, tuning, holdCityNeutralLetter);
+        }
+
+        // ── Topology: Balanced (concentric rings) ─────────────────────────────────
+
+        private static Variant BuildVariantBalanced(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null)
+        {
+            var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
+            // Place zones on concentric rings ordered by quality tier.
+            var allLetters = BuildBalancedRingLetters(playerLetters, neutralZones, minNeutralZonesBetweenPlayers: 0);
+            var pos = BuildBalancedRandomPositions(allLetters, playerLetters, neutralByLetter);
+
+            var pairs = DelaunayEdges(pos);
+            return BuildVariantFromDelaunay(settings, playerLetters, neutralZones, neutralByLetter,
+                allLetters, pos, pairs, filterByTier: true, tuning, holdCityNeutralLetter);
+        }
+
+        // ── Shared Delaunay builder ───────────────────────────────────────────────
+
+        private static Variant BuildVariantFromDelaunay(
+            GeneratorSettings settings,
+            List<string> playerLetters,
+            List<NeutralZonePlan> neutralZones,
+            Dictionary<string, NeutralZonePlan> neutralByLetter,
+            List<string> allLetters,
+            List<(double X, double Y)> pos,
+            List<(int A, int B)> pairs,
+            bool filterByTier,
+            GenerationTuning tuning,
+            string? holdCityNeutralLetter)
+        {
             int count = allLetters.Count;
             bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
-
-            // Assign random 2D positions in the unit square.
-            // Jitter positions slightly apart to avoid degenerate collinear/cocircular cases.
-            var pos = settings.ExperimentalBalancedZonePlacement
-                ? BuildBalancedRandomPositions(allLetters, playerLetters, neutralByLetter)
-                : new List<(double X, double Y)>();
-            if (!settings.ExperimentalBalancedZonePlacement)
-            {
-                for (int i = 0; i < count; i++)
-                    pos.Add((rng.NextDouble() * 0.9 + 0.05, rng.NextDouble() * 0.9 + 0.05));
-            }
-
-            // Compute Delaunay triangulation to find physical zone neighbours.
-            // Delaunay edges correspond exactly to shared Voronoi boundaries, so they
-            // are the correct proxy for zones that physically border each other on the map.
-            var pairs = DelaunayEdges(pos);
 
             // When balanced placement is active, strip any edge that skips a tier.
             // Allowed: player↔low, low↔medium, medium↔high (adjacent tiers only).
             // If an intermediate tier is entirely absent from the map the skip is permitted
             // so the graph remains connectable. EnsureFullConnectivity handles any gaps.
-            if (settings.ExperimentalBalancedZonePlacement)
+            if (filterByTier)
             {
                 var playerSet = playerLetters.ToHashSet(StringComparer.Ordinal);
-                // Use quality groups (0=player,1=low,2=medium,3=high) for the adjacency
-                // filter so that plain and city variants of the same quality can freely
-                // border each other and the adjacent quality tier.
+                // Use quality groups for the adjacency filter so that plain and city variants
+                // of the same quality can freely border each other and the adjacent quality tier.
                 var presentGroups = allLetters
                     .Select(l => ZoneQualityGroup(l, playerLetters, neutralByLetter))
                     .ToHashSet();
@@ -1207,6 +1220,8 @@ namespace Olden_Era___Template_Editor.Services
                     int ga = ZoneQualityGroup(la, playerLetters, neutralByLetter);
                     int gb = ZoneQualityGroup(lb, playerLetters, neutralByLetter);
                     int lo = Math.Min(ga, gb), hi = Math.Max(ga, gb);
+                    // Same-ring neutral zones are always allowed to connect.
+                    if (hi == lo) return true;
                     if (hi - lo <= 2) return true;
                     // Allow a group skip only when every group in between is absent.
                     for (int g = lo + 1; g < hi; g++)
@@ -1268,7 +1283,7 @@ namespace Olden_Era___Template_Editor.Services
 
             if (isolate) EnsurePlayerZonesConnected(playerLetters, zones, connections, tuning);
             EnsureFullConnectivity(playerLetters, allLetters, pos, zones, connections, tuning,
-                settings.ExperimentalBalancedZonePlacement ? neutralByLetter : null);
+                filterByTier ? neutralByLetter : null);
             return MakeVariant(playerLetters, allLetters[0], count, zones, connections);
         }
 
@@ -1478,17 +1493,12 @@ namespace Olden_Era___Template_Editor.Services
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
             var neutralLetters = neutralZones.Select(zone => zone.Letter).ToList();
             List<string> outerLetters;
-            if (settings.ExperimentalBalancedZonePlacement)
             {
                 int honoredSeparation = settings.MinNeutralZonesBetweenPlayers > 0
                     && CanHonorNeutralSeparation(settings, neutralZones.Count)
                         ? settings.MinNeutralZonesBetweenPlayers
                         : 0;
                 outerLetters = BuildBalancedRingLetters(playerLetters, neutralZones, honoredSeparation);
-            }
-            else
-            {
-                outerLetters = playerLetters.Concat(neutralLetters).ToList();
             }
             var zones = new List<Zone>();
             var connections = new List<Connection>();
@@ -1650,9 +1660,7 @@ namespace Olden_Era___Template_Editor.Services
             // If there are fewer neutrals than needed, we wrap around (multiple players share a neutral).
             // Requires at least 1 neutral zone.
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
-            var neutrals = settings.ExperimentalBalancedZonePlacement
-                ? BuildBalancedNeutralRing(neutralZones, playerLetters.Count)
-                : neutralZones.Select(zone => zone.Letter).ToList();
+            var neutrals = BuildBalancedNeutralRing(neutralZones, playerLetters.Count);
 
             int p = playerLetters.Count;
             int n = neutrals.Count;

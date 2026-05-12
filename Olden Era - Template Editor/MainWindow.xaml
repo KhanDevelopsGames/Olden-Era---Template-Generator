@@ -849,17 +849,6 @@
                                         ValueChanged="SldMaxPortals_ValueChanged"/>
                             </Grid>
                         </StackPanel>
-                        <CheckBox x:Name="ChkBalancedZonePlacement"
-                                  Content="Balance zone placement [RECOMMENDED]"
-                                  IsChecked="True"
-                                  Margin="0,6,0,0"
-                                  Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
-                        <TextBlock x:Name="TxtBalancedZonePlacementDesc"
-                                   Visibility="Collapsed"
-                                   Foreground="{StaticResource BrushTextDim}"
-                                   FontSize="13" TextWrapping="Wrap"
-                                   Margin="25,3,0,0"
-                                   Text="Spreads players and neutral zone tiers more evenly across structured layouts. Random layout uses balanced seed positions before building borders. We recommend to keep this setting enabled."/>
                         <CheckBox x:Name="ChkNoDirectPlayerConn"
                                   Content="Connect via neutral zones only, if possible"
                                   Margin="0,6,0,0"

@@ -24,7 +24,7 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("neutralHighCastle")]     public int NeutralHighCastleCount     { get; set; } = 0;
         [JsonPropertyName("matchPlayerCastleFactions")] public bool MatchPlayerCastleFactions { get; set; } = false;
         [JsonPropertyName("minNeutralZonesBetweenPlayers")] public int MinNeutralZonesBetweenPlayers { get; set; } = 0;
-        [JsonPropertyName("experimentalBalancedZonePlacement")] public bool ExperimentalBalancedZonePlacement { get; set; } = false;
+        [JsonPropertyName("experimentalBalancedZonePlacement")] [System.Obsolete] public bool ExperimentalBalancedZonePlacement { get; set; } = false;
         [JsonPropertyName("experimentalMapSizes")] public bool ExperimentalMapSizes { get; set; } = false;
         [JsonPropertyName("playerZoneSize")]  public double  PlayerZoneSize       { get; set; } = 1.0;
         [JsonPropertyName("neutralZoneSize")] public double  NeutralZoneSize      { get; set; } = 1.0;
@@ -34,7 +34,7 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("heroMin")]           public int     HeroCountMin           { get; set; } = 4;
         [JsonPropertyName("heroMax")]           public int     HeroCountMax           { get; set; } = 8;
         [JsonPropertyName("heroIncrement")]     public int     HeroCountIncrement     { get; set; } = 1;
-        [JsonPropertyName("topology")]          public MapTopology Topology           { get; set; } = MapTopology.Random;
+        [JsonPropertyName("topology")]          public MapTopology Topology           { get; set; } = MapTopology.Balanced;
         [JsonPropertyName("randomPortals")]     public bool    RandomPortals          { get; set; } = false;
         [JsonPropertyName("maxPortalConns")]    public int     MaxPortalConnections   { get; set; } = 32;
         [JsonPropertyName("spawnFootholds")]    public bool    SpawnRemoteFootholds   { get; set; } = true;
