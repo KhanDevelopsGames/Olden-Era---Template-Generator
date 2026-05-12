@@ -190,11 +190,11 @@ namespace Olden_Era___Template_Editor.Services
             // the FR spring embedder uses), giving consistent readable circle sizes.
             if (zones.All(z => z.GeneratorPosition.HasValue))
             {
-                // ── Ring-snap pass (balanced concentric placement) ──────────────────
-                // If the raw positions cluster into distinct concentric rings (detected
-                // by gaps in the sorted distance-from-centroid list) we snap every zone
-                // to a perfectly evenly-spaced clean ring so the preview never shows
-                // overlapping circles regardless of zone count or jitter.
+                // ── Ring-snap pass (balanced concentric placement only) ─────────────
+                // Snaps zones to clean evenly-spaced rings when the topology is
+                // Balanced. Skipped for Random so that genuinely scattered positions
+                // are never forced into a false circular arrangement.
+                if (topology == MapTopology.Balanced)
                 {
                     double rawCx0 = zones.Average(z => z.GeneratorPosition!.Value.X);
                     double rawCy0 = zones.Average(z => z.GeneratorPosition!.Value.Y);
@@ -313,7 +313,8 @@ namespace Olden_Era___Template_Editor.Services
                         return rResult;
                     }
                 }
-                // ── End ring-snap pass — fall through for non-ringed random layouts ─
+                // ── End ring-snap pass ─────────────────────────────────────────────
+                // ── Fall through for non-ringed layouts (Random topology) ──────────
                 var gAdj = new HashSet<int>[n];
                 for (int i = 0; i < n; i++) gAdj[i] = [];
                 foreach (var conn in connections)
