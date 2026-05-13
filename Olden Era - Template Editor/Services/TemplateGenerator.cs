@@ -826,8 +826,9 @@ namespace Olden_Era___Template_Editor.Services
             var zones = new List<Zone>();
             var connections = new List<Connection>();
 
-            bool useRandom = settings.Topology == MapTopology.Random;
-            bool useHub    = settings.Topology == MapTopology.HubAndSpoke;
+            bool useRandom   = settings.Topology == MapTopology.Random;
+            bool useHub      = settings.Topology == MapTopology.HubAndSpoke;
+            bool useBalanced = settings.Topology == MapTopology.Balanced;
 
             if (useHub)
             {
@@ -869,6 +870,13 @@ namespace Olden_Era___Template_Editor.Services
 
                 for (int p = 0; p < 2; p++)
                     BuildTournamentRandomCluster(p, playerLetters[p], neutralsForPlayer[p], neutralByLetter, settings, tuning, zones, connections, templateEdges, previewPositions[p]);
+            }
+            else if (useBalanced)
+            {
+                // Each player gets their own fully isolated balanced (concentric-ring) cluster.
+                // Both clusters share the same structure but are mapped to opposite canvas halves.
+                for (int p = 0; p < 2; p++)
+                    BuildTournamentBalancedCluster(p, playerLetters[p], neutralsForPlayer[p], neutralByLetter, settings, tuning, zones, connections);
             }
             else
             {
@@ -1099,6 +1107,121 @@ namespace Olden_Era___Template_Editor.Services
                     zone.GeneratorPosition = previewPositions[i];
                 zones.Add(zone);
             }
+        }
+
+        /// <summary>
+        /// Builds one player's isolated cluster using the balanced concentric-ring layout,
+        /// mirroring <see cref="BuildVariantBalanced"/> but scoped to a single player's
+        /// exclusive neutrals.  Both clusters are mapped to opposite canvas halves so the
+        /// preview shows them side-by-side with a clear gap.
+        /// </summary>
+        private static void BuildTournamentBalancedCluster(
+            int playerIndex,
+            string playerLetter,
+            List<NeutralZonePlan> myNeutrals,
+            Dictionary<string, NeutralZonePlan> neutralByLetter,
+            GeneratorSettings settings,
+            GenerationTuning tuning,
+            List<Zone> zones,
+            List<Connection> connections)
+        {
+            // Build the ordered letter list using the same balanced ring helper so that
+            // neutral zones are interleaved by quality tier, identical to the non-tournament
+            // balanced layout.
+            var clusterLettersList = new List<string> { playerLetter };
+            clusterLettersList.AddRange(myNeutrals.Select(n => n.Letter));
+
+            var singlePlayerList = new List<string> { playerLetter };
+            var orderedLetters = BuildBalancedRingLetters(singlePlayerList, myNeutrals, minNeutralZonesBetweenPlayers: 0);
+
+            // Generate concentric-ring positions for this cluster, then remap them onto
+            // the player's canvas half: cluster 0 → left half, cluster 1 → right half.
+            var rawPos = BuildBalancedRandomPositions(orderedLetters, singlePlayerList, neutralByLetter);
+
+            double xMin = playerIndex == 0 ? 0.03 : 0.57;
+            double xMax = playerIndex == 0 ? 0.43 : 0.97;
+            double rawXMin = rawPos.Count > 0 ? rawPos.Min(p => p.X) : 0.05;
+            double rawXMax = rawPos.Count > 0 ? rawPos.Max(p => p.X) : 0.95;
+            double rawYMin = rawPos.Count > 0 ? rawPos.Min(p => p.Y) : 0.05;
+            double rawYMax = rawPos.Count > 0 ? rawPos.Max(p => p.Y) : 0.95;
+            double spanX = Math.Max(rawXMax - rawXMin, 0.001);
+            double spanY = Math.Max(rawYMax - rawYMin, 0.001);
+
+            var pos = rawPos
+                .Select(pt => (
+                    X: xMin + (pt.X - rawXMin) / spanX * (xMax - xMin),
+                    Y: 0.05 + (pt.Y - rawYMin) / spanY * 0.90))
+                .ToList();
+
+            // Build Delaunay edges and apply the same quality-tier adjacency filter used
+            // by the standard balanced variant.
+            var pairs = DelaunayEdges(pos);
+
+            var presentGroups = orderedLetters
+                .Select(l => ZoneQualityGroup(l, singlePlayerList, neutralByLetter))
+                .ToHashSet();
+
+            pairs = pairs.Where(p =>
+            {
+                string la = orderedLetters[p.A], lb = orderedLetters[p.B];
+                // No player↔player edges (only one player per cluster anyway).
+                if (la == playerLetter && lb == playerLetter) return false;
+                int ga = ZoneQualityGroup(la, singlePlayerList, neutralByLetter);
+                int gb = ZoneQualityGroup(lb, singlePlayerList, neutralByLetter);
+                int lo = Math.Min(ga, gb), hi = Math.Max(ga, gb);
+                if (hi == lo) return true;
+                if (hi - lo <= 2) return true;
+                for (int g = lo + 1; g < hi; g++)
+                    if (presentGroups.Contains(g)) return false;
+                return true;
+            }).ToList();
+
+            int count = orderedLetters.Count;
+            var connsByZone = Enumerable.Range(0, count).ToDictionary(i => i, _ => new List<string>());
+
+            foreach (var (a, b) in pairs)
+            {
+                string fromLetter = orderedLetters[a];
+                string toLetter   = orderedLetters[b];
+                string connName   = $"TBal-{fromLetter}-{toLetter}";
+                connsByZone[a].Add(connName);
+                connsByZone[b].Add(connName);
+
+                string fromZone = fromLetter == playerLetter ? $"Spawn-{fromLetter}" : $"Neutral-{fromLetter}";
+                string toZone   = toLetter   == playerLetter ? $"Spawn-{toLetter}"   : $"Neutral-{toLetter}";
+                connections.Add(new Connection
+                {
+                    Name = connName,
+                    From = fromZone,
+                    To = toZone,
+                    ConnectionType = "Direct",
+                    GuardZone = fromZone,
+                    GuardEscape = false,
+                    SimTurnSquad = true,
+                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardWeeklyIncrement = 0.15,
+                    GuardMatchGroup = $"tourney_bal_guard_{fromLetter}_{toLetter}"
+                });
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                string letter = orderedLetters[i];
+                var myConns = connsByZone[i].ToArray();
+                Zone zone;
+                if (letter == playerLetter)
+                    zone = BuildSpawnZone(letter, $"Player{playerIndex + 1}", myConns,
+                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions,
+                        settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
+                else
+                    zone = BuildNeutralZone(neutralByLetter[letter], myConns,
+                        settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
+                zone.GeneratorPosition = pos[i];
+                zones.Add(zone);
+            }
+
+            // Ensure the cluster is fully connected (same guarantee as the standard balanced variant).
+            EnsureFullConnectivity(singlePlayerList, orderedLetters, pos, zones, connections, tuning, neutralByLetter);
         }
 
         // ── Topology: Default (Ring) ──────────────────────────────────────────────
