@@ -194,12 +194,10 @@ namespace Olden_Era___Template_Editor.Services
                 // Snaps zones to clean evenly-spaced rings when the topology is
                 // Balanced. Skipped for Random so that genuinely scattered positions
                 // are never forced into a false circular arrangement.
-                // For two-cluster tournament layouts the ring-snap is applied
-                // independently per cluster, each in its own canvas half.
                 if (topology == MapTopology.Balanced)
                 {
-                    // Build adjacency so we can detect connected components (single
-                    // cluster = standard balanced; two clusters = tournament balanced).
+                    // Detect connected components to distinguish a standard single-cluster
+                    // balanced layout from a two-cluster tournament balanced layout.
                     var bAdj = new HashSet<int>[n];
                     for (int i = 0; i < n; i++) bAdj[i] = [];
                     foreach (var conn in connections)
@@ -210,7 +208,6 @@ namespace Olden_Era___Template_Editor.Services
                         if (!idx.TryGetValue(conn.To,   out int bb)) continue;
                         bAdj[ba].Add(bb); bAdj[bb].Add(ba);
                     }
-
                     var bCompId = new int[n];
                     Array.Fill(bCompId, -1);
                     var bComponents = new List<List<int>>();
@@ -229,150 +226,235 @@ namespace Olden_Era___Template_Editor.Services
                         bComponents.Add(comp);
                     }
 
-                    bool isTwoClusterBalanced = bComponents.Count == 2;
                     const double ringGapThreshold = 0.03;
 
-                    var rPxB = new double[n];
-                    var rPyB = new double[n];
-                    double bestZoneRadius = ZoneRadiusMax;
-                    bool allClustersSnapped = true;
-
-                    for (int ci = 0; ci < bComponents.Count; ci++)
+                    if (bComponents.Count == 2)
                     {
-                        var comp = bComponents[ci];
-                        int cn = comp.Count;
+                        // ── Two-cluster tournament balanced layout ─────────────────────
+                        // Apply the ring-snap independently per cluster, each mapped into
+                        // its own canvas half (left / right).
+                        var rPxB = new double[n];
+                        var rPyB = new double[n];
+                        double bestZoneRadius = ZoneRadiusMax;
+                        bool allClustersSnapped = true;
 
-                        // Canvas region for this cluster.
-                        // Single cluster → full canvas. Two clusters → left / right halves.
-                        double canvasXMin = isTwoClusterBalanced
-                            ? (ci == 0 ? margin : Width / 2.0 + margin / 2.0)
-                            : margin;
-                        double canvasXMax = isTwoClusterBalanced
-                            ? (ci == 0 ? Width / 2.0 - margin / 2.0 : Width - margin)
-                            : Width - margin;
-                        double canvasYMin = margin;
-                        double canvasYMax = Height - margin;
-                        double clCx = (canvasXMin + canvasXMax) / 2.0;
-                        double clCy = (canvasYMin + canvasYMax) / 2.0;
-                        double clW  = canvasXMax - canvasXMin;
-                        double clH  = canvasYMax - canvasYMin;
+                        for (int ci = 0; ci < 2; ci++)
+                        {
+                            var comp = bComponents[ci];
+                            int cn = comp.Count;
 
-                        // Compute cluster centroid from raw generator positions.
-                        double rawClCx = comp.Average(i => zones[i].GeneratorPosition!.Value.X);
-                        double rawClCy = comp.Average(i => zones[i].GeneratorPosition!.Value.Y);
+                            double canvasXMin = ci == 0 ? margin : Width / 2.0 + margin / 2.0;
+                            double canvasXMax = ci == 0 ? Width / 2.0 - margin / 2.0 : Width - margin;
+                            double canvasYMin = margin;
+                            double canvasYMax = Height - margin;
+                            double clCx = (canvasXMin + canvasXMax) / 2.0;
+                            double clCy = (canvasYMin + canvasYMax) / 2.0;
+                            double clW  = canvasXMax - canvasXMin;
+                            double clH  = canvasYMax - canvasYMin;
 
-                        // Sort cluster zones by distance from their centroid.
-                        var clusterByDist = comp
-                            .Select(i =>
+                            double rawClCx = comp.Average(i => zones[i].GeneratorPosition!.Value.X);
+                            double rawClCy = comp.Average(i => zones[i].GeneratorPosition!.Value.Y);
+
+                            var clusterByDist = comp
+                                .Select(i =>
+                                {
+                                    double dx = zones[i].GeneratorPosition!.Value.X - rawClCx;
+                                    double dy = zones[i].GeneratorPosition!.Value.Y - rawClCy;
+                                    return (idx: i, dist: Math.Sqrt(dx * dx + dy * dy));
+                                })
+                                .OrderBy(t => t.dist)
+                                .ToList();
+
+                            var clRingLabel = new int[n];
+                            int clRingCount = 0;
+                            clRingLabel[clusterByDist[0].idx] = 0;
+                            for (int k = 1; k < cn; k++)
                             {
-                                double dx = zones[i].GeneratorPosition!.Value.X - rawClCx;
-                                double dy = zones[i].GeneratorPosition!.Value.Y - rawClCy;
-                                return (idx: i, dist: Math.Sqrt(dx * dx + dy * dy));
-                            })
-                            .OrderBy(t => t.dist)
-                            .ToList();
+                                if (clusterByDist[k].dist - clusterByDist[k - 1].dist > ringGapThreshold)
+                                    clRingCount++;
+                                clRingLabel[clusterByDist[k].idx] = clRingCount;
+                            }
+                            clRingCount++;
 
-                        // Detect ring boundaries within this cluster.
-                        var clRingLabel = new int[n]; // indexed by global zone index
-                        int clRingCount = 0;
-                        clRingLabel[clusterByDist[0].idx] = 0;
-                        for (int k = 1; k < cn; k++)
-                        {
-                            if (clusterByDist[k].dist - clusterByDist[k - 1].dist > ringGapThreshold)
-                                clRingCount++;
-                            clRingLabel[clusterByDist[k].idx] = clRingCount;
-                        }
-                        clRingCount++;
+                            if (clRingCount < 2) { allClustersSnapped = false; break; }
 
-                        if (clRingCount < 2)
-                        {
-                            allClustersSnapped = false;
-                            break;
-                        }
+                            var clRingIndices = Enumerable.Range(0, clRingCount)
+                                .Select(r => comp.Where(i => clRingLabel[i] == r).ToList())
+                                .ToList();
 
-                        // Group by ring (0 = innermost).
-                        var clRingIndices = Enumerable.Range(0, clRingCount)
-                            .Select(r => comp.Where(i => clRingLabel[i] == r).ToList())
-                            .ToList();
+                            // Evenly space rings across the usable radius of the half-canvas.
+                            // Zone radius is computed directly from geometry (no binary search):
+                            //   - inter-ring constraint: spacing between adjacent rings >= 2*zr + minGap
+                            //   - within-ring constraint: chord between adjacent zones in a ring >= 2*zr + minGap
+                            double drawRadius = Math.Min(clW, clH) / 2.0 - margin - ZoneRadiusMax;
+                            double ringSpacing = drawRadius / clRingCount;
 
-                        double drawRadius = Math.Min(clW, clH) / 2.0 - ZoneRadiusMax;
+                            // Ring radii are fixed at evenly spaced positions.
+                            var ringRadii = Enumerable.Range(0, clRingCount)
+                                .Select(r => ringSpacing * (r + 1.0))
+                                .ToArray();
 
-                        // Compute ring radii for a given zone radius zr so that:
-                        //   (a) zones on the same ring are at least 2*zr+minGap apart, and
-                        //   (b) adjacent rings are at least 2*zr+minGap apart.
-                        double[] AssignRingRadii(double zr)
-                        {
-                            double mc = 2.0 * zr + minGap;
-                            var radii = new double[clRingCount];
+                            // Max zr from inter-ring spacing (ring[r+1] - ring[r] = ringSpacing for all r).
+                            // Ring 0 center zone: its distance to ring 1 is also ringSpacing.
+                            double clZoneRadius = (ringSpacing - minGap) / 2.0;
+
+                            // Max zr from within-ring chord for each ring with 2+ zones.
                             for (int r = 0; r < clRingCount; r++)
                             {
                                 int cnt = clRingIndices[r].Count;
-                                double natural    = drawRadius * (r + 1.0) / clRingCount;
-                                double withinRing = cnt >= 2
-                                    ? mc / (2.0 * Math.Sin(Math.PI / cnt))
-                                    : (cnt == 1 && r > 0 ? mc : 0.0);
-                                double afterPrev = r > 0 ? radii[r - 1] + mc : 0.0;
-                                radii[r] = Math.Max(natural, Math.Max(withinRing, afterPrev));
+                                if (cnt >= 2)
+                                {
+                                    double chord = ringRadii[r] * 2.0 * Math.Sin(Math.PI / cnt);
+                                    clZoneRadius = Math.Min(clZoneRadius, (chord - minGap) / 2.0);
+                                }
                             }
-                            return radii;
+                            clZoneRadius = Math.Max(8.0, Math.Min(clZoneRadius, ZoneRadiusMax));
+                            bestZoneRadius = Math.Min(bestZoneRadius, clZoneRadius);
+
+                            for (int r = 0; r < clRingCount; r++)
+                            {
+                                var group = clRingIndices[r];
+                                int cnt = group.Count;
+                                double ringR = ringRadii[r];
+
+                                if (cnt == 1 && r == 0)
+                                {
+                                    rPxB[group[0]] = clCx;
+                                    rPyB[group[0]] = clCy;
+                                    continue;
+                                }
+
+                                var sortedByAngle = group
+                                    .OrderBy(i => Math.Atan2(
+                                        zones[i].GeneratorPosition!.Value.Y - rawClCy,
+                                        zones[i].GeneratorPosition!.Value.X - rawClCx))
+                                    .ToList();
+
+                                double firstAngle = Math.Atan2(
+                                    zones[sortedByAngle[0]].GeneratorPosition!.Value.Y - rawClCy,
+                                    zones[sortedByAngle[0]].GeneratorPosition!.Value.X - rawClCx);
+
+                                for (int j = 0; j < cnt; j++)
+                                {
+                                    double angle = firstAngle + 2.0 * Math.PI * j / cnt;
+                                    rPxB[sortedByAngle[j]] = clCx + Math.Cos(angle) * ringR;
+                                    rPyB[sortedByAngle[j]] = clCy + Math.Sin(angle) * ringR;
+                                }
+                            }
                         }
 
-                        // Binary-search for the largest zone radius that fits.
-                        double lo = 8.0, hi = ZoneRadiusMax;
-                        for (int iter = 0; iter < 32; iter++)
+                        if (allClustersSnapped)
                         {
-                            double mid = (lo + hi) / 2.0;
-                            double[] r2 = AssignRingRadii(mid);
-                            if (r2[clRingCount - 1] <= drawRadius) lo = mid;
-                            else hi = mid;
-                        }
-                        double clZoneRadius = Math.Max(lo, 8.0);
-                        bestZoneRadius = Math.Min(bestZoneRadius, clZoneRadius);
-
-                        double[] ringRadii = AssignRingRadii(clZoneRadius);
-
-                        for (int r = 0; r < clRingCount; r++)
-                        {
-                            var group = clRingIndices[r];
-                            int cnt = group.Count;
-                            double canvasRadius = ringRadii[r];
-
-                            // A single zone on the innermost ring sits at the cluster centre.
-                            if (cnt == 1 && r == 0)
-                            {
-                                rPxB[group[0]] = clCx;
-                                rPyB[group[0]] = clCy;
-                                continue;
-                            }
-
-                            // Sort by original angle and distribute evenly, anchored to
-                            // the first zone's angle to preserve the visual arrangement.
-                            var sortedByAngle = group
-                                .OrderBy(i => Math.Atan2(
-                                    zones[i].GeneratorPosition!.Value.Y - rawClCy,
-                                    zones[i].GeneratorPosition!.Value.X - rawClCx))
-                                .ToList();
-
-                            double firstAngle = Math.Atan2(
-                                zones[sortedByAngle[0]].GeneratorPosition!.Value.Y - rawClCy,
-                                zones[sortedByAngle[0]].GeneratorPosition!.Value.X - rawClCx);
-
-                            for (int j = 0; j < cnt; j++)
-                            {
-                                double angle = firstAngle + 2.0 * Math.PI * j / cnt;
-                                rPxB[sortedByAngle[j]] = clCx + Math.Cos(angle) * canvasRadius;
-                                rPyB[sortedByAngle[j]] = clCy + Math.Sin(angle) * canvasRadius;
-                            }
+                            _zoneRadius = bestZoneRadius;
+                            var rResult = new Dictionary<string, Point>(StringComparer.Ordinal);
+                            for (int i = 0; i < n; i++)
+                                rResult[zones[i].Name] = new Point(rPxB[i], rPyB[i]);
+                            return rResult;
                         }
                     }
-
-                    if (allClustersSnapped)
+                    else
                     {
-                        _zoneRadius = bestZoneRadius;
-                        var rResult = new Dictionary<string, Point>(StringComparer.Ordinal);
-                        for (int i = 0; i < n; i++)
-                            rResult[zones[i].Name] = new Point(rPxB[i], rPyB[i]);
-                        return rResult;
+                        // ── Standard single-cluster balanced layout (original logic) ───
+                        double rawCx0 = zones.Average(z => z.GeneratorPosition!.Value.X);
+                        double rawCy0 = zones.Average(z => z.GeneratorPosition!.Value.Y);
+                        var rawDist = zones.Select(z =>
+                        {
+                            double dx = z.GeneratorPosition!.Value.X - rawCx0;
+                            double dy = z.GeneratorPosition!.Value.Y - rawCy0;
+                            return Math.Sqrt(dx * dx + dy * dy);
+                        }).ToArray();
+
+                        var sortedByDist = Enumerable.Range(0, n).OrderBy(i => rawDist[i]).ToArray();
+
+                        var ringLabel = new int[n];
+                        int ringCount = 0;
+                        ringLabel[sortedByDist[0]] = 0;
+                        for (int k = 1; k < n; k++)
+                        {
+                            if (rawDist[sortedByDist[k]] - rawDist[sortedByDist[k - 1]] > ringGapThreshold)
+                                ringCount++;
+                            ringLabel[sortedByDist[k]] = ringCount;
+                        }
+                        ringCount++;
+
+                        if (ringCount >= 2)
+                        {
+                            var ringIndices = Enumerable.Range(0, ringCount)
+                                .Select(r => Enumerable.Range(0, n).Where(i => ringLabel[i] == r).ToList())
+                                .ToList();
+
+                            double drawRadius = Math.Min(Width, Height) / 2.0 - margin - ZoneRadiusMax;
+
+                            double[] AssignRingRadii(double zr)
+                            {
+                                double mc = 2.0 * zr + minGap;
+                                var radii = new double[ringCount];
+                                for (int r = 0; r < ringCount; r++)
+                                {
+                                    int cnt = ringIndices[r].Count;
+                                    double natural    = drawRadius * (r + 1.0) / ringCount;
+                                    double withinRing = cnt >= 2
+                                        ? mc / (2.0 * Math.Sin(Math.PI / cnt))
+                                        : (cnt == 1 && r > 0 ? mc : 0.0);
+                                    double afterPrev = r > 0 ? radii[r - 1] + mc : 0.0;
+                                    radii[r] = Math.Max(natural, Math.Max(withinRing, afterPrev));
+                                }
+                                return radii;
+                            }
+
+                            double lo = 8.0, hi = ZoneRadiusMax;
+                            for (int iter = 0; iter < 32; iter++)
+                            {
+                                double mid = (lo + hi) / 2.0;
+                                double[] r2 = AssignRingRadii(mid);
+                                if (r2[ringCount - 1] <= drawRadius) lo = mid;
+                                else hi = mid;
+                            }
+                            double ringZoneRadius = Math.Max(lo, 8.0);
+                            _zoneRadius = ringZoneRadius;
+
+                            double[] ringRadii = AssignRingRadii(ringZoneRadius);
+
+                            double cx0 = Width / 2.0, cy0 = Height / 2.0;
+                            var rPx = new double[n];
+                            var rPy = new double[n];
+
+                            for (int r = 0; r < ringCount; r++)
+                            {
+                                var group = ringIndices[r];
+                                int cnt = group.Count;
+                                double canvasRadius = ringRadii[r];
+
+                                if (cnt == 1 && r == 0)
+                                {
+                                    rPx[group[0]] = cx0;
+                                    rPy[group[0]] = cy0;
+                                    continue;
+                                }
+
+                                var sortedByAngle = group
+                                    .OrderBy(i => Math.Atan2(
+                                        zones[i].GeneratorPosition!.Value.Y - rawCy0,
+                                        zones[i].GeneratorPosition!.Value.X - rawCx0))
+                                    .ToList();
+
+                                double firstAngle = Math.Atan2(
+                                    zones[sortedByAngle[0]].GeneratorPosition!.Value.Y - rawCy0,
+                                    zones[sortedByAngle[0]].GeneratorPosition!.Value.X - rawCx0);
+
+                                for (int j = 0; j < cnt; j++)
+                                {
+                                    double angle = firstAngle + 2.0 * Math.PI * j / cnt;
+                                    rPx[sortedByAngle[j]] = cx0 + Math.Cos(angle) * canvasRadius;
+                                    rPy[sortedByAngle[j]] = cy0 + Math.Sin(angle) * canvasRadius;
+                                }
+                            }
+
+                            var rResult = new Dictionary<string, Point>(StringComparer.Ordinal);
+                            for (int i = 0; i < n; i++)
+                                rResult[zones[i].Name] = new Point(rPx[i], rPy[i]);
+                            return rResult;
+                        }
                     }
                 }
                 // ── End ring-snap pass ─────────────────────────────────────────────
@@ -1058,15 +1140,39 @@ namespace Olden_Era___Template_Editor.Services
 
             // ── Standard single-ring layout ───────────────────────────────────────
             const double margin = 18;
-            double ringRadius0  = Width / 2.0 - margin;
-            double chord0       = 2.0 * ringRadius0 * Math.Sin(Math.PI / Math.Max(1, n));
             const double minGap = 6;
-            double zoneRadius   = Math.Min(ZoneRadiusMax, (chord0 - minGap) / 2.0);
-            _zoneRadius = zoneRadius;
+            double ringRadius0  = Width / 2.0 - margin;
 
             Zone? hub   = zones.FirstOrDefault(z => string.Equals(z.Name, "Hub", StringComparison.Ordinal));
             var outer   = hub is null ? zones : zones.Where(z => z != hub).ToList();
             int outerN  = Math.Max(1, outer.Count);
+
+            // Solve for zoneRadius so that adjacent zone circles have a visible gap
+            // for connection lines at the actual ring radius where they are placed.
+            //
+            // For non-hub layouts (chain / ring):
+            //   actual ring radius: ringRadius = ringRadius0 - zoneRadius
+            //   chord constraint:   2*(ringRadius0 - zoneRadius)*sin(π/outerN) = 2*zoneRadius + connectionGap
+            //   → zoneRadius = (2*ringRadius0*sinA - connectionGap) / (2*(1 + sinA))
+            //
+            // connectionGap is deliberately generous so connection lines are clearly visible.
+            //
+            // For hub layouts the spoke-ring radius is pushed out by the hub clearance so
+            // we keep the original chord estimate (conservative, always ≤ the no-hub size).
+            const double connectionGap = 26; // minimum visible space between circle edges for connection lines
+            double sinA = outerN > 1 ? Math.Sin(Math.PI / outerN) : 1.0;
+            double zoneRadius;
+            if (hub is null)
+            {
+                zoneRadius = (2.0 * ringRadius0 * sinA - connectionGap) / (2.0 * (1.0 + sinA));
+            }
+            else
+            {
+                double chord0 = 2.0 * ringRadius0 * Math.Sin(Math.PI / Math.Max(1, outerN));
+                zoneRadius = (chord0 - connectionGap) / 2.0;
+            }
+            zoneRadius = Math.Min(ZoneRadiusMax, Math.Max(zoneRadius, 4.0));
+            _zoneRadius = zoneRadius;
 
             double ringRadius = Math.Max(
                 HubRadiusMin + zoneRadius + minGap,
