@@ -1160,10 +1160,18 @@ namespace Olden_Era___Template_Editor.Services
             double spanX = Math.Max(rawXMax - rawXMin, 0.001);
             double spanY = Math.Max(rawYMax - rawYMin, 0.001);
 
+            // Use a uniform scale (preserve aspect ratio) so concentric rings
+            // stay circular rather than being stretched into a tall ellipse.
+            double targetW = xMax - xMin;     // 0.40 per half
+            const double targetH = 0.90;
+            double scale = Math.Min(targetW / spanX, targetH / spanY);
+            double xCentre = (xMin + xMax) / 2.0;
+            const double yCentre = 0.5;
+
             var pos = rawPos
                 .Select(pt => (
-                    X: xMin + (pt.X - rawXMin) / spanX * (xMax - xMin),
-                    Y: 0.05 + (pt.Y - rawYMin) / spanY * 0.90))
+                    X: xCentre + (pt.X - (rawXMin + rawXMax) / 2.0) * scale,
+                    Y: yCentre + (pt.Y - (rawYMin + rawYMax) / 2.0) * scale))
                 .ToList();
 
             // Build Delaunay edges and apply the same quality-tier adjacency filter used
