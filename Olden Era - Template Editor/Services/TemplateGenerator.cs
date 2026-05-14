@@ -2403,7 +2403,7 @@ namespace Olden_Era___Template_Editor.Services
                 Name = $"Spawn-{letter}",
                 Size = NormalizeZoneSize(zoneSize),
                 Layout = SpawnLayoutName,
-                GuardCutoffValue = 2000,
+                GuardCutoffValue = 1500,
                 GuardRandomization = tuning.GuardRandomization,
                 GuardMultiplier = ScaleGuardMultiplier(1.0, tuning),
                 GuardWeeklyIncrement = 0.20,
