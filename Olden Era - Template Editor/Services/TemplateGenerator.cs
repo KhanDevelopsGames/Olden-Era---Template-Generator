@@ -458,6 +458,55 @@ namespace Olden_Era___Template_Editor.Services
         private static int ScaleBorderGuardValue(int value, GenerationTuning tuning) =>
             ScaleValue(value, tuning.BorderGuardStrengthMultiplier);
 
+        /// <summary>
+        /// Returns the base border guard value for a connection between two zone letters,
+        /// scaled by the tuning multiplier.
+        /// <list type="bullet">
+        ///   <item>Player ↔ Player  → 30 000</item>
+        ///   <item>Player ↔ Neutral → based on the neutral zone quality</item>
+        ///   <item>Neutral ↔ Neutral → based on the higher-quality neutral zone</item>
+        /// </list>
+        /// </summary>
+        private static int BorderGuardValue(
+            string letterA, string letterB,
+            ICollection<string> playerLetters,
+            IReadOnlyDictionary<string, NeutralZonePlan>? neutralByLetter,
+            GenerationTuning tuning)
+        {
+            bool aIsPlayer = playerLetters.Contains(letterA);
+            bool bIsPlayer = playerLetters.Contains(letterB);
+
+            if (aIsPlayer && bIsPlayer)
+                return ScaleBorderGuardValue(30000, tuning);
+
+            static int QualityGuardBase(NeutralZoneQuality quality) => quality switch
+            {
+                NeutralZoneQuality.Low    => 15000,
+                NeutralZoneQuality.High   => 25000,
+                _                         => 20000, // Medium
+            };
+
+            if (neutralByLetter == null)
+                return ScaleBorderGuardValue(30000, tuning);
+
+            if (!aIsPlayer && !bIsPlayer)
+            {
+                // Neutral ↔ Neutral: use the higher quality zone.
+                neutralByLetter.TryGetValue(letterA, out var planA);
+                neutralByLetter.TryGetValue(letterB, out var planB);
+                NeutralZoneQuality qa = planA?.Quality ?? NeutralZoneQuality.Medium;
+                NeutralZoneQuality qb = planB?.Quality ?? NeutralZoneQuality.Medium;
+                NeutralZoneQuality higher = (int)qa >= (int)qb ? qa : qb;
+                return ScaleBorderGuardValue(QualityGuardBase(higher), tuning);
+            }
+
+            // Player ↔ Neutral: use the neutral zone quality.
+            string neutralLetter = aIsPlayer ? letterB : letterA;
+            neutralByLetter.TryGetValue(neutralLetter, out var plan);
+            NeutralZoneQuality q = plan?.Quality ?? NeutralZoneQuality.Medium;
+            return ScaleBorderGuardValue(QualityGuardBase(q), tuning);
+        }
+
         private static double ScaleGuardMultiplier(double value, GenerationTuning tuning) =>
             Math.Round(value * tuning.NeutralStackStrengthMultiplier, 3, MidpointRounding.AwayFromZero);
 
@@ -952,7 +1001,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardValue = BorderGuardValue(fromLetter, toLetter, [playerLetter], neutralByLetter, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"tourney_guard_{fromLetter}_{toLetter}"
                 });
@@ -1025,7 +1074,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = hubName,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardValue = BorderGuardValue(playerLetter, spokeLetter, [playerLetter], neutralByLetter, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"tourney_hub_guard_{playerLetter}_{spokeLetter}"
                 });
@@ -1097,7 +1146,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardValue = BorderGuardValue(fromLetter, toLetter, [playerLetter], neutralByLetter, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"tourney_rnd_guard_{fromLetter}_{toLetter}"
                 });
@@ -1219,7 +1268,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardValue = BorderGuardValue(fromLetter, toLetter, [playerLetter], neutralByLetter, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"tourney_bal_guard_{fromLetter}_{toLetter}"
                 });
@@ -1285,7 +1334,7 @@ namespace Olden_Era___Template_Editor.Services
             }
 
             var connections = new List<Connection>();
-            connections.AddRange(BuildRingConnections(playerLetters, orderedLetters, tuning, isolate));
+            connections.AddRange(BuildRingConnections(playerLetters, orderedLetters, tuning, isolate, neutralByLetter));
             if (settings.RandomPortals)
                 connections.AddRange(BuildRandomPortalConnections(playerLetters, orderedLetters, tuning, settings.MaxPortalConnections));
 
@@ -1335,7 +1384,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardValue = BorderGuardValue(fromLetter, toLetter, playerLetters, neutralByLetter, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"rnd_guard_{fromLetter}_{toLetter}"
                 });
@@ -1434,7 +1483,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardValue = BorderGuardValue(fromLetter, toLetter, playerLetters, neutralByLetter, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"rnd_guard_{fromLetter}_{toLetter}"
                 });
@@ -1700,6 +1749,9 @@ namespace Olden_Era___Template_Editor.Services
             foreach (var letter in outerLetters)
             {
                 string outerZone = playerLetters.Contains(letter) ? $"Spawn-{letter}" : $"Neutral-{letter}";
+                int guardBase = BorderGuardValue(
+                    playerLetters.Count > 0 ? playerLetters[0] : letter, letter,
+                    playerLetters, neutralByLetter, tuning);
                 // Main named connection.
                 connections.Add(new Connection
                 {
@@ -1710,7 +1762,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = "Hub",
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardValue = guardBase,
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"hub_guard_{letter}"
                 });
@@ -1724,7 +1776,7 @@ namespace Olden_Era___Template_Editor.Services
                         GuardZone = "Hub",
                         GuardEscape = false,
                         SimTurnSquad = true,
-                        GuardValue = ScaleBorderGuardValue(30000, tuning),
+                        GuardValue = guardBase,
                         GuardWeeklyIncrement = 0.15,
                         GuardMatchGroup = $"hub_guard_{letter}_{e}"
                     });
@@ -1815,7 +1867,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardValue = BorderGuardValue(fromLetter, toLetter, playerLetters, neutralByLetter, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"chain_guard_{fromLetter}_{toLetter}"
                 });
@@ -1906,9 +1958,9 @@ namespace Olden_Era___Template_Editor.Services
                         GuardZone = neutralZone,
                         GuardEscape = false,
                         SimTurnSquad = true,
-                        GuardValue = ScaleBorderGuardValue(30000, tuning),
-                        GuardWeeklyIncrement = 0.15,
-                        GuardMatchGroup = $"web_guard_{playerLetters[i]}_{neutralLetter}"
+                        GuardValue = BorderGuardValue(playerLetters[i], neutralLetter, playerLetters, neutralByLetter, tuning),
+                            GuardWeeklyIncrement = 0.15,
+                            GuardMatchGroup = $"web_guard_{playerLetters[i]}_{neutralLetter}"
                     });
                 }
             }
@@ -1928,7 +1980,7 @@ namespace Olden_Era___Template_Editor.Services
                         GuardZone = $"Neutral-{neutrals[i]}",
                         GuardEscape = false,
                         SimTurnSquad = true,
-                        GuardValue = ScaleBorderGuardValue(20000, tuning),
+                        GuardValue = BorderGuardValue(neutrals[i], neutrals[next], playerLetters, neutralByLetter, tuning),
                         GuardWeeklyIncrement = 0.15,
                         GuardMatchGroup = $"nring_guard_{neutrals[i]}_{neutrals[next]}"
                     });
@@ -2242,7 +2294,7 @@ namespace Olden_Era___Template_Editor.Services
                         GuardZone = zoneA,
                         GuardEscape = false,
                         SimTurnSquad = true,
-                        GuardValue = ScaleBorderGuardValue(30000, tuning),
+                        GuardValue = BorderGuardValue(letterA, letterB, playerLetters, neutralByLetter, tuning),
                         GuardWeeklyIncrement = 0.15,
                         GuardMatchGroup = $"bridge_guard_{pair}"
                     });
@@ -2608,7 +2660,8 @@ namespace Olden_Era___Template_Editor.Services
         /// When <paramref name="isolatePlayers"/> is true, player–player adjacent pairs are skipped.
         /// </summary>
         private static IEnumerable<Connection> BuildRingConnections(
-            List<string> playerLetters, List<string> orderedLetters, GenerationTuning tuning, bool isolatePlayers = false)
+            List<string> playerLetters, List<string> orderedLetters, GenerationTuning tuning, bool isolatePlayers = false,
+            IReadOnlyDictionary<string, NeutralZonePlan>? neutralByLetter = null)
         {
             int count = orderedLetters.Count;
             if (count < 2) yield break;
@@ -2634,7 +2687,7 @@ namespace Olden_Era___Template_Editor.Services
                     GuardZone = fromZone,
                     GuardEscape = false,
                     SimTurnSquad = true,
-                    GuardValue = ScaleBorderGuardValue(30000, tuning),
+                    GuardValue = BorderGuardValue(fromLetter, toLetter, playerLetters, neutralByLetter, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"ring_guard_{fromLetter}_{toLetter}"
                 };

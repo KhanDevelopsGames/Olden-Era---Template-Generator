@@ -415,11 +415,17 @@ namespace Olden_Era___Template_Editor.Services
                 {
                     // Two-cluster tournament layout: map each cluster independently into
                     // its own canvas half (left / right) so there is always a visible gap.
-                    // Use a generous initial padding, then compute the true zoneRadius from
-                    // the actual minimum inter-node distance after placement.
-                    const double initPad = margin + 4.0;
-                    double halfDrawW = Width  / 2.0 - initPad;
-                    double drawH     = Height - 2 * initPad;
+                    //
+                    // Two-pass approach:
+                    //   Pass 1 — place with ZoneRadiusMax padding to get node positions, then
+                    //             derive the true zoneRadius from the minimum intra-cluster distance.
+                    //   Pass 2 — rescale positions so every circle edge respects zoneRadius worth
+                    //             of clearance at the canvas border AND the centre gap.
+
+                    // ── Pass 1: initial placement with maximum-radius padding ────────
+                    const double p1Pad = ZoneRadiusMax + margin;
+                    double p1HalfW = Width  / 2.0 - p1Pad;
+                    double p1DrawH = Height - 2.0 * p1Pad;
 
                     foreach (var (compIdx, comp) in gComponents.Select((c, ci) => (ci, c)))
                     {
@@ -430,13 +436,11 @@ namespace Olden_Era___Template_Editor.Services
                         double cSpanX = Math.Max(cMaxX - cMinX, 0.001);
                         double cSpanY = Math.Max(cMaxY - cMinY, 0.001);
 
-                        // Fill the half-canvas as much as possible — no edge-length cap.
-                        double localScale = Math.Min(halfDrawW / cSpanX, drawH / cSpanY);
+                        double localScale = Math.Min(p1HalfW / cSpanX, p1DrawH / cSpanY);
 
-                        // Centre each cluster in its half: cluster 0 → left, cluster 1 → right
                         double halfCx = compIdx == 0
-                            ? initPad + halfDrawW / 2.0
-                            : Width - initPad - halfDrawW / 2.0;
+                            ? p1Pad + p1HalfW / 2.0
+                            : Width - p1Pad - p1HalfW / 2.0;
                         double halfCy = Height / 2.0;
 
                         double rawCx = (cMinX + cMaxX) / 2.0;
@@ -450,11 +454,9 @@ namespace Olden_Era___Template_Editor.Services
                         }
                     }
 
-                    // Derive zoneRadius from the actual minimum intra-cluster inter-node
-                    // distance so circles fill the available space without overlapping.
-                    // Only consider pairs within the same cluster — cross-cluster distances
-                    // can be near zero (both clusters mapped to opposite canvas halves) and
-                    // would otherwise collapse the radius to the minimum floor.
+                    // ── Derive zoneRadius from actual minimum intra-cluster distance ──
+                    // Only consider pairs within the same cluster — cross-cluster
+                    // distances can be near zero and would collapse the radius.
                     double minDist = double.MaxValue;
                     foreach (var comp in gComponents)
                     {
@@ -471,7 +473,41 @@ namespace Olden_Era___Template_Editor.Services
                         gZoneRadius = Math.Min(ZoneRadiusMax, Math.Max((minDist - 26.0) / 2.0, 4.0));
                     _zoneRadius = gZoneRadius;
 
-                    // Positions are already correctly placed — skip Pass A+B and final fit.
+                    // ── Pass 2: rescale so circles don't bleed past border or centre ─
+                    // Required clearance on every side = zoneRadius + margin.
+                    // The two clusters are symmetric so we just shrink each cluster
+                    // uniformly about its own centre until it fits.
+                    double requiredPad = gZoneRadius + margin;
+                    double allowedHalfW = Width  / 2.0 - requiredPad;
+                    double allowedH     = Height - 2.0 * requiredPad;
+
+                    foreach (var (compIdx, comp) in gComponents.Select((c, ci) => (ci, c)))
+                    {
+                        double cxCanvas = compIdx == 0
+                            ? requiredPad + allowedHalfW / 2.0
+                            : Width - requiredPad - allowedHalfW / 2.0;
+                        double cyCanvas = Height / 2.0;
+
+                        // Current bounding box of this cluster in canvas space
+                        double curMinX = comp.Min(i => gPx[i]), curMaxX = comp.Max(i => gPx[i]);
+                        double curMinY = comp.Min(i => gPy[i]), curMaxY = comp.Max(i => gPy[i]);
+                        double curSpanX = Math.Max(curMaxX - curMinX, 0.001);
+                        double curSpanY = Math.Max(curMaxY - curMinY, 0.001);
+                        double curCx = (curMinX + curMaxX) / 2.0;
+                        double curCy = (curMinY + curMaxY) / 2.0;
+
+                        double fitScale = Math.Min(allowedHalfW / curSpanX, allowedH / curSpanY);
+                        // Only shrink, never grow — if it already fits, keep positions as-is.
+                        if (fitScale >= 1.0) fitScale = 1.0;
+
+                        foreach (int i in comp)
+                        {
+                            gPx[i] = cxCanvas + (gPx[i] - curCx) * fitScale;
+                            gPy[i] = cyCanvas + (gPy[i] - curCy) * fitScale;
+                        }
+                    }
+
+                    // Positions are correctly placed — skip Pass A+B and final fit.
                     var tcResult = new Dictionary<string, Point>(StringComparer.Ordinal);
                     for (int i = 0; i < n; i++)
                         tcResult[zones[i].Name] = new Point(gPx[i], gPy[i]);
