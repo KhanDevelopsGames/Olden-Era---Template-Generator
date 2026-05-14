@@ -596,9 +596,22 @@ namespace Olden_Era___Template_Editor.Services
                 remaining -= requiredInterior;
             }
 
-            int[] extras = BuildEvenGapCapacities(gapCount, remaining, minimumPerGap: 0);
-            for (int i = 0; i < gapCount; i++)
-                capacities[i] += extras[i];
+            // Distribute extra neutrals only into interior gaps so that the first and last
+            // positions in the chain are always player zones (not neutral zones).
+            int interiorGapCount = Math.Max(0, gapCount - 2);
+            if (interiorGapCount > 0)
+            {
+                int[] extras = BuildEvenGapCapacities(interiorGapCount, remaining, minimumPerGap: 0);
+                for (int i = 1; i < gapCount - 1; i++)
+                    capacities[i] += extras[i - 1];
+            }
+            else
+            {
+                // Degenerate case (0 or 1 player): fall back to distributing across all gaps.
+                int[] extras = BuildEvenGapCapacities(gapCount, remaining, minimumPerGap: 0);
+                for (int i = 0; i < gapCount; i++)
+                    capacities[i] += extras[i];
+            }
 
             var gaps = AssignNeutralZonesToGaps(neutralZones, capacities, preferInteriorGaps: true);
             var ordered = new List<string>(playerLetters.Count + neutralZones.Count);
