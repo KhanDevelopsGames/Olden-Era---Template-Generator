@@ -130,6 +130,56 @@ namespace Olden_Era___Template_Editor.Services
 
             var orderedZones = OrderZones(zones, variant?.Orientation?.ZeroAngleZone);
             var connections  = variant?.Connections ?? [];
+
+            // For any two-cluster tournament layout, render only the first cluster at
+            // full canvas size so the preview looks identical to a non-tournament layout.
+            // A "two-cluster" layout is one whose non-proximity/portal adjacency graph
+            // has exactly two connected components (each player's isolated cluster).
+            bool isTournamentSingleCluster = false;
+            {
+                int n0 = orderedZones.Count;
+                var nameIdx0 = new Dictionary<string, int>(StringComparer.Ordinal);
+                for (int i = 0; i < n0; i++) nameIdx0[orderedZones[i].Name] = i;
+                var adj0 = new HashSet<int>[n0];
+                for (int i = 0; i < n0; i++) adj0[i] = [];
+                foreach (var conn in connections)
+                {
+                    if (string.Equals(conn.ConnectionType, "Proximity", StringComparison.Ordinal)) continue;
+                    if (string.Equals(conn.ConnectionType, "Portal",    StringComparison.Ordinal)) continue;
+                    if (!nameIdx0.TryGetValue(conn.From, out int ca)) continue;
+                    if (!nameIdx0.TryGetValue(conn.To,   out int cb)) continue;
+                    adj0[ca].Add(cb); adj0[cb].Add(ca);
+                }
+                var compId0 = new int[n0];
+                Array.Fill(compId0, -1);
+                var components0 = new List<List<int>>();
+                for (int start = 0; start < n0; start++)
+                {
+                    if (compId0[start] >= 0) continue;
+                    var comp = new List<int>();
+                    var bq   = new Queue<int>();
+                    bq.Enqueue(start); compId0[start] = components0.Count;
+                    while (bq.Count > 0)
+                    {
+                        int u = bq.Dequeue(); comp.Add(u);
+                        foreach (int v in adj0[u])
+                            if (compId0[v] < 0) { compId0[v] = components0.Count; bq.Enqueue(v); }
+                    }
+                    components0.Add(comp);
+                }
+                if (components0.Count == 2)
+                {
+                    isTournamentSingleCluster = true;
+                    var firstCluster = new HashSet<int>(components0[0]);
+                    orderedZones = orderedZones
+                        .Where((_, i) => firstCluster.Contains(i))
+                        .ToList();
+                    connections = connections
+                        .Where(c => orderedZones.Any(z => z.Name == c.From))
+                        .ToList();
+                }
+            }
+
             var positions    = LayoutZones(orderedZones, connections, topology);
 
             // Draw connections first (below zones)
@@ -140,7 +190,7 @@ namespace Olden_Era___Template_Editor.Services
             foreach (Zone zone in orderedZones.Where(z => !z.Name.StartsWith("Spawn-", StringComparison.Ordinal)))
                 DrawZone(dc, zone, positions[zone.Name]);
             foreach (Zone zone in orderedZones.Where(z => z.Name.StartsWith("Spawn-", StringComparison.Ordinal)))
-                DrawZone(dc, zone, positions[zone.Name]);
+                DrawZone(dc, zone, positions[zone.Name], playerIcon: isTournamentSingleCluster);
         }
 
         // ── Zone ordering / layout ───────────────────────────────────────────────
@@ -230,11 +280,24 @@ namespace Olden_Era___Template_Editor.Services
 
                     if (bComponents.Count == 2 && zones.All(z => z.GeneratorRing.HasValue))
                     {
-                        // ── Two-cluster tournament balanced layout (ring-snap per half) ─
-                        // Each cluster occupies one canvas half and is snapped to clean
-                        // concentric rings, identical to the single-cluster logic.
+                        // ── Two-cluster tournament balanced layout ─────────────────
+                        // Layout on a 700×700 canvas:
+                        //   [margin][←──── cluster0 ────→][gap][←──── cluster1 ────→][margin]
+                        //
+                        // Each cluster's "extent" R = outerRing + zoneRadius.
+                        // Total width: 2*margin + 4*R + gap  ≤  Width
+                        //   → R ≤ (Width - 2*margin - gap) / 4
+                        // Also: R ≤ Height/2 - margin  (vertical fit)
+                        const double clusterGap = 20;
+                        double maxExtent = Math.Min(
+                            (Width  - 2.0 * margin - clusterGap) / 4.0,
+                            Height / 2.0 - margin);
 
-                        // Dense ring mapping: tier 0 (player, outermost) → highest ring index.
+                        // Cluster centres are fixed at margin + maxExtent from each edge.
+                        double cx0 = margin + maxExtent;
+                        double cx1 = Width  - margin - maxExtent;
+                        double cy2 = Height / 2.0;
+
                         var presentTiers2 = zones
                             .Select(z => z.GeneratorRing!.Value)
                             .Distinct()
@@ -245,54 +308,49 @@ namespace Olden_Era___Template_Editor.Services
                             .Select((tier, ri) => (tier, ri: ringCount2 - 1 - ri))
                             .ToDictionary(x => x.tier, x => x.ri);
 
-                        // Each cluster gets half the canvas width; compute max draw radius.
-                        double halfW2  = Width / 2.0;
-                        double tDrawR2 = Math.Min(halfW2, (double)Height) / 2.0 - margin - ZoneRadiusMax;
-
-                        // Per-cluster ring zone count (both clusters are identical in structure).
                         var clusterRingCounts = Enumerable.Range(0, ringCount2)
                             .Select(r => bComponents[0].Count(i => tierToRing2[zones[i].GeneratorRing!.Value] == r))
                             .ToArray();
 
+                        // availableR(zr) = maxExtent - zr  (space for ring radii after subtracting zone circles).
+                        // Natural ring spacing divides that space evenly.
                         double[] AssignRingRadii2(double zr)
                         {
-                            double mc = 2.0 * zr + minGap;
-                            var radii = new double[ringCount2];
+                            double mc         = 2.0 * zr + minGap;
+                            double availableR = maxExtent - zr;
+                            var radii         = new double[ringCount2];
                             for (int r = 0; r < ringCount2; r++)
                             {
-                                int cnt   = clusterRingCounts[r];
-                                double natural    = tDrawR2 * (r + 1.0) / ringCount2;
+                                int cnt           = clusterRingCounts[r];
+                                double natural    = availableR * (r + 1.0) / ringCount2;
                                 double withinRing = cnt >= 2
                                     ? mc / (2.0 * Math.Sin(Math.PI / cnt))
                                     : (cnt == 1 && r > 0 ? mc : 0.0);
                                 double afterPrev  = r > 0 ? radii[r - 1] + mc : 0.0;
-                                radii[r] = Math.Max(natural, Math.Max(withinRing, afterPrev));
+                                radii[r]          = Math.Max(natural, Math.Max(withinRing, afterPrev));
                             }
                             return radii;
                         }
 
+                        // Binary-search the largest zone radius where outerRing + zr ≤ maxExtent.
                         double lo2 = 8.0, hi2 = ZoneRadiusMax;
                         for (int iter = 0; iter < 32; iter++)
                         {
-                            double mid2 = (lo2 + hi2) / 2.0;
-                            if (AssignRingRadii2(mid2)[ringCount2 - 1] <= tDrawR2) lo2 = mid2;
-                            else hi2 = mid2;
+                            double mid = (lo2 + hi2) / 2.0;
+                            var r2    = AssignRingRadii2(mid);
+                            if (r2[ringCount2 - 1] + mid <= maxExtent) lo2 = mid; else hi2 = mid;
                         }
-                        double tZoneRadius = Math.Max(lo2, 8.0);
-                        _zoneRadius = tZoneRadius;
+                        double tZoneRadius  = Math.Max(lo2, 8.0);
+                        _zoneRadius         = tZoneRadius;
                         double[] tRingRadii = AssignRingRadii2(tZoneRadius);
 
                         var tResult = new Dictionary<string, Point>(StringComparer.Ordinal);
 
                         foreach (var (compIdx, comp) in bComponents.Select((c, ci) => (ci, c)))
                         {
-                            // Centre of this cluster's canvas half.
-                            double cx2 = compIdx == 0 ? halfW2 / 2.0 : halfW2 + halfW2 / 2.0;
-                            double cy2 = Height / 2.0;
-
-                            // Centroid of raw positions for this cluster (for angle ordering).
-                            double rawCxC = comp.Average(i => zones[i].GeneratorPosition!.Value.X);
-                            double rawCyC = comp.Average(i => zones[i].GeneratorPosition!.Value.Y);
+                            double cxC   = compIdx == 0 ? cx0 : cx1;
+                            double rawCx = comp.Average(i => zones[i].GeneratorPosition!.Value.X);
+                            double rawCy = comp.Average(i => zones[i].GeneratorPosition!.Value.Y);
 
                             for (int r = 0; r < ringCount2; r++)
                             {
@@ -302,31 +360,30 @@ namespace Olden_Era___Template_Editor.Services
                                 int cnt2 = group2.Count;
                                 if (cnt2 == 0) continue;
 
-                                double canvasR2 = tRingRadii[r];
+                                double ringR = tRingRadii[r];
 
-                                // Innermost ring with a single zone → place at cluster centre.
                                 if (cnt2 == 1 && r == 0)
                                 {
-                                    tResult[zones[group2[0]].Name] = new Point(cx2, cy2);
+                                    tResult[zones[group2[0]].Name] = new Point(cxC, cy2);
                                     continue;
                                 }
 
                                 var sortedByAngle2 = group2
                                     .OrderBy(i => Math.Atan2(
-                                        zones[i].GeneratorPosition!.Value.Y - rawCyC,
-                                        zones[i].GeneratorPosition!.Value.X - rawCxC))
+                                        zones[i].GeneratorPosition!.Value.Y - rawCy,
+                                        zones[i].GeneratorPosition!.Value.X - rawCx))
                                     .ToList();
 
                                 double firstAngle2 = Math.Atan2(
-                                    zones[sortedByAngle2[0]].GeneratorPosition!.Value.Y - rawCyC,
-                                    zones[sortedByAngle2[0]].GeneratorPosition!.Value.X - rawCxC);
+                                    zones[sortedByAngle2[0]].GeneratorPosition!.Value.Y - rawCy,
+                                    zones[sortedByAngle2[0]].GeneratorPosition!.Value.X - rawCx);
 
                                 for (int j = 0; j < cnt2; j++)
                                 {
                                     double angle2 = firstAngle2 + 2.0 * Math.PI * j / cnt2;
                                     tResult[zones[sortedByAngle2[j]].Name] =
-                                        new Point(cx2 + Math.Cos(angle2) * canvasR2,
-                                                  cy2 + Math.Sin(angle2) * canvasR2);
+                                        new Point(cxC + Math.Cos(angle2) * ringR,
+                                                  cy2  + Math.Sin(angle2) * ringR);
                                 }
                             }
                         }
@@ -1218,7 +1275,10 @@ namespace Olden_Era___Template_Editor.Services
             const double minGap = 6;
             double ringRadius0  = Width / 2.0 - margin;
 
-            Zone? hub   = zones.FirstOrDefault(z => string.Equals(z.Name, "Hub", StringComparison.Ordinal));
+            // Recognise both "Hub" (normal) and "Hub-*" (tournament single-cluster preview)
+            // as the hub so it is always placed in the centre.
+            Zone? hub   = zones.FirstOrDefault(z => string.Equals(z.Name, "Hub", StringComparison.Ordinal)
+                                                  || z.Name.StartsWith("Hub-", StringComparison.Ordinal));
             var outer   = hub is null ? zones : zones.Where(z => z != hub).ToList();
             int outerN  = Math.Max(1, outer.Count);
 
@@ -1916,7 +1976,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Zone drawing ─────────────────────────────────────────────────────────
 
-        private static void DrawZone(DrawingContext dc, Zone zone, Point pt)
+        private static void DrawZone(DrawingContext dc, Zone zone, Point pt, bool playerIcon = false)
         {
             bool isSpawn    = zone.Name.StartsWith("Spawn-",   StringComparison.Ordinal);
             bool isHub      = string.Equals(zone.Name, "Hub",  StringComparison.Ordinal)
@@ -1956,7 +2016,10 @@ namespace Olden_Era___Template_Editor.Services
             }
             else if (isSpawn)
             {
-                DrawPlayerNumber(dc, zone, pt, drawRadius);
+                if (playerIcon)
+                    DrawPlayerIcon(dc, pt, drawRadius);
+                else
+                    DrawPlayerNumber(dc, zone, pt, drawRadius);
                 if (castles > 1)
                     DrawCastleBadge(dc, pt, drawRadius, castles);
             }
@@ -2117,6 +2180,27 @@ namespace Olden_Era___Template_Editor.Services
 
             var brush = new SolidColorBrush(Color.FromRgb(160, 230, 170));
             DrawText(dc, label, centre, r * 1.05, brush, centered: true, FontWeights.Bold);
+        }
+
+        // ── Player icon (person silhouette, no number) ──────────────────────────
+        // Drawn centred in the zone circle using a head circle + body trapezoid.
+
+        private static void DrawPlayerIcon(DrawingContext dc, Point centre, double r)
+        {
+            var brush = new SolidColorBrush(Color.FromRgb(160, 230, 170));
+
+            // Head: small circle above centre
+            double headR  = r * 0.28;
+            double headCy = centre.Y - r * 0.26;
+            dc.DrawEllipse(brush, null, new Point(centre.X, headCy), headR, headR);
+
+            // Body: rounded rectangle below the head
+            double bodyW   = r * 0.52;
+            double bodyTop = headCy + headR + r * 0.04;
+            double bodyH   = r * 0.44;
+            dc.DrawRoundedRectangle(brush, null,
+                new Rect(centre.X - bodyW / 2, bodyTop, bodyW, bodyH),
+                bodyW * 0.3, bodyW * 0.3);
         }
 
         // ── Helpers ──────────────────────────────────────────────────────────────

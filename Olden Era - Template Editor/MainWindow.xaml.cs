@@ -626,6 +626,37 @@ namespace Olden_Era___Template_Editor
                 return false;
             }
 
+            if (selectedVictoryCondition == "win_condition_6")
+            {
+                // Each neutral zone type must be divisible by 2 so both players get an
+                // identical cluster. Check per-tier counts in advanced mode, total in simple mode.
+                if (_advancedZoneSettings)
+                {
+                    var oddTiers = new System.Collections.Generic.List<string>();
+                    if ((int)SldNeutralLowNoCastle.Value    % 2 != 0) oddTiers.Add("Low (no castle)");
+                    if ((int)SldNeutralLowCastle.Value      % 2 != 0) oddTiers.Add("Low (castle)");
+                    if ((int)SldNeutralMediumNoCastle.Value % 2 != 0) oddTiers.Add("Medium (no castle)");
+                    if ((int)SldNeutralMediumCastle.Value   % 2 != 0) oddTiers.Add("Medium (castle)");
+                    if ((int)SldNeutralHighNoCastle.Value   % 2 != 0) oddTiers.Add("High (no castle)");
+                    if ((int)SldNeutralHighCastle.Value     % 2 != 0) oddTiers.Add("High (castle)");
+                    if (oddTiers.Count > 0)
+                    {
+                        SetValidationError($"Tournament mode requires each neutral zone type to be divisible by 2 for a fair layout. Odd count: {string.Join(", ", oddTiers)}.");
+                        BtnPreview.IsEnabled = false;
+                        return false;
+                    }
+                }
+                else
+                {
+                    if ((int)SldNeutral.Value % 2 != 0)
+                    {
+                        SetValidationError("Tournament mode requires the total number of neutral zones to be divisible by 2 for a fair layout.");
+                        BtnPreview.IsEnabled = false;
+                        return false;
+                    }
+                }
+            }
+
             if ((int)SldBorderGuardStrength.Value > 100)
                 warnings.Add(new ValidationMessage("Border/portal guard strength above 100% may cause issues for easy and medium AI enemies — guards can become too strong for them to progress through.", warnBrush));
 
