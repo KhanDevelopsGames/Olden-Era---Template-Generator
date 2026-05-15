@@ -1663,10 +1663,13 @@ namespace Olden_Era___Template_Editor.Services
 
             // Same-ring: connect each zone to its two circle-neighbors.
             // Player ring: skip player↔player — EnsurePlayerZonesConnected handles that.
+            // Skip rings with fewer than 3 zones: with n=2 the only "ring" edge is a
+            // diameter (180° chord) that tunnels straight through all inner rings, which
+            // is geographically wrong.  Those zones are reachable via cross-ring edges.
             foreach (var (tier, sorted) in tierSorted)
             {
                 int n = sorted.Count;
-                if (n < 2) continue;
+                if (n < 3) continue;
                 for (int j = 0; j < n; j++)
                 {
                     int a = sorted[j], b = sorted[(j + 1) % n];
