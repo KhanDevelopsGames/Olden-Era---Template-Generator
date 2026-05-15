@@ -16,6 +16,14 @@ namespace OldenEraTemplateEditor.Models
         [JsonIgnore]
         public (double X, double Y)? GeneratorPosition { get; set; }
 
+        /// <summary>
+        /// For balanced (concentric-ring) layouts, the exact ring index assigned by the generator
+        /// (0 = outermost player ring, increasing toward center). Not serialised — used only by
+        /// the preview renderer so it can snap zones to the correct ring without guessing from distances.
+        /// </summary>
+        [JsonIgnore]
+        public int? GeneratorRing { get; set; }
+
         [JsonPropertyName("size")]
         public double? Size { get; set; }
 

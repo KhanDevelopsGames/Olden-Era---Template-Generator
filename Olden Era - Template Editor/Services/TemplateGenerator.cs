@@ -1231,7 +1231,7 @@ namespace Olden_Era___Template_Editor.Services
                 .Select(l => ZoneQualityGroup(l, singlePlayerList, neutralByLetter))
                 .ToHashSet();
 
-            // Pre-compute which same-tier pairs are ring-adjacent (circle neighbors by angle).
+            // Pre-compute allowed pairs — same approach as standard balanced variant.
             var tbalTierIndices = new Dictionary<int, List<int>>();
             for (int i = 0; i < orderedLetters.Count; i++)
             {
@@ -1239,18 +1239,71 @@ namespace Olden_Era___Template_Editor.Services
                 if (!tbalTierIndices.TryGetValue(tier, out var lst)) tbalTierIndices[tier] = lst = [];
                 lst.Add(i);
             }
-            var tbalRingAdjacentPairs = new HashSet<(int, int)>();
+
+            var tbalRingAdjacentPairs    = new HashSet<(int, int)>();
+            var tbalCrossRingAllowedPairs = new HashSet<(int, int)>();
+            var tbalSortedPresentTiers   = tbalTierIndices.Keys.OrderBy(t => t).ToList();
+
             foreach (var (_, indices) in tbalTierIndices)
             {
                 if (indices.Count < 2) continue;
-                var sortedByAngle = indices
+                var sorted = indices
                     .OrderBy(i => Math.Atan2(pos[i].Y - 0.5, pos[i].X - 0.5))
                     .ToList();
-                int n = sortedByAngle.Count;
+                int n = sorted.Count;
                 for (int j = 0; j < n; j++)
                 {
-                    int a = sortedByAngle[j], b = sortedByAngle[(j + 1) % n];
+                    int a = sorted[j], b = sorted[(j + 1) % n];
                     tbalRingAdjacentPairs.Add((Math.Min(a, b), Math.Max(a, b)));
+                }
+            }
+
+            static double TbalAngleDist(double a, double b)
+            {
+                double d = Math.Abs(a - b) % (2 * Math.PI);
+                return d > Math.PI ? 2 * Math.PI - d : d;
+            }
+
+            for (int ti = 0; ti + 1 < tbalSortedPresentTiers.Count; ti++)
+            {
+                var outerList = tbalTierIndices[tbalSortedPresentTiers[ti]];
+                var innerList = tbalTierIndices[tbalSortedPresentTiers[ti + 1]];
+                if (outerList.Count == 0 || innerList.Count == 0) continue;
+
+                var innerSorted = innerList
+                    .OrderBy(i => Math.Atan2(pos[i].Y - 0.5, pos[i].X - 0.5))
+                    .ToList();
+                double[] innerAngles = innerSorted
+                    .Select(i => Math.Atan2(pos[i].Y - 0.5, pos[i].X - 0.5)).ToArray();
+
+                var innerHasConnection = new bool[innerSorted.Count];
+
+                foreach (int outerIdx in outerList)
+                {
+                    double angle = Math.Atan2(pos[outerIdx].Y - 0.5, pos[outerIdx].X - 0.5);
+
+                    int prev = innerSorted.Count - 1;
+                    for (int k = 0; k < innerSorted.Count; k++)
+                        if (innerAngles[k] <= angle) prev = k;
+                    int next = (prev + 1) % innerSorted.Count;
+
+                    tbalCrossRingAllowedPairs.Add((Math.Min(outerIdx, innerSorted[prev]), Math.Max(outerIdx, innerSorted[prev])));
+                    innerHasConnection[prev] = true;
+                    if (innerSorted.Count > 1)
+                    {
+                        tbalCrossRingAllowedPairs.Add((Math.Min(outerIdx, innerSorted[next]), Math.Max(outerIdx, innerSorted[next])));
+                        innerHasConnection[next] = true;
+                    }
+                }
+
+                for (int ii = 0; ii < innerSorted.Count; ii++)
+                {
+                    if (innerHasConnection[ii]) continue;
+                    double angle = innerAngles[ii];
+                    int best = outerList
+                        .Select((idx, oi) => (oi, diff: TbalAngleDist(angle, Math.Atan2(pos[idx].Y - 0.5, pos[idx].X - 0.5))))
+                        .OrderBy(x => x.diff).First().oi;
+                    tbalCrossRingAllowedPairs.Add((Math.Min(innerSorted[ii], outerList[best]), Math.Max(innerSorted[ii], outerList[best])));
                 }
             }
 
@@ -1264,21 +1317,22 @@ namespace Olden_Era___Template_Editor.Services
                 int lo = Math.Min(ga, gb), hi = Math.Max(ga, gb);
                 // Same-ring zones: only allow ring-adjacent (circle-neighbor) connections.
                 if (hi == lo) return tbalRingAdjacentPairs.Contains((Math.Min(p.A, p.B), Math.Max(p.A, p.B)));
-                if (hi - lo <= 2) return true;
+                // Cross-ring zones: only allow angularly bracketing connections.
+                if (hi - lo <= 2) return tbalCrossRingAllowedPairs.Contains((Math.Min(p.A, p.B), Math.Max(p.A, p.B)));
                 for (int g = lo + 1; g < hi; g++)
                     if (presentGroups.Contains(g)) return false;
                 return true;
             }).ToList();
 
-            // Guarantee every ring-adjacent pair exists — Delaunay may miss some
-            // when zones are nearly co-circular, causing gaps in the circle.
+            // Guarantee all ring-adjacent and cross-ring bracket pairs exist.
             // Never force a player↔player connection; those are handled separately.
             var tbalExistingPairSet = pairs.ToHashSet();
-            foreach (var rp in tbalRingAdjacentPairs)
+            foreach (var rp in tbalRingAdjacentPairs.Concat(tbalCrossRingAllowedPairs))
             {
                 if (tbalExistingPairSet.Contains(rp)) continue;
                 if (orderedLetters[rp.Item1] == playerLetter && orderedLetters[rp.Item2] == playerLetter) continue;
                 pairs.Add(rp);
+                tbalExistingPairSet.Add(rp);
             }
 
             int count = orderedLetters.Count;
@@ -1322,6 +1376,7 @@ namespace Olden_Era___Template_Editor.Services
                     zone = BuildNeutralZone(neutralByLetter[letter], myConns,
                         settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
                 zone.GeneratorPosition = pos[i];
+                zone.GeneratorRing = ZoneTierRank(letter, singlePlayerList, neutralByLetter);
                 zones.Add(zone);
             }
 
@@ -1454,25 +1509,21 @@ namespace Olden_Era___Template_Editor.Services
         private static Variant BuildVariantBalanced(GeneratorSettings settings, List<string> playerLetters, List<NeutralZonePlan> neutralZones, GenerationTuning tuning, string? holdCityNeutralLetter = null)
         {
             var neutralByLetter = neutralZones.ToDictionary(zone => zone.Letter);
-            // Place zones on concentric rings ordered by quality tier.
             var allLetters = BuildBalancedRingLetters(playerLetters, neutralZones, minNeutralZonesBetweenPlayers: 0);
             var pos = BuildBalancedRandomPositions(allLetters, playerLetters, neutralByLetter);
 
-            var pairs = DelaunayEdges(pos);
-
-            // Strip any edge that skips a quality tier.
-            // Allowed: player↔low, low↔medium, medium↔high (adjacent tiers only).
-            // If an intermediate tier is entirely absent from the map the skip is permitted
-            // so the graph remains connectable. EnsureFullConnectivity handles any gaps.
             var playerSet = playerLetters.ToHashSet(StringComparer.Ordinal);
-            // Use quality groups for the adjacency filter so that plain and city variants
-            // of the same quality can freely border each other and the adjacent quality tier.
-            var presentGroups = allLetters
-                .Select(l => ZoneQualityGroup(l, playerLetters, neutralByLetter))
-                .ToHashSet();
 
-            // Pre-compute which same-tier pairs are ring-adjacent (circle neighbors by angle).
-            // This ensures same-ring zones only connect around the circle, not every-to-every.
+            // Build the connection graph explicitly from the ring structure — no Delaunay.
+            // Rules:
+            //   Same-ring  : each zone connects to its two circle-neighbors (ring).
+            //   Cross-ring : each zone on ring A connects to its single nearest zone
+            //                on ring B (by angular distance), applied in both directions
+            //                and deduplicated. This gives a symmetric, balanced bipartite
+            //                ladder between every pair of adjacent rings.
+            var pairs = new HashSet<(int, int)>();
+
+            // Group zone indices by tier rank, sorted by angle.
             var tierIndices = new Dictionary<int, List<int>>();
             for (int i = 0; i < allLetters.Count; i++)
             {
@@ -1480,48 +1531,79 @@ namespace Olden_Era___Template_Editor.Services
                 if (!tierIndices.TryGetValue(tier, out var lst)) tierIndices[tier] = lst = [];
                 lst.Add(i);
             }
-            var ringAdjacentPairs = new HashSet<(int, int)>();
-            foreach (var (_, indices) in tierIndices)
+            var sortedPresentTiers = tierIndices.Keys.OrderBy(t => t).ToList();
+
+            // Helper: angular distance on the circle [-π, π] → [0, π].
+            static double AngDist(double a, double b)
             {
-                if (indices.Count < 2) continue;
-                var sortedByAngle = indices
-                    .OrderBy(i => Math.Atan2(pos[i].Y - 0.5, pos[i].X - 0.5))
-                    .ToList();
-                int n = sortedByAngle.Count;
+                double d = Math.Abs(a - b) % (2 * Math.PI);
+                return d > Math.PI ? 2 * Math.PI - d : d;
+            }
+
+            // Sort each tier's indices by angle once.
+            var tierSorted  = new Dictionary<int, List<int>>();
+            var tierAngles  = new Dictionary<int, double[]>();
+            foreach (var (tier, indices) in tierIndices)
+            {
+                var s = indices.OrderBy(i => Math.Atan2(pos[i].Y - 0.5, pos[i].X - 0.5)).ToList();
+                tierSorted[tier] = s;
+                tierAngles[tier] = s.Select(i => Math.Atan2(pos[i].Y - 0.5, pos[i].X - 0.5)).ToArray();
+            }
+
+            // Same-ring: connect each zone to its two circle-neighbors.
+            // Player ring: skip player↔player — EnsurePlayerZonesConnected handles that.
+            foreach (var (tier, sorted) in tierSorted)
+            {
+                int n = sorted.Count;
+                if (n < 2) continue;
                 for (int j = 0; j < n; j++)
                 {
-                    int a = sortedByAngle[j], b = sortedByAngle[(j + 1) % n];
-                    ringAdjacentPairs.Add((Math.Min(a, b), Math.Max(a, b)));
+                    int a = sorted[j], b = sorted[(j + 1) % n];
+                    bool bothPlayers = playerSet.Contains(allLetters[a]) && playerSet.Contains(allLetters[b]);
+                    if (bothPlayers) continue;
+                    pairs.Add((Math.Min(a, b), Math.Max(a, b)));
                 }
             }
 
-            pairs = pairs.Where(p =>
+            // Cross-ring: bidirectional nearest-neighbor between adjacent tiers.
+            for (int ti = 0; ti + 1 < sortedPresentTiers.Count; ti++)
             {
-                string la = allLetters[p.A], lb = allLetters[p.B];
-                // Always strip player↔player edges from Delaunay in balanced mode.
-                // EnsureFullConnectivity will re-add them only if truly unavoidable.
-                if (playerSet.Contains(la) && playerSet.Contains(lb)) return false;
-                int ga = ZoneQualityGroup(la, playerLetters, neutralByLetter);
-                int gb = ZoneQualityGroup(lb, playerLetters, neutralByLetter);
-                int lo = Math.Min(ga, gb), hi = Math.Max(ga, gb);
-                // Same-ring zones: only allow ring-adjacent (circle-neighbor) connections.
-                if (hi == lo) return ringAdjacentPairs.Contains((Math.Min(p.A, p.B), Math.Max(p.A, p.B)));
-                if (hi - lo <= 2) return true;
-                // Allow a group skip only when every group in between is absent.
-                for (int g = lo + 1; g < hi; g++)
-                    if (presentGroups.Contains(g)) return false;
-                return true;
-            }).ToList();
+                int outerTier = sortedPresentTiers[ti];
+                int innerTier = sortedPresentTiers[ti + 1];
+                var outerSorted = tierSorted[outerTier];
+                var innerSorted = tierSorted[innerTier];
+                var outerAngles = tierAngles[outerTier];
+                var innerAngles = tierAngles[innerTier];
 
-            // Guarantee every ring-adjacent pair exists — Delaunay may miss some
-            // when zones are nearly co-circular, causing gaps in the circle.
-            // Never force a player↔player connection; those are handled separately.
-            var existingPairSet = pairs.ToHashSet();
-            foreach (var rp in ringAdjacentPairs)
-            {
-                if (existingPairSet.Contains(rp)) continue;
-                if (playerSet.Contains(allLetters[rp.Item1]) && playerSet.Contains(allLetters[rp.Item2])) continue;
-                pairs.Add(rp);
+                // Each outer zone → its nearest inner zone.
+                for (int oi = 0; oi < outerSorted.Count; oi++)
+                {
+                    int best = 0;
+                    double bestD = double.MaxValue;
+                    for (int ii = 0; ii < innerSorted.Count; ii++)
+                    {
+                        double d = AngDist(outerAngles[oi], innerAngles[ii]);
+                        if (d < bestD) { bestD = d; best = ii; }
+                    }
+                    int a = outerSorted[oi], b = innerSorted[best];
+                    bool bothPlayers = playerSet.Contains(allLetters[a]) && playerSet.Contains(allLetters[b]);
+                    if (!bothPlayers) pairs.Add((Math.Min(a, b), Math.Max(a, b)));
+                }
+
+                // Each inner zone → its nearest outer zone.
+                for (int ii = 0; ii < innerSorted.Count; ii++)
+                {
+                    int best = 0;
+                    double bestD = double.MaxValue;
+                    for (int oi = 0; oi < outerSorted.Count; oi++)
+                    {
+                        double d = AngDist(innerAngles[ii], outerAngles[oi]);
+                        if (d < bestD) { bestD = d; best = oi; }
+                    }
+                    int a = innerSorted[ii], b = outerSorted[best];
+                    bool bothPlayers = playerSet.Contains(allLetters[a]) && playerSet.Contains(allLetters[b]);
+                    if (!bothPlayers) pairs.Add((Math.Min(a, b), Math.Max(a, b)));
+                }
             }
 
             int count = allLetters.Count;
@@ -1570,8 +1652,9 @@ namespace Olden_Era___Template_Editor.Services
                     zone = BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
                 else
                     zone = BuildNeutralZone(neutralByLetter[letter], myConns, settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning, letter == holdCityNeutralLetter);
-                // Stamp the Delaunay position so the preview can reproduce the exact geometry.
+                // Stamp the position and tier so the preview can reproduce the exact geometry.
                 zone.GeneratorPosition = pos[i];
+                zone.GeneratorRing = ZoneTierRank(letter, playerLetters, neutralByLetter);
                 zones.Add(zone);
             }
 

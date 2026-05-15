@@ -238,28 +238,58 @@ namespace Olden_Era___Template_Editor.Services
                     }
                     else
                     {
-                        // ── Standard single-cluster balanced layout (original logic) ───
+                        // ── Standard single-cluster balanced layout ────────────────
+                        // Use the GeneratorRing value stamped by the generator when
+                        // available; fall back to distance-based detection otherwise.
+                        bool hasRingData = zones.All(z => z.GeneratorRing.HasValue);
+
+                        int[] ringLabel;
+                        int ringCount;
+
+                        if (hasRingData)
+                        {
+                            // Map the sparse tier ranks (0,1,3,5…) to dense ring indices
+                            // (0,1,2,3…) ordered from outermost to innermost.
+                            var presentTiers = zones
+                                .Select(z => z.GeneratorRing!.Value)
+                                .Distinct()
+                                .OrderBy(t => t)
+                                .ToList();
+                            var tierToRing = presentTiers
+                                .Select((tier, ri) => (tier, ri: presentTiers.Count - 1 - ri))
+                                .ToDictionary(x => x.tier, x => x.ri);
+
+                            ringLabel = zones.Select(z => tierToRing[z.GeneratorRing!.Value]).ToArray();
+                            ringCount = presentTiers.Count;
+                        }
+                        else
+                        {
+                            // Legacy fallback: infer rings from distance gaps.
+                            double rawCx0f = zones.Average(z => z.GeneratorPosition!.Value.X);
+                            double rawCy0f = zones.Average(z => z.GeneratorPosition!.Value.Y);
+                            var rawDistF = zones.Select(z =>
+                            {
+                                double dx = z.GeneratorPosition!.Value.X - rawCx0f;
+                                double dy = z.GeneratorPosition!.Value.Y - rawCy0f;
+                                return Math.Sqrt(dx * dx + dy * dy);
+                            }).ToArray();
+
+                            var sortedByDist = Enumerable.Range(0, n).OrderBy(i => rawDistF[i]).ToArray();
+                            ringLabel = new int[n];
+                            int rc = 0;
+                            ringLabel[sortedByDist[0]] = 0;
+                            for (int k = 1; k < n; k++)
+                            {
+                                if (rawDistF[sortedByDist[k]] - rawDistF[sortedByDist[k - 1]] > ringGapThreshold)
+                                    rc++;
+                                ringLabel[sortedByDist[k]] = rc;
+                            }
+                            ringCount = rc + 1;
+                        }
+
+                        // rawCx0 / rawCy0 used below for angle ordering — always compute.
                         double rawCx0 = zones.Average(z => z.GeneratorPosition!.Value.X);
                         double rawCy0 = zones.Average(z => z.GeneratorPosition!.Value.Y);
-                        var rawDist = zones.Select(z =>
-                        {
-                            double dx = z.GeneratorPosition!.Value.X - rawCx0;
-                            double dy = z.GeneratorPosition!.Value.Y - rawCy0;
-                            return Math.Sqrt(dx * dx + dy * dy);
-                        }).ToArray();
-
-                        var sortedByDist = Enumerable.Range(0, n).OrderBy(i => rawDist[i]).ToArray();
-
-                        var ringLabel = new int[n];
-                        int ringCount = 0;
-                        ringLabel[sortedByDist[0]] = 0;
-                        for (int k = 1; k < n; k++)
-                        {
-                            if (rawDist[sortedByDist[k]] - rawDist[sortedByDist[k - 1]] > ringGapThreshold)
-                                ringCount++;
-                            ringLabel[sortedByDist[k]] = ringCount;
-                        }
-                        ringCount++;
 
                         if (ringCount >= 2)
                         {
