@@ -1270,6 +1270,17 @@ namespace Olden_Era___Template_Editor.Services
                 return true;
             }).ToList();
 
+            // Guarantee every ring-adjacent pair exists — Delaunay may miss some
+            // when zones are nearly co-circular, causing gaps in the circle.
+            // Never force a player↔player connection; those are handled separately.
+            var tbalExistingPairSet = pairs.ToHashSet();
+            foreach (var rp in tbalRingAdjacentPairs)
+            {
+                if (tbalExistingPairSet.Contains(rp)) continue;
+                if (orderedLetters[rp.Item1] == playerLetter && orderedLetters[rp.Item2] == playerLetter) continue;
+                pairs.Add(rp);
+            }
+
             int count = orderedLetters.Count;
             var connsByZone = Enumerable.Range(0, count).ToDictionary(i => i, _ => new List<string>());
 
@@ -1501,6 +1512,17 @@ namespace Olden_Era___Template_Editor.Services
                     if (presentGroups.Contains(g)) return false;
                 return true;
             }).ToList();
+
+            // Guarantee every ring-adjacent pair exists — Delaunay may miss some
+            // when zones are nearly co-circular, causing gaps in the circle.
+            // Never force a player↔player connection; those are handled separately.
+            var existingPairSet = pairs.ToHashSet();
+            foreach (var rp in ringAdjacentPairs)
+            {
+                if (existingPairSet.Contains(rp)) continue;
+                if (playerSet.Contains(allLetters[rp.Item1]) && playerSet.Contains(allLetters[rp.Item2])) continue;
+                pairs.Add(rp);
+            }
 
             int count = allLetters.Count;
             bool isolate = settings.NoDirectPlayerConnections && playerLetters.Count > 1;
