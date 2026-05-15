@@ -1231,6 +1231,29 @@ namespace Olden_Era___Template_Editor.Services
                 .Select(l => ZoneQualityGroup(l, singlePlayerList, neutralByLetter))
                 .ToHashSet();
 
+            // Pre-compute which same-tier pairs are ring-adjacent (circle neighbors by angle).
+            var tbalTierIndices = new Dictionary<int, List<int>>();
+            for (int i = 0; i < orderedLetters.Count; i++)
+            {
+                int tier = ZoneTierRank(orderedLetters[i], singlePlayerList, neutralByLetter);
+                if (!tbalTierIndices.TryGetValue(tier, out var lst)) tbalTierIndices[tier] = lst = [];
+                lst.Add(i);
+            }
+            var tbalRingAdjacentPairs = new HashSet<(int, int)>();
+            foreach (var (_, indices) in tbalTierIndices)
+            {
+                if (indices.Count < 2) continue;
+                var sortedByAngle = indices
+                    .OrderBy(i => Math.Atan2(pos[i].Y - 0.5, pos[i].X - 0.5))
+                    .ToList();
+                int n = sortedByAngle.Count;
+                for (int j = 0; j < n; j++)
+                {
+                    int a = sortedByAngle[j], b = sortedByAngle[(j + 1) % n];
+                    tbalRingAdjacentPairs.Add((Math.Min(a, b), Math.Max(a, b)));
+                }
+            }
+
             pairs = pairs.Where(p =>
             {
                 string la = orderedLetters[p.A], lb = orderedLetters[p.B];
@@ -1239,7 +1262,8 @@ namespace Olden_Era___Template_Editor.Services
                 int ga = ZoneQualityGroup(la, singlePlayerList, neutralByLetter);
                 int gb = ZoneQualityGroup(lb, singlePlayerList, neutralByLetter);
                 int lo = Math.Min(ga, gb), hi = Math.Max(ga, gb);
-                if (hi == lo) return true;
+                // Same-ring zones: only allow ring-adjacent (circle-neighbor) connections.
+                if (hi == lo) return tbalRingAdjacentPairs.Contains((Math.Min(p.A, p.B), Math.Max(p.A, p.B)));
                 if (hi - lo <= 2) return true;
                 for (int g = lo + 1; g < hi; g++)
                     if (presentGroups.Contains(g)) return false;
@@ -1436,6 +1460,30 @@ namespace Olden_Era___Template_Editor.Services
                 .Select(l => ZoneQualityGroup(l, playerLetters, neutralByLetter))
                 .ToHashSet();
 
+            // Pre-compute which same-tier pairs are ring-adjacent (circle neighbors by angle).
+            // This ensures same-ring zones only connect around the circle, not every-to-every.
+            var tierIndices = new Dictionary<int, List<int>>();
+            for (int i = 0; i < allLetters.Count; i++)
+            {
+                int tier = ZoneTierRank(allLetters[i], playerLetters, neutralByLetter);
+                if (!tierIndices.TryGetValue(tier, out var lst)) tierIndices[tier] = lst = [];
+                lst.Add(i);
+            }
+            var ringAdjacentPairs = new HashSet<(int, int)>();
+            foreach (var (_, indices) in tierIndices)
+            {
+                if (indices.Count < 2) continue;
+                var sortedByAngle = indices
+                    .OrderBy(i => Math.Atan2(pos[i].Y - 0.5, pos[i].X - 0.5))
+                    .ToList();
+                int n = sortedByAngle.Count;
+                for (int j = 0; j < n; j++)
+                {
+                    int a = sortedByAngle[j], b = sortedByAngle[(j + 1) % n];
+                    ringAdjacentPairs.Add((Math.Min(a, b), Math.Max(a, b)));
+                }
+            }
+
             pairs = pairs.Where(p =>
             {
                 string la = allLetters[p.A], lb = allLetters[p.B];
@@ -1445,8 +1493,8 @@ namespace Olden_Era___Template_Editor.Services
                 int ga = ZoneQualityGroup(la, playerLetters, neutralByLetter);
                 int gb = ZoneQualityGroup(lb, playerLetters, neutralByLetter);
                 int lo = Math.Min(ga, gb), hi = Math.Max(ga, gb);
-                // Same-ring neutral zones are always allowed to connect.
-                if (hi == lo) return true;
+                // Same-ring zones: only allow ring-adjacent (circle-neighbor) connections.
+                if (hi == lo) return ringAdjacentPairs.Contains((Math.Min(p.A, p.B), Math.Max(p.A, p.B)));
                 if (hi - lo <= 2) return true;
                 // Allow a group skip only when every group in between is absent.
                 for (int g = lo + 1; g < hi; g++)
