@@ -521,6 +521,17 @@
                                     TickFrequency="1" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
                         </Grid>
+                        <CheckBox x:Name="ChkNoDirectPlayerConn"
+                                  Content="Connect via neutral zones only, if possible"
+                                  Margin="0,8,0,0"
+                                  Visibility="Collapsed"
+                                  Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
+                        <TextBlock x:Name="TxtIsolateDesc"
+                                   Visibility="Collapsed"
+                                   Foreground="{StaticResource BrushTextDim}"
+                                   FontSize="13" TextWrapping="Wrap"
+                                   Margin="25,3,0,0"
+                                   Text="The game tries to connect player zones to neutral zones only. If no neutral zone borders a player zone, it will fall back to connecting directly to another player zone."/>
                     </StackPanel>
                     </ScrollViewer>
                 </Border>
@@ -849,17 +860,6 @@
                                         ValueChanged="SldMaxPortals_ValueChanged"/>
                             </Grid>
                         </StackPanel>
-                        <CheckBox x:Name="ChkNoDirectPlayerConn"
-                                  Content="Connect via neutral zones only, if possible"
-                                  Margin="0,6,0,0"
-                                  Visibility="Collapsed"
-                                  Checked="ChkOption_Changed" Unchecked="ChkOption_Changed"/>
-                        <TextBlock x:Name="TxtIsolateDesc"
-                                   Visibility="Collapsed"
-                                   Foreground="{StaticResource BrushTextDim}"
-                                   FontSize="13" TextWrapping="Wrap"
-                                   Margin="25,3,0,0"
-                                   Text="The game tries to connect player zones to neutral zones only. If no neutral zone borders a player zone, it will fall back to connecting directly to another player zone."/>
                         </StackPanel>
                         </ScrollViewer>
                     </DockPanel>

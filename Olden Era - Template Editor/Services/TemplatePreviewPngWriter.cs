@@ -2031,6 +2031,8 @@ namespace Olden_Era___Template_Editor.Services
             else if (isHub)
             {
                 DrawText(dc, "Hub", pt, drawRadius * 1.1, Brushes.White, centered: true);
+                if (castles > 0)
+                    DrawCastleBadge(dc, pt, drawRadius, castles, HubBorder);
             }
         }
 
@@ -2063,26 +2065,37 @@ namespace Olden_Era___Template_Editor.Services
         // ── Castle badge (player zones) ──────────────────────────────────────────
         // Small filled circle at bottom-right edge of the zone circle, showing the count.
 
-        private static void DrawCastleBadge(DrawingContext dc, Point zoneCentre, double r, int castles)
+        private static void DrawCastleBadge(DrawingContext dc, Point zoneCentre, double r, int castles, Color? accentColor = null)
         {
             // Position: bottom-right quadrant, just on the border of the zone circle
             double bx = zoneCentre.X + r * 0.72;
             double by = zoneCentre.Y + r * 0.72;
             double br = r * 0.70;   // larger badge
 
-            var badgeBg  = new SolidColorBrush(Color.FromRgb(28, 60, 35));
-            var badgePen = new Pen(new SolidColorBrush(SpawnBorder), 1.5);
+            Color accent  = accentColor ?? SpawnBorder;
+            Color iconClr = accentColor.HasValue
+                ? Color.FromRgb((byte)Math.Min(255, accent.R + 80), (byte)Math.Min(255, accent.G + 80), (byte)Math.Min(255, accent.B + 80))
+                : Color.FromRgb(160, 230, 170);
+            Color textClr = accentColor.HasValue
+                ? Color.FromRgb((byte)Math.Min(255, accent.R + 110), (byte)Math.Min(255, accent.G + 110), (byte)Math.Min(255, accent.B + 110))
+                : Color.FromRgb(200, 245, 210);
+            Color bgClr   = accentColor.HasValue
+                ? Color.FromRgb((byte)(accent.R / 5), (byte)(accent.G / 5), (byte)(accent.B / 5 + 20))
+                : Color.FromRgb(28, 60, 35);
+
+            var badgeBg  = new SolidColorBrush(bgClr);
+            var badgePen = new Pen(new SolidColorBrush(accent), 1.5);
             dc.DrawEllipse(badgeBg, badgePen, new Point(bx, by), br, br);
 
             double iconSize = br * 0.60;
             double fontSize = br * 1.05;  // bigger font
 
             DrawHouseIcon(dc, new Point(bx - br * 0.32, by + 0.5), iconSize,
-                new SolidColorBrush(Color.FromRgb(160, 230, 170)));
+                new SolidColorBrush(iconClr));
 
             DrawText(dc, castles.ToString(CultureInfo.InvariantCulture),
                 new Point(bx + br * 0.40, by + 0.5), fontSize,
-                new SolidColorBrush(Color.FromRgb(200, 245, 210)),
+                new SolidColorBrush(textClr),
                 centered: true, FontWeights.Bold);
         }
 
