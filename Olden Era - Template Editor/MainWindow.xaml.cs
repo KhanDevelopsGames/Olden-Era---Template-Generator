@@ -515,10 +515,18 @@ namespace Olden_Era___Template_Editor
             TxtTournamentInterval.Text = ((int)SldTournamentInterval.Value).ToString();
         }
 
-        private void SetValidationText(string text)
+        private record ValidationMessage(string Text, System.Windows.Media.Brush Foreground);
+
+        private void SetValidationMessages(IEnumerable<ValidationMessage> messages)
         {
-            TxtValidation.Text = text;
-            TxtValidation.Visibility = string.IsNullOrEmpty(text) ? Visibility.Collapsed : Visibility.Visible;
+            var list = messages.ToList();
+            LstValidation.ItemsSource = list;
+            PnlValidation.Visibility = list.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void SetValidationError(string text)
+        {
+            SetValidationMessages([new ValidationMessage(text, (System.Windows.Media.Brush)FindResource("BrushError"))]);
         }
 
         private bool Validate()
@@ -530,7 +538,7 @@ namespace Olden_Era___Template_Editor
 
             if (heroMin > heroMax)
             {
-                SetValidationText("Min Heroes cannot be greater than Max Heroes.");
+                SetValidationError("Min Heroes cannot be greater than Max Heroes.");
                 BtnPreview.IsEnabled = false;
                 return false;
             }
@@ -538,22 +546,23 @@ namespace Olden_Era___Template_Editor
             int maxZones = _advancedZoneSettings ? AdvancedModeMaxZones : SimpleModeMaxZones;
             if (players + neutral > maxZones)
             {
-                SetValidationText($"Total zones (players + neutral) cannot exceed {maxZones}.");
+                SetValidationError($"Total zones (players + neutral) cannot exceed {maxZones}.");
                 BtnPreview.IsEnabled = false;
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(TxtTemplateName.Text))
             {
-                SetValidationText("Template name cannot be empty.");
+                SetValidationError("Template name cannot be empty.");
                 BtnPreview.IsEnabled = false;
                 return false;
             }
 
-            var warnings = new System.Collections.Generic.List<string>();
+            var warnBrush = (System.Windows.Media.Brush)FindResource("BrushWarnText");
+            var warnings = new System.Collections.Generic.List<ValidationMessage>();
 
             if (TxtTemplateName.Text.Trim().Equals("Custom Template", StringComparison.OrdinalIgnoreCase))
-                warnings.Add("⚠️ The template is still using the default name \"Custom Template\". Consider renaming it before saving.");
+                warnings.Add(new ValidationMessage("The template is still using the default name \"Custom Template\". Consider renaming it before saving.", warnBrush));
 
             int selectedMapSize = SelectedMapSize();
             int totalZones = players + neutral;
@@ -561,17 +570,17 @@ namespace Olden_Era___Template_Editor
             // Hub layout has an extra central zone that also occupies map area.
             int totalZonesIncludingHub = selectedTopology == MapTopology.HubAndSpoke ? totalZones + 1 : totalZones;
             if (totalZonesIncludingHub > 0 && (selectedMapSize * selectedMapSize) / totalZonesIncludingHub < 1024)
-                warnings.Add($"⚠️ Estimated zone size is too small. The game may freeze when loading the map. Increase the map size or reduce the number of zones.");
+                warnings.Add(new ValidationMessage($"Estimated zone size is too small. The game may freeze when loading the map. Increase the map size or reduce the number of zones.", warnBrush));
 
             if (selectedMapSize > KnownValues.MaxOfficialMapSize)
-                warnings.Add("Experimental map sizes above 240x240 are not confirmed by official templates; generated maps may fail, freeze, or behave unpredictably in game.");
+                warnings.Add(new ValidationMessage("Experimental map sizes above 240x240 are not confirmed by official templates; generated maps may fail, freeze, or behave unpredictably in game.", warnBrush));
 
             if (totalZones > 10)
             {
                 int playerCastles = (int)SldPlayerCastles.Value;
                 int neutralCastles = _advancedZoneSettings ? 0 : (int)SldNeutralCastles.Value;
                 if (playerCastles > 1 || neutralCastles > 1)
-                    warnings.Add("⚠️ Using more than 1 castle per zone with more than 10 total zones may cause the game to freeze when generating the map. Consider reducing the number of castles.");
+                    warnings.Add(new ValidationMessage("Using more than 1 castle per zone with more than 10 total zones may cause the game to freeze when generating the map. Consider reducing the number of castles.", warnBrush));
             }
 
             int minNeutralBetweenPlayers = (int)SldMinNeutralBetweenPlayers.Value;
@@ -586,7 +595,7 @@ namespace Olden_Era___Template_Editor
                 };
 
                 if (!TemplateGenerator.CanHonorNeutralSeparation(separationSettings, neutral))
-                        warnings.Add("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.");
+                        warnings.Add(new ValidationMessage("Minimum neutral separation cannot be guaranteed with the current layout, neutral zone total, or portal setting; generation will ignore that option.", warnBrush));
             }
 
             bool cityHoldActive = ChkCityHold.IsChecked == true;
@@ -594,7 +603,7 @@ namespace Olden_Era___Template_Editor
             {
                 if (selectedTopology != MapTopology.HubAndSpoke && neutral == 0)
                 {
-                    SetValidationText("City Hold requires at least one neutral zone to place the hold city. Add a neutral zone or switch to the Hub layout.");
+                    SetValidationError("City Hold requires at least one neutral zone to place the hold city. Add a neutral zone or switch to the Hub layout.");
                     BtnPreview.IsEnabled = false;
                     return false;
                 }
@@ -602,7 +611,7 @@ namespace Olden_Era___Template_Editor
 
             if (ChkNoDirectPlayerConn.IsChecked == true && neutral == 0)
             {
-                SetValidationText("\"Connect via neutral zones only\" requires at least one neutral zone. Add a neutral zone or disable this option.");
+                SetValidationError("\"Connect via neutral zones only\" requires at least one neutral zone. Add a neutral zone or disable this option.");
                 BtnPreview.IsEnabled = false;
                 return false;
             }
@@ -612,12 +621,15 @@ namespace Olden_Era___Template_Editor
                 : "win_condition_1";
             if (selectedVictoryCondition == "win_condition_6" && players != 2)
             {
-                SetValidationText("Tournament mode only supports exactly 2 players.");
+                SetValidationError("Tournament mode only supports exactly 2 players.");
                 BtnPreview.IsEnabled = false;
                 return false;
             }
 
-            SetValidationText(string.Join("\n\n", warnings));
+            if ((int)SldBorderGuardStrength.Value > 100)
+                warnings.Add(new ValidationMessage("Border/portal guard strength above 100% may cause issues for easy and medium AI enemies — guards can become too strong for them to progress through.", warnBrush));
+
+            SetValidationMessages(warnings);
 
             BtnPreview.IsEnabled = true;
             return true;

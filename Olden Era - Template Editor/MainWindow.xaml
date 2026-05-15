@@ -1393,12 +1393,36 @@
                         Style="{StaticResource GenerateButton}"
                         Click="BtnPreview_Click"/>
 
-                <TextBlock Grid.Row="2"
-                           x:Name="TxtValidation"
-                           Foreground="{StaticResource BrushError}"
-                           FontSize="12" TextWrapping="Wrap"
-                           Visibility="Collapsed"
-                           HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                <ScrollViewer Grid.Row="2"
+                              x:Name="PnlValidation"
+                              Visibility="Collapsed"
+                              MaxHeight="120"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl x:Name="LstValidation" Margin="4,2">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="16"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                               Text="•"
+                                               Foreground="{Binding Foreground}"
+                                               FontSize="12"
+                                               VerticalAlignment="Top"
+                                               HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding Text}"
+                                               Foreground="{Binding Foreground}"
+                                               FontSize="12"
+                                               TextWrapping="Wrap"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
                         
                         <Border Grid.Row="4"
                         BorderThickness="2"
