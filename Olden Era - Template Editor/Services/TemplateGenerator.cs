@@ -1701,19 +1701,27 @@ namespace Olden_Era___Template_Editor.Services
                     if (!bothPlayers) pairs.Add((Math.Min(a, b), Math.Max(a, b)));
                 }
 
-                // Each inner zone → its nearest outer zone.
+                // Each inner zone → its nearest outer zone(s).
+                // When multiple outer zones are equally close (e.g. two players at ±90° from
+                // a neutral that sits exactly between them), connect to ALL of them so that
+                // ties never cause one player to receive zero connections from that ring.
                 for (int ii = 0; ii < innerSorted.Count; ii++)
                 {
-                    int best = 0;
                     double bestD = double.MaxValue;
                     for (int oi = 0; oi < outerSorted.Count; oi++)
                     {
                         double d = AngDist(innerAngles[ii], outerAngles[oi]);
-                        if (d < bestD) { bestD = d; best = oi; }
+                        if (d < bestD) bestD = d;
                     }
-                    int a = innerSorted[ii], b = outerSorted[best];
-                    bool bothPlayers = playerSet.Contains(allLetters[a]) && playerSet.Contains(allLetters[b]);
-                    if (!bothPlayers) pairs.Add((Math.Min(a, b), Math.Max(a, b)));
+                    const double epsilon = 1e-9;
+                    for (int oi = 0; oi < outerSorted.Count; oi++)
+                    {
+                        double d = AngDist(innerAngles[ii], outerAngles[oi]);
+                        if (d > bestD + epsilon) continue;
+                        int a = innerSorted[ii], b = outerSorted[oi];
+                        bool bothPlayers = playerSet.Contains(allLetters[a]) && playerSet.Contains(allLetters[b]);
+                        if (!bothPlayers) pairs.Add((Math.Min(a, b), Math.Max(a, b)));
+                    }
                 }
             }
 
@@ -1882,12 +1890,10 @@ namespace Olden_Era___Template_Editor.Services
                 double offset = tier * (n > 0 ? Math.PI / n : 0.0);
                 for (int j = 0; j < n; j++)
                 {
-                    double angle  = 2.0 * Math.PI * j / n + offset;
-                    // Tiny jitter to avoid degenerate collinear/cocircular Delaunay cases.
-                    double jitter = (j % 3 - 1) * 0.008;
+                    double angle = 2.0 * Math.PI * j / n + offset;
                     positions[indices[j]] = (
-                        Math.Clamp(0.5 + Math.Cos(angle + jitter) * radius, 0.05, 0.95),
-                        Math.Clamp(0.5 + Math.Sin(angle + jitter) * radius, 0.05, 0.95));
+                        Math.Clamp(0.5 + Math.Cos(angle) * radius, 0.05, 0.95),
+                        Math.Clamp(0.5 + Math.Sin(angle) * radius, 0.05, 0.95));
                 }
             }
 
