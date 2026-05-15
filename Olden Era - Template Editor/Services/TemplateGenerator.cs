@@ -874,16 +874,16 @@ namespace Olden_Era___Template_Editor.Services
             // Randomize the chain order, but use the same permutation for both players
             // so each cluster has an identical slot structure (mirrored layout).
             var rng = new Random();
-            int maxSlots = Math.Max(neutralsForPlayer[0].Count, neutralsForPlayer[1].Count);
-            var slotOrder = Enumerable.Range(0, maxSlots).OrderBy(_ => rng.Next()).ToList();
+
+            // Order each player's neutrals ascending by quality so the chain reads:
+            // player → low → medium → high  (mirrors the ordering used in non-tournament layouts).
             for (int p = 0; p < 2; p++)
-            {
-                var original = neutralsForPlayer[p];
-                neutralsForPlayer[p] = slotOrder
-                    .Where(i => i < original.Count)
-                    .Select(i => original[i])
+                neutralsForPlayer[p] = neutralsForPlayer[p]
+                    .OrderBy(NeutralZoneBalanceScore)
+                    .ThenBy(n => n.Letter, StringComparer.Ordinal)
                     .ToList();
-            }
+
+            int maxSlots = Math.Max(neutralsForPlayer[0].Count, neutralsForPlayer[1].Count);
 
             var zones = new List<Zone>();
             var connections = new List<Connection>();
