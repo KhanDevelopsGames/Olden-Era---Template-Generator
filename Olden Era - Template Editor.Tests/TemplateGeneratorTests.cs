@@ -303,7 +303,7 @@ public class TemplateGeneratorTests
         Assert.Equal([10000, 5000], spawnZone.MainObjects?.Select(mainObject => mainObject.GuardValue).ToArray());
         Assert.Equal(2.8, neutralZone.GuardMultiplier);
         Assert.Equal([16000, 8000], neutralZone.MainObjects?.Select(mainObject => mainObject.GuardValue).ToArray());
-        Assert.All(RequiredConnections(variant), connection => Assert.Equal(30000, connection.GuardValue));
+        Assert.All(RequiredConnections(variant), connection => Assert.Equal(20000, connection.GuardValue));
     }
 
     [Fact]
@@ -335,7 +335,7 @@ public class TemplateGeneratorTests
 
         Assert.Equal(1.0, spawnZone.GuardMultiplier);
         Assert.Equal(5000, Assert.Single(spawnZone.MainObjects ?? []).GuardValue);
-        Assert.All(directConnections, connection => Assert.Equal(15000, connection.GuardValue));
+        Assert.All(directConnections, connection => Assert.Equal(10000, connection.GuardValue));
         Assert.All(portalConnections, connection => Assert.Equal(12500, connection.GuardValue));
     }
 
