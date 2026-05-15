@@ -228,13 +228,113 @@ namespace Olden_Era___Template_Editor.Services
 
                     const double ringGapThreshold = 0.03;
 
-                    if (bComponents.Count == 2)
+                    if (bComponents.Count == 2 && zones.All(z => z.GeneratorRing.HasValue))
                     {
-                        // ── Two-cluster tournament balanced layout ─────────────────────
-                        // Skip ring-snap entirely: it constrains zoneRadius to fit ring
-                        // spacing, which makes circles tiny for small clusters.
-                        // Fall through to the bounding-box placement path below, which
-                        // fills each half-canvas and derives the radius from actual node spacing.
+                        // ── Two-cluster tournament balanced layout (ring-snap per half) ─
+                        // Each cluster occupies one canvas half and is snapped to clean
+                        // concentric rings, identical to the single-cluster logic.
+
+                        // Dense ring mapping: tier 0 (player, outermost) → highest ring index.
+                        var presentTiers2 = zones
+                            .Select(z => z.GeneratorRing!.Value)
+                            .Distinct()
+                            .OrderBy(t => t)
+                            .ToList();
+                        int ringCount2 = presentTiers2.Count;
+                        var tierToRing2 = presentTiers2
+                            .Select((tier, ri) => (tier, ri: ringCount2 - 1 - ri))
+                            .ToDictionary(x => x.tier, x => x.ri);
+
+                        // Each cluster gets half the canvas width; compute max draw radius.
+                        double halfW2  = Width / 2.0;
+                        double tDrawR2 = Math.Min(halfW2, (double)Height) / 2.0 - margin - ZoneRadiusMax;
+
+                        // Per-cluster ring zone count (both clusters are identical in structure).
+                        var clusterRingCounts = Enumerable.Range(0, ringCount2)
+                            .Select(r => bComponents[0].Count(i => tierToRing2[zones[i].GeneratorRing!.Value] == r))
+                            .ToArray();
+
+                        double[] AssignRingRadii2(double zr)
+                        {
+                            double mc = 2.0 * zr + minGap;
+                            var radii = new double[ringCount2];
+                            for (int r = 0; r < ringCount2; r++)
+                            {
+                                int cnt   = clusterRingCounts[r];
+                                double natural    = tDrawR2 * (r + 1.0) / ringCount2;
+                                double withinRing = cnt >= 2
+                                    ? mc / (2.0 * Math.Sin(Math.PI / cnt))
+                                    : (cnt == 1 && r > 0 ? mc : 0.0);
+                                double afterPrev  = r > 0 ? radii[r - 1] + mc : 0.0;
+                                radii[r] = Math.Max(natural, Math.Max(withinRing, afterPrev));
+                            }
+                            return radii;
+                        }
+
+                        double lo2 = 8.0, hi2 = ZoneRadiusMax;
+                        for (int iter = 0; iter < 32; iter++)
+                        {
+                            double mid2 = (lo2 + hi2) / 2.0;
+                            if (AssignRingRadii2(mid2)[ringCount2 - 1] <= tDrawR2) lo2 = mid2;
+                            else hi2 = mid2;
+                        }
+                        double tZoneRadius = Math.Max(lo2, 8.0);
+                        _zoneRadius = tZoneRadius;
+                        double[] tRingRadii = AssignRingRadii2(tZoneRadius);
+
+                        var tResult = new Dictionary<string, Point>(StringComparer.Ordinal);
+
+                        foreach (var (compIdx, comp) in bComponents.Select((c, ci) => (ci, c)))
+                        {
+                            // Centre of this cluster's canvas half.
+                            double cx2 = compIdx == 0 ? halfW2 / 2.0 : halfW2 + halfW2 / 2.0;
+                            double cy2 = Height / 2.0;
+
+                            // Centroid of raw positions for this cluster (for angle ordering).
+                            double rawCxC = comp.Average(i => zones[i].GeneratorPosition!.Value.X);
+                            double rawCyC = comp.Average(i => zones[i].GeneratorPosition!.Value.Y);
+
+                            for (int r = 0; r < ringCount2; r++)
+                            {
+                                var group2 = comp
+                                    .Where(i => tierToRing2[zones[i].GeneratorRing!.Value] == r)
+                                    .ToList();
+                                int cnt2 = group2.Count;
+                                if (cnt2 == 0) continue;
+
+                                double canvasR2 = tRingRadii[r];
+
+                                // Innermost ring with a single zone → place at cluster centre.
+                                if (cnt2 == 1 && r == 0)
+                                {
+                                    tResult[zones[group2[0]].Name] = new Point(cx2, cy2);
+                                    continue;
+                                }
+
+                                var sortedByAngle2 = group2
+                                    .OrderBy(i => Math.Atan2(
+                                        zones[i].GeneratorPosition!.Value.Y - rawCyC,
+                                        zones[i].GeneratorPosition!.Value.X - rawCxC))
+                                    .ToList();
+
+                                double firstAngle2 = Math.Atan2(
+                                    zones[sortedByAngle2[0]].GeneratorPosition!.Value.Y - rawCyC,
+                                    zones[sortedByAngle2[0]].GeneratorPosition!.Value.X - rawCxC);
+
+                                for (int j = 0; j < cnt2; j++)
+                                {
+                                    double angle2 = firstAngle2 + 2.0 * Math.PI * j / cnt2;
+                                    tResult[zones[sortedByAngle2[j]].Name] =
+                                        new Point(cx2 + Math.Cos(angle2) * canvasR2,
+                                                  cy2 + Math.Sin(angle2) * canvasR2);
+                                }
+                            }
+                        }
+                        return tResult;
+                    }
+                    else if (bComponents.Count == 2)
+                    {
+                        // Two-cluster without ring data — fall through to bounding-box path.
                     }
                     else
                     {
