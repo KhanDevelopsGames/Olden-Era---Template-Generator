@@ -891,6 +891,7 @@ namespace Olden_Era___Template_Editor.Services
             bool useRandom   = settings.Topology == MapTopology.Random;
             bool useHub      = settings.Topology == MapTopology.HubAndSpoke;
             bool useBalanced = settings.Topology == MapTopology.Balanced;
+            bool useRing     = settings.Topology == MapTopology.Default;
 
             if (useHub)
             {
@@ -939,6 +940,11 @@ namespace Olden_Era___Template_Editor.Services
                 // Both clusters share the same structure but are mapped to opposite canvas halves.
                 for (int p = 0; p < 2; p++)
                     BuildTournamentBalancedCluster(p, playerLetters[p], neutralsForPlayer[p], neutralByLetter, settings, tuning, zones, connections);
+            }
+            else if (useRing)
+            {
+                for (int p = 0; p < 2; p++)
+                    BuildTournamentRingCluster(p, playerLetters[p], neutralsForPlayer[p], neutralByLetter, settings, tuning, zones, connections);
             }
             else
             {
@@ -1004,6 +1010,98 @@ namespace Olden_Era___Template_Editor.Services
                     GuardValue = BorderGuardValue(fromLetter, toLetter, [playerLetter], neutralByLetter, tuning),
                     GuardWeeklyIncrement = 0.15,
                     GuardMatchGroup = $"tourney_guard_{fromLetter}_{toLetter}"
+                });
+            }
+        }
+
+        /// <summary>
+        /// Builds one player's isolated cluster as a ring.
+        /// Neutrals are arranged so the lowest-quality zones sit immediately adjacent to
+        /// the player on both sides and the highest-quality zone sits at the midpoint of
+        /// the ring (maximum hop distance from the player):
+        ///   player → low → … → high → … → low → player
+        /// </summary>
+        private static void BuildTournamentRingCluster(
+            int playerIndex,
+            string playerLetter,
+            List<NeutralZonePlan> myNeutrals,
+            Dictionary<string, NeutralZonePlan> neutralByLetter,
+            GeneratorSettings settings,
+            GenerationTuning tuning,
+            List<Zone> zones,
+            List<Connection> connections)
+        {
+            // Arrange neutrals so the ring reads: player → low → … → high → … → low → player.
+            // Sort ascending first, then fill from the player-adjacent positions inward so
+            // that the highest-quality zones end up at the midpoint of the ring.
+            //
+            // Example (5 neutrals, sorted [L0, L1, M0, M1, H]):
+            //   slots = [L0, M0, H, M1, L1]
+            //   ring  = player → L0 → M0 → H → M1 → L1 → player
+            //   hops  =            1     2   3     2     1
+            var sortedNeutrals = myNeutrals
+                .OrderBy(NeutralZoneBalanceScore)
+                .ThenBy(n => n.Letter, StringComparer.Ordinal)
+                .ToList();
+
+            int n = sortedNeutrals.Count;
+            var orderedNeutrals = new NeutralZonePlan[n];
+            int lo = 0, hi = n - 1;
+            for (int i = 0; i < n; i++)
+            {
+                if (i % 2 == 0) orderedNeutrals[lo++] = sortedNeutrals[i];
+                else             orderedNeutrals[hi--] = sortedNeutrals[i];
+            }
+
+            // Ring order: player, then neutrals in the arranged order, wrapping back.
+            var ringLetters = new List<string> { playerLetter };
+            ringLetters.AddRange(orderedNeutrals.Select(neutral => neutral.Letter));
+            int count = ringLetters.Count;
+
+            // One connection per adjacent pair in the ring (including wrap-around).
+            var connNames = new string[count];
+            for (int i = 0; i < count; i++)
+            {
+                int next = (i + 1) % count;
+                connNames[i] = $"TRing-{ringLetters[i]}-{ringLetters[next]}";
+            }
+
+            // Build zones, giving each zone its two ring connections.
+            for (int i = 0; i < count; i++)
+            {
+                string letter = ringLetters[i];
+                int prev = (i - 1 + count) % count;
+                var myConns = new[] { connNames[prev], connNames[i] }.Distinct().ToArray();
+
+                if (i == 0)
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIndex + 1}", myConns,
+                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions,
+                        settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                else
+                    zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns,
+                        settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+            }
+
+            // Build connections (one per ring edge).
+            for (int i = 0; i < count; i++)
+            {
+                int next = (i + 1) % count;
+                string fromLetter = ringLetters[i];
+                string toLetter   = ringLetters[next];
+                string fromZone   = i == 0            ? $"Spawn-{fromLetter}"   : $"Neutral-{fromLetter}";
+                string toZone     = next == 0         ? $"Spawn-{toLetter}"     : $"Neutral-{toLetter}";
+                connections.Add(new Connection
+                {
+                    Name = connNames[i],
+                    From = fromZone,
+                    To = toZone,
+                    ConnectionType = "Direct",
+                    GuardZone = fromZone,
+                    GuardEscape = false,
+                    SimTurnSquad = true,
+                    GuardValue = BorderGuardValue(fromLetter, toLetter, [playerLetter], neutralByLetter, tuning),
+                    GuardWeeklyIncrement = 0.15,
+                    GuardMatchGroup = $"tourney_ring_guard_{fromLetter}_{toLetter}"
                 });
             }
         }
