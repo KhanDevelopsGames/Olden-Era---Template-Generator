@@ -830,7 +830,7 @@
           Checked="ChkOption_Changed" Unchecked="ChkOption_Changed" Margin="0,10,0,0"/>
 
                                 <CheckBox x:Name="ChkSpawnFootholds" Content="Spawn remote footholds" IsChecked="True" Margin="0,6,0,0"/>
-                        <CheckBox x:Name="ChkRandomPortals"  Content="Always spawn portals"          Margin="0,6,0,0"
+                        <CheckBox x:Name="ChkRandomPortals"  Content="Spawn additional portals" Margin="0,6,0,0"
                                   Checked="ChkRandomPortals_Changed" Unchecked="ChkRandomPortals_Changed"/>
                         <StackPanel x:Name="PnlMaxPortals" Visibility="Collapsed" Margin="25,4,0,0">
                             <Grid>

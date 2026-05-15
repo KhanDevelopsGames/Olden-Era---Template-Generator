@@ -953,6 +953,19 @@ namespace Olden_Era___Template_Editor.Services
             }
 
             int totalZones = zones.Count;
+
+            if (settings.RandomPortals)
+            {
+                // Add portals scoped to each cluster individually so they never cross
+                // the isolation boundary between the two players.
+                for (int p = 0; p < 2; p++)
+                {
+                    var clusterLetters = new List<string> { playerLetters[p] };
+                    clusterLetters.AddRange(neutralsForPlayer[p].Select(n => n.Letter));
+                    connections.AddRange(BuildRandomPortalConnections(playerLetters, clusterLetters, tuning, settings.MaxPortalConnections));
+                }
+            }
+
             return MakeVariant(playerLetters, playerLetters[0], totalZones, zones, connections);
         }
 
