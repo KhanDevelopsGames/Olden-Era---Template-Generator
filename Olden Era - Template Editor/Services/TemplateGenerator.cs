@@ -1334,15 +1334,18 @@ namespace Olden_Era___Template_Editor.Services
                     Y: yCentre + (pt.Y - (rawYMin + rawYMax) / 2.0) * scale))
                 .ToList();
 
-            // Build Delaunay edges and apply the same quality-tier adjacency filter used
-            // by the standard balanced variant.
-            var pairs = DelaunayEdges(pos);
+            // Build connections directly from ring structure — identical logic to BuildVariantBalanced.
+            // rawPos is centred at (0.5, 0.5) so angle arithmetic works without adjustment.
+            // Same-ring  : each zone connects to its two circle-neighbors (skip if n < 3).
+            // Cross-ring : bidirectional nearest-neighbor between adjacent tiers (tie-safe).
+            var pairs = new HashSet<(int A, int B)>();
 
-            var presentGroups = orderedLetters
-                .Select(l => ZoneQualityGroup(l, singlePlayerList, neutralByLetter))
-                .ToHashSet();
+            static double TbalAngDist(double a, double b)
+            {
+                double d = Math.Abs(a - b) % (2 * Math.PI);
+                return d > Math.PI ? 2 * Math.PI - d : d;
+            }
 
-            // Pre-compute allowed pairs — same approach as standard balanced variant.
             var tbalTierIndices = new Dictionary<int, List<int>>();
             for (int i = 0; i < orderedLetters.Count; i++)
             {
@@ -1350,100 +1353,70 @@ namespace Olden_Era___Template_Editor.Services
                 if (!tbalTierIndices.TryGetValue(tier, out var lst)) tbalTierIndices[tier] = lst = [];
                 lst.Add(i);
             }
+            var tbalSortedPresentTiers = tbalTierIndices.Keys.OrderBy(t => t).ToList();
 
-            var tbalRingAdjacentPairs    = new HashSet<(int, int)>();
-            var tbalCrossRingAllowedPairs = new HashSet<(int, int)>();
-            var tbalSortedPresentTiers   = tbalTierIndices.Keys.OrderBy(t => t).ToList();
-
-            foreach (var (_, indices) in tbalTierIndices)
+            // Sort each tier's indices by angle (using rawPos, centred at 0.5).
+            var tbalTierSorted = new Dictionary<int, List<int>>();
+            var tbalTierAngles = new Dictionary<int, double[]>();
+            foreach (var (tier, indices) in tbalTierIndices)
             {
-                if (indices.Count < 2) continue;
-                var sorted = indices
-                    .OrderBy(i => Math.Atan2(pos[i].Y - 0.5, pos[i].X - 0.5))
-                    .ToList();
+                var s = indices.OrderBy(i => Math.Atan2(rawPos[i].Y - 0.5, rawPos[i].X - 0.5)).ToList();
+                tbalTierSorted[tier] = s;
+                tbalTierAngles[tier] = s.Select(i => Math.Atan2(rawPos[i].Y - 0.5, rawPos[i].X - 0.5)).ToArray();
+            }
+
+            // Same-ring: circle-neighbors only; skip degenerate 2-zone rings.
+            foreach (var (_, sorted) in tbalTierSorted)
+            {
                 int n = sorted.Count;
+                if (n < 3) continue;
                 for (int j = 0; j < n; j++)
                 {
                     int a = sorted[j], b = sorted[(j + 1) % n];
-                    tbalRingAdjacentPairs.Add((Math.Min(a, b), Math.Max(a, b)));
+                    pairs.Add((Math.Min(a, b), Math.Max(a, b)));
                 }
             }
 
-            static double TbalAngleDist(double a, double b)
-            {
-                double d = Math.Abs(a - b) % (2 * Math.PI);
-                return d > Math.PI ? 2 * Math.PI - d : d;
-            }
-
+            // Cross-ring: bidirectional nearest-neighbor between adjacent tiers.
             for (int ti = 0; ti + 1 < tbalSortedPresentTiers.Count; ti++)
             {
-                var outerList = tbalTierIndices[tbalSortedPresentTiers[ti]];
-                var innerList = tbalTierIndices[tbalSortedPresentTiers[ti + 1]];
-                if (outerList.Count == 0 || innerList.Count == 0) continue;
+                int outerTier   = tbalSortedPresentTiers[ti];
+                int innerTier   = tbalSortedPresentTiers[ti + 1];
+                var outerSorted = tbalTierSorted[outerTier];
+                var innerSorted = tbalTierSorted[innerTier];
+                var outerAngles = tbalTierAngles[outerTier];
+                var innerAngles = tbalTierAngles[innerTier];
 
-                var innerSorted = innerList
-                    .OrderBy(i => Math.Atan2(pos[i].Y - 0.5, pos[i].X - 0.5))
-                    .ToList();
-                double[] innerAngles = innerSorted
-                    .Select(i => Math.Atan2(pos[i].Y - 0.5, pos[i].X - 0.5)).ToArray();
-
-                var innerHasConnection = new bool[innerSorted.Count];
-
-                foreach (int outerIdx in outerList)
+                // Each outer zone → its nearest inner zone.
+                for (int oi = 0; oi < outerSorted.Count; oi++)
                 {
-                    double angle = Math.Atan2(pos[outerIdx].Y - 0.5, pos[outerIdx].X - 0.5);
-
-                    int prev = innerSorted.Count - 1;
-                    for (int k = 0; k < innerSorted.Count; k++)
-                        if (innerAngles[k] <= angle) prev = k;
-                    int next = (prev + 1) % innerSorted.Count;
-
-                    tbalCrossRingAllowedPairs.Add((Math.Min(outerIdx, innerSorted[prev]), Math.Max(outerIdx, innerSorted[prev])));
-                    innerHasConnection[prev] = true;
-                    if (innerSorted.Count > 1)
+                    int best = 0;
+                    double bestD = double.MaxValue;
+                    for (int ii = 0; ii < innerSorted.Count; ii++)
                     {
-                        tbalCrossRingAllowedPairs.Add((Math.Min(outerIdx, innerSorted[next]), Math.Max(outerIdx, innerSorted[next])));
-                        innerHasConnection[next] = true;
+                        double d = TbalAngDist(outerAngles[oi], innerAngles[ii]);
+                        if (d < bestD) { bestD = d; best = ii; }
                     }
+                    pairs.Add((Math.Min(outerSorted[oi], innerSorted[best]), Math.Max(outerSorted[oi], innerSorted[best])));
                 }
 
+                // Each inner zone → its nearest outer zone(s); connect to ALL ties.
                 for (int ii = 0; ii < innerSorted.Count; ii++)
                 {
-                    if (innerHasConnection[ii]) continue;
-                    double angle = innerAngles[ii];
-                    int best = outerList
-                        .Select((idx, oi) => (oi, diff: TbalAngleDist(angle, Math.Atan2(pos[idx].Y - 0.5, pos[idx].X - 0.5))))
-                        .OrderBy(x => x.diff).First().oi;
-                    tbalCrossRingAllowedPairs.Add((Math.Min(innerSorted[ii], outerList[best]), Math.Max(innerSorted[ii], outerList[best])));
+                    double bestD = double.MaxValue;
+                    for (int oi = 0; oi < outerSorted.Count; oi++)
+                    {
+                        double d = TbalAngDist(innerAngles[ii], outerAngles[oi]);
+                        if (d < bestD) bestD = d;
+                    }
+                    const double epsilon = 1e-9;
+                    for (int oi = 0; oi < outerSorted.Count; oi++)
+                    {
+                        double d = TbalAngDist(innerAngles[ii], outerAngles[oi]);
+                        if (d <= bestD + epsilon)
+                            pairs.Add((Math.Min(innerSorted[ii], outerSorted[oi]), Math.Max(innerSorted[ii], outerSorted[oi])));
+                    }
                 }
-            }
-
-            pairs = pairs.Where(p =>
-            {
-                string la = orderedLetters[p.A], lb = orderedLetters[p.B];
-                // No player↔player edges (only one player per cluster anyway).
-                if (la == playerLetter && lb == playerLetter) return false;
-                int ga = ZoneQualityGroup(la, singlePlayerList, neutralByLetter);
-                int gb = ZoneQualityGroup(lb, singlePlayerList, neutralByLetter);
-                int lo = Math.Min(ga, gb), hi = Math.Max(ga, gb);
-                // Same-ring zones: only allow ring-adjacent (circle-neighbor) connections.
-                if (hi == lo) return tbalRingAdjacentPairs.Contains((Math.Min(p.A, p.B), Math.Max(p.A, p.B)));
-                // Cross-ring zones: only allow angularly bracketing connections.
-                if (hi - lo <= 2) return tbalCrossRingAllowedPairs.Contains((Math.Min(p.A, p.B), Math.Max(p.A, p.B)));
-                for (int g = lo + 1; g < hi; g++)
-                    if (presentGroups.Contains(g)) return false;
-                return true;
-            }).ToList();
-
-            // Guarantee all ring-adjacent and cross-ring bracket pairs exist.
-            // Never force a player↔player connection; those are handled separately.
-            var tbalExistingPairSet = pairs.ToHashSet();
-            foreach (var rp in tbalRingAdjacentPairs.Concat(tbalCrossRingAllowedPairs))
-            {
-                if (tbalExistingPairSet.Contains(rp)) continue;
-                if (orderedLetters[rp.Item1] == playerLetter && orderedLetters[rp.Item2] == playerLetter) continue;
-                pairs.Add(rp);
-                tbalExistingPairSet.Add(rp);
             }
 
             int count = orderedLetters.Count;
