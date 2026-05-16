@@ -1,0 +1,620 @@
+[
+  {
+    "id": "day_2_magic_sharp_edge",
+    "name": "Blessing",
+    "school": "day",
+    "tier": 1
+  },
+  {
+    "id": "day_3_magic_haste",
+    "name": "Haste",
+    "school": "day",
+    "tier": 1
+  },
+  {
+    "id": "day_1_magic_healing_water",
+    "name": "Healing Water",
+    "school": "day",
+    "tier": 1
+  },
+  {
+    "id": "day_5_magic_shorten_shadow",
+    "name": "Shorten Shadow",
+    "school": "day",
+    "tier": 1
+  },
+  {
+    "id": "day_4_magic_favorable_wind",
+    "name": "Favorable Wind",
+    "school": "day",
+    "tier": 2
+  },
+  {
+    "id": "day_17_magic_clear_view",
+    "name": "From a Bird’s Eye",
+    "school": "day",
+    "tier": 2
+  },
+  {
+    "id": "day_7_magic_inner_light",
+    "name": "Inner Light",
+    "school": "day",
+    "tier": 2
+  },
+  {
+    "id": "day_6_magic_cleansing_ray",
+    "name": "Weakening Ray",
+    "school": "day",
+    "tier": 2
+  },
+  {
+    "id": "day_9_magic_arinas_hymn",
+    "name": "Arina’s Touch",
+    "school": "day",
+    "tier": 3
+  },
+  {
+    "id": "day_11_magic_masterful_parry",
+    "name": "Riposte",
+    "school": "day",
+    "tier": 3
+  },
+  {
+    "id": "day_10_magic_second_song",
+    "name": "Song of Power",
+    "school": "day",
+    "tier": 3
+  },
+  {
+    "id": "day_8_magic_taunt",
+    "name": "Taunt",
+    "school": "day",
+    "tier": 3
+  },
+  {
+    "id": "day_18_magic_farsight",
+    "name": "Clear Fog",
+    "school": "day",
+    "tier": 4
+  },
+  {
+    "id": "day_13_magic_holy_arms",
+    "name": "Heavenly Blades",
+    "school": "day",
+    "tier": 4
+  },
+  {
+    "id": "day_12_magic_radiant_armor",
+    "name": "Radiant Armor",
+    "school": "day",
+    "tier": 4
+  },
+  {
+    "id": "day_14_magic_vengeance",
+    "name": "Vengeance",
+    "school": "day",
+    "tier": 4
+  },
+  {
+    "id": "day_16_magic_arinas_chosen",
+    "name": "Arina’s Chosen",
+    "school": "day",
+    "tier": 5
+  },
+  {
+    "id": "day_15_magic_judgement",
+    "name": "Judgement",
+    "school": "day",
+    "tier": 5
+  },
+  {
+    "id": "neutral_1_magic_back_to_garrison",
+    "name": "Back to Foothold!",
+    "school": "neutral",
+    "tier": 1
+  },
+  {
+    "id": "neutral_1_magic_back_to_city",
+    "name": "Back to Town!",
+    "school": "neutral",
+    "tier": 1
+  },
+  {
+    "id": "bonus_magic_kill_summon",
+    "name": "Dispel Summon",
+    "school": "neutral",
+    "tier": 1
+  },
+  {
+    "id": "night_bonus_magic_1_magic",
+    "name": "Dusk Dampening",
+    "school": "neutral",
+    "tier": 1
+  },
+  {
+    "id": "bonus_magic_pure_bolt",
+    "name": "Magic Arrow",
+    "school": "neutral",
+    "tier": 1
+  },
+  {
+    "id": "neutral_1_magic_mana_restore",
+    "name": "Mana Rite",
+    "school": "neutral",
+    "tier": 1
+  },
+  {
+    "id": "neutral_1_magic_mana_transfer",
+    "name": "Mana Transfusion",
+    "school": "neutral",
+    "tier": 1
+  },
+  {
+    "id": "change_use_necromancy",
+    "name": "Necromancer Will",
+    "school": "neutral",
+    "tier": 1
+  },
+  {
+    "id": "neutral_1_magic_units_replace",
+    "name": "Relocation",
+    "school": "neutral",
+    "tier": 1
+  },
+  {
+    "id": "primal_bonus_magic_1_magic",
+    "name": "Spell Eruption",
+    "school": "neutral",
+    "tier": 1
+  },
+  {
+    "id": "neutral_magic_pocket_dimension",
+    "name": "Pocket Dimension",
+    "school": "neutral",
+    "tier": 2
+  },
+  {
+    "id": "neutral_magic_second_sight",
+    "name": "Second Wind",
+    "school": "neutral",
+    "tier": 2
+  },
+  {
+    "id": "bonus_magic_astral_summon_1",
+    "name": "bonus_magic_astral_summon_1",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_2",
+    "name": "bonus_magic_astral_summon_2",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_3",
+    "name": "bonus_magic_astral_summon_3",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_4",
+    "name": "bonus_magic_astral_summon_4",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_5",
+    "name": "bonus_magic_astral_summon_5",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_nature_1",
+    "name": "bonus_magic_astral_summon_nature_1",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_nature_2",
+    "name": "bonus_magic_astral_summon_nature_2",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_nature_3",
+    "name": "bonus_magic_astral_summon_nature_3",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_nature_4",
+    "name": "bonus_magic_astral_summon_nature_4",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_nature_5",
+    "name": "bonus_magic_astral_summon_nature_5",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_unfrozen_1",
+    "name": "bonus_magic_astral_summon_unfrozen_1",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_unfrozen_2",
+    "name": "bonus_magic_astral_summon_unfrozen_2",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_unfrozen_3",
+    "name": "bonus_magic_astral_summon_unfrozen_3",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_unfrozen_4",
+    "name": "bonus_magic_astral_summon_unfrozen_4",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "bonus_magic_astral_summon_unfrozen_5",
+    "name": "bonus_magic_astral_summon_unfrozen_5",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "neutral_magic_shadow_form",
+    "name": "Shadowflight",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "neutral_magic_town_portal",
+    "name": "Town Portal",
+    "school": "neutral",
+    "tier": 3
+  },
+  {
+    "id": "neutral_magic_dimension_door",
+    "name": "Dimension Door",
+    "school": "neutral",
+    "tier": 4
+  },
+  {
+    "id": "neutral_magic_light_gate",
+    "name": "Gate of Light",
+    "school": "neutral",
+    "tier": 4
+  },
+  {
+    "id": "night_4_magic_despair",
+    "name": "Despair",
+    "school": "night",
+    "tier": 1
+  },
+  {
+    "id": "night_3_magic_enlarge_shadow",
+    "name": "Enlarge Shadow",
+    "school": "night",
+    "tier": 1
+  },
+  {
+    "id": "night_7_magic_fatal_decay",
+    "name": "Fatal Decay",
+    "school": "night",
+    "tier": 1
+  },
+  {
+    "id": "night_1_magic_unnatural_calm",
+    "name": "Unnatural Calm",
+    "school": "night",
+    "tier": 1
+  },
+  {
+    "id": "night_17_magic_read_minds",
+    "name": "Read Minds",
+    "school": "night",
+    "tier": 2
+  },
+  {
+    "id": "night_5_magic_shade_cloak",
+    "name": "Shade Cloak",
+    "school": "night",
+    "tier": 2
+  },
+  {
+    "id": "night_6_magic_deaths_grip",
+    "name": "Umbral Grip",
+    "school": "night",
+    "tier": 2
+  },
+  {
+    "id": "night_2_magic_web",
+    "name": "Web",
+    "school": "night",
+    "tier": 2
+  },
+  {
+    "id": "night_18_magic_nairas_veil",
+    "name": "Naira’s Veil",
+    "school": "night",
+    "tier": 3
+  },
+  {
+    "id": "night_10_magic_silence",
+    "name": "Silence",
+    "school": "night",
+    "tier": 3
+  },
+  {
+    "id": "night_8_magic_sleep",
+    "name": "Sleep",
+    "school": "night",
+    "tier": 3
+  },
+  {
+    "id": "night_9_magic_twilight",
+    "name": "Twilight",
+    "school": "night",
+    "tier": 3
+  },
+  {
+    "id": "night_13_magic_berserker",
+    "name": "Berserk",
+    "school": "night",
+    "tier": 4
+  },
+  {
+    "id": "night_12_magic_summon_starchild",
+    "name": "Summon Starchild",
+    "school": "night",
+    "tier": 4
+  },
+  {
+    "id": "night_11_magic_vulnerability",
+    "name": "Vulnerability",
+    "school": "night",
+    "tier": 4
+  },
+  {
+    "id": "night_15_magic_deaths_call",
+    "name": "Coup de Grâce",
+    "school": "night",
+    "tier": 5
+  },
+  {
+    "id": "night_14_magic_nairas_kiss",
+    "name": "Naira’s Kiss",
+    "school": "night",
+    "tier": 5
+  },
+  {
+    "id": "night_16_magic_shadow_army",
+    "name": "Shadow Army",
+    "school": "night",
+    "tier": 5
+  },
+  {
+    "id": "primal_17_magic_groundsight",
+    "name": "Groundsight",
+    "school": "primal",
+    "tier": 1
+  },
+  {
+    "id": "primal_1_magic_thunderbolt",
+    "name": "Lightning Bolt",
+    "school": "primal",
+    "tier": 1
+  },
+  {
+    "id": "primal_2_magic_thick_hide",
+    "name": "Thick Hide",
+    "school": "primal",
+    "tier": 1
+  },
+  {
+    "id": "primal_5_magic_crystal_crown",
+    "name": "Crystal Crown",
+    "school": "primal",
+    "tier": 2
+  },
+  {
+    "id": "primal_4_magic_fire_globe",
+    "name": "Fireball",
+    "school": "primal",
+    "tier": 2
+  },
+  {
+    "id": "primal_6_magic_ice_bolt",
+    "name": "Ice Bolt",
+    "school": "primal",
+    "tier": 2
+  },
+  {
+    "id": "primal_3_magic_wean",
+    "name": "Wean",
+    "school": "primal",
+    "tier": 2
+  },
+  {
+    "id": "primal_8_magic_cave_in",
+    "name": "Cave In",
+    "school": "primal",
+    "tier": 3
+  },
+  {
+    "id": "primal_9_magic_earths_rage",
+    "name": "Earth’s Rage",
+    "school": "primal",
+    "tier": 3
+  },
+  {
+    "id": "primal_7_magic_wall_of_flame",
+    "name": "Firewall",
+    "school": "primal",
+    "tier": 3
+  },
+  {
+    "id": "primal_16_magic_stone_fangs",
+    "name": "Stone Fangs",
+    "school": "primal",
+    "tier": 3
+  },
+  {
+    "id": "primal_10_magic_primordial_purity",
+    "name": "Anti‑Magic",
+    "school": "primal",
+    "tier": 4
+  },
+  {
+    "id": "primal_12_magic_chain_lightning",
+    "name": "Chain Lightning",
+    "school": "primal",
+    "tier": 4
+  },
+  {
+    "id": "primal_13_magic_avalanche",
+    "name": "Circle of Winter",
+    "school": "primal",
+    "tier": 4
+  },
+  {
+    "id": "primal_18_magic_primordial_chaos",
+    "name": "Primordial Chaos",
+    "school": "primal",
+    "tier": 4
+  },
+  {
+    "id": "primal_11_magic_armageddon",
+    "name": "Armageddon",
+    "school": "primal",
+    "tier": 5
+  },
+  {
+    "id": "primal_14_magic_hksmillas_rampage",
+    "name": "Hksmilla’s Rampage",
+    "school": "primal",
+    "tier": 5
+  },
+  {
+    "id": "primal_15_magic_summon_primal_remnant",
+    "name": "Summon Primal Remnant",
+    "school": "primal",
+    "tier": 5
+  },
+  {
+    "id": "space_1_magic_early_start",
+    "name": "Early Start",
+    "school": "space",
+    "tier": 1
+  },
+  {
+    "id": "space_3_magic_energyze",
+    "name": "Energize",
+    "school": "space",
+    "tier": 1
+  },
+  {
+    "id": "space_11_magic_decimate",
+    "name": "Guillotine",
+    "school": "space",
+    "tier": 1
+  },
+  {
+    "id": "space_4_magic_optical_illusion",
+    "name": "Optical Illusion",
+    "school": "space",
+    "tier": 1
+  },
+  {
+    "id": "space_6_magic_blink",
+    "name": "Blink",
+    "school": "space",
+    "tier": 2
+  },
+  {
+    "id": "space_8_magic_carapace",
+    "name": "Carapace",
+    "school": "space",
+    "tier": 2
+  },
+  {
+    "id": "space_2_magic_energy_explosion",
+    "name": "Energy Explosion",
+    "school": "space",
+    "tier": 2
+  },
+  {
+    "id": "space_17_magic_reinforcements",
+    "name": "Reinforcements",
+    "school": "space",
+    "tier": 2
+  },
+  {
+    "id": "space_18_magic_assemble",
+    "name": "Assemble!",
+    "school": "space",
+    "tier": 3
+  },
+  {
+    "id": "space_9_magic_impending_fate",
+    "name": "Impending Fate",
+    "school": "space",
+    "tier": 3
+  },
+  {
+    "id": "space_7_magic_shackles",
+    "name": "Shackles",
+    "school": "space",
+    "tier": 3
+  },
+  {
+    "id": "space_5_magic_trap_jaws",
+    "name": "Temporal Spheres",
+    "school": "space",
+    "tier": 3
+  },
+  {
+    "id": "space_10_magic_mirror_copy",
+    "name": "Mirror Copy",
+    "school": "space",
+    "tier": 4
+  },
+  {
+    "id": "space_12_magic_rewind",
+    "name": "Rewind Life",
+    "school": "space",
+    "tier": 4
+  },
+  {
+    "id": "space_15_magic_trap_snare",
+    "name": "Spatial Snare",
+    "school": "space",
+    "tier": 4
+  },
+  {
+    "id": "space_13_magic_black_hole",
+    "name": "Black Hole",
+    "school": "space",
+    "tier": 5
+  },
+  {
+    "id": "space_14_magic_doreaths_tide",
+    "name": "Doreath’s Tide",
+    "school": "space",
+    "tier": 5
+  },
+  {
+    "id": "space_16_magic_reality_distortion",
+    "name": "Reality Distortion",
+    "school": "space",
+    "tier": 5
+  }
+]

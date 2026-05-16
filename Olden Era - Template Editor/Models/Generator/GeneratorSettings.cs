@@ -79,6 +79,10 @@ namespace Olden_Era___Template_Editor.Models
         public ZoneConfiguration ZoneCfg { get; set; } = new ZoneConfiguration();
         public int FactionLawsExpPercent { get; set; } = 100;
         public int AstrologyExpPercent { get; set; } = 100;
+        public string BannedItems { get; set; } = "";
+        public string BannedMagics { get; set; } = "";
+        public string ValueOverridesText { get; set; } = "";
+        public System.Collections.Generic.List<OldenEraTemplateEditor.Models.BonusEntry> Bonuses { get; set; } = [];
         public List<ContentItem> PlayerZoneMandatoryContent { get; set; } = new List<ContentItem>();
         public GameEndConditions GameEndConditions { get; set; } = new GameEndConditions();
         public GladiatorArenaRules GladiatorArenaRules { get; set; } = new GladiatorArenaRules();

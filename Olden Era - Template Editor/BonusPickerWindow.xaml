@@ -1,0 +1,113 @@
+<Window x:Class="Olden_Era___Template_Editor.BonusPickerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Bonus" Width="420" Height="370"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize" MinWidth="350" MinHeight="280"
+        Background="#221E15" Foreground="#E8D5A3"
+        FontFamily="Segoe UI" FontSize="13">
+
+    <DockPanel Margin="14">
+
+        <!-- Buttons (bottom) -->
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button x:Name="BtnAdd" Content="Add" Width="90" Height="28"
+                    Margin="0,0,8,0" IsDefault="True" Click="BtnAdd_Click"/>
+            <Button Content="Cancel" Width="80" Height="28"
+                    IsCancel="True" Click="BtnCancel_Click"/>
+        </StackPanel>
+
+        <!-- Main form -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+
+                <!-- Bonus type -->
+                <TextBlock Text="Bonus type" Foreground="#9A8A6A" FontSize="11" Margin="0,0,0,3"/>
+                <ComboBox x:Name="CmbType" Height="28"
+                          SelectionChanged="CmbType_Changed"
+                          Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28">
+                    <ComboBoxItem Tag="1" Content="Spell"/>
+                    <ComboBoxItem Tag="2" Content="Unit Multiplier"/>
+                    <ComboBoxItem Tag="3" Content="Movement Bonus"/>
+                    <ComboBoxItem Tag="4" Content="Starting Item"/>
+                    <ComboBoxItem Tag="5" Content="Starting Gold"/>
+                    <ComboBoxItem Tag="6" Content="Starting Gems"/>
+                    <ComboBoxItem Tag="7" Content="Starting Crystals"/>
+                    <ComboBoxItem Tag="8" Content="Starting Mercury"/>
+                </ComboBox>
+
+                <!-- Receiver -->
+                <TextBlock Text="Applies to" Foreground="#9A8A6A" FontSize="11" Margin="0,8,0,3"/>
+                <ComboBox x:Name="CmbReceiver" Height="28"
+                          Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28">
+                    <ComboBoxItem Tag="start_hero" Content="Start hero"/>
+                    <ComboBoxItem Tag="all_heroes" Content="All heroes"/>
+                </ComboBox>
+
+                <!-- ── Dynamic parameter panels ── -->
+
+                <!-- Spell -->
+                <StackPanel x:Name="PnlSpell" Margin="0,8,0,0">
+                    <TextBlock Text="Spell" Foreground="#9A8A6A" FontSize="11" Margin="0,0,0,3"/>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="Pick…" Width="64"
+                                Height="26" Margin="6,0,0,0" Click="BtnPickSpell_Click"
+                                Background="#1E1A10" BorderBrush="#7A6A48"
+                                Foreground="#C8B87A" FontSize="12" Cursor="Hand"/>
+                        <TextBox x:Name="TxtSpell" Height="26" IsReadOnly="True"
+                                 Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28"
+                                 CaretBrush="#C9A84C" Padding="6,0"
+                                 FontFamily="Consolas" FontSize="11"/>
+                    </DockPanel>
+                    <CheckBox x:Name="ChkMakeFree" Margin="0,8,0,0"
+                              Content="Make this spell free (zero cast cost)"
+                              Foreground="#E8D5A3"/>
+                </StackPanel>
+
+                <!-- Unit Multiplier -->
+                <StackPanel x:Name="PnlMultiplier" Visibility="Collapsed" Margin="0,8,0,0">
+                    <TextBlock Text="Multiplier  (e.g. 2 = double starting army)"
+                               Foreground="#9A8A6A" FontSize="11" Margin="0,0,0,3"/>
+                    <TextBox x:Name="TxtMultiplier" Height="26" Text="2"
+                             Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28"
+                             CaretBrush="#C9A84C" Padding="6,0"/>
+                </StackPanel>
+
+                <!-- Movement Bonus -->
+                <StackPanel x:Name="PnlMovement" Visibility="Collapsed" Margin="0,8,0,0">
+                    <TextBlock Text="Bonus movement tiles  (0 = game default)"
+                               Foreground="#9A8A6A" FontSize="11" Margin="0,0,0,3"/>
+                    <TextBox x:Name="TxtMovement" Height="26" Text="0"
+                             Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28"
+                             CaretBrush="#C9A84C" Padding="6,0"/>
+                </StackPanel>
+
+                <!-- Starting Item -->
+                <StackPanel x:Name="PnlItem" Visibility="Collapsed" Margin="0,8,0,0">
+                    <TextBlock Text="Artifact ID" Foreground="#9A8A6A" FontSize="11" Margin="0,0,0,3"/>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="Pick…" Width="64"
+                                Height="26" Margin="6,0,0,0" Click="BtnPickItem_Click"
+                                Background="#1E1A10" BorderBrush="#7A6A48"
+                                Foreground="#C8B87A" FontSize="12" Cursor="Hand"/>
+                        <TextBox x:Name="TxtItem" Height="26"
+                                 Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28"
+                                 CaretBrush="#C9A84C" Padding="6,0"
+                                 FontFamily="Consolas" FontSize="11"/>
+                    </DockPanel>
+                </StackPanel>
+
+                <!-- Resources (Gold / Gems / Crystals / Mercury) -->
+                <StackPanel x:Name="PnlResources" Visibility="Collapsed" Margin="0,8,0,0">
+                    <TextBlock x:Name="LblResourceAmount" Text="Amount"
+                               Foreground="#9A8A6A" FontSize="11" Margin="0,0,0,3"/>
+                    <TextBox x:Name="TxtResourceAmount" Height="26" Text="10000"
+                             Background="#2C2619" Foreground="#E8D5A3" BorderBrush="#5A4A28"
+                             CaretBrush="#C9A84C" Padding="6,0"/>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
+</Window>

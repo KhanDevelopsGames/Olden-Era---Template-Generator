@@ -455,6 +455,8 @@
                                               Checked="ChkOption_Changed"
                                               Unchecked="ChkOption_Changed"/>
                                                 </Grid>
+
+
                                             </StackPanel>
                                         </StackPanel>
                                     </ScrollViewer>
@@ -462,6 +464,225 @@
                                 </Border>
                     </Grid>
                 </TabItem>
+
+            <!-- ── BONUSES & BANS TAB ───────────────────────────────────────── -->
+            <TabItem Header="Bonuses &amp; Bans">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <DockPanel Margin="0,8,0,0">
+                    <Border DockPanel.Dock="Top" Style="{StaticResource SectionBorder}">
+                        <StackPanel>
+                            <TextBlock Text="◆  GAME START BONUSES"
+                                       Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
+                            <TextBlock Text="Bonuses are granted to all players equally at game start."
+                                       Foreground="#9A8A6A" FontSize="11"
+                                       Margin="0,0,0,6" TextWrapping="Wrap"/>
+                            <Border Background="#2C2619" BorderBrush="#5A4A28" BorderThickness="1" Margin="0,0,0,0">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Left" x:Name="BtnAddBonus"
+                                            Content="+" Width="28"
+                                            Click="BtnAddBonus_Click"
+                                            Background="#1E1A10"
+                                            BorderBrush="#7A6A48" BorderThickness="0,0,1,0"
+                                            Foreground="#C8B87A" FontSize="16"
+                                            VerticalAlignment="Stretch"
+                                            Cursor="Hand"/>
+                                    <ListBox x:Name="LbBonuses"
+                                             MinHeight="32"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Padding"    Value="0"/>
+                                        <Setter Property="Margin"     Value="0"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <ContentPresenter/>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="4,2">
+                                            <Button DockPanel.Dock="Right"
+                                                    Content="×" Width="20" Height="18"
+                                                    FontSize="13" Padding="0"
+                                                    Tag="{Binding}"
+                                                    Click="RemoveBonus_Click"
+                                                    ToolTip="Remove"
+                                                    Background="#3A2820"
+                                                    BorderBrush="#5A4A28"
+                                                    Foreground="#E8D5A3"/>
+                                            <Ellipse Width="8" Height="8"
+                                                     Fill="{Binding DotBrush}"
+                                                     VerticalAlignment="Center"
+                                                     Margin="0,0,6,0"/>
+                                            <TextBlock Text="{Binding DisplayName}"
+                                                       Foreground="#E8D5A3" FontSize="12"
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,8,0"/>
+                                            <TextBlock Text="{Binding ReceiverLabel}"
+                                                       Foreground="#9A8A6A" FontSize="11"
+                                                       VerticalAlignment="Center"
+                                                       FontStyle="Italic"/>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </DockPanel>
+                            </Border>
+
+                            <Separator Margin="0,12,0,8"/>
+                            <TextBlock Text="◆  BANS &amp; OVERRIDES" Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
+
+                            <!-- Banned Items -->
+                            <TextBlock Text="Banned items"
+                                       Foreground="#E8D5A3" FontSize="12" Margin="0,0,0,4"/>
+                            <Border Background="#2C2619" BorderBrush="#5A4A28" BorderThickness="1" Margin="0,0,0,10">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Left" x:Name="BtnAddBannedItem"
+                                            Content="+" Width="28"
+                                            Click="BtnAddBannedItem_Click"
+                                            Background="#1E1A10"
+                                            BorderBrush="#7A6A48" BorderThickness="0,0,1,0"
+                                            Foreground="#C8B87A" FontSize="16"
+                                            VerticalAlignment="Stretch"
+                                            Cursor="Hand"/>
+                                    <ListBox x:Name="LbBannedItems"
+                                             MinHeight="32" MaxHeight="130"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Padding"    Value="0"/>
+                                        <Setter Property="Margin"     Value="0"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <ContentPresenter/>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="4,2">
+                                            <Button DockPanel.Dock="Right"
+                                                    Content="×" Width="20" Height="18"
+                                                    FontSize="13" Padding="0"
+                                                    Tag="{Binding Id}"
+                                                    Click="RemoveBannedItem_Click"
+                                                    ToolTip="Remove"
+                                                    Background="#3A2820"
+                                                    BorderBrush="#5A4A28"
+                                                    Foreground="#E8D5A3"/>
+                                            <Ellipse Width="8" Height="8"
+                                                     Fill="{Binding CategoryBrush}"
+                                                     VerticalAlignment="Center"
+                                                     Margin="0,0,6,0"/>
+                                            <TextBlock Text="{Binding DisplayName}"
+                                                       Foreground="#E8D5A3" FontSize="12"
+                                                       VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding Category}"
+                                                       Foreground="#9A8A6A" FontSize="11"
+                                                       VerticalAlignment="Center"
+                                                       Margin="6,0,0,0"/>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </DockPanel>
+                            </Border>
+
+                            <!-- Banned Spells -->
+                            <TextBlock Text="Banned spells"
+                                       Foreground="#E8D5A3" FontSize="12" Margin="0,0,0,4"/>
+                            <Border Background="#2C2619" BorderBrush="#5A4A28" BorderThickness="1" Margin="0,0,0,10">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Left" x:Name="BtnAddBannedMagic"
+                                            Content="+" Width="28"
+                                            Click="BtnAddBannedMagic_Click"
+                                            Background="#1E1A10"
+                                            BorderBrush="#7A6A48" BorderThickness="0,0,1,0"
+                                            Foreground="#C8B87A" FontSize="16"
+                                            VerticalAlignment="Stretch"
+                                            Cursor="Hand"/>
+                                    <ListBox x:Name="LbBannedMagics"
+                                             MinHeight="32" MaxHeight="130"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="Padding"    Value="0"/>
+                                        <Setter Property="Margin"     Value="0"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <ContentPresenter/>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <DockPanel Margin="4,2">
+                                            <Button DockPanel.Dock="Right"
+                                                    Content="×" Width="20" Height="18"
+                                                    FontSize="13" Padding="0"
+                                                    Tag="{Binding Id}"
+                                                    Click="RemoveBannedMagic_Click"
+                                                    ToolTip="Remove"
+                                                    Background="#3A2820"
+                                                    BorderBrush="#5A4A28"
+                                                    Foreground="#E8D5A3"/>
+                                            <Ellipse Width="8" Height="8"
+                                                     Fill="{Binding CategoryBrush}"
+                                                     VerticalAlignment="Center"
+                                                     Margin="0,0,6,0"/>
+                                            <TextBlock Text="{Binding DisplayName}"
+                                                       Foreground="#E8D5A3" FontSize="12"
+                                                       VerticalAlignment="Center"/>
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </DockPanel>
+                            </Border>
+
+                            <!-- Value overrides (kept as free-text) -->
+                            <TextBlock Text="Value overrides (one per line: sid=guardValue)"
+                                       Foreground="#E8D5A3" FontSize="12" Margin="0,0,0,4"/>
+                            <Border Background="#2C2619" BorderBrush="#5A4A28" BorderThickness="1">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Left" x:Name="BtnPickValueOverride"
+                                            Content="+" Width="28"
+                                            Click="BtnPickValueOverride_Click"
+                                            Background="#1E1A10" BorderBrush="#7A6A48" BorderThickness="0,0,1,0"
+                                            Foreground="#C8B87A" FontSize="16"
+                                            VerticalAlignment="Stretch" Cursor="Hand"/>
+                                    <TextBox x:Name="TxtValueOverrides"
+                                             AcceptsReturn="True" Height="68" TextWrapping="NoWrap"
+                                             VerticalScrollBarVisibility="Auto"
+                                             Background="Transparent" BorderThickness="0"
+                                             FontFamily="Consolas" FontSize="11"
+                                             TextChanged="BansOverrides_TextChanged"/>
+                                </DockPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </DockPanel>
+                </ScrollViewer>
+            </TabItem>
 
             <TabItem Header="Layout &amp; Zones">
             <Grid Margin="0,8,0,0">

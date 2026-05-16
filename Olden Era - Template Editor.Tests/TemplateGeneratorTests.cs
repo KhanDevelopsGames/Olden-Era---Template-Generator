@@ -908,6 +908,193 @@ public class TemplateGeneratorTests
         });
     }
 
+    // ── Bonuses ───────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void Generate_WithNoBonusesLeavesGameRulesBonusesNull()
+    {
+        var settings = new GeneratorSettings { Bonuses = [] };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.Null(template.GameRules?.Bonuses);
+    }
+
+    [Fact]
+    public void Generate_TownPortalFreeBonusExpandsToTwoRawBonuses()
+    {
+        var settings = new GeneratorSettings
+        {
+            Bonuses =
+            [
+                new BonusEntry { PresetType = BonusPresetType.TownPortalFree, ReceiverFilter = "start_hero" }
+            ]
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.NotNull(template.GameRules?.Bonuses);
+        var bonuses = template.GameRules!.Bonuses!;
+        Assert.Equal(2, bonuses.Count);
+        Assert.Contains(bonuses, b => b.Sid == "add_bonus_hero_spell" && (b.Parameters?.Contains("neutral_magic_town_portal") ?? false));
+        Assert.Contains(bonuses, b => b.Sid == "add_bonus_hero_stat"  && (b.Parameters?.Contains("neutral_magic_town_portal") ?? false));
+    }
+
+    [Fact]
+    public void Generate_StartingItemBonusExpandsToOneRawBonus()
+    {
+        var settings = new GeneratorSettings
+        {
+            Bonuses =
+            [
+                new BonusEntry { PresetType = BonusPresetType.StartingItem, ReceiverFilter = "all_heroes", Param = "amulet_of_health" }
+            ]
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.NotNull(template.GameRules?.Bonuses);
+        var bonuses = template.GameRules!.Bonuses!;
+        Bonus bonus = Assert.Single(bonuses);
+        Assert.Equal("add_bonus_hero_item", bonus.Sid);
+        Assert.Equal("all_heroes", bonus.ReceiverFilter);
+        Assert.Contains("amulet_of_health", bonus.Parameters ?? []);
+    }
+
+    [Fact]
+    public void Generate_MultipleBonusEntriesAreAllExpanded()
+    {
+        var settings = new GeneratorSettings
+        {
+            Bonuses =
+            [
+                new BonusEntry { PresetType = BonusPresetType.StartingGold,    Param = "2000" },
+                new BonusEntry { PresetType = BonusPresetType.MovementBonus,   Param = "200"  },
+            ]
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.NotNull(template.GameRules?.Bonuses);
+        var bonuses = template.GameRules!.Bonuses!;
+        Assert.Equal(2, bonuses.Count);
+        Assert.Contains(bonuses, b => b.Sid == "add_bonus_res"      && (b.Parameters?.Contains("gold") ?? false));
+        Assert.Contains(bonuses, b => b.Sid == "add_bonus_hero_stat" && (b.Parameters?.Contains("movementBonus") ?? false));
+    }
+
+    // ── Value overrides ───────────────────────────────────────────────────────
+
+    [Fact]
+    public void Generate_WithEmptyValueOverridesTextLeavesOverridesNull()
+    {
+        var settings = new GeneratorSettings { ValueOverridesText = "" };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.Null(template.ValueOverrides);
+    }
+
+    [Fact]
+    public void Generate_ParsesValidValueOverrideLines()
+    {
+        var settings = new GeneratorSettings
+        {
+            ValueOverridesText = "dragon_utopia=10000\narena=5000"
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.NotNull(template.ValueOverrides);
+        var overrides = template.ValueOverrides!;
+        Assert.Equal(2, overrides.Count);
+        Assert.Contains(overrides, v => v.Sid == "dragon_utopia" && v.GuardValue == 10000 && v.Variant == -1);
+        Assert.Contains(overrides, v => v.Sid == "arena"         && v.GuardValue == 5000  && v.Variant == -1);
+    }
+
+    [Fact]
+    public void Generate_SkipsMalformedAndBlankValueOverrideLines()
+    {
+        var settings = new GeneratorSettings
+        {
+            ValueOverridesText = "arena=5000\n\nbadline\n=1000\nalchemy_lab=3000"
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.NotNull(template.ValueOverrides);
+        var overrides = template.ValueOverrides!;
+        Assert.Equal(2, overrides.Count);
+        Assert.Contains(overrides, v => v.Sid == "arena");
+        Assert.Contains(overrides, v => v.Sid == "alchemy_lab");
+    }
+
+    // ── Global bans ───────────────────────────────────────────────────────────
+
+    [Fact]
+    public void Generate_WithNoBansLeavesGlobalBansNull()
+    {
+        var settings = new GeneratorSettings { BannedItems = "", BannedMagics = "" };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.Null(template.GlobalBans);
+    }
+
+    [Fact]
+    public void Generate_BannedItemsAreWrittenToGlobalBansItems()
+    {
+        var settings = new GeneratorSettings
+        {
+            BannedItems  = "amulet_of_health\nring_of_life",
+            BannedMagics = ""
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.NotNull(template.GlobalBans);
+        var bans = template.GlobalBans!;
+        Assert.NotNull(bans.Items);
+        Assert.Contains("amulet_of_health", bans.Items);
+        Assert.Contains("ring_of_life",     bans.Items);
+        Assert.Null(bans.Magics);
+    }
+
+    [Fact]
+    public void Generate_BannedMagicsAreWrittenToGlobalBansMagics()
+    {
+        var settings = new GeneratorSettings
+        {
+            BannedItems  = "",
+            BannedMagics = "neutral_magic_town_portal\nneutral_magic_dimension_door"
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.NotNull(template.GlobalBans);
+        var bans = template.GlobalBans!;
+        Assert.Null(bans.Items);
+        Assert.NotNull(bans.Magics);
+        Assert.Contains("neutral_magic_town_portal",    bans.Magics);
+        Assert.Contains("neutral_magic_dimension_door", bans.Magics);
+    }
+
+    [Fact]
+    public void Generate_ItemsAndMagicsBannedTogetherWritesBothLists()
+    {
+        var settings = new GeneratorSettings
+        {
+            BannedItems  = "amulet_of_health",
+            BannedMagics = "neutral_magic_town_portal"
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        Assert.NotNull(template.GlobalBans);
+        var bans = template.GlobalBans!;
+        Assert.NotNull(bans.Items);
+        Assert.NotNull(bans.Magics);
+    }
+
     private static List<MainObject> Cities(int count) =>
         Enumerable.Range(0, count).Select(_ => new MainObject { Type = "City" }).ToList();
 
