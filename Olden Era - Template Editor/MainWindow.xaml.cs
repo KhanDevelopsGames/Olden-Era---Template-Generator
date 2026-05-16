@@ -45,6 +45,10 @@ namespace Olden_Era___Template_Editor
         private string _baseTitle = string.Empty;
 
         private ZoneMandatoryContent _playerZoneMandatoryContent = new();
+        private ZoneMandatoryContent _lowNeutralMandatoryContent = new();
+        private ZoneMandatoryContent _mediumNeutralMandatoryContent = new();
+        private ZoneMandatoryContent _highNeutralMandatoryContent = new();
+        private ZoneMandatoryContent _hubZoneMandatoryContent = new();
 
         private static readonly (MapTopology Topology, string Label, string Description)[] TopologyOptions =
         [
@@ -90,6 +94,10 @@ namespace Olden_Era___Template_Editor
 
             InitializeZoneContentPresets();
             InitializeDefaultPlayerZoneContents();
+            InitializeDefaultLowNeutralContents();
+            InitializeDefaultMediumNeutralContents();
+            InitializeDefaultHighNeutralContents();
+            InitializeDefaultHubZoneContents();
             DataContext = new
             {
                 MineContentItems = _playerZoneMandatoryContent.mines,
@@ -97,7 +105,31 @@ namespace Olden_Era___Template_Editor
                 UnitRecruitmentContentItems = _playerZoneMandatoryContent.unitRecruitment,
                 ResourceBankContentItems = _playerZoneMandatoryContent.resourceBanks,
                 UtilityStructureContentItems = _playerZoneMandatoryContent.utilityStructures,
-                HeroImprovementStructureContentItems = _playerZoneMandatoryContent.heroImprovementStructures
+                HeroImprovementStructureContentItems = _playerZoneMandatoryContent.heroImprovementStructures,
+                LowNeutralMineContentItems = _lowNeutralMandatoryContent.mines,
+                LowNeutralTreasureContentItems = _lowNeutralMandatoryContent.treasures,
+                LowNeutralUnitRecruitmentContentItems = _lowNeutralMandatoryContent.unitRecruitment,
+                LowNeutralResourceBankContentItems = _lowNeutralMandatoryContent.resourceBanks,
+                LowNeutralUtilityStructureContentItems = _lowNeutralMandatoryContent.utilityStructures,
+                LowNeutralHeroImprovementStructureContentItems = _lowNeutralMandatoryContent.heroImprovementStructures,
+                MediumNeutralMineContentItems = _mediumNeutralMandatoryContent.mines,
+                MediumNeutralTreasureContentItems = _mediumNeutralMandatoryContent.treasures,
+                MediumNeutralUnitRecruitmentContentItems = _mediumNeutralMandatoryContent.unitRecruitment,
+                MediumNeutralResourceBankContentItems = _mediumNeutralMandatoryContent.resourceBanks,
+                MediumNeutralUtilityStructureContentItems = _mediumNeutralMandatoryContent.utilityStructures,
+                MediumNeutralHeroImprovementStructureContentItems = _mediumNeutralMandatoryContent.heroImprovementStructures,
+                HighNeutralMineContentItems = _highNeutralMandatoryContent.mines,
+                HighNeutralTreasureContentItems = _highNeutralMandatoryContent.treasures,
+                HighNeutralUnitRecruitmentContentItems = _highNeutralMandatoryContent.unitRecruitment,
+                HighNeutralResourceBankContentItems = _highNeutralMandatoryContent.resourceBanks,
+                HighNeutralUtilityStructureContentItems = _highNeutralMandatoryContent.utilityStructures,
+                HighNeutralHeroImprovementStructureContentItems = _highNeutralMandatoryContent.heroImprovementStructures,
+                HubZoneMineContentItems = _hubZoneMandatoryContent.mines,
+                HubZoneTreasureContentItems = _hubZoneMandatoryContent.treasures,
+                HubZoneUnitRecruitmentContentItems = _hubZoneMandatoryContent.unitRecruitment,
+                HubZoneResourceBankContentItems = _hubZoneMandatoryContent.resourceBanks,
+                HubZoneUtilityStructureContentItems = _hubZoneMandatoryContent.utilityStructures,
+                HubZoneHeroImprovementStructureContentItems = _hubZoneMandatoryContent.heroImprovementStructures,
             };
             // Fire-and-forget background update check — never blocks the UI.
             _ = CheckForUpdateAsync(version);
@@ -143,7 +175,121 @@ namespace Olden_Era___Template_Editor
 
         }
 
-        private void PopulateZoneContentMenu(ComboBox comboBox, ComboBox comboBoxSticky, List<SidMapping> contentGroup)
+        private void InitializeDefaultLowNeutralContents()
+        {
+            // Mines — biome rare mine + one random rare mine
+            _lowNeutralMandatoryContent.mines.Add(CreateZoneContentItem(IncludeListIds.RandomRareMinesBiomeRestricted));
+            _lowNeutralMandatoryContent.mines.Add(CreateZoneContentItem(IncludeListIds.RandomRareMines));
+            // Utility — guarded market + vision building
+            _lowNeutralMandatoryContent.utilityStructures.Add(CreateZoneContentItem(ContentIds.Market));
+            _lowNeutralMandatoryContent.utilityStructures.Add(CreateZoneContentItem(IncludeListIds.VisionBuildingsTier1));
+            // Buff buildings — two hero buff tier-1 picks
+            _lowNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroBuffTier1));
+            _lowNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroBuffTier1));
+            // Hero stat building — tier-1
+            _lowNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier1));
+            // Hiring — two low-tier random hires
+            _lowNeutralMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier, count: 2));
+            // Loot — pandora box + random pickup item + magic tier-1 pickup
+            _lowNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
+            _lowNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(IncludeListIds.RandomPickupItems));
+            _lowNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier1));
+        }
+
+        private void InitializeDefaultMediumNeutralContents()
+        {
+            // Mines — full rare set + gold + alchemy lab
+            _mediumNeutralMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineCrystals, roadDistance: "Next To"));
+            _mediumNeutralMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineMercury, roadDistance: "Next To"));
+            _mediumNeutralMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineGemstones, roadDistance: "Next To"));
+            _mediumNeutralMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.AlchemyLab, roadDistance: "Next To"));
+            _mediumNeutralMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineGold, roadDistance: "Near"));
+            // Utility — guarded watchtower + vision building
+            _mediumNeutralMandatoryContent.utilityStructures.Add(CreateZoneContentItem(ContentIds.Watchtower));
+            _mediumNeutralMandatoryContent.utilityStructures.Add(CreateZoneContentItem(IncludeListIds.VisionBuildingsTier1));
+            // Buff buildings
+            _mediumNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroBuffTier1));
+            // Hero stats — tier 1 + tier 2
+            _mediumNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier1));
+            _mediumNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier2));
+            // Magic buildings — tier 1 + tier 2
+            _mediumNeutralMandatoryContent.utilityStructures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier1));
+            _mediumNeutralMandatoryContent.utilityStructures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier2));
+            // Hiring — low + high tier
+            _mediumNeutralMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier));
+            _mediumNeutralMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier));
+            // Unit banks — biome-restricted
+            _mediumNeutralMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.GuardedUnitBanksBiomeRestricted));
+            // Guarded resource banks — tier 2
+            _mediumNeutralMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier2));
+            // Loot — epic items + pandora boxes
+            _mediumNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemEpic));
+            _mediumNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemEpic));
+            _mediumNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
+            _mediumNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
+            _mediumNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(IncludeListIds.PandoraBoxArmyLowTier));
+        }
+
+        private void InitializeDefaultHighNeutralContents()
+        {
+            // Epic encounters — utopias + epic resource banks
+            _highNeutralMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.UtopiaBuildings, count: 2));
+            _highNeutralMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.EpicGuardedResourceBanks, count: 2));
+            // Utility — vision + buff buildings
+            _highNeutralMandatoryContent.utilityStructures.Add(CreateZoneContentItem(IncludeListIds.VisionBuildingsTier1));
+            _highNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroBuffTier1));
+            // Hero stats — tier 2 + tier 3 × 2
+            _highNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier2));
+            _highNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier3, count: 2));
+            // Magic buildings — tier 2 × 2
+            _highNeutralMandatoryContent.utilityStructures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier2, count: 2));
+            // Hiring — high-tier × 2 + all-tier
+            _highNeutralMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier, count: 2));
+            _highNeutralMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresAllTier));
+            // Unit banks — biome-restricted + no-restriction × 2
+            _highNeutralMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.GuardedUnitBanksBiomeRestricted));
+            _highNeutralMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.GuardedUnitBanksNoBiome, count: 2));
+            // Guarded resource banks — tier 2 + tier 3
+            _highNeutralMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier2));
+            _highNeutralMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.GuardedBanksTier3));
+            // Loot — mythic scrolls × 2, legendary × 2, epic, pandoras + high-tier army × 2
+            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(IncludeListIds.MythicScrollBoxPickup, count: 2));
+            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemLegendary));
+            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemLegendary));
+            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemEpic));
+            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
+            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
+            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
+            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(IncludeListIds.PandoraBoxArmyHighTier, count: 2));
+            // Mines — gold-heavy with full rare set
+            _highNeutralMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineGold, count: 3));
+            _highNeutralMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineCrystals));
+            _highNeutralMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineMercury));
+            _highNeutralMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineGemstones));
+            _highNeutralMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.AlchemyLab, count: 2));
+        }
+
+        private void InitializeDefaultHubZoneContents()
+        {
+            // Hub zones are connector/transit zones; give them medium-quality defaults
+            // as a sensible starting point (user can customize from here)
+            _hubZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineGold));
+            _hubZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineCrystals));
+            _hubZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineMercury));
+            _hubZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineGemstones));
+            _hubZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.AlchemyLab));
+            _hubZoneMandatoryContent.utilityStructures.Add(CreateZoneContentItem(ContentIds.Watchtower));
+            _hubZoneMandatoryContent.utilityStructures.Add(CreateZoneContentItem(IncludeListIds.VisionBuildingsTier1));
+            _hubZoneMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier));
+            _hubZoneMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier));
+            _hubZoneMandatoryContent.resourceBanks.Add(CreateZoneContentItem(IncludeListIds.ResourceBanksTier2));
+            _hubZoneMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier1));
+            _hubZoneMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier1));
+            _hubZoneMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemEpic));
+            _hubZoneMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
+        }
+
+        private void PopulateZoneContentMenu(ComboBox comboBox, ComboBox? comboBoxSticky, List<SidMapping> contentGroup)
         {
             var names = new List<string>();
             foreach (SidMapping sidMapping in contentGroup)
@@ -152,10 +298,13 @@ namespace Olden_Era___Template_Editor
             }
             comboBox.ItemsSource = names;
             comboBox.SelectedIndex = 0;
-            comboBoxSticky.ItemsSource = names;
-            comboBoxSticky.SelectedIndex = 0;
-            comboBox.SelectionChanged       += (_, _) => comboBoxSticky.SelectedIndex = comboBox.SelectedIndex;
-            comboBoxSticky.SelectionChanged += (_, _) => comboBox.SelectedIndex       = comboBoxSticky.SelectedIndex;
+            if (comboBoxSticky != null)
+            {
+                comboBoxSticky.ItemsSource = names;
+                comboBoxSticky.SelectedIndex = 0;
+                comboBox.SelectionChanged       += (_, _) => comboBoxSticky.SelectedIndex = comboBox.SelectedIndex;
+                comboBoxSticky.SelectionChanged += (_, _) => comboBox.SelectedIndex       = comboBoxSticky.SelectedIndex;
+            }
         }
 
         private void InitializeZoneContentPresets()
@@ -172,6 +321,34 @@ namespace Olden_Era___Template_Editor
             PopulateZoneContentMenu(CmbUtilityStructureContentPreset, CmbUtilityStructureContentPresetSticky, ContentItemGroup.UtilityStructures);
             /* Populate the Hero Improvement Structures dropdown menu */
             PopulateZoneContentMenu(CmbHeroImprovementContentPreset, CmbHeroImprovementContentPresetSticky, ContentItemGroup.HeroImprovementStructures);
+            /* Populate Low Neutral dropdowns */
+            PopulateZoneContentMenu(CmbLowNeutralMineContentPreset,               null, ContentItemGroup.Mines);
+            PopulateZoneContentMenu(CmbLowNeutralTreasureContentPreset,           null, ContentItemGroup.Treasures);
+            PopulateZoneContentMenu(CmbLowNeutralUnitRecruitmentContentPreset,    null, ContentItemGroup.UnitRecruitment);
+            PopulateZoneContentMenu(CmbLowNeutralResourceBankContentPreset,       null, ContentItemGroup.ResourceBanks);
+            PopulateZoneContentMenu(CmbLowNeutralUtilityStructureContentPreset,   null, ContentItemGroup.UtilityStructures);
+            PopulateZoneContentMenu(CmbLowNeutralHeroImprovementContentPreset,    null, ContentItemGroup.HeroImprovementStructures);
+            /* Populate Medium Neutral dropdowns */
+            PopulateZoneContentMenu(CmbMediumNeutralMineContentPreset,            null, ContentItemGroup.Mines);
+            PopulateZoneContentMenu(CmbMediumNeutralTreasureContentPreset,        null, ContentItemGroup.Treasures);
+            PopulateZoneContentMenu(CmbMediumNeutralUnitRecruitmentContentPreset, null, ContentItemGroup.UnitRecruitment);
+            PopulateZoneContentMenu(CmbMediumNeutralResourceBankContentPreset,    null, ContentItemGroup.ResourceBanks);
+            PopulateZoneContentMenu(CmbMediumNeutralUtilityStructureContentPreset,null, ContentItemGroup.UtilityStructures);
+            PopulateZoneContentMenu(CmbMediumNeutralHeroImprovementContentPreset, null, ContentItemGroup.HeroImprovementStructures);
+            /* Populate High Neutral dropdowns */
+            PopulateZoneContentMenu(CmbHighNeutralMineContentPreset,              null, ContentItemGroup.Mines);
+            PopulateZoneContentMenu(CmbHighNeutralTreasureContentPreset,          null, ContentItemGroup.Treasures);
+            PopulateZoneContentMenu(CmbHighNeutralUnitRecruitmentContentPreset,   null, ContentItemGroup.UnitRecruitment);
+            PopulateZoneContentMenu(CmbHighNeutralResourceBankContentPreset,      null, ContentItemGroup.ResourceBanks);
+            PopulateZoneContentMenu(CmbHighNeutralUtilityStructureContentPreset,  null, ContentItemGroup.UtilityStructures);
+            PopulateZoneContentMenu(CmbHighNeutralHeroImprovementContentPreset,   null, ContentItemGroup.HeroImprovementStructures);
+            /* Populate Hub Zone dropdowns */
+            PopulateZoneContentMenu(CmbHubZoneMineContentPreset,                  null, ContentItemGroup.Mines);
+            PopulateZoneContentMenu(CmbHubZoneTreasureContentPreset,              null, ContentItemGroup.Treasures);
+            PopulateZoneContentMenu(CmbHubZoneUnitRecruitmentContentPreset,       null, ContentItemGroup.UnitRecruitment);
+            PopulateZoneContentMenu(CmbHubZoneResourceBankContentPreset,          null, ContentItemGroup.ResourceBanks);
+            PopulateZoneContentMenu(CmbHubZoneUtilityStructureContentPreset,      null, ContentItemGroup.UtilityStructures);
+            PopulateZoneContentMenu(CmbHubZoneHeroImprovementContentPreset,       null, ContentItemGroup.HeroImprovementStructures);
         }
 
         private async Task CheckForUpdateAsync(Version? currentVersion)
@@ -1164,9 +1341,17 @@ namespace Olden_Era___Template_Editor
 
             if (sender is not Button button || button.DataContext is not ZoneContentItemUI item)
                 return;
-            
-            
+
+
             if(_playerZoneMandatoryContent.Remove(item))
+                MarkDirty();
+            else if (_lowNeutralMandatoryContent.Remove(item))
+                MarkDirty();
+            else if (_mediumNeutralMandatoryContent.Remove(item))
+                MarkDirty();
+            else if (_highNeutralMandatoryContent.Remove(item))
+                MarkDirty();
+            else if (_hubZoneMandatoryContent.Remove(item))
                 MarkDirty();
         }
 
@@ -1178,6 +1363,190 @@ namespace Olden_Era___Template_Editor
 
             InitializeDefaultPlayerZoneContents();
             MarkDirty();
+        }
+
+        private void BtnResetLowNeutralContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            _lowNeutralMandatoryContent.Clear();
+            InitializeDefaultLowNeutralContents();
+            MarkDirty();
+        }
+
+        private void BtnResetMediumNeutralContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            _mediumNeutralMandatoryContent.Clear();
+            InitializeDefaultMediumNeutralContents();
+            MarkDirty();
+        }
+
+        private void BtnResetHighNeutralContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            _highNeutralMandatoryContent.Clear();
+            InitializeDefaultHighNeutralContents();
+            MarkDirty();
+        }
+
+        private void BtnResetHubZoneContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            _hubZoneMandatoryContent.Clear();
+            InitializeDefaultHubZoneContents();
+            MarkDirty();
+        }
+
+        // -- Low Neutral add handlers --
+        private void BtnAddLowNeutralMineContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbLowNeutralMineContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_lowNeutralMandatoryContent.mines, name);
+        }
+        private void BtnAddLowNeutralTreasureContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbLowNeutralTreasureContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_lowNeutralMandatoryContent.treasures, name);
+        }
+        private void BtnAddLowNeutralUnitRecruitmentContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbLowNeutralUnitRecruitmentContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_lowNeutralMandatoryContent.unitRecruitment, name);
+        }
+        private void BtnAddLowNeutralResourceBankContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbLowNeutralResourceBankContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_lowNeutralMandatoryContent.resourceBanks, name);
+        }
+        private void BtnAddLowNeutralUtilityStructureContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbLowNeutralUtilityStructureContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_lowNeutralMandatoryContent.utilityStructures, name);
+        }
+        private void BtnAddLowNeutralHeroImprovementContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbLowNeutralHeroImprovementContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_lowNeutralMandatoryContent.heroImprovementStructures, name);
+        }
+
+        // -- Medium Neutral add handlers --
+        private void BtnAddMediumNeutralMineContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbMediumNeutralMineContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_mediumNeutralMandatoryContent.mines, name);
+        }
+        private void BtnAddMediumNeutralTreasureContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbMediumNeutralTreasureContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_mediumNeutralMandatoryContent.treasures, name);
+        }
+        private void BtnAddMediumNeutralUnitRecruitmentContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbMediumNeutralUnitRecruitmentContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_mediumNeutralMandatoryContent.unitRecruitment, name);
+        }
+        private void BtnAddMediumNeutralResourceBankContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbMediumNeutralResourceBankContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_mediumNeutralMandatoryContent.resourceBanks, name);
+        }
+        private void BtnAddMediumNeutralUtilityStructureContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbMediumNeutralUtilityStructureContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_mediumNeutralMandatoryContent.utilityStructures, name);
+        }
+        private void BtnAddMediumNeutralHeroImprovementContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbMediumNeutralHeroImprovementContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_mediumNeutralMandatoryContent.heroImprovementStructures, name);
+        }
+
+        // -- High Neutral add handlers --
+        private void BtnAddHighNeutralMineContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHighNeutralMineContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_highNeutralMandatoryContent.mines, name);
+        }
+        private void BtnAddHighNeutralTreasureContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHighNeutralTreasureContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_highNeutralMandatoryContent.treasures, name);
+        }
+        private void BtnAddHighNeutralUnitRecruitmentContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHighNeutralUnitRecruitmentContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_highNeutralMandatoryContent.unitRecruitment, name);
+        }
+        private void BtnAddHighNeutralResourceBankContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHighNeutralResourceBankContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_highNeutralMandatoryContent.resourceBanks, name);
+        }
+        private void BtnAddHighNeutralUtilityStructureContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHighNeutralUtilityStructureContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_highNeutralMandatoryContent.utilityStructures, name);
+        }
+        private void BtnAddHighNeutralHeroImprovementContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHighNeutralHeroImprovementContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_highNeutralMandatoryContent.heroImprovementStructures, name);
+        }
+
+        // -- Hub Zone add handlers --
+        private void BtnAddHubZoneMineContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHubZoneMineContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_hubZoneMandatoryContent.mines, name);
+        }
+        private void BtnAddHubZoneTreasureContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHubZoneTreasureContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_hubZoneMandatoryContent.treasures, name);
+        }
+        private void BtnAddHubZoneUnitRecruitmentContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHubZoneUnitRecruitmentContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_hubZoneMandatoryContent.unitRecruitment, name);
+        }
+        private void BtnAddHubZoneResourceBankContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHubZoneResourceBankContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_hubZoneMandatoryContent.resourceBanks, name);
+        }
+        private void BtnAddHubZoneUtilityStructureContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHubZoneUtilityStructureContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_hubZoneMandatoryContent.utilityStructures, name);
+        }
+        private void BtnAddHubZoneHeroImprovementContent_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            string name = (FindName("CmbHubZoneHeroImprovementContentPreset") as ComboBox)?.SelectedItem as string ?? string.Empty;
+            AddZoneContentItemFromName(_hubZoneMandatoryContent.heroImprovementStructures, name);
         }
 
         private static ZoneContentItemUI CreateZoneContentItem(SidMapping preset, int count = 1, bool isGuarded = true, bool nearCastle = false, string roadDistance = "Any")
@@ -1259,7 +1628,11 @@ namespace Olden_Era___Template_Editor
             BannedMagics       = string.Join("\n", _bannedMagics.Select(e => e.Id)),
             ValueOverridesText = TxtValueOverrides.Text,
             BonusesJson        = string.Join("\n", _bonuses.Select(b => b.ToString())),
-            PlayerZoneMandatoryContent = BuildPlayerZoneMandatoryContentFromUi(),
+            PlayerZoneMandatoryContent  = BuildPlayerZoneMandatoryContentFromUi(),
+            LowNeutralMandatoryContent   = BuildZoneMandatoryContentFromUi(_lowNeutralMandatoryContent),
+            MediumNeutralMandatoryContent = BuildZoneMandatoryContentFromUi(_mediumNeutralMandatoryContent),
+            HighNeutralMandatoryContent  = BuildZoneMandatoryContentFromUi(_highNeutralMandatoryContent),
+            HubZoneMandatoryContent      = BuildZoneMandatoryContentFromUi(_hubZoneMandatoryContent),
         };
 
         private void ApplySettings(SettingsFile s)
@@ -1324,6 +1697,10 @@ namespace Olden_Era___Template_Editor
             LoadBonusList(s.BonusesJson);
             TxtValueOverrides.Text = s.ValueOverridesText;
             ApplyPlayerZoneMandatoryContentFromSettings(s.PlayerZoneMandatoryContent);
+            ApplyZoneMandatoryContentFromSettings(_lowNeutralMandatoryContent, s.LowNeutralMandatoryContent, InitializeDefaultLowNeutralContents);
+            ApplyZoneMandatoryContentFromSettings(_mediumNeutralMandatoryContent, s.MediumNeutralMandatoryContent, InitializeDefaultMediumNeutralContents);
+            ApplyZoneMandatoryContentFromSettings(_highNeutralMandatoryContent, s.HighNeutralMandatoryContent, InitializeDefaultHighNeutralContents);
+            ApplyZoneMandatoryContentFromSettings(_hubZoneMandatoryContent, s.HubZoneMandatoryContent, InitializeDefaultHubZoneContents);
             UpdateValueLabels();
             UpdateAdvancedZoneSettingsVisibility();
             UpdatePlayerCastleFactionVisibility();
@@ -1552,6 +1929,10 @@ namespace Olden_Era___Template_Editor
                 }
             },
             PlayerZoneMandatoryContent = BuildPlayerZoneMandatoryContentFromUi(),
+            LowNeutralMandatoryContent = BuildZoneMandatoryContentFromUi(_lowNeutralMandatoryContent),
+            MediumNeutralMandatoryContent = BuildZoneMandatoryContentFromUi(_mediumNeutralMandatoryContent),
+            HighNeutralMandatoryContent = BuildZoneMandatoryContentFromUi(_highNeutralMandatoryContent),
+            HubZoneMandatoryContent = BuildZoneMandatoryContentFromUi(_hubZoneMandatoryContent),
             // Neutral zones between players can be influenced by advanced zone settings, but is functionally independent.
             MinNeutralZonesBetweenPlayers = _advancedZoneSettings ? (int)SldMinNeutralBetweenPlayers.Value : 0,
             MatchPlayerCastleFactions = ChkMatchPlayerCastleFactions.IsChecked == true,
@@ -1645,6 +2026,127 @@ namespace Olden_Era___Template_Editor
             }
 
             return result;
+        }
+
+        /* Generic version of BuildPlayerZoneMandatoryContentFromUi for neutral/hub zone collections. */
+        private static List<ContentItem> BuildZoneMandatoryContentFromUi(ZoneMandatoryContent content)
+        {
+            var result = new List<ContentItem>();
+
+            foreach (var item in content.AllItems)
+            {
+                if (item.Count <= 0) continue;
+                if (item.SidMapping == null) continue;
+
+                var distance = item.RoadDistance switch
+                {
+                    "Next To" => DistancePresets.NextTo,
+                    "Near" => DistancePresets.Near,
+                    "Far" => DistancePresets.Far,
+                    "Very Far" => DistancePresets.VeryFar,
+                    _ => DistancePresets.Medium
+                };
+
+                for (int i = 0; i < item.Count; i++)
+                {
+                    if (item.IsGroup)
+                    {
+                        var groupItem = new ContentItem
+                        {
+                            IncludeLists = new List<string> { item.SidMapping.Sid },
+                            IsGuarded = item.IsGuarded
+                        };
+
+                        if (item.RoadDistance != "Any")
+                        {
+                            groupItem.Rules = new List<ContentPlacementRule>
+                            {
+                                RulePresets.RoadDistance(distance)
+                            };
+                        }
+
+                        result.Add(groupItem);
+                        continue;
+                    }
+
+                    var builder = ContentItemBuilder
+                        .Create(item.SidMapping.Sid)
+                        .Guarded(item.IsGuarded);
+
+                    if (content.mines.Contains(item))
+                        builder.Mine();
+
+                    if (item.NearCastle)
+                        builder.AddRule(RulePresets.NearCastle());
+
+                    if (item.RoadDistance != "Any")
+                        builder.RoadDistance(distance);
+
+                    result.Add(builder.Build());
+                }
+            }
+
+            return result;
+        }
+
+        /* Generic version of ApplyPlayerZoneMandatoryContentFromSettings for neutral/hub zone collections. */
+        private void ApplyZoneMandatoryContentFromSettings(ZoneMandatoryContent target, List<ContentItem>? contentItems, Action defaultInit)
+        {
+            target.Clear();
+
+            if (contentItems is null || contentItems.Count == 0)
+            {
+                defaultInit();
+                return;
+            }
+
+            var groupedItems = new Dictionary<PlayerZoneContentKey, int>();
+
+            foreach (var contentItem in contentItems)
+            {
+                bool isGroup = contentItem.IncludeLists is { Count: > 0 };
+                string? sid = isGroup ? contentItem.IncludeLists![0] : contentItem.Sid;
+
+                if (string.IsNullOrWhiteSpace(sid)) continue;
+
+                SidMapping? sidMapping = GlobalContent.GetBySid(sid);
+                if (sidMapping is null) continue;
+
+                bool isMine = contentItem.IsMine == true;
+                bool isGuarded = contentItem.IsGuarded == true;
+                bool nearCastle = HasNearCastleRule(contentItem.Rules);
+                string roadDistance = GetRoadDistanceLabel(contentItem.Rules);
+
+                var key = new PlayerZoneContentKey(sidMapping.Sid, isMine, isGuarded, nearCastle, roadDistance);
+
+                groupedItems[key] = groupedItems.TryGetValue(key, out int c) ? c + 1 : 1;
+            }
+
+            foreach (var kvp in groupedItems)
+            {
+                SidMapping? sidMapping = GlobalContent.GetBySid(kvp.Key.Sid);
+                if (sidMapping is null) continue;
+
+                var uiItem = CreateZoneContentItem(
+                    sidMapping,
+                    count: kvp.Value,
+                    isGuarded: kvp.Key.IsGuarded,
+                    nearCastle: kvp.Key.NearCastle,
+                    roadDistance: kvp.Key.RoadDistance);
+
+                if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.Mines))
+                    target.mines.Add(uiItem);
+                else if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.UnitRecruitment))
+                    target.unitRecruitment.Add(uiItem);
+                else if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.ResourceBanks))
+                    target.resourceBanks.Add(uiItem);
+                else if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.UtilityStructures))
+                    target.utilityStructures.Add(uiItem);
+                else if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.HeroImprovementStructures))
+                    target.heroImprovementStructures.Add(uiItem);
+                else if (IsContentItemGroupSid(kvp.Key.Sid, ContentItemGroup.Treasures))
+                    target.treasures.Add(uiItem);
+            }
         }
 
         /* Loading settings from file to restore UI state */

@@ -1819,6 +1819,805 @@
                                 </DockPanel>
                             </Border>
                         </TabItem>
+
+                        <!-- ═══════════════════ LOW NEUTRAL ZONES ═══════════════════ -->
+                        <TabItem Header="Low Neutral Zones">
+                            <Border Style="{StaticResource SectionBorder}">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <StackPanel>
+                                        <DockPanel Margin="0,0,0,10">
+                                            <TextBlock Text="◆  Mines" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbLowNeutralMineContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddLowNeutralMineContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding LowNeutralMineContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="160"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}">
+                                                                <ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Treasures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbLowNeutralTreasureContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddLowNeutralTreasureContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding LowNeutralTreasureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="160"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="8" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}">
+                                                                <ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Unit Recruitment" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbLowNeutralUnitRecruitmentContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddLowNeutralUnitRecruitmentContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding LowNeutralUnitRecruitmentContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}">
+                                                                <ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Resource Banks" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbLowNeutralResourceBankContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddLowNeutralResourceBankContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding LowNeutralResourceBankContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}">
+                                                                <ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Utility Structures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbLowNeutralUtilityStructureContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddLowNeutralUtilityStructureContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding LowNeutralUtilityStructureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}">
+                                                                <ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Hero Improvement Structures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbLowNeutralHeroImprovementContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddLowNeutralHeroImprovementContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding LowNeutralHeroImprovementStructureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}">
+                                                                <ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/>
+                                                            </ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <DockPanel Margin="0,12,0,0">
+                                            <Button Content="Reset to default" Width="140" HorizontalAlignment="Left" Style="{StaticResource ToolbarButton}" Click="BtnResetLowNeutralContent_Click"/>
+                                        </DockPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </TabItem>
+
+                        <!-- ═══════════════════ MEDIUM NEUTRAL ZONES ═══════════════════ -->
+                        <TabItem Header="Medium Neutral Zones">
+                            <Border Style="{StaticResource SectionBorder}">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <StackPanel>
+                                        <DockPanel Margin="0,0,0,10">
+                                            <TextBlock Text="◆  Mines" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbMediumNeutralMineContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddMediumNeutralMineContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding MediumNeutralMineContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <CheckBox Content="Near Castle" IsChecked="{Binding NearCastle}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Treasures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbMediumNeutralTreasureContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddMediumNeutralTreasureContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding MediumNeutralTreasureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="8" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Unit Recruitment" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbMediumNeutralUnitRecruitmentContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddMediumNeutralUnitRecruitmentContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding MediumNeutralUnitRecruitmentContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Resource Banks" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbMediumNeutralResourceBankContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddMediumNeutralResourceBankContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding MediumNeutralResourceBankContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Utility Structures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbMediumNeutralUtilityStructureContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddMediumNeutralUtilityStructureContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding MediumNeutralUtilityStructureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Hero Improvement Structures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbMediumNeutralHeroImprovementContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddMediumNeutralHeroImprovementContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding MediumNeutralHeroImprovementStructureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <DockPanel Margin="0,12,0,0">
+                                            <Button Content="Reset to default" Width="140" HorizontalAlignment="Left" Style="{StaticResource ToolbarButton}" Click="BtnResetMediumNeutralContent_Click"/>
+                                        </DockPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </TabItem>
+
+                        <!-- ═══════════════════ HIGH NEUTRAL ZONES ═══════════════════ -->
+                        <TabItem Header="High Neutral Zones">
+                            <Border Style="{StaticResource SectionBorder}">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <StackPanel>
+                                        <DockPanel Margin="0,0,0,10">
+                                            <TextBlock Text="◆  Mines" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHighNeutralMineContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHighNeutralMineContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HighNeutralMineContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Treasures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHighNeutralTreasureContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHighNeutralTreasureContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HighNeutralTreasureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="8" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Unit Recruitment" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHighNeutralUnitRecruitmentContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHighNeutralUnitRecruitmentContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HighNeutralUnitRecruitmentContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Resource Banks" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHighNeutralResourceBankContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHighNeutralResourceBankContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HighNeutralResourceBankContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Utility Structures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHighNeutralUtilityStructureContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHighNeutralUtilityStructureContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HighNeutralUtilityStructureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Hero Improvement Structures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHighNeutralHeroImprovementContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHighNeutralHeroImprovementContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HighNeutralHeroImprovementStructureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <DockPanel Margin="0,12,0,0">
+                                            <Button Content="Reset to default" Width="140" HorizontalAlignment="Left" Style="{StaticResource ToolbarButton}" Click="BtnResetHighNeutralContent_Click"/>
+                                        </DockPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </TabItem>
+
+                        <!-- ═══════════════════ HUB ZONES ═══════════════════ -->
+                        <TabItem Header="Hub Zones">
+                            <Border Style="{StaticResource SectionBorder}">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                    <StackPanel>
+                                        <DockPanel Margin="0,0,0,10">
+                                            <TextBlock Text="◆  Mines" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHubZoneMineContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHubZoneMineContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HubZoneMineContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Treasures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHubZoneTreasureContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHubZoneTreasureContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HubZoneTreasureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="8" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Unit Recruitment" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHubZoneUnitRecruitmentContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHubZoneUnitRecruitmentContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HubZoneUnitRecruitmentContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Resource Banks" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHubZoneResourceBankContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHubZoneResourceBankContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HubZoneResourceBankContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Utility Structures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHubZoneUtilityStructureContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHubZoneUtilityStructureContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HubZoneUtilityStructureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Rectangle Height="1" Fill="{StaticResource BrushBorder}" Margin="0,12,0,0"/>
+                                        <DockPanel Margin="0,8,0,10">
+                                            <TextBlock Text="◆  Hero Improvement Structures" Style="{StaticResource SectionHeader}" VerticalAlignment="Center" Margin="0,0,10,0" DockPanel.Dock="Left"/>
+                                            <ComboBox x:Name="CmbHubZoneHeroImprovementContentPreset" Width="170" DockPanel.Dock="Left"/>
+                                            <Button Content="Add Content" Width="100" HorizontalAlignment="Left" Margin="8,0,0,0" Style="{StaticResource ToolbarButton}" Click="BtnAddHubZoneHeroImprovementContent_Click"/>
+                                        </DockPanel>
+                                        <ItemsControl ItemsSource="{Binding HubZoneHeroImprovementStructureContentItems}">
+                                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><StackPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type local:ZoneContentItemUI}">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions><ColumnDefinition Width="200"/><ColumnDefinition Width="8"/><ColumnDefinition Width="180"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="8"/></Grid.RowDefinitions>
+                                                        <Grid Grid.Column="0"><Grid.ColumnDefinitions><ColumnDefinition Width="30"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <Button Grid.Column="0" Content="x" Width="20" Height="16" Margin="4,0,0,0" Padding="0" FontSize="10" ToolTip="Remove content" Style="{StaticResource ToolbarButton}" Click="BtnRemoveZoneContent_Click"/>
+                                                            <TextBlock Grid.Column="1" Text="{Binding SidMapping.Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                                        </Grid>
+                                                        <Grid Grid.Column="2"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0" Text="{Binding Count, StringFormat={}{0:0}}" Style="{StaticResource ValueText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <Slider Grid.Column="1" Minimum="0" Maximum="5" Value="{Binding Count}" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                                        </Grid>
+                                                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                                                            <CheckBox Content="Guarded" IsChecked="{Binding IsGuarded}" Margin="0,0,12,0"/>
+                                                            <TextBlock Text="Road" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                                            <ComboBox Width="120" SelectedValuePath="Content" SelectedValue="{Binding RoadDistance}"><ComboBoxItem Content="Any"/><ComboBoxItem Content="Next To"/><ComboBoxItem Content="Near"/><ComboBoxItem Content="Medium"/><ComboBoxItem Content="Far"/><ComboBoxItem Content="Very Far"/></ComboBox>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <DockPanel Margin="0,12,0,0">
+                                            <Button Content="Reset to default" Width="140" HorizontalAlignment="Left" Style="{StaticResource ToolbarButton}" Click="BtnResetHubZoneContent_Click"/>
+                                        </DockPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </TabItem>
                     </TabControl>
                 </DockPanel>
             </Grid>

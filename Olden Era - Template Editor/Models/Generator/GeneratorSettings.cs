@@ -84,6 +84,10 @@ namespace Olden_Era___Template_Editor.Models
         public string ValueOverridesText { get; set; } = "";
         public System.Collections.Generic.List<OldenEraTemplateEditor.Models.BonusEntry> Bonuses { get; set; } = [];
         public List<ContentItem> PlayerZoneMandatoryContent { get; set; } = new List<ContentItem>();
+        public List<ContentItem> LowNeutralMandatoryContent { get; set; } = new List<ContentItem>();
+        public List<ContentItem> MediumNeutralMandatoryContent { get; set; } = new List<ContentItem>();
+        public List<ContentItem> HighNeutralMandatoryContent { get; set; } = new List<ContentItem>();
+        public List<ContentItem> HubZoneMandatoryContent { get; set; } = new List<ContentItem>();
         public GameEndConditions GameEndConditions { get; set; } = new GameEndConditions();
         public GladiatorArenaRules GladiatorArenaRules { get; set; } = new GladiatorArenaRules();
         public TournamentRules TournamentRules { get; set; } = new TournamentRules();

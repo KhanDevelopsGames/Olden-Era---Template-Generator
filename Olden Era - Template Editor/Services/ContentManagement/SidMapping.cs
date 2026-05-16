@@ -166,6 +166,15 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
         public static readonly SidMapping MagicBuildingsTier1 = new() { Sid = "basic_content_list_building_magic_tier_1", Name = "Random Magic Building Tier 1" };
         public static readonly SidMapping MagicBuildingsTier2 = new() { Sid = "basic_content_list_building_magic_tier_2", Name = "Random Magic Building Tier 2" };
         public static readonly SidMapping HeroImprovementUncommon = new() { Sid = "content_list_building_uncommon_hero_banks", Name = "Uncommon Hero Improvement" };
+        public static readonly SidMapping VisionBuildingsTier1 = new() { Sid = "basic_content_list_vision_buildings_tier_1", Name = "Random Vision Building Tier 1" };
+        public static readonly SidMapping RandomPickupItems = new() { Sid = "basic_content_list_pickup_random_items", Name = "Random Pickup Items" };
+        public static readonly SidMapping UtopiaBuildings = new() { Sid = "content_list_building_utopia", Name = "Utopia (Dragon/Unstable/Lab)" };
+        public static readonly SidMapping EpicGuardedResourceBanks = new() { Sid = "content_list_building_epic_guarded_resource_banks", Name = "Epic Guarded Resource Banks" };
+        public static readonly SidMapping GuardedUnitBanksBiomeRestricted = new() { Sid = "basic_content_list_building_guarded_units_banks_only_biome_restriction", Name = "Guarded Unit Bank (Biome Restricted)" };
+        public static readonly SidMapping GuardedUnitBanksNoBiome = new() { Sid = "basic_content_list_building_guarded_units_banks_no_biome_restriction", Name = "Guarded Unit Bank (No Biome Restriction)" };
+        public static readonly SidMapping MythicScrollBoxPickup = new() { Sid = "basic_content_list_pickup_mythic_scroll_box", Name = "Random Mythic Scroll Box" };
+        public static readonly SidMapping PandoraBoxArmyLowTier = new() { Sid = "content_list_pickup_pandora_box_army_low_tier", Name = "Pandora Box Army (Low Tier)" };
+        public static readonly SidMapping PandoraBoxArmyHighTier = new() { Sid = "content_list_pickup_pandora_box_army_high_tier", Name = "Pandora Box Army (High Tier)" };
     }
 
     public static class GlobalContent

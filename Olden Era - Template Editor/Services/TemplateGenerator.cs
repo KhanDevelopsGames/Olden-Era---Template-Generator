@@ -1198,7 +1198,8 @@ namespace Olden_Era___Template_Editor.Services
                 isHoldCity: false,
                 size: settings.ZoneCfg.HubZoneSize,
                 castleCount: settings.ZoneCfg.HubZoneCastles,
-                generateRoads: settings.GenerateRoads);
+                generateRoads: settings.GenerateRoads,
+                hubContentGroupName: settings.HubZoneMandatoryContent.Count > 0 ? "mandatory_content_hub" : null);
             hubZone.Name = hubName;
             zones.Add(hubZone);
 
@@ -2023,7 +2024,7 @@ namespace Olden_Era___Template_Editor.Services
 
             // Hub zone (neutral, configurable castles, high loot).
             var hubConns = outerLetters.Select(l => $"Hub-{l}").ToArray();
-            zones.Add(BuildHubZone(hubConns, tuning, hubIsHoldCity, settings.ZoneCfg.HubZoneSize, settings.ZoneCfg.HubZoneCastles, settings.GenerateRoads));
+            zones.Add(BuildHubZone(hubConns, tuning, hubIsHoldCity, settings.ZoneCfg.HubZoneSize, settings.ZoneCfg.HubZoneCastles, settings.GenerateRoads, settings.HubZoneMandatoryContent.Count > 0 ? "mandatory_content_hub" : null));
 
             // Outer zones each connect only to the hub.
             for (int i = 0; i < outerLetters.Count; i++)
@@ -2300,7 +2301,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Hub zone (only used by Hub & Spoke topology) ─────────────────────────
 
-        private static Zone BuildHubZone(string[] spokeConns, GenerationTuning tuning, bool isHoldCity = false, double size = 1.0, int castleCount = 0, bool generateRoads = true)
+        private static Zone BuildHubZone(string[] spokeConns, GenerationTuning tuning, bool isHoldCity = false, double size = 1.0, int castleCount = 0, bool generateRoads = true, string? hubContentGroupName = null)
         {
             // When hold city is active, ensure at least one castle exists.
             // If castles are already configured (>0), pick one at random as the hold city castle;
@@ -2339,8 +2340,7 @@ namespace Olden_Era___Template_Editor.Services
             GuardedContentPool = [.. T3GuardedPools],
             UnguardedContentPool = [.. T3UnguardedPools],
             ResourcesContentPool = [.. GeneralResourcesMedium],
-            MandatoryContent = [],
-            ContentCountLimits = BuildSideContentLimits(),
+            MandatoryContent = hubContentGroupName != null ? [hubContentGroupName] : [],
             GuardedContentValue = ScaleStructureValue(300000 * tuning.ContentScale, tuning),
             GuardedContentValuePerArea = ScaleStructureValue(2400 * Math.Sqrt(tuning.ContentScale), tuning),
             UnguardedContentValue = ScaleStructureValue(50000 * tuning.ContentScale, tuning),
@@ -3216,7 +3216,14 @@ namespace Olden_Era___Template_Editor.Services
                 groups.Add(BuildSpawnMandatoryContent(letter, settings));
 
             foreach (var neutralZone in neutralZones)
-                groups.Add(BuildNeutralMandatoryContent(neutralZone.Letter, neutralZone.CastleCount, settings.SpawnRemoteFootholds, neutralZone.Quality));
+                groups.Add(BuildNeutralMandatoryContent(neutralZone.Letter, neutralZone.CastleCount, neutralZone.Quality, settings));
+
+            if (settings.HubZoneMandatoryContent.Count > 0)
+                groups.Add(new MandatoryContentGroup
+                {
+                    Name = "mandatory_content_hub",
+                    Content = [.. settings.HubZoneMandatoryContent]
+                });
 
             return groups;
         }
@@ -3230,16 +3237,16 @@ namespace Olden_Era___Template_Editor.Services
             };
         }
 
-        private static MandatoryContentGroup BuildNeutralMandatoryContent(string letter, int castleCount, bool spawnFootholds, NeutralZoneQuality quality)
+        private static MandatoryContentGroup BuildNeutralMandatoryContent(string letter, int castleCount, NeutralZoneQuality quality, GeneratorSettings settings)
         {
             return new MandatoryContentGroup
             {
                 Name = $"mandatory_content_neutral_{letter}",
                 Content = quality switch
                 {
-                    NeutralZoneQuality.Low    => ZoneContentManager.BuildLowNeutralMandatoryContent(castleCount, spawnFootholds),
-                    NeutralZoneQuality.High   => ZoneContentManager.BuildHighNeutralMandatoryContent(castleCount, spawnFootholds),
-                    _                         => ZoneContentManager.BuildMediumNeutralMandatoryContent(castleCount, spawnFootholds),
+                    NeutralZoneQuality.Low    => ZoneContentManager.BuildLowNeutralMandatoryContent(settings),
+                    NeutralZoneQuality.High   => ZoneContentManager.BuildHighNeutralMandatoryContent(settings),
+                    _                         => ZoneContentManager.BuildMediumNeutralMandatoryContent(settings),
                 }
             };
         }
