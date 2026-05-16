@@ -65,6 +65,8 @@
                             <ComboBoxItem Tag="6" Content="Starting Gems"/>
                             <ComboBoxItem Tag="7" Content="Starting Crystals"/>
                             <ComboBoxItem Tag="8" Content="Starting Mercury"/>
+                            <ComboBoxItem Tag="9" Content="Starting Wood"/>
+                            <ComboBoxItem Tag="10" Content="Starting Ore"/>
                         </ComboBox>
 
                         <!-- Receiver -->

@@ -14,6 +14,8 @@ namespace OldenEraTemplateEditor.Models
         StartingGems     = 6,
         StartingCrystals = 7,
         StartingMercury  = 8,
+        StartingWood     = 9,
+        StartingOre      = 10,
     }
 
     /// <summary>UI view-model for a single configurable game-start bonus.</summary>
@@ -33,7 +35,9 @@ namespace OldenEraTemplateEditor.Models
             BonusPresetType.StartingGold or
             BonusPresetType.StartingGems or
             BonusPresetType.StartingCrystals or
-            BonusPresetType.StartingMercury);
+            BonusPresetType.StartingMercury or
+            BonusPresetType.StartingWood or
+            BonusPresetType.StartingOre);
 
         public string DisplayName => PresetType switch
         {
@@ -47,6 +51,8 @@ namespace OldenEraTemplateEditor.Models
             BonusPresetType.StartingGems                    => $"Starting gems: {Param}",
             BonusPresetType.StartingCrystals                => $"Starting crystals: {Param}",
             BonusPresetType.StartingMercury                 => $"Starting mercury: {Param}",
+            BonusPresetType.StartingWood                    => $"Starting wood: {Param}",
+            BonusPresetType.StartingOre                     => $"Starting ore: {Param}",
             _                                               => PresetType.ToString(),
         };
 
@@ -118,6 +124,12 @@ namespace OldenEraTemplateEditor.Models
                     break;
                 case BonusPresetType.StartingMercury:
                     list.Add(new Bonus { Sid = "add_bonus_res", ReceiverSide = -1, ReceiverFilter = ReceiverFilter, Parameters = ["mercury",   Param] });
+                    break;
+                case BonusPresetType.StartingWood:
+                    list.Add(new Bonus { Sid = "add_bonus_res", ReceiverSide = -1, ReceiverFilter = ReceiverFilter, Parameters = ["wood",      Param] });
+                    break;
+                case BonusPresetType.StartingOre:
+                    list.Add(new Bonus { Sid = "add_bonus_res", ReceiverSide = -1, ReceiverFilter = ReceiverFilter, Parameters = ["ore",       Param] });
                     break;
             }
             return list;

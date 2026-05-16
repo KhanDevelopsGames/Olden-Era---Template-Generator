@@ -55,7 +55,9 @@ namespace Olden_Era___Template_Editor
             bool isResource = type is BonusPresetType.StartingGold
                                          or BonusPresetType.StartingGems
                                          or BonusPresetType.StartingCrystals
-                                         or BonusPresetType.StartingMercury;
+                                         or BonusPresetType.StartingMercury
+                                         or BonusPresetType.StartingWood
+                                         or BonusPresetType.StartingOre;
 
             PnlResources.Visibility = isResource ? Visibility.Visible : Visibility.Collapsed;
             PnlReceiver.Visibility  = isResource ? Visibility.Collapsed : Visibility.Visible;
@@ -68,6 +70,8 @@ namespace Olden_Era___Template_Editor
                     BonusPresetType.StartingGems     => ("Gems amount",     "15"),
                     BonusPresetType.StartingCrystals => ("Crystals amount", "15"),
                     BonusPresetType.StartingMercury  => ("Mercury amount",  "15"),
+                    BonusPresetType.StartingWood     => ("Wood amount",     "20"),
+                    BonusPresetType.StartingOre      => ("Ore amount",      "20"),
                     _                                => ("Amount",          "10000"),
                 };
             }
