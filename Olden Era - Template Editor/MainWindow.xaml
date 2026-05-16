@@ -40,6 +40,7 @@
         <Style x:Key="RowSpacer" TargetType="RowDefinition">
             <Setter Property="Height" Value="8"/>
         </Style>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </Window.Resources>
 
     <!-- Outer border gives the window its themed frame -->
@@ -528,7 +529,8 @@
                                             <TextBlock Text="{Binding ReceiverLabel}"
                                                        Foreground="#9A8A6A" FontSize="11"
                                                        VerticalAlignment="Center"
-                                                       FontStyle="Italic"/>
+                                                       FontStyle="Italic"
+                                                       Visibility="{Binding ShowReceiverLabel, Converter={StaticResource BoolToVis}}"/>
                                         </DockPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>

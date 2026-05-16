@@ -26,7 +26,8 @@ namespace Olden_Era___Template_Editor
         public ItemPickerWindow(IEnumerable<BanEntry> entries, IEnumerable<string> alreadyBanned, string windowTitle)
         {
             InitializeComponent();
-            Title          = windowTitle;
+            Title             = windowTitle;
+            TxtWindowTitle.Text = windowTitle;
             _allEntries    = [.. entries];
             _alreadyBanned = [.. alreadyBanned];
             RefreshTree(string.Empty);
@@ -227,6 +228,15 @@ namespace Olden_Era___Template_Editor
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
+            => DialogResult = false;
+
+        private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed)
+                DragMove();
+        }
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
             => DialogResult = false;
     }
 }

@@ -29,6 +29,12 @@ namespace OldenEraTemplateEditor.Models
 
         public string ReceiverLabel  => ReceiverFilter == "start_hero" ? "start hero" : "all heroes";
 
+        public bool ShowReceiverLabel => PresetType is not (
+            BonusPresetType.StartingGold or
+            BonusPresetType.StartingGems or
+            BonusPresetType.StartingCrystals or
+            BonusPresetType.StartingMercury);
+
         public string DisplayName => PresetType switch
         {
             BonusPresetType.TownPortalFree                  => "Town Portal (free)",

@@ -52,11 +52,13 @@ namespace Olden_Era___Template_Editor
             PnlMultiplier.Visibility = type == BonusPresetType.UnitMultiplier     ? Visibility.Visible : Visibility.Collapsed;
             PnlMovement.Visibility   = type == BonusPresetType.MovementBonus      ? Visibility.Visible : Visibility.Collapsed;
             PnlItem.Visibility       = type == BonusPresetType.StartingItem       ? Visibility.Visible : Visibility.Collapsed;
-            PnlResources.Visibility  = type is BonusPresetType.StartingGold
-                                           or BonusPresetType.StartingGems
-                                           or BonusPresetType.StartingCrystals
-                                           or BonusPresetType.StartingMercury
-                                       ? Visibility.Visible : Visibility.Collapsed;
+            bool isResource = type is BonusPresetType.StartingGold
+                                         or BonusPresetType.StartingGems
+                                         or BonusPresetType.StartingCrystals
+                                         or BonusPresetType.StartingMercury;
+
+            PnlResources.Visibility = isResource ? Visibility.Visible : Visibility.Collapsed;
+            PnlReceiver.Visibility  = isResource ? Visibility.Collapsed : Visibility.Visible;
 
             if (PnlResources.Visibility == Visibility.Visible)
             {
@@ -188,6 +190,15 @@ namespace Olden_Era___Template_Editor
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
+            => DialogResult = false;
+
+        private void TitleBar_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed)
+                DragMove();
+        }
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
             => DialogResult = false;
     }
 }

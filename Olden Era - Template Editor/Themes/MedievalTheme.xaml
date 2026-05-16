@@ -404,6 +404,42 @@
     </Style>
 
     <!-- ══════════════════════════════════════════════════════════════════
+         BUTTON  (default — used by all dialog/picker buttons)
+    ══════════════════════════════════════════════════════════════════════ -->
+    <Style TargetType="Button">
+        <Setter Property="Foreground"  Value="{StaticResource BrushText}"/>
+        <Setter Property="FontSize"    Value="13"/>
+        <Setter Property="Cursor"      Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd"
+                            Background="{StaticResource BrushInput}"
+                            BorderBrush="{StaticResource BrushBorder}"
+                            BorderThickness="1" CornerRadius="3">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          Margin="8,4"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource BrushGold}"/>
+                            <Setter TargetName="Bd" Property="Background"  Value="#3A3020"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="#1E1A10"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Background"  Value="#1E1A10"/>
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="#3A3020"/>
+                            <Setter Property="Foreground"                   Value="#4A4A40"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ══════════════════════════════════════════════════════════════════
          GENERATE BUTTON
     ══════════════════════════════════════════════════════════════════════ -->
     <!-- Toolbar button (New / Open / Save / Save As) -->
