@@ -26,15 +26,7 @@ public static class ZoneContentManager
         content.AddRange([
             // DEBUG HELPER: Unguarded full map reveal near starting castle.
             //ContentItemBuilder.Create(ContentIds.WindRose.Sid).RoadDistance(DistancePresets.NextTo).AddRule(RulePresets.NearCastle()).Guarded(false).Build(),
-            
-            // ── Utility buildings (Blitz/Kerberos/Exodus pattern). ──
-            new() { Sid = "watchtower" },
-            ContentItemBuilder.Create(ContentIds.Market.Sid).Guarded().RoadDistance(DistancePresets.Near).Build(),
-            ContentItemBuilder.Create(ContentIds.ManaWell.Sid).RoadDistance(DistancePresets.Near).Build(),
-            // ── Hero training — tier-2 stat building (fort/university/orb_observatory) ──
-            //    + uncommon hero bank (university/wise_owl/tree_of_knowledge) (Blitz/Exodus pattern).
-            new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
-            new() { IncludeLists = ["content_list_building_uncommon_hero_banks"] },
+            // TODO: Add support for customizing pandora box contents (different variants)
             new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"], IsGuarded = true },
         ]);
         return content;
@@ -96,10 +88,10 @@ public static class ZoneContentManager
 
         content.AddRange([
             // Mines — full rare set + gold + alchemy lab (Yin Yang/Staircase t3 pattern).
-            ContentPresets.MineCrystals_NextToRoad(),
-            ContentPresets.MineMercury_NextToRoad(),
-            ContentPresets.MineGemstones_NextToRoad(),
-            ContentPresets.AlchemyLab_NearRoad(),
+            ContentItemBuilder.Create(ContentIds.MineCrystals.Sid).WithName("name_mine_crystals").Mine().RoadDistance(DistancePresets.NextTo).Build(),
+            ContentItemBuilder.Create(ContentIds.MineMercury.Sid).WithName("name_mine_mercury").Mine().RoadDistance(DistancePresets.NextTo).Build(),
+            ContentItemBuilder.Create(ContentIds.MineGemstones.Sid).WithName("name_mine_gemstones").Mine().RoadDistance(DistancePresets.NextTo).Build(),
+            ContentItemBuilder.Create(ContentIds.AlchemyLab.Sid).WithName("name_alchemy_lab").Mine().RoadDistance(DistancePresets.NextTo).Build(),
             ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().RoadDistance(DistancePresets.Near).Build(),
             // Utility — watchtower (guarded) + vision building (tier 1 only: flattering_mirror/watchtower).
             // wind_rose (full map reveal) lives in tier_2 and belongs exclusively in high zones.
@@ -185,7 +177,7 @@ public static class ZoneContentManager
             new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
             new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
             // Mines — gold-heavy with full rare set.
-            ContentPresets.MineGold_NearCrossroads(),
+            ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().AddRule(RulePresets.CrossroadsDistance(DistancePresets.Near)).Build(),
             ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().Build(),
             ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().Build(),
             ContentItemBuilder.Create(ContentIds.MineCrystals.Sid).Mine().Build(),

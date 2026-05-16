@@ -3,6 +3,7 @@ using OldenEraTemplateEditor.Models;
 
 namespace OldenEraTemplateEditor.Services.ContentManagement
 {
+/* Some commonly found content items with rules, to use throughout the application. */
 public static class ContentPresets
 {
     /* Foothold rules derived from example templates. Might need adjustment. */
@@ -31,64 +32,6 @@ public static class ContentPresets
             .AddRules(rules)
             .Build();
     }
-    
-    /* Basic wood mine, guarded & anchored near the player castle */
-    public static ContentItem MineWood_Anchored() => 
-        ContentItemBuilder.Create(ContentIds.MineWood.Sid)
-            .WithName("name_mine_wood")
-            .Mine()
-            .Guarded()
-            .AddRules([
-                RulePresets.NearCastle(),
-                RulePresets.CrossroadsDistance(DistancePresets.Near)
-            ])
-            .Build();
-    /* Basic ore mine, guarded & anchored near the player castle */
-    public static ContentItem MineOre_Anchored() => 
-        ContentItemBuilder.Create(ContentIds.MineOre.Sid)
-            .WithName("name_mine_ore")
-            .Mine()
-            .Guarded()
-            .AddRules([
-                RulePresets.NearCastle(),
-                RulePresets.CrossroadsDistance(DistancePresets.Near)
-            ])
-            .Build();
-    /* Gold mine near crossroads */
-    public static ContentItem MineGold_NearCrossroads() => 
-        ContentItemBuilder.Create(ContentIds.MineGold.Sid)
-            .Mine()
-            .AddRules([
-                RulePresets.CrossroadsDistance(DistancePresets.Near)
-            ])
-            .Build();
-    
-    /* Mines near roads */
-    public static ContentItem MineCrystals_NextToRoad() =>
-        ContentItemBuilder.Create(ContentIds.MineCrystals.Sid)
-            .WithName("name_mine_crystals")
-            .Mine()
-            .RoadDistance(DistancePresets.NextTo)
-            .Build();
-    public static ContentItem MineMercury_NextToRoad() =>
-        ContentItemBuilder.Create(ContentIds.MineMercury.Sid)
-            .WithName("name_mine_mercury")
-            .Mine()
-            .RoadDistance(DistancePresets.NextTo)
-            .Build();
-    public static ContentItem MineGemstones_NextToRoad() =>
-        ContentItemBuilder.Create(ContentIds.MineGemstones.Sid)
-            .WithName("name_mine_gemstones")
-            .Mine()
-            .RoadDistance(DistancePresets.NextTo)
-            .Build();
-    public static ContentItem AlchemyLab_NearRoad() =>
-        ContentItemBuilder.Create(ContentIds.AlchemyLab.Sid)
-            .WithName("name_alchemy_lab")
-            .Mine()
-            .RoadDistance(DistancePresets.Near)
-            .Build();
-
 }
 
 }
