@@ -57,7 +57,10 @@ public class TemplateGeneratorTests
             PlayerCount = 4,
             ZoneCfg = new ZoneConfiguration
             {
-                NeutralZoneCount = 2,
+                Advanced = new AdvancedSettings()
+                {
+                    NeutralMediumCastleCount = 2
+                },
                 PlayerZoneCastles = 2,
                 NeutralZoneCastles = 0
             },
@@ -82,7 +85,10 @@ public class TemplateGeneratorTests
             PlayerCount = 3,
             ZoneCfg = new ZoneConfiguration
             {
-                NeutralZoneCount = 2,
+                Advanced = new AdvancedSettings()
+                {
+                    NeutralMediumCastleCount = 2
+                },
                 PlayerZoneCastles = 2,
                 NeutralZoneCastles = 1
             },
@@ -182,7 +188,10 @@ public class TemplateGeneratorTests
             PlayerCount = 2,
             ZoneCfg = new ZoneConfiguration
             {
-                NeutralZoneCount = 1,
+                Advanced = new AdvancedSettings()
+                {
+                    NeutralMediumCastleCount = 2
+                },
                 PlayerZoneCastles = 3,
                 NeutralZoneCastles = 2
             },
@@ -204,7 +213,10 @@ public class TemplateGeneratorTests
             PlayerCount = 2,
             ZoneCfg = new ZoneConfiguration
             {
-                NeutralZoneCount = 2
+                Advanced = new AdvancedSettings()
+                {
+                    NeutralMediumCastleCount = 2
+                }
             },
             NoDirectPlayerConnections = true,
             Topology = MapTopology.Default
@@ -256,7 +268,10 @@ public class TemplateGeneratorTests
             PlayerCount = 2,
             ZoneCfg = new ZoneConfiguration
             {
-                NeutralZoneCount = 2,
+                Advanced = new AdvancedSettings()
+                {
+                    NeutralMediumCastleCount = 2
+                },
                 ResourceDensityPercent = 50,
                 StructureDensityPercent = 150
             },
@@ -284,7 +299,10 @@ public class TemplateGeneratorTests
             PlayerCount = 2,
             ZoneCfg = new ZoneConfiguration
             {
-                NeutralZoneCount = 2,
+                Advanced = new AdvancedSettings()
+                {
+                    NeutralMediumCastleCount = 2
+                },
                 PlayerZoneCastles = 2,
                 NeutralZoneCastles = 2,
                 NeutralStackStrengthPercent = 200,
@@ -314,7 +332,10 @@ public class TemplateGeneratorTests
             PlayerCount = 2,
             ZoneCfg = new ZoneConfiguration
             {
-                NeutralZoneCount = 2,
+                Advanced = new AdvancedSettings()
+                {
+                    NeutralMediumCastleCount = 2
+                },
                 NeutralStackStrengthPercent = 100,
                 BorderGuardStrengthPercent = 50
             },
@@ -727,7 +748,10 @@ public class TemplateGeneratorTests
             PlayerCount = 3,
             ZoneCfg = new ZoneConfiguration
             {
-                NeutralZoneCount = 6,
+                Advanced = new AdvancedSettings()
+                {
+                    NeutralMediumCastleCount = 6
+                },
             },
             MinNeutralZonesBetweenPlayers = 2,
             Topology = MapTopology.Default
