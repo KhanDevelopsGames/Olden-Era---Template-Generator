@@ -3219,11 +3219,16 @@ namespace Olden_Era___Template_Editor.Services
                 groups.Add(BuildNeutralMandatoryContent(neutralZone.Letter, neutralZone.CastleCount, neutralZone.Quality, settings));
 
             if (settings.HubZoneMandatoryContent.Count > 0)
+            {
+                var hubContent = settings.ZoneCfg.HubZoneCastles == 0
+                    ? ZoneContentManager.StripNearCastleRules([.. settings.HubZoneMandatoryContent])
+                    : [.. settings.HubZoneMandatoryContent];
                 groups.Add(new MandatoryContentGroup
                 {
                     Name = "mandatory_content_hub",
-                    Content = [.. settings.HubZoneMandatoryContent]
+                    Content = hubContent
                 });
+            }
 
             return groups;
         }
@@ -3239,15 +3244,20 @@ namespace Olden_Era___Template_Editor.Services
 
         private static MandatoryContentGroup BuildNeutralMandatoryContent(string letter, int castleCount, NeutralZoneQuality quality, GeneratorSettings settings)
         {
+            var content = quality switch
+            {
+                NeutralZoneQuality.Low    => ZoneContentManager.BuildLowNeutralMandatoryContent(settings),
+                NeutralZoneQuality.High   => ZoneContentManager.BuildHighNeutralMandatoryContent(settings),
+                _                         => ZoneContentManager.BuildMediumNeutralMandatoryContent(settings),
+            };
+
+            if (castleCount == 0)
+                content = ZoneContentManager.StripNearCastleRules(content);
+
             return new MandatoryContentGroup
             {
                 Name = $"mandatory_content_neutral_{letter}",
-                Content = quality switch
-                {
-                    NeutralZoneQuality.Low    => ZoneContentManager.BuildLowNeutralMandatoryContent(settings),
-                    NeutralZoneQuality.High   => ZoneContentManager.BuildHighNeutralMandatoryContent(settings),
-                    _                         => ZoneContentManager.BuildMediumNeutralMandatoryContent(settings),
-                }
+                Content = content
             };
         }
     }

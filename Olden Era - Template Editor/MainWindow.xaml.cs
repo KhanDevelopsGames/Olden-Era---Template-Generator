@@ -190,10 +190,11 @@ namespace Olden_Era___Template_Editor
             _lowNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier1));
             // Hiring — two low-tier random hires
             _lowNeutralMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier, count: 2));
-            // Loot — pandora box + random pickup item + magic tier-1 pickup
+            // Loot — pandora box + random pickup item
             _lowNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
             _lowNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(IncludeListIds.RandomPickupItems));
-            _lowNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier1));
+            // Magic buildings — tier 1
+            _lowNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier1));
         }
 
         private void InitializeDefaultMediumNeutralContents()
@@ -213,8 +214,8 @@ namespace Olden_Era___Template_Editor
             _mediumNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier1));
             _mediumNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier2));
             // Magic buildings — tier 1 + tier 2
-            _mediumNeutralMandatoryContent.utilityStructures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier1));
-            _mediumNeutralMandatoryContent.utilityStructures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier2));
+            _mediumNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier1));
+            _mediumNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier2));
             // Hiring — low + high tier
             _mediumNeutralMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresLowTier));
             _mediumNeutralMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier));
@@ -242,7 +243,7 @@ namespace Olden_Era___Template_Editor
             _highNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier2));
             _highNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.HeroStatsAndSkillsTier3, count: 2));
             // Magic buildings — tier 2 × 2
-            _highNeutralMandatoryContent.utilityStructures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier2, count: 2));
+            _highNeutralMandatoryContent.heroImprovementStructures.Add(CreateZoneContentItem(IncludeListIds.MagicBuildingsTier2, count: 2));
             // Hiring — high-tier × 2 + all-tier
             _highNeutralMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresHighTier, count: 2));
             _highNeutralMandatoryContent.unitRecruitment.Add(CreateZoneContentItem(IncludeListIds.RandomHiresAllTier));

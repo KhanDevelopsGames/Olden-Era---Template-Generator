@@ -83,7 +83,39 @@ public static class ZoneContentManager
 
         return content;
     }
-    
+
+    /// <summary>
+    /// Returns a copy of <paramref name="items"/> with every NearCastle (MainObject) rule removed.
+    /// Used when a zone has no castle so the rule cannot meaningfully be satisfied.
+    /// </summary>
+    public static List<ContentItem> StripNearCastleRules(List<ContentItem> items)
+    {
+        var result = new List<ContentItem>(items.Count);
+        foreach (var item in items)
+        {
+            if (item.Rules == null || !item.Rules.Any(r => r.Type == "MainObject"))
+            {
+                result.Add(item);
+                continue;
+            }
+            var stripped = new ContentItem
+            {
+                Name = item.Name,
+                Sid = item.Sid,
+                Variant = item.Variant,
+                IsGuarded = item.IsGuarded,
+                IsMine = item.IsMine,
+                SoloEncounter = item.SoloEncounter,
+                IncludeLists = item.IncludeLists,
+                Rules = item.Rules.Where(r => r.Type != "MainObject").ToList()
+            };
+            if (stripped.Rules.Count == 0)
+                stripped.Rules = null;
+            result.Add(stripped);
+        }
+        return result;
+    }
+
         // ── Content count limits ─────────────────────────────────────────────────
 
         /// <summary>
