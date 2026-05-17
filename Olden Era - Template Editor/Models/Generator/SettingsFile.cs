@@ -65,6 +65,10 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("valueOverrides")]     public string ValueOverridesText           { get; set; } = "";
         [JsonPropertyName("bonuses")]            public string BonusesJson                  { get; set; } = "";
         [JsonPropertyName("playerZoneMandatoryContent")] public List<ContentItem>? PlayerZoneMandatoryContent { get; set; }
+        [JsonPropertyName("lowNeutralMandatoryContent")] public List<ContentItem>? LowNeutralMandatoryContent { get; set; }
+        [JsonPropertyName("mediumNeutralMandatoryContent")] public List<ContentItem>? MediumNeutralMandatoryContent { get; set; }
+        [JsonPropertyName("highNeutralMandatoryContent")] public List<ContentItem>? HighNeutralMandatoryContent { get; set; }
+        [JsonPropertyName("hubZoneMandatoryContent")] public List<ContentItem>? HubZoneMandatoryContent { get; set; }
 
         // Legacy setting from v0.2 and earlier; when present, it seeds both split density sliders.
         [JsonPropertyName("contentDensity")]    public int?    ContentDensityPercent        { get; set; }

@@ -23,12 +23,6 @@ public static class ZoneContentManager
 
         content.AddRange(settings.PlayerZoneMandatoryContent);
 
-        content.AddRange([
-            // DEBUG HELPER: Unguarded full map reveal near starting castle.
-            //ContentItemBuilder.Create(ContentIds.WindRose.Sid).RoadDistance(DistancePresets.NextTo).AddRule(RulePresets.NearCastle()).Guarded(false).Build(),
-            // TODO: Add support for customizing pandora box contents (different variants)
-            new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"], IsGuarded = true },
-        ]);
         return content;
     }
 
@@ -40,35 +34,14 @@ public static class ZoneContentManager
     /// Kerberos connector zones, and Madness side zones from the template corpus.
     /// No high-end encounters (no dragon utopias, research labs, unstable ruins).
     /// </summary>
-    public static List<ContentItem> BuildLowNeutralMandatoryContent(int castleCount, bool spawnFootholds)
+    public static List<ContentItem> BuildLowNeutralMandatoryContent(GeneratorSettings settings)
     {
         var content = new List<ContentItem>();
 
-        if (spawnFootholds)
-            content.Add(ContentPresets.RemoteFoothold(castleCount));
+        if (settings.SpawnRemoteFootholds)
+            content.Add(ContentPresets.RemoteFoothold(settings.ZoneCfg.PlayerZoneCastles));
 
-        content.AddRange([
-            // Mines — biome-based rare mine + one fixed rare mine (Blitz Side-1 pattern).
-            new() { Name = "name_mine_by_biome_1", IncludeLists = ["basic_content_list_rare_mines_by_biome"], IsMine = true },
-            new() { IncludeLists = ["basic_content_list_rare_mines"], IsMine = true },
-            // Utility — one guarded market near crossroads, one vision building.
-            ContentItemBuilder.Create(ContentIds.Market.Sid).Guarded().AddRule(RulePresets.CrossroadsDistance(DistancePresets.Near)).Build(),
-            new() { IncludeLists = ["basic_content_list_vision_buildings_tier_1"] },
-            // Buff buildings — picked from the real hero-buff pool (mana_well, fountain, stables, etc.).
-            new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
-            new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
-            // Common hero stat building (stinging_sword, armory_automaton, magic_wheel, knowledge_garden).
-            new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_1"] },
-            // Hiring — low-tier random hires (hires 1–4, confirmed content_list name).
-            new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
-            new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
-            // Loot — solo pandora box + low-tier army pandora (variants 8–11).
-            ContentItemBuilder.Create(ContentIds.PandoraBox.Sid).SoloEncounter().Build(),
-            new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"] },
-            // Pickup — random item + common magic pickup.
-            new() { IncludeLists = ["basic_content_list_pickup_random_items"] },
-            new() { IncludeLists = ["basic_content_list_building_magic_tier_1"] },
-        ]);
+        content.AddRange(settings.LowNeutralMandatoryContent);       
 
         return content;
     }
@@ -79,46 +52,14 @@ public static class ZoneContentManager
     /// Based on t3-pool side/treasure zones found in Staircase, Shamrock, Blitz, Kerberos, and similar templates.
     /// No high-end encounters (no dragon utopias, research labs, unstable ruins).
     /// </summary>
-    public static List<ContentItem> BuildMediumNeutralMandatoryContent(int castleCount, bool spawnFootholds)
+    public static List<ContentItem> BuildMediumNeutralMandatoryContent(GeneratorSettings settings)
     {
         var content = new List<ContentItem>();
 
-        if (spawnFootholds)
-            content.Add(ContentPresets.RemoteFoothold(castleCount));
+        if (settings.SpawnRemoteFootholds)
+            content.Add(ContentPresets.RemoteFoothold(settings.ZoneCfg.PlayerZoneCastles));
 
-        content.AddRange([
-            // Mines — full rare set + gold + alchemy lab (Yin Yang/Staircase t3 pattern).
-            ContentItemBuilder.Create(ContentIds.MineCrystals.Sid).WithName("name_mine_crystals").Mine().RoadDistance(DistancePresets.NextTo).Build(),
-            ContentItemBuilder.Create(ContentIds.MineMercury.Sid).WithName("name_mine_mercury").Mine().RoadDistance(DistancePresets.NextTo).Build(),
-            ContentItemBuilder.Create(ContentIds.MineGemstones.Sid).WithName("name_mine_gemstones").Mine().RoadDistance(DistancePresets.NextTo).Build(),
-            ContentItemBuilder.Create(ContentIds.AlchemyLab.Sid).WithName("name_alchemy_lab").Mine().RoadDistance(DistancePresets.NextTo).Build(),
-            ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().RoadDistance(DistancePresets.Near).Build(),
-            // Utility — watchtower (guarded) + vision building (tier 1 only: flattering_mirror/watchtower).
-            // wind_rose (full map reveal) lives in tier_2 and belongs exclusively in high zones.
-            ContentItemBuilder.Create(ContentIds.Watchtower.Sid).Guarded().Build(),
-            new() { IncludeLists = ["basic_content_list_vision_buildings_tier_1"] },
-            // Buff buildings.
-            new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
-            // Hero stats — tier 1 common + tier 2 uncommon picks.
-            new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_1"] },
-            new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
-            // Magic buildings — tier 1 + tier 2.
-            new() { IncludeLists = ["basic_content_list_building_magic_tier_1"] },
-            new() { IncludeLists = ["basic_content_list_building_magic_tier_2"] },
-            // Hiring — low-tier + high-tier random hires (confirmed generator list names).
-            new() { IncludeLists = ["content_list_building_random_hires_low_tier"] },
-            new() { IncludeLists = ["content_list_building_random_hires_high_tier"] },
-            // Unit banks — biome-restricted (Blitz Treasure-2 pattern).
-            new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_only_biome_restriction"] },
-            // Guarded resource banks — tier 2 (no black tower / tier-1 banks).
-            new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_2"] },
-            // Loot — epic items + pandora boxes with army variants.
-            ContentItemBuilder.Create(ContentIds.RandomItemEpic.Sid).SoloEncounter().Build(),
-            ContentItemBuilder.Create(ContentIds.RandomItemEpic.Sid).Build(),
-            ContentItemBuilder.Create(ContentIds.PandoraBox.Sid).SoloEncounter().Build(),
-            ContentItemBuilder.Create(ContentIds.PandoraBox.Sid).Build(),
-            new() { IncludeLists = ["content_list_pickup_pandora_box_army_low_tier"] },
-        ]);
+        content.AddRange(settings.MediumNeutralMandatoryContent);
 
         return content;
     }
@@ -131,65 +72,50 @@ public static class ZoneContentManager
     /// high-zone mandatory content across the example template corpus.
     /// Only this tier spawns dragon utopias, unstable ruins, and research laboratories.
     /// </summary>
-    public static List<ContentItem> BuildHighNeutralMandatoryContent(int castleCount, bool spawnFootholds)
+    public static List<ContentItem> BuildHighNeutralMandatoryContent(GeneratorSettings settings)
     {
         var content = new List<ContentItem>();
 
-        if (spawnFootholds)
-            content.Add(ContentPresets.RemoteFoothold(castleCount));
+        if (settings.SpawnRemoteFootholds)
+            content.Add(ContentPresets.RemoteFoothold(settings.ZoneCfg.PlayerZoneCastles));
 
-        content.AddRange([
-            // Epic encounters — exclusive to high zones.
-            new() { IncludeLists = ["content_list_building_utopia"] },
-            new() { IncludeLists = ["content_list_building_utopia"] },
-            new() { IncludeLists = ["content_list_building_epic_guarded_resource_banks"] },
-            new() { IncludeLists = ["content_list_building_epic_guarded_resource_banks"] },
-            // Utility — vision + buff buildings.
-            new() { IncludeLists = ["basic_content_list_vision_buildings_tier_1"] },
-            new() { IncludeLists = ["basic_content_list_building_hero_buff_tier_1"] },
-            // Hero stats — tier 2 + tier 3 (fort/university/maze/college_of_wonder).
-            new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_2"] },
-            new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_3"] },
-            new() { IncludeLists = ["basic_content_list_building_hero_stats_and_skills_tier_3"] },
-            // Magic buildings — tier 2 (magic amplifiers).
-            new() { IncludeLists = ["basic_content_list_building_magic_tier_2"] },
-            new() { IncludeLists = ["basic_content_list_building_magic_tier_2"] },
-            // Hiring — high-tier hires (hires 5–7) + all hires pool.
-            new() { IncludeLists = ["content_list_building_random_hires_high_tier"] },
-            new() { IncludeLists = ["content_list_building_random_hires_high_tier"] },
-            new() { IncludeLists = ["basic_content_list_building_random_hires"] },
-            // Unit banks — biome-restricted + no-restriction variants.
-            new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_only_biome_restriction"] },
-            new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"] },
-            new() { IncludeLists = ["basic_content_list_building_guarded_units_banks_no_biome_restriction"] },
-            // Guarded resource banks — tier 2 + tier 3.
-            new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_2"] },
-            new() { IncludeLists = ["basic_content_list_building_guarded_resource_banks_tier_3"] },
-            // Loot — mythic scrolls, legendary items, pandora boxes with high-tier armies.
-            new() { IncludeLists = ["basic_content_list_pickup_mythic_scroll_box"] },
-            new() { IncludeLists = ["basic_content_list_pickup_mythic_scroll_box"] },
-            ContentItemBuilder.Create(ContentIds.RandomItemLegendary.Sid).SoloEncounter().Build(),
-            ContentItemBuilder.Create(ContentIds.RandomItemLegendary.Sid).Build(),
-            ContentItemBuilder.Create(ContentIds.RandomItemEpic.Sid).Build(),
-            ContentItemBuilder.Create(ContentIds.PandoraBox.Sid).SoloEncounter().Build(),
-            ContentItemBuilder.Create(ContentIds.PandoraBox.Sid).Build(),
-            ContentItemBuilder.Create(ContentIds.PandoraBox.Sid).Build(),
-            new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
-            new() { IncludeLists = ["content_list_pickup_pandora_box_army_high_tier"] },
-            // Mines — gold-heavy with full rare set.
-            ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().AddRule(RulePresets.CrossroadsDistance(DistancePresets.Near)).Build(),
-            ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().Build(),
-            ContentItemBuilder.Create(ContentIds.MineGold.Sid).Mine().Build(),
-            ContentItemBuilder.Create(ContentIds.MineCrystals.Sid).Mine().Build(),
-            ContentItemBuilder.Create(ContentIds.MineMercury.Sid).Mine().Build(),
-            ContentItemBuilder.Create(ContentIds.MineGemstones.Sid).Mine().Build(),
-            ContentItemBuilder.Create(ContentIds.AlchemyLab.Sid).Mine().Build(),
-            ContentItemBuilder.Create(ContentIds.AlchemyLab.Sid).Mine().Build(),
-        ]);
+        content.AddRange(settings.HighNeutralMandatoryContent);
 
         return content;
     }
-    
+
+    /// <summary>
+    /// Returns a copy of <paramref name="items"/> with every NearCastle (MainObject) rule removed.
+    /// Used when a zone has no castle so the rule cannot meaningfully be satisfied.
+    /// </summary>
+    public static List<ContentItem> StripNearCastleRules(List<ContentItem> items)
+    {
+        var result = new List<ContentItem>(items.Count);
+        foreach (var item in items)
+        {
+            if (item.Rules == null || !item.Rules.Any(r => r.Type == "MainObject"))
+            {
+                result.Add(item);
+                continue;
+            }
+            var stripped = new ContentItem
+            {
+                Name = item.Name,
+                Sid = item.Sid,
+                Variant = item.Variant,
+                IsGuarded = item.IsGuarded,
+                IsMine = item.IsMine,
+                SoloEncounter = item.SoloEncounter,
+                IncludeLists = item.IncludeLists,
+                Rules = item.Rules.Where(r => r.Type != "MainObject").ToList()
+            };
+            if (stripped.Rules.Count == 0)
+                stripped.Rules = null;
+            result.Add(stripped);
+        }
+        return result;
+    }
+
         // ── Content count limits ─────────────────────────────────────────────────
 
         /// <summary>

@@ -139,17 +139,25 @@ namespace OldenEraTemplateEditor.Models
 
         /// <summary>Serializes to a compact pipe-separated string for storage.</summary>
         public override string ToString() =>
-            $"{(int)PresetType}|{ReceiverFilter}|{Param}|{Param2}";
+            $"{PresetType}|{ReceiverFilter}|{Param}|{Param2}";
 
         /// <summary>Deserializes from a pipe-separated string produced by <see cref="ToString"/>.</summary>
         public static BonusEntry? FromString(string s)
         {
             if (string.IsNullOrWhiteSpace(s)) return null;
             var p = s.Split('|');
-            if (p.Length < 4 || !int.TryParse(p[0], out int t)) return null;
+            if (p.Length < 4) return null;
+
+            // Support both legacy numeric format and current name-based format.
+            BonusPresetType presetType;
+            if (int.TryParse(p[0], out int t))
+                presetType = (BonusPresetType)t;
+            else if (!System.Enum.TryParse(p[0], ignoreCase: true, out presetType))
+                return null;
+
             return new BonusEntry
             {
-                PresetType     = (BonusPresetType)t,
+                PresetType     = presetType,
                 ReceiverFilter = p[1],
                 Param          = p[2],
                 Param2         = p[3],

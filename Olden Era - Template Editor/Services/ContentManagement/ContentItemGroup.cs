@@ -34,6 +34,7 @@ public static class ContentItemGroup
         ContentIds.CrystalTrail,
         ContentIds.SacrificialShrine,
         ContentIds.Chimerologist,
+        IncludeListIds.VisionBuildingsTier1,
     };
     /* ContentIds of treasures */
     public static readonly List<SidMapping> Treasures = new() {
@@ -46,7 +47,11 @@ public static class ContentItemGroup
         ContentIds.EnchantedScrollBox,
         ContentIds.MythicScrollBox,
         ContentIds.Prison,
-        ContentIds.Mirage
+        ContentIds.Mirage,
+        IncludeListIds.RandomPickupItems,
+        IncludeListIds.MythicScrollBoxPickup,
+        IncludeListIds.PandoraBoxArmyLowTier,
+        IncludeListIds.PandoraBoxArmyHighTier,
     };
     /* Unit recruitment buildings  */
     public static readonly List<SidMapping> UnitRecruitment = new()
@@ -118,11 +123,16 @@ public static class ContentItemGroup
         ContentIds.TwilightBloom,
         ContentIds.UnstableRuins,
         ContentIds.DragonUtopia,
-        ContentIds.ResearchLaboratory
+        ContentIds.ResearchLaboratory,
+        IncludeListIds.UtopiaBuildings,
+        IncludeListIds.EpicGuardedResourceBanks,
+        IncludeListIds.GuardedUnitBanksBiomeRestricted,
+        IncludeListIds.GuardedUnitBanksNoBiome,
     };
     /* Hero improvement structures */
     public static readonly List<SidMapping> HeroImprovementStructures = new()
     {
+        IncludeListIds.HeroBuffTier1,
         IncludeListIds.HeroImprovementUncommon,
         IncludeListIds.HeroStatsAndSkillsTier1,
         ContentIds.StingingSword,
