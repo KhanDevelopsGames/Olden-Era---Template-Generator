@@ -1096,7 +1096,7 @@ ValueChanged="Slider_ValueChanged"/>
                             </ScrollViewer>
                         </TabItem>
 
-                        <TabItem Header="Additional zone Content [EXPERIMENTAL]">
+                        <TabItem Header="Additional zone content [EXPERIMENTAL]">
             <Grid Margin="0,8,0,0">
                 <DockPanel>
                     <Border DockPanel.Dock="Top"
