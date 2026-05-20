@@ -1170,8 +1170,7 @@ namespace Olden_Era___Template_Editor
         private void ApplyVictoryPreset(string victoryCondition)
         {
             ChkLostStartCity.IsChecked = false;
-            if (ChkSingleHeroMode.IsChecked != true) ChkLostStartHero.IsChecked = false;
-            ChkCityHold.IsChecked = false;
+            if (ChkSingleHeroMode.IsChecked != true) ChkLostStartHero.IsChecked = false;            ChkCityHold.IsChecked = false;
             ChkGladiatorArena.IsChecked = false;
             ChkTournament.IsChecked = false;
 
@@ -1241,6 +1240,7 @@ namespace Olden_Era___Template_Editor
 
             ChkLostStartCity.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_3";
             ChkLostStartHero.IsEnabled = ChkSingleHeroMode.IsChecked != true && selectedVictoryCondition != "win_condition_4";
+            if (ChkSingleHeroMode.IsChecked == true) ChkLostStartHero.IsChecked = true;
             ChkCityHold.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_5";
             ChkGladiatorArena.IsEnabled = !isTournament && selectedVictoryCondition != "win_condition_4";
             ChkTournament.IsChecked = isTournament;
