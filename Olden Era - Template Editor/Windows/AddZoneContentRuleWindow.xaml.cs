@@ -12,20 +12,26 @@ namespace Olden_Era___Template_Editor
     public partial class AddZoneContentRuleWindow : Window
     {
         private readonly SidMapping _contentItem;
+        private readonly List<IContentRule> _appliedRules;
         public IContentRule? CreatedRule { get; private set; }
 
-        private ref readonly IContentRule GetSelectedRule()
+        private IContentRule? GetSelectedRule()
         {
-            return ref _contentRulePresets[CmbRuleType.SelectedIndex];
+            int selectedIndex = CmbRuleType.SelectedIndex;
+            if (selectedIndex < 0 || selectedIndex >= _contentRulePresets.Length)
+                return null;
+
+            return _contentRulePresets[selectedIndex];
         }
 
         private IContentRule[] _contentRulePresets = ContentRuleManager.GetRules();
 
-        public AddZoneContentRuleWindow(SidMapping contentItem)
+        public AddZoneContentRuleWindow(SidMapping contentItem, List<IContentRule>? appliedRules = null)
         {
             InitializeComponent();
 
             _contentItem = contentItem;
+            _appliedRules = appliedRules ?? new List<IContentRule>();
 
             CmbRuleType.ItemsSource = _contentRulePresets.Select(rule => rule.Name);
 
@@ -34,6 +40,13 @@ namespace Olden_Era___Template_Editor
 
             CmbRuleType.SelectedIndex = 0;
             UpdateRuleSpecificControls();
+        }
+
+        public AddZoneContentRuleWindow(SidMapping contentItem, IContentRule existingRule, List<IContentRule>? appliedRules = null)
+            : this(contentItem, appliedRules)
+        {
+            TxtWindowTitle.Text = "Edit rule";
+            PrepopulateFromRule(existingRule);
         }
 
         private void BtnClose_Click(object sender, RoutedEventArgs e)
@@ -45,6 +58,8 @@ namespace Olden_Era___Template_Editor
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
             var selectedRule = GetSelectedRule();
+            if (selectedRule is null)
+                return;
             
             switch(selectedRule)
             {
@@ -73,12 +88,52 @@ namespace Olden_Era___Template_Editor
             UpdateRuleSpecificControls();
         }
 
+        private IContentRule? GetAppliedRuleOfSelectedType()
+        {
+            var selectedRule = GetSelectedRule();
+            if (selectedRule is null)
+                return null;
+
+            return _appliedRules.FirstOrDefault(rule => rule.GetType() == selectedRule.GetType());
+        }
+
+        private void PrepopulateFromRule(IContentRule existingRule)
+        {
+            int selectedIndex = Array.FindIndex(_contentRulePresets, rule => rule.GetType() == existingRule.GetType());
+            if (selectedIndex >= 0)
+            {
+                CmbRuleType.SelectedIndex = selectedIndex;
+            }
+
+            switch (existingRule)
+            {
+                case RuleDistanceToRoad roadRule:
+                    CmbDistance.SelectedItem = roadRule.Value.distanceVariation.Name;
+                    break;
+                case RuleDistanceToTown townRule:
+                    CmbDistance.SelectedItem = townRule.Value.distanceVariation.Name;
+                    break;
+                case RuleGuarded guardedRule:
+                    ChkGuarded.IsChecked = guardedRule.Value.isGuarded;
+                    break;
+                case RuleVariant variantRule:
+                    if (CmbVariant.ItemsSource is IEnumerable<int> variants && variants.Contains(variantRule.Value.variant))
+                    {
+                        CmbVariant.SelectedItem = variantRule.Value.variant;
+                    }
+                    break;
+            }
+        }
+
         /* Handle rule-specific control visibility and updates */
         private void UpdateRuleSpecificControls()
         {
             var selectedRule = GetSelectedRule();
+            if (selectedRule is null)
+                return;
+
             if (FindName("TxtRuleDescription") is System.Windows.Controls.TextBlock ruleDescription)
-                ruleDescription.Text = selectedRule?.Description ?? string.Empty;
+                ruleDescription.Text = selectedRule.Description;
 
             /* Controls visibility of controls per rule */
             PnlDistance.Visibility = (selectedRule is RuleDistanceToRoad || selectedRule is RuleDistanceToTown) ? Visibility.Visible : Visibility.Collapsed;
@@ -88,6 +143,17 @@ namespace Olden_Era___Template_Editor
             if (selectedRule is RuleVariant)
             {
                 RefreshVariantOptions();
+            }
+
+            IContentRule? existingRule = GetAppliedRuleOfSelectedType();
+            if (existingRule is not null)
+            {
+                TxtWindowTitle.Text = "Edit rule";
+                PrepopulateFromRule(existingRule);
+            }
+            else
+            {
+                TxtWindowTitle.Text = "Add rule";
             }
         }
         /* Variants differ between content items. Refresh the options based on the parent content item. */
