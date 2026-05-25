@@ -89,12 +89,21 @@
                             Value="{Binding Count}"
                             TickFrequency="1" IsSnapToTickEnabled="True"/>
                 </Grid>
-                <Button Grid.Column="4"
-                        Content="Manage Rules"
+                <StackPanel Grid.Column="4"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center">
+                    <Button Content="Manage Rules"
                         Width="120"
                         HorizontalAlignment="Left"
                         Style="{StaticResource ToolbarButton}"
                         Click="BtnManageZoneContentRules_Click"/>
+                    <TextBlock Text="{Binding RuleMarkers}"
+                           Margin="8,0,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource BrushTextDim}"
+                           FontSize="11"/>
+                </StackPanel>
             </Grid>
         </DataTemplate>
     </Window.Resources>

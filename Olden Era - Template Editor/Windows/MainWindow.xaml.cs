@@ -144,26 +144,44 @@ namespace Olden_Era___Template_Editor
             _playerZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineWood, 
                 contentRules: new List<IContentRule> {
                     new RuleDistanceToTown(DistancePresets.Near),
-                    new RuleDistanceToRoad(DistancePresets.Near)
+                    new RuleDistanceToRoad(DistancePresets.Near),
+                    new RuleGuarded(true)
                 }));
             _playerZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineOre, 
                 contentRules: new List<IContentRule> {
                     new RuleDistanceToTown(DistancePresets.Near),
-                    new RuleDistanceToRoad(DistancePresets.Near)
+                    new RuleDistanceToRoad(DistancePresets.Near),
+                    new RuleGuarded(true)
                 }));
             // ── Gold mine (Exodus/Staircase/Yin Yang pattern). ──
-            _playerZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineGold, new RuleDistanceToRoad(DistancePresets.Near)));
+            _playerZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineGold, 
+                contentRules: new List<IContentRule> {
+                    new RuleDistanceToRoad(DistancePresets.Near),
+                    new RuleGuarded(true)
+                }));
             // ── Rare mines spread along roads (Exodus/Staircase/Yin Yang pattern). ──
             _playerZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineCrystals,
-                contentRule: new RuleDistanceToRoad(DistancePresets.NextTo)));
+                contentRules: new List<IContentRule> {
+                    new RuleDistanceToRoad(DistancePresets.NextTo),
+                    new RuleGuarded(true)
+                }));
             _playerZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineMercury, 
-                contentRule: new RuleDistanceToRoad(DistancePresets.NextTo)));
+                contentRules: new List<IContentRule> {
+                    new RuleDistanceToRoad(DistancePresets.NextTo),
+                    new RuleGuarded(true)
+                }));
             _playerZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineGemstones, 
-                contentRule: new RuleDistanceToRoad(DistancePresets.NextTo)));
+                contentRules: new List<IContentRule> {
+                    new RuleDistanceToRoad(DistancePresets.NextTo),
+                    new RuleGuarded(true)
+                }));
             _playerZoneMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.AlchemyLab, 
-                contentRule: new RuleDistanceToRoad(DistancePresets.NextTo)));
+                contentRules: new List<IContentRule> {
+                    new RuleDistanceToRoad(DistancePresets.NextTo),
+                    new RuleGuarded(true)
+                }));
             // ── Loot — epic items + army pandora (Exodus/Blitz pattern). ──
-            _playerZoneMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
+            _playerZoneMandatoryContent.treasures.Add(CreateZoneContentItem(IncludeListIds.PandoraBoxArmyLowTier));
             _playerZoneMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemEpic));
 
             // ── Hiring — low-tier × 2 + high-tier × 1 + full pool × 1 (Kerberos + Universe blend). ──
@@ -277,9 +295,7 @@ namespace Olden_Era___Template_Editor
             _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemLegendary));
             _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemLegendary));
             _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.RandomItemEpic));
-            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
-            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
-            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox));
+            _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(ContentIds.PandoraBox, count: 2));
             _highNeutralMandatoryContent.treasures.Add(CreateZoneContentItem(IncludeListIds.PandoraBoxArmyHighTier, count: 2));
             // Mines — gold-heavy with full rare set
             _highNeutralMandatoryContent.mines.Add(CreateZoneContentItem(ContentIds.MineGold, count: 3));

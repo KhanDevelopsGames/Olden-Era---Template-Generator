@@ -41,9 +41,36 @@ namespace Olden_Era___Template_Editor.Models
             }
         }
 
+        public string RuleMarkers
+        {
+            get
+            {
+                string guardedMarker = string.Empty;
+                RuleGuarded? guardedRule = Rules.OfType<RuleGuarded>().FirstOrDefault();
+                if (guardedRule is not null)
+                {
+                    guardedMarker = guardedRule.Value.isGuarded ? "G" : "!G";
+                }
+
+                bool hasRoadRule = Rules.OfType<RuleDistanceToRoad>().Any();
+                bool hasTownRule = Rules.OfType<RuleDistanceToTown>().Any();
+
+                var markers = new List<string>();
+                if (!string.IsNullOrEmpty(guardedMarker))
+                    markers.Add(guardedMarker);
+                if (hasRoadRule)
+                    markers.Add("R");
+                if (hasTownRule)
+                    markers.Add("T");
+
+                return string.Join(" ", markers);
+            }
+        }
+
         public void NotifyRulesChanged()
         {
             OnPropertyChanged(nameof(DisplayName));
+            OnPropertyChanged(nameof(RuleMarkers));
         }
 
         public int Count
