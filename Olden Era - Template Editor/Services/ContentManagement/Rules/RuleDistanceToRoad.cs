@@ -40,7 +40,7 @@ public class RuleDistanceToRoad : IContentRule
         Value = new DistanceValue(value ?? DistancePresets.Medium);
     }
     
-    /* Required for saving settings! Rule contructor from serialized save data. */
+    /* Required for saving settings! Rule variant constructor from serialized save data. */
     [SetsRequiredMembers]
     public RuleDistanceToRoad(ContentRuleRowSave savedRule)
     {

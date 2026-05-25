@@ -1,4 +1,4 @@
-<Window x:Class="Olden_Era___Template_Editor.MainWindow"
+﻿<Window x:Class="Olden_Era___Template_Editor.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -69,7 +69,7 @@
                             Style="{StaticResource ToolbarButton}"
                             Click="BtnRemoveZoneContent_Click"/>
                     <TextBlock Grid.Column="1"
-                               Text="{Binding SidMapping.Name}"
+                               Text="{Binding DisplayName}"
                                VerticalAlignment="Center"
                                TextTrimming="CharacterEllipsis"/>
                 </Grid>
@@ -1849,7 +1849,7 @@ ValueChanged="Slider_ValueChanged"/>
 
                 <Button Grid.Row="0"
                         x:Name="BtnPreview"
-                        Content="?  Generate Template"
+                        Content="&#x25C6; Generate Template"
                         Style="{StaticResource GenerateButton}"
                         Click="BtnPreview_Click"/>
 

@@ -10,7 +10,7 @@ public class VariantMapping
     /* Dictionary of possible variant values and their descriptions */
     public Dictionary<int, string> variants { get; set; } = new();
     public string DisplayText => variants.Count > 0
-        ? $"{variants.First().Key} ({variants.First().Value})"
+        ? $"{variants.First().Value}"
         : content.Name;
 
     public VariantMapping(SidMapping content, Dictionary<int, string> variants)

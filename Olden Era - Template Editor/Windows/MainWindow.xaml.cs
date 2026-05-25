@@ -1390,6 +1390,7 @@ namespace Olden_Era___Template_Editor
             };
 
             window.ShowDialog();
+            item.NotifyRulesChanged();
         }
 
         private void BtnResetPlayerZoneContent_Click(object sender, RoutedEventArgs e)

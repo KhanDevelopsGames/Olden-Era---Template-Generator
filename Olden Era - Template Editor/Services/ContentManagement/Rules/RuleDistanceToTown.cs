@@ -40,7 +40,7 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
         Value = new DistanceToTownValue(value ?? DistancePresets.Medium);
     }
 
-    /* Required for saving settings! Rule contructor from serialized save data. */
+    /* Required for saving settings! Rule variant constructor from serialized save data. */
     [SetsRequiredMembers]
     public RuleDistanceToTown(ContentRuleRowSave savedRule)
     {

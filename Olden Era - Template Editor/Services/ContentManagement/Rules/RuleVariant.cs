@@ -33,7 +33,7 @@ public class RuleVariant : IContentRule
     public string GetDisplayText()
     {
         if (Value.variantMapping.variants.TryGetValue(Value.variantId, out string? description))
-            return $"{Name}: {Value.variantId} ({description})";
+            return $"{Name}: {description}";
 
         return $"{Name}: ERROR - please show this on template generator discord :)";
     }
@@ -56,7 +56,7 @@ public class RuleVariant : IContentRule
         Value = new VariantValue(resolvedMapping, resolvedVariantId);
     }
 
-    /* Required for saving settings! Rule contructor from serialized save data. */
+    /* Required for saving settings! Rule variant constructor from serialized save data. */
     [SetsRequiredMembers]
     public RuleVariant(ContentRuleRowSave savedRule, SidMapping contentItem)
     {

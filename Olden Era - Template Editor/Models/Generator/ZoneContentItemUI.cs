@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Linq;
 using OldenEraTemplateEditor.Services.ContentManagement;
 
 namespace Olden_Era___Template_Editor.Models
@@ -16,7 +17,33 @@ namespace Olden_Era___Template_Editor.Models
         public SidMapping? SidMapping
         {
             get => _sidMapping;
-            set { _sidMapping = value; OnPropertyChanged(); }
+            set
+            {
+                _sidMapping = value;
+                OnPropertyChanged();
+                /* Separate update handling for name changes (variant selection via the rules) */
+                OnPropertyChanged(nameof(DisplayName));
+            }
+        }
+
+        public string DisplayName
+        {
+            get
+            {
+                if (SidMapping is null)
+                    return string.Empty;
+
+                RuleVariant? variantRule = Rules.OfType<RuleVariant>().FirstOrDefault();
+                if (variantRule is null)
+                    return SidMapping.Name;
+
+                return $"{SidMapping.Name} ({variantRule.Value.variantMapping})";
+            }
+        }
+
+        public void NotifyRulesChanged()
+        {
+            OnPropertyChanged(nameof(DisplayName));
         }
 
         public int Count

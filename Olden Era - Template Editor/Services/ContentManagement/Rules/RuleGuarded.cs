@@ -40,7 +40,7 @@ public class RuleGuarded : IContentRule
         Value = new GuardedValue(isGuarded ?? false);
     }
 
-    /* Required for saving settings! Rule contructor from serialized save data. */
+    /* Required for saving settings! Rule variant constructor from serialized save data. */
     [SetsRequiredMembers]
     public RuleGuarded(ContentRuleRowSave savedRule)
     {

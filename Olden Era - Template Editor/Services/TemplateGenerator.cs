@@ -612,7 +612,7 @@ namespace Olden_Era___Template_Editor.Services
                     ? BuildBalancedRingLetters(playerLetters, neutralZones, honoredSeparation)
                     : BuildBalancedChainLetters(playerLetters, neutralZones, honoredSeparation);
             }
-
+            /* // Comenting out unreachable code to suppress warnings.
             int min = settings.MinNeutralZonesBetweenPlayers;
             if (min <= 0 || settings.RandomPortals || !CanHonorNeutralSeparation(settings, neutralLetters.Count))
                 return playerLetters.Concat(neutralLetters).ToList();
@@ -633,7 +633,7 @@ namespace Olden_Era___Template_Editor.Services
             while (remainingNeutrals.Count > 0)
                 ordered.Add(remainingNeutrals.Dequeue());
 
-            return ordered.Count > 0 ? ordered : playerLetters.Concat(neutralLetters).ToList();
+            return ordered.Count > 0 ? ordered : playerLetters.Concat(neutralLetters).ToList();*/
         }
 
         private static List<string> BuildBalancedRingLetters(
