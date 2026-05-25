@@ -50,6 +50,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -74,6 +75,19 @@
                 </Grid>
 
                 <Border Grid.Row="1"
+                        Margin="0,0,0,10"
+                        Background="{StaticResource BrushWarnBg}"
+                        BorderBrush="{StaticResource BrushWarnBorder}"
+                        BorderThickness="1"
+                        CornerRadius="3"
+                        Padding="10,7">
+                    <TextBlock x:Name="TxtRuleDescription"
+                               Foreground="{StaticResource BrushWarnText}"
+                               FontSize="11"
+                               TextWrapping="Wrap"/>
+                </Border>
+
+                <Border Grid.Row="2"
                         x:Name="PnlDistance"
                         Margin="0,0,0,10"
                         BorderThickness="1"
@@ -99,7 +113,7 @@
                     </Grid>
                 </Border>
 
-                <Border Grid.Row="2"
+                <Border Grid.Row="3"
                         x:Name="PnlGuarded"
                         Margin="0,0,0,10"
                         BorderThickness="1"
@@ -112,7 +126,7 @@
                               Foreground="{StaticResource BrushText}"/>
                 </Border>
 
-                <Border Grid.Row="3"
+                <Border Grid.Row="4"
                         x:Name="PnlVariant"
                         Margin="0,0,0,10"
                         BorderThickness="1"
@@ -120,10 +134,6 @@
                         Padding="8"
                         Visibility="Collapsed">
                     <StackPanel>
-                        <TextBlock x:Name="TxtVariantContext"
-                                   Text="Parent content:"
-                                   Margin="0,0,0,6"
-                                   Foreground="{StaticResource BrushTextDim}"/>
                         <ComboBox x:Name="CmbVariant"
                                   Height="30"
                                   Background="{StaticResource BrushInput}"
@@ -131,13 +141,13 @@
                                   BorderBrush="{StaticResource BrushBorder}"/>
                         <TextBlock x:Name="TxtVariantEmpty"
                                    Margin="0,8,0,0"
-                                   Text="No known variants for this content item."
+                                   Text="No known variants"
                                    Foreground="{StaticResource BrushTextDim}"
                                    Visibility="Collapsed"/>
                     </StackPanel>
                 </Border>
 
-                <StackPanel Grid.Row="4"
+                <StackPanel Grid.Row="5"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             Margin="0,4,0,0">

@@ -57,35 +57,34 @@ public static class ContentRuleManager
             contentItem.Rules.AddRange(ContentPlacementRules);
         }
     }
-
+    /* Creates appropriate rule instance from saved rule data.
+    *  @note - This is runtime-based, and there is no compile time safety ensuring that appropriate constructor is implemented.
+    * Implementing a rule without a ContentRuleRowSave contructor will result in undefined behavior, 
+    * But it reduces footprint of adding a new rule. Most likely could be written better, but enforcing it compile-time could be cumbersome. */
     public static IContentRule? CreateRuleFromSavedRule(ContentRuleRowSave savedRule)
     {
-        if (string.IsNullOrWhiteSpace(savedRule.Name))
+        /* Get the type of the rule based on the saved rule's name */
+        Type? ruleType = GetRules()
+            .FirstOrDefault(rule => string.Equals(rule.Name, savedRule.Name, StringComparison.OrdinalIgnoreCase))
+            ?.GetType();
+        if (ruleType is null)
             return null;
 
-        if (string.Equals(savedRule.Name, RuleDistanceToRoad.RuleName, StringComparison.OrdinalIgnoreCase))
-        {
-            return new RuleDistanceToRoad(savedRule);
-        }
+        /* Get the constructor that accepts a ContentRuleRowSave parameter */
+        ConstructorInfo? ruleConstructor = ruleType.GetConstructor(new[] { typeof(ContentRuleRowSave) });
+        if (ruleConstructor is null)
+            return null;
 
-        if (string.Equals(savedRule.Name, RuleDistanceToTown.RuleName, StringComparison.OrdinalIgnoreCase))
+        /* Finally, invoke proper constructor to create the rule instance */
+        try
         {
-            if (string.IsNullOrWhiteSpace(savedRule.DistanceName))
-                return null;
-            return new RuleDistanceToTown(DistancePresets.GetDistanceVariationByName(savedRule.DistanceName));
+            return ruleConstructor.Invoke(new object[] { savedRule }) as IContentRule;
         }
-
-        if (string.Equals(savedRule.Name, RuleGuarded.RuleName, StringComparison.OrdinalIgnoreCase) && savedRule.IsGuarded.HasValue)
+        catch (ArgumentException)
         {
-            return new RuleGuarded(savedRule.IsGuarded.Value);
+            /* We never should reach this state, but it'll help with debugging. */
+            return null;
         }
-
-        if (string.Equals(savedRule.Name, RuleVariant.RuleName, StringComparison.OrdinalIgnoreCase) && savedRule.VariantId.HasValue)
-        {
-            return new RuleVariant(savedRule.VariantId.Value);
-        }
-
-        return null;
     }
 }
 

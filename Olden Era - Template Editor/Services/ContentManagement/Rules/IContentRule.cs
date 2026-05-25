@@ -7,6 +7,8 @@ public interface IContentRule
 {
     /* Name of the rule to be displayed in the UI */
     public string Name { get; }
+    /* Description of the rule to be displayed in the UI */
+    public string Description { get; }
     /* Value of the rule, which can be of different types based on the rule type. */
     public abstract record RuleValue
     {

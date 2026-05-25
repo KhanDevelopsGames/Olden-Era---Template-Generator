@@ -32,8 +32,6 @@ namespace Olden_Era___Template_Editor
             CmbDistance.ItemsSource = DistancePresets.GetDisplayNames();
             CmbDistance.SelectedIndex = 0;
 
-            TxtVariantContext.Text = $"Parent content: {_contentItem.Name}";
-
             CmbRuleType.SelectedIndex = 0;
             UpdateRuleSpecificControls();
         }
@@ -50,16 +48,16 @@ namespace Olden_Era___Template_Editor
             
             switch(selectedRule)
             {
-                case RuleDistanceToRoad rule:
+                case RuleDistanceToRoad:
                     CreatedRule = new RuleDistanceToRoad(DistancePresets.GetDistanceVariationByName(CmbDistance.SelectedItem as string));
                     break;
-                case RuleDistanceToTown rule:
+                case RuleDistanceToTown:
                     CreatedRule = new RuleDistanceToTown(DistancePresets.GetDistanceVariationByName(CmbDistance.SelectedItem as string));
                     break;
-                case RuleGuarded rule:
+                case RuleGuarded:
                     CreatedRule = new RuleGuarded(ChkGuarded.IsChecked ?? false);
                     break;
-                case RuleVariant rule:
+                case RuleVariant:
                     CreatedRule = new RuleVariant(CmbVariant.SelectedItem is int variantId ? variantId : 0);
                     break;
                 default:
@@ -79,6 +77,8 @@ namespace Olden_Era___Template_Editor
         private void UpdateRuleSpecificControls()
         {
             var selectedRule = GetSelectedRule();
+            if (FindName("TxtRuleDescription") is System.Windows.Controls.TextBlock ruleDescription)
+                ruleDescription.Text = selectedRule?.Description ?? string.Empty;
 
             /* Controls visibility of controls per rule */
             PnlDistance.Visibility = (selectedRule is RuleDistanceToRoad || selectedRule is RuleDistanceToTown) ? Visibility.Visible : Visibility.Collapsed;
@@ -97,7 +97,9 @@ namespace Olden_Era___Template_Editor
 
             CmbVariant.ItemsSource = variants;
             CmbVariant.IsEnabled = variants.Count > 0;
+            CmbVariant.Visibility = variants.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
             TxtVariantEmpty.Visibility = variants.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+            TxtVariantEmpty.Text = $"No known variants for {_contentItem.Name}";
 
             if (variants.Count > 0)
             {

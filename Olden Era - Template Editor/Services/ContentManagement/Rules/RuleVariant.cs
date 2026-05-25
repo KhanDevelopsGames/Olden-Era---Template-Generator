@@ -9,7 +9,9 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
 public class RuleVariant : IContentRule
 {
     public const string RuleName = "Variant";
+    public const string RuleDescription = "Forces the content item to spawn a specific variant.";
     public string Name => RuleName;
+    public string Description => RuleDescription;
     /* Custom value type for variant rule. */
     public sealed record VariantValue(int variant) : IContentRule.RuleValue
     {
@@ -37,6 +39,19 @@ public class RuleVariant : IContentRule
     {
         Value = new VariantValue(variant ?? 0);
     }
+
+    /* Required for saving settings! Rule contructor from serialized save data. */
+    [SetsRequiredMembers]
+    public RuleVariant(ContentRuleRowSave savedRule)
+    {
+        if (savedRule is null)
+            throw new ArgumentNullException(nameof(savedRule));
+        if (!savedRule.VariantId.HasValue)
+            throw new ArgumentException("VariantId is required for RuleVariant.", nameof(savedRule));
+
+        Value = new VariantValue(savedRule.VariantId.Value);
+    }
+
     public ContentRuleRowSave SerializeToRowSave()
     {
         var rowSave = new ContentRuleRowSave

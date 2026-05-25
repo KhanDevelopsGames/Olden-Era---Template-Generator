@@ -9,7 +9,9 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
 public class RuleGuarded : IContentRule
 {
     public const string RuleName = "Guarded";
+    public const string RuleDescription = "Forces the content item to be guarded or unguarded, regardless of the default behavior.";
     public string Name => RuleName;
+    public string Description => RuleDescription;
     /* Custom value type for guarded rule. */
     public sealed record GuardedValue(bool isGuarded) : IContentRule.RuleValue
     {
@@ -37,6 +39,19 @@ public class RuleGuarded : IContentRule
     {
         Value = new GuardedValue(isGuarded ?? false);
     }
+
+    /* Required for saving settings! Rule contructor from serialized save data. */
+    [SetsRequiredMembers]
+    public RuleGuarded(ContentRuleRowSave savedRule)
+    {
+        if (savedRule is null)
+            throw new ArgumentNullException(nameof(savedRule));
+        if (!savedRule.IsGuarded.HasValue)
+            throw new ArgumentException("IsGuarded is required for RuleGuarded.", nameof(savedRule));
+
+        Value = new GuardedValue(savedRule.IsGuarded.Value);
+    }
+
     public ContentRuleRowSave SerializeToRowSave()
     {
         var rowSave = new ContentRuleRowSave

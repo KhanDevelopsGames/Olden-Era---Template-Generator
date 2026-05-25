@@ -9,7 +9,9 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
 public class RuleDistanceToRoad : IContentRule
 {
     public const string RuleName = "Distance to road";
+    public const string RuleDescription = "Distance to the nearest road for the content item.";
     public string Name => RuleName;
+    public string Description => RuleDescription;
     /* Custom value type for distance to road rule. */
     public sealed record DistanceValue(DistanceVariation distanceVariation) : IContentRule.RuleValue
     {
@@ -38,10 +40,16 @@ public class RuleDistanceToRoad : IContentRule
         Value = new DistanceValue(value ?? DistancePresets.Medium);
     }
     
+    /* Required for saving settings! Rule contructor from serialized save data. */
     [SetsRequiredMembers]
     public RuleDistanceToRoad(ContentRuleRowSave savedRule)
     {
-            Value = new DistanceValue(DistancePresets.GetDistanceVariationByName(savedRule.DistanceName));
+        if (savedRule is null)
+            throw new ArgumentNullException(nameof(savedRule));
+        if (string.IsNullOrWhiteSpace(savedRule.DistanceName))
+            throw new ArgumentException("DistanceName is required for RuleDistanceToRoad.", nameof(savedRule));
+
+        Value = new DistanceValue(DistancePresets.GetDistanceVariationByName(savedRule.DistanceName));
     }
     public ContentRuleRowSave SerializeToRowSave()
     {
