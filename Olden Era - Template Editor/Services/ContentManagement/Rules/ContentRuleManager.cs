@@ -26,11 +26,11 @@ public static class ContentRuleManager
             .ToArray();
     }
 
-    /* Apply the rules from the UI data storage to the final JSON content item. */
+    /* Apply the rules from the UI data storage to the final JSON content item. 
+    * @TODO: Update this to use ContentItemBuilder, as currently dur to grouped items it's a post-processing step on already built content items.*/
     public static void ApplyRulesToFinalContentItem(ContentItem contentItem, ZoneContentItemUI itemUIData)
     {
         List<ContentPlacementRule> ContentPlacementRules = new List<ContentPlacementRule>();
-        bool? isGuarded = null;
         foreach(IContentRule Rule in itemUIData.Rules)
         {
             switch(Rule)
@@ -42,15 +42,16 @@ public static class ContentRuleManager
                     ContentPlacementRules.Add(RulePresets.TownDistance(rule.Value.distanceVariation));
                     break;
                 case RuleGuarded rule:
-                    isGuarded = rule.Value.isGuarded;
+                    contentItem.IsGuarded = rule.Value.isGuarded;
+                    break;
+                case RuleVariant rule:
+                    contentItem.Variant = rule.Value.variantId;
                     break;
                 default:
-                    // We never should reach this state. (assuming the UI only allows valid rules to be added).
+                    // We should never reach this state. (assuming the UI only allows valid rules to be added).
                     continue;
             }
         }
-        /* isGuarded can be null and that's fine - if rule is not set, do not force it in the final ContentItem. */
-        contentItem.IsGuarded = isGuarded;
         if (ContentPlacementRules.Count > 0)
         {
             contentItem.Rules ??= new List<ContentPlacementRule>();
@@ -61,7 +62,7 @@ public static class ContentRuleManager
     *  @note - This is runtime-based, and there is no compile time safety ensuring that appropriate constructor is implemented.
     * Implementing a rule without a ContentRuleRowSave contructor will result in undefined behavior, 
     * But it reduces footprint of adding a new rule. Most likely could be written better, but enforcing it compile-time could be cumbersome. */
-    public static IContentRule? CreateRuleFromSavedRule(ContentRuleRowSave savedRule)
+    public static IContentRule? CreateRuleFromSavedRule(ContentRuleRowSave savedRule, SidMapping contentItem)
     {
         /* Get the type of the rule based on the saved rule's name */
         Type? ruleType = GetRules()
@@ -70,21 +71,37 @@ public static class ContentRuleManager
         if (ruleType is null)
             return null;
 
-        /* Get the constructor that accepts a ContentRuleRowSave parameter */
-        ConstructorInfo? ruleConstructor = ruleType.GetConstructor(new[] { typeof(ContentRuleRowSave) });
-        if (ruleConstructor is null)
-            return null;
+        /* First attempt - get the constructor that accepts a ContentRuleRowSave parameter */
+        ConstructorInfo? ruleConstructor = ruleType.GetConstructor(new[] { typeof(ContentRuleRowSave)});
+        if (ruleConstructor is not null)
+        {
+            try
+            {
+                return ruleConstructor.Invoke(new object[] { savedRule }) as IContentRule;
+            }
+            catch (ArgumentException)
+            {
+                /* We never should reach this state, but it'll help with debugging. */
+                return null;
+            }
+        }
+        else
+        {
+            /* Second attempt - get the constructor that accepts a ContentRuleRowSave and SidMapping parameters for rules that depend on them */
+            ruleConstructor = ruleType.GetConstructor(new[] { typeof(ContentRuleRowSave), typeof(SidMapping) });
+            if (ruleConstructor is null)
+                return null;
+            try
+            {
+                return ruleConstructor.Invoke(new object[] { savedRule, contentItem }) as IContentRule;
+            }
+            catch (ArgumentException)
+            {
+                /* We never should reach this state, but it'll help with debugging. */
+                return null;
+            }
+        }
 
-        /* Finally, invoke proper constructor to create the rule instance */
-        try
-        {
-            return ruleConstructor.Invoke(new object[] { savedRule }) as IContentRule;
-        }
-        catch (ArgumentException)
-        {
-            /* We never should reach this state, but it'll help with debugging. */
-            return null;
-        }
     }
 }
 

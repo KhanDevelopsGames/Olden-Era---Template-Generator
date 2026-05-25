@@ -13,9 +13,9 @@ public class RuleVariant : IContentRule
     public string Name => RuleName;
     public string Description => RuleDescription;
     /* Custom value type for variant rule. */
-    public sealed record VariantValue(int variant) : IContentRule.RuleValue
+    public sealed record VariantValue(VariantMapping variantMapping, int variantId) : IContentRule.RuleValue
     {
-        public override object UntypedValue => variant;
+        public override object UntypedValue => variantMapping;
     }
     /* Storage of the actual rule value. */
     public required VariantValue Value { get; set; }
@@ -30,26 +30,49 @@ public class RuleVariant : IContentRule
             : throw new ArgumentException($"{nameof(RuleVariant)} requires a {nameof(VariantValue)}.", nameof(value));
     }
     /* Representation of the given rule in the UI when added as an individual rule */
-    public string GetDisplayText() => $"{Name}: {Value.variant}";
+    public string GetDisplayText()
+    {
+        if (Value.variantMapping.variants.TryGetValue(Value.variantId, out string? description))
+            return $"{Name}: {Value.variantId} ({description})";
+
+        return $"{Name}: ERROR - please show this on template generator discord :)";
+    }
     /* Need to expose the display name for UI binding. */
     public string DisplayName => GetDisplayText();
     
     [SetsRequiredMembers]
-    public RuleVariant(int? variant = null)
+    public RuleVariant(VariantMapping? variantMapping = null, int? variantId = null)
     {
-        Value = new VariantValue(variant ?? 0);
+        // Dummy mapping to avoid null issues. 
+        VariantMapping dummyVariant = VariantMappingManager.utopiaVariants;
+        VariantMapping resolvedMapping = variantMapping ?? dummyVariant;
+
+        int resolvedVariantId = variantId
+            ?? resolvedMapping.variants.Keys.FirstOrDefault();
+
+        if (!resolvedMapping.variants.ContainsKey(resolvedVariantId))
+            throw new ArgumentException("Selected variant ID is not present in the provided variant mapping.", nameof(variantId));
+
+        Value = new VariantValue(resolvedMapping, resolvedVariantId);
     }
 
     /* Required for saving settings! Rule contructor from serialized save data. */
     [SetsRequiredMembers]
-    public RuleVariant(ContentRuleRowSave savedRule)
+    public RuleVariant(ContentRuleRowSave savedRule, SidMapping contentItem)
     {
+        /* Sanity checks. Shouldn't be possible to reach exception throw during regular user interaction. */
         if (savedRule is null)
             throw new ArgumentNullException(nameof(savedRule));
+        if (contentItem is null)
+            throw new ArgumentNullException(nameof(contentItem));
         if (!savedRule.VariantId.HasValue)
             throw new ArgumentException("VariantId is required for RuleVariant.", nameof(savedRule));
 
-        Value = new VariantValue(savedRule.VariantId.Value);
+        VariantMapping? variantMapping = VariantMappingManager.GetVariantForContentById(contentItem, savedRule.VariantId.Value);
+        if (variantMapping is null)
+            throw new ArgumentException("VariantId does not match any known variant for the content item.", nameof(savedRule));
+
+        Value = new VariantValue(variantMapping, savedRule.VariantId.Value);
     }
 
     public ContentRuleRowSave SerializeToRowSave()
@@ -57,7 +80,7 @@ public class RuleVariant : IContentRule
         var rowSave = new ContentRuleRowSave
         {
             Name = Name,
-            VariantId = Value.variant
+            VariantId = Value.variantId
         };
         return rowSave;
     }

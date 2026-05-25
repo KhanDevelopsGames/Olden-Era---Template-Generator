@@ -34,6 +34,7 @@ namespace Olden_Era___Template_Editor
             _appliedRules = appliedRules ?? new List<IContentRule>();
 
             CmbRuleType.ItemsSource = _contentRulePresets.Select(rule => rule.Name);
+            CmbVariant.DisplayMemberPath = nameof(VariantMapping.DisplayText);
 
             CmbDistance.ItemsSource = DistancePresets.GetDisplayNames();
             CmbDistance.SelectedIndex = 0;
@@ -73,7 +74,11 @@ namespace Olden_Era___Template_Editor
                     CreatedRule = new RuleGuarded(ChkGuarded.IsChecked ?? false);
                     break;
                 case RuleVariant:
-                    CreatedRule = new RuleVariant(CmbVariant.SelectedItem is int variantId ? variantId : 0);
+                    VariantMapping? selectedVariant = GetSelectedVariantMapping();
+                    if (selectedVariant is null)
+                        return;
+
+                    CreatedRule = new RuleVariant(selectedVariant);
                     break;
                 default:
                     // We never should reach this state. (assuming the UI only allows valid rules to be added).
@@ -97,6 +102,9 @@ namespace Olden_Era___Template_Editor
             return _appliedRules.FirstOrDefault(rule => rule.GetType() == selectedRule.GetType());
         }
 
+        private VariantMapping? GetSelectedVariantMapping()
+            => CmbVariant.SelectedItem as VariantMapping;
+
         private void PrepopulateFromRule(IContentRule existingRule)
         {
             int selectedIndex = Array.FindIndex(_contentRulePresets, rule => rule.GetType() == existingRule.GetType());
@@ -117,9 +125,15 @@ namespace Olden_Era___Template_Editor
                     ChkGuarded.IsChecked = guardedRule.Value.isGuarded;
                     break;
                 case RuleVariant variantRule:
-                    if (CmbVariant.ItemsSource is IEnumerable<int> variants && variants.Contains(variantRule.Value.variant))
+                    if (CmbVariant.ItemsSource is IEnumerable<VariantMapping> variants)
                     {
-                        CmbVariant.SelectedItem = variantRule.Value.variant;
+                        VariantMapping? matchingVariant = variants
+                            .FirstOrDefault(variant => variant.variants.ContainsKey(variantRule.Value.variantId));
+
+                        if (matchingVariant is not null)
+                        {
+                            CmbVariant.SelectedItem = matchingVariant;
+                        }
                     }
                     break;
             }
@@ -173,14 +187,8 @@ namespace Olden_Era___Template_Editor
             }
         }
         /* Function to handle possible variant values for the content item. */
-        private List<int> GetVariantValuesForParent()
-        {
-            if(_contentItem.Sid == ContentIds.MineWood.Sid)
-            {
-                return new List<int>();
-            }
-            return new List<int> { 0, 1, 2 };
-        }
+        private List<VariantMapping> GetVariantValuesForParent()
+            => VariantMappingManager.GetVariantsForContent(_contentItem);
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

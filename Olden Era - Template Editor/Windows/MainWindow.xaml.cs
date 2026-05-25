@@ -1633,7 +1633,7 @@ namespace Olden_Era___Template_Editor
                 SidMapping? sidMapping = GlobalContent.GetBySid(row.Sid);
                 if (sidMapping is null) continue;
 
-                List<IContentRule> rowRules = RestoreContentRulesFromRow(row);
+                List<IContentRule> rowRules = RestoreContentRulesFromRow(row, sidMapping);
                 var item = CreateZoneContentItem(
                     sidMapping,
                     contentRules: rowRules,
@@ -2158,7 +2158,7 @@ namespace Olden_Era___Template_Editor
             return result;
         }
 
-        private static List<IContentRule> RestoreContentRulesFromRow(ZoneContentRowSave row)
+        private static List<IContentRule> RestoreContentRulesFromRow(ZoneContentRowSave row, SidMapping contentItem)
         {
             var result = new List<IContentRule>();
 
@@ -2167,7 +2167,7 @@ namespace Olden_Era___Template_Editor
             {
                 foreach (ContentRuleRowSave savedRule in row.Rules)
                 {
-                    var rule = ContentRuleManager.CreateRuleFromSavedRule(savedRule);
+                    var rule = ContentRuleManager.CreateRuleFromSavedRule(savedRule, contentItem);
                     if (rule != null)
                     {
                         result.Add(rule);
