@@ -12,14 +12,14 @@ namespace Olden_Era___Template_Editor
     public partial class AddZoneContentRuleWindow : Window
     {
         private readonly SidMapping _contentItem;
-        public ContentRule? CreatedRule { get; private set; }
+        public IContentRule? CreatedRule { get; private set; }
 
-        private ref readonly ContentRule GetSelectedRule()
+        private ref readonly IContentRule GetSelectedRule()
         {
             return ref _contentRulePresets[CmbRuleType.SelectedIndex];
         }
 
-        private ContentRule[] _contentRulePresets = ContentRuleManager.GetRules();
+        private IContentRule[] _contentRulePresets = ContentRuleManager.GetRules();
 
         public AddZoneContentRuleWindow(SidMapping contentItem)
         {
@@ -47,22 +47,25 @@ namespace Olden_Era___Template_Editor
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
             var selectedRule = GetSelectedRule();
-            ContentRule newRule = new ContentRule(selectedRule.Name, selectedRule.Type);
-
-            switch (selectedRule.Type)
+            
+            switch(selectedRule)
             {
-                case ContentRuleType.DistanceToRoad:
-                case ContentRuleType.DistanceToTown:
-                    newRule.Value = new ContentRule.DistanceValue(DistancePresets.GetDistanceVariationByName(CmbDistance.SelectedItem as string));
+                case RuleDistanceToRoad rule:
+                    CreatedRule = new RuleDistanceToRoad(DistancePresets.GetDistanceVariationByName(CmbDistance.SelectedItem as string));
                     break;
-                case ContentRuleType.Guarded:
-                    newRule.Value = new ContentRule.GuardedValue(ChkGuarded.IsChecked ?? false);
+                case RuleDistanceToTown rule:
+                    CreatedRule = new RuleDistanceToTown(DistancePresets.GetDistanceVariationByName(CmbDistance.SelectedItem as string));
                     break;
-                case ContentRuleType.Variant:
-                    newRule.Value = new ContentRule.VariantValue(CmbVariant.SelectedItem is int variantId ? variantId : 0);
+                case RuleGuarded rule:
+                    CreatedRule = new RuleGuarded(ChkGuarded.IsChecked ?? false);
+                    break;
+                case RuleVariant rule:
+                    CreatedRule = new RuleVariant(CmbVariant.SelectedItem is int variantId ? variantId : 0);
+                    break;
+                default:
+                    // We never should reach this state. (assuming the UI only allows valid rules to be added).
                     break;
             }
-            CreatedRule = newRule;
             DialogResult = true;
             Close();
         }
@@ -78,11 +81,11 @@ namespace Olden_Era___Template_Editor
             var selectedRule = GetSelectedRule();
 
             /* Controls visibility of controls per rule */
-            PnlDistance.Visibility = (selectedRule.Type == ContentRuleType.DistanceToRoad || selectedRule.Type == ContentRuleType.DistanceToTown) ? Visibility.Visible : Visibility.Collapsed;
-            PnlGuarded.Visibility = (selectedRule.Type == ContentRuleType.Guarded) ? Visibility.Visible : Visibility.Collapsed;
-            PnlVariant.Visibility = (selectedRule.Type == ContentRuleType.Variant) ? Visibility.Visible : Visibility.Collapsed;
+            PnlDistance.Visibility = (selectedRule is RuleDistanceToRoad || selectedRule is RuleDistanceToTown) ? Visibility.Visible : Visibility.Collapsed;
+            PnlGuarded.Visibility = (selectedRule is RuleGuarded) ? Visibility.Visible : Visibility.Collapsed;
+            PnlVariant.Visibility = (selectedRule is RuleVariant) ? Visibility.Visible : Visibility.Collapsed;
 
-            if (selectedRule.Type == ContentRuleType.Variant)
+            if (selectedRule is RuleVariant)
             {
                 RefreshVariantOptions();
             }

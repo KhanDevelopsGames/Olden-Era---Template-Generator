@@ -8,16 +8,16 @@ namespace Olden_Era___Template_Editor
 {
     public partial class ManageZoneContentRulesWindow : Window
     {
-        private readonly List<ContentRule> _rules;
+        private readonly List<IContentRule> _rules;
         private SidMapping _sidMapping;
 
-        public ManageZoneContentRulesWindow(SidMapping contentItem, List<ContentRule> appliedRules)
+        public ManageZoneContentRulesWindow(SidMapping contentItem, List<IContentRule> appliedRules)
         {
             InitializeComponent();
             _sidMapping = contentItem;
             TxtManagingRulesFor.Text = $"Managing rules for: {_sidMapping.Name}";
             _rules = appliedRules;
-            LbRules.DisplayMemberPath = nameof(ContentRule.DisplayName);
+            LbRules.DisplayMemberPath = nameof(IContentRule.DisplayName);
             LbRules.ItemsSource = _rules;
         }
 
@@ -36,7 +36,7 @@ namespace Olden_Era___Template_Editor
         }
         private void BtnRemoveRule_Click(object sender, RoutedEventArgs e)
         {
-            if (LbRules.SelectedItem is ContentRule selectedRule)
+            if (LbRules.SelectedItem is IContentRule selectedRule)
             {
                 _rules.Remove(selectedRule);
                 LbRules.Items.Refresh();

@@ -49,12 +49,12 @@ namespace Olden_Era___Template_Editor.Models
     }
 
     /// <summary>
-    /// Lightweight, JSON-friendly representation of a single ContentRule value.
+    /// Lightweight, JSON-friendly representation of a single IContentRule value.
     /// </summary>
     public sealed class ContentRuleRowSave
     {
-        [JsonPropertyName("type")]
-        public int Type { get; set; }
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
 
         [JsonPropertyName("distanceName")]
         public string? DistanceName { get; set; }

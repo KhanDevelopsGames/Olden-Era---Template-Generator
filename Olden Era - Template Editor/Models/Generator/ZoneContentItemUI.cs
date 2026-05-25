@@ -11,7 +11,7 @@ namespace Olden_Era___Template_Editor.Models
         // Flag indicating if this is a single content item, or a group added via includeLists.
         private bool _isGroup;
         // Abstract representation of "content rules" from the UI, to be converted to proper ContentItem fields during its construction.
-        public List<ContentRule> Rules { get; set; } = new List<ContentRule>();
+        public List<IContentRule> Rules { get; set; } = new List<IContentRule>();
 
         public SidMapping? SidMapping
         {
