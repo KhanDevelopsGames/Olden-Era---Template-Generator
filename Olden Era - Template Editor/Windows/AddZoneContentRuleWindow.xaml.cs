@@ -73,6 +73,9 @@ namespace Olden_Era___Template_Editor
                 case RuleGuarded:
                     CreatedRule = new RuleGuarded(ChkGuarded.IsChecked ?? false);
                     break;
+                case RuleSoloEncounter:
+                    CreatedRule = new RuleSoloEncounter(ChkSoloEncounter.IsChecked ?? false);
+                    break;
                 case RuleVariant:
                     VariantMapping? selectedVariant = GetSelectedVariantMapping();
                     if (selectedVariant is null)
@@ -124,6 +127,9 @@ namespace Olden_Era___Template_Editor
                 case RuleGuarded guardedRule:
                     ChkGuarded.IsChecked = guardedRule.Value.isGuarded;
                     break;
+                case RuleSoloEncounter soloEncounterRule:
+                    ChkSoloEncounter.IsChecked = soloEncounterRule.Value.isSoloEncounter;
+                    break;
                 case RuleVariant variantRule:
                     if (CmbVariant.ItemsSource is IEnumerable<VariantMapping> variants)
                     {
@@ -152,6 +158,7 @@ namespace Olden_Era___Template_Editor
             /* Controls visibility of controls per rule */
             PnlDistance.Visibility = (selectedRule is RuleDistanceToRoad || selectedRule is RuleDistanceToTown) ? Visibility.Visible : Visibility.Collapsed;
             PnlGuarded.Visibility = (selectedRule is RuleGuarded) ? Visibility.Visible : Visibility.Collapsed;
+            PnlSoloEncounter.Visibility = (selectedRule is RuleSoloEncounter) ? Visibility.Visible : Visibility.Collapsed;
             PnlVariant.Visibility = (selectedRule is RuleVariant) ? Visibility.Visible : Visibility.Collapsed;
 
             if (selectedRule is RuleVariant)

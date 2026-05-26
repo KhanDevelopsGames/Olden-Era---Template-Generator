@@ -62,6 +62,9 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("isGuarded")]
         public bool? IsGuarded { get; set; }
 
+        [JsonPropertyName("isSoloEncounter")]
+        public bool? IsSoloEncounter { get; set; }
+
         [JsonPropertyName("variantId")]
         public int? VariantId { get; set; }
     }

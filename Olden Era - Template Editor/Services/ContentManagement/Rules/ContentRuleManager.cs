@@ -13,6 +13,7 @@ public static class ContentRuleManager
     public static RuleDistanceToTown _ruleDistanceToTown = new RuleDistanceToTown();
     public static RuleGuarded _ruleGuarded = new RuleGuarded();
     public static RuleVariant _ruleVariant = new RuleVariant();
+    public static RuleSoloEncounter _ruleSoloEncounter = new RuleSoloEncounter();
     
     /* Retrieve all defined Content Rules */
     public static IContentRule[] GetRules()
@@ -46,6 +47,9 @@ public static class ContentRuleManager
                     break;
                 case RuleVariant rule:
                     contentItem.Variant = rule.Value.variantId;
+                    break;
+                case RuleSoloEncounter rule:
+                    contentItem.SoloEncounter = rule.Value.isSoloEncounter;
                     break;
                 default:
                     // We should never reach this state. (assuming the UI only allows valid rules to be added).

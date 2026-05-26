@@ -99,6 +99,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -197,8 +198,20 @@
                                    Visibility="Collapsed"/>
                     </StackPanel>
                 </Border>
+                <Border Grid.Row="5"
+                        x:Name="PnlSoloEncounter"
+                        Margin="0,0,0,10"
+                        BorderThickness="1"
+                        BorderBrush="{StaticResource BrushBorder}"
+                        Padding="8"
+                        Visibility="Collapsed">
+                    <CheckBox x:Name="ChkSoloEncounter"
+                              Content="Solo Encounter"
+                              IsChecked="True"
+                              Foreground="{StaticResource BrushText}"/>
+                </Border>
 
-                <StackPanel Grid.Row="5"
+                <StackPanel Grid.Row="6"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             Margin="0,4,0,0">
