@@ -46,6 +46,21 @@ namespace Olden_Era___Template_Editor
         // ── Rendering constants ──────────────────────────────────────────────
         private const double NodeRadius = 18.0;
 
+        // ── Guard-preset tables ──────────────────────────────────────────────
+        private enum ZoneTier { Bronze, Silver, Gold }
+        private static readonly string[] StrengthLabels = ["Weak", "Moderate", "Medium", "High", "Very High"];
+        private static readonly int[,] GuardPresets =
+        {
+            //   Weak   Moderate  Medium   High  VeryHigh
+            {  3_000,   6_000,   9_000,  12_000,  15_000 },  // Bronze
+            { 18_000,  21_000,  24_000,  27_000,  30_000 },  // Silver
+            { 36_000,  42_000,  48_000,  54_000,  60_000 },  // Gold
+        };
+        private static readonly string[] WeeklyIncrementLabels =
+            ["Slow (5%)", "Normal (10%)", "Standard (15%)", "Fast (20%)", "Very Fast (25%)"];
+        private static readonly double[] WeeklyIncrementValues =
+            [0.05, 0.10, 0.15, 0.20, 0.25];
+
         // ── Colours (mirroring TemplatePreviewPngWriter constants) ──────────
         private static readonly SolidColorBrush BrushPlayerFill    = new(Color.FromRgb( 42,  90,  50));
         private static readonly SolidColorBrush BrushPlayerBorder  = new(Color.FromRgb(100, 200, 120));
@@ -60,13 +75,11 @@ namespace Olden_Era___Template_Editor
         private static readonly SolidColorBrush BrushEdgeDirect    = new(Color.FromRgb(180, 145,  60));
         private static readonly SolidColorBrush BrushEdgePortal    = new(Color.FromArgb(210,  90, 170, 210));
         private static readonly SolidColorBrush BrushEdgeSelected  = new(Color.FromRgb(255, 140,   0));
-        private static readonly SolidColorBrush BrushNormalBorder;
 
         // ── Constructor ──────────────────────────────────────────────────────
 
         static ZoneConnectionEditorWindow()
         {
-            BrushNormalBorder = new SolidColorBrush(Color.FromRgb(90, 74, 40));
         }
 
         public ZoneConnectionEditorWindow(
@@ -84,16 +97,28 @@ namespace Olden_Era___Template_Editor
 
             InitializeComponent();
 
-            // Populate add-connection type combobox
+            // Add-connection type combobox
             CmbAddType.Items.Add("Direct");
             CmbAddType.Items.Add("Portal");
             CmbAddType.SelectedIndex = 0;
 
-            // Populate edit connection-type combobox
+            // Add-connection guard-strength combobox (Custom added dynamically when Advanced is on)
+            foreach (string label in StrengthLabels)
+                CmbAddGuardStrength.Items.Add(label);
+            CmbAddGuardStrength.SelectedIndex = 2; // default: Medium
+
+            // Add-connection weekly-growth combobox
+            foreach (string label in WeeklyIncrementLabels)
+                CmbAddWeeklyIncrement.Items.Add(label);
+            CmbAddWeeklyIncrement.SelectedIndex = 2; // default: Standard (15%)
+
+            // Edit connection-type combobox
             CmbConnectionType.Items.Add("Direct");
             CmbConnectionType.Items.Add("Portal");
             CmbConnectionType.Items.Add("Proximity");
             CmbConnectionType.SelectedIndex = 0;
+
+            // Guard-zone combobox (property panel): populated per-connection in PopulatePropertyPanel
 
             Loaded           += (_, _) => RenderAll();
             ZoneCanvas.SizeChanged += (_, _) => RenderAll();
@@ -374,6 +399,31 @@ namespace Olden_Era___Template_Editor
             return (BrushBronzeFill, BrushBronzeBorder);
         }
 
+        private ZoneTier GetZoneTier(string? zoneName)
+        {
+            if (zoneName is null) return ZoneTier.Bronze;
+            var zone = _zones.FirstOrDefault(z => z.Name == zoneName);
+            if (zone is null) return ZoneTier.Bronze;
+
+            if (_playerZoneNames.Contains(zone.Name)) return ZoneTier.Bronze;
+            if (zone.Name.Equals("Hub", StringComparison.Ordinal)
+                || zone.Name.StartsWith("Hub-", StringComparison.Ordinal))
+                return ZoneTier.Bronze;
+
+            if (zone.Name.StartsWith("Neutral-", StringComparison.Ordinal))
+            {
+                string pool = zone.GuardedContentPool?.FirstOrDefault() ?? "";
+                if (pool.Contains("_t4_") || pool.Contains("_t5_")) return ZoneTier.Gold;
+                if (pool.Contains("_t1_") || pool.Contains("_t2_")) return ZoneTier.Bronze;
+                return ZoneTier.Silver;
+            }
+
+            return ZoneTier.Bronze;
+        }
+
+        private ZoneTier HigherTierOf(string? zoneA, string? zoneB) =>
+            (ZoneTier)Math.Max((int)GetZoneTier(zoneA), (int)GetZoneTier(zoneB));
+
         // ── Edge selection ────────────────────────────────────────────────────
 
         private void SelectEdge(Connection conn, Line visibleLine)
@@ -398,33 +448,28 @@ namespace Olden_Era___Template_Editor
             _suppressPropertyEvents = true;
             try
             {
-                TxtFromZone.Text = conn.From;
-                TxtToZone.Text   = conn.To;
-                TxtConnectionName.Text = conn.Name ?? "";
-
+                // Connection type
                 int typeIdx = CmbConnectionType.Items.IndexOf(conn.ConnectionType ?? "Direct");
                 CmbConnectionType.SelectedIndex = typeIdx >= 0 ? typeIdx : 0;
 
-                TxtGuardValue.Text = conn.GuardValue.HasValue
-                    ? conn.GuardValue.Value.ToString()
-                    : "";
+                // Guard zone — only the two connected nodes
+                CmbGuardZone.Items.Clear();
+                CmbGuardZone.Items.Add(conn.From);
+                CmbGuardZone.Items.Add(conn.To);
+                int gzIdx = CmbGuardZone.Items.IndexOf(conn.GuardZone ?? conn.From);
+                CmbGuardZone.SelectedIndex = gzIdx >= 0 ? gzIdx : 0;
 
-                TxtGuardWeeklyIncrement.Text = conn.GuardWeeklyIncrement.HasValue
-                    ? conn.GuardWeeklyIncrement.Value.ToString("G", CultureInfo.InvariantCulture)
-                    : "";
+                // Guard value — presets derived from tier, auto-expand Advanced if custom
+                ZoneTier tier = HigherTierOf(conn.From, conn.To);
+                PopulateGuardValueCombo(tier, conn.GuardValue);
 
-                TxtGuardZone.Text       = conn.GuardZone      ?? "";
-                TxtGuardMatchGroup.Text = conn.GuardMatchGroup ?? "";
+                // Weekly increment — preset list, auto-expand Advanced if custom
+                PopulateWeeklyIncrementCombo(conn.GuardWeeklyIncrement);
+
+                // Advanced fields
+                TxtGuardMatchGroup.Text   = conn.GuardMatchGroup ?? "";
                 ChkGuardEscape.IsChecked  = conn.GuardEscape  ?? false;
                 ChkSimTurnSquad.IsChecked = conn.SimTurnSquad ?? false;
-
-                // Reset validation borders
-                TxtConnectionName.BorderBrush       = BrushNormalBorder;
-                TxtGuardValue.BorderBrush            = BrushNormalBorder;
-                TxtGuardWeeklyIncrement.BorderBrush  = BrushNormalBorder;
-                TxtGuardZone.BorderBrush             = BrushNormalBorder;
-
-                ValidatePropertyPanel();
             }
             finally
             {
@@ -432,22 +477,128 @@ namespace Olden_Era___Template_Editor
             }
         }
 
+        private void PopulateGuardValueCombo(ZoneTier tier, int? currentValue)
+        {
+            CmbGuardValue.Items.Clear();
+            for (int i = 0; i < StrengthLabels.Length; i++)
+                CmbGuardValue.Items.Add($"{StrengthLabels[i]}  ({GuardPresets[(int)tier, i]:N0})");
+            if (ChkPropAdvanced.IsChecked == true)
+                CmbGuardValue.Items.Add("Custom...");
+
+            bool matched = false;
+            if (currentValue.HasValue)
+            {
+                for (int i = 0; i < StrengthLabels.Length; i++)
+                {
+                    if (GuardPresets[(int)tier, i] == currentValue.Value)
+                    {
+                        CmbGuardValue.SelectedIndex = i;
+                        matched = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                CmbGuardValue.SelectedIndex = 2; // Medium default
+                matched = true;
+            }
+            if (!matched)
+            {
+                // Value is non-preset — force Advanced + Custom
+                if (!CmbGuardValue.Items.Contains("Custom..."))
+                    CmbGuardValue.Items.Add("Custom...");
+                CmbGuardValue.SelectedIndex = CmbGuardValue.Items.Count - 1;
+                TxtPropGuardValueCustom.Text = currentValue!.Value.ToString();
+            }
+            TxtPropGuardValueCustom.Visibility =
+                CmbGuardValue.SelectedItem as string == "Custom..."
+                ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void PopulateWeeklyIncrementCombo(double? currentValue)
+        {
+            CmbGuardWeeklyIncrement.Items.Clear();
+            foreach (string label in WeeklyIncrementLabels)
+                CmbGuardWeeklyIncrement.Items.Add(label);
+            if (ChkPropAdvanced.IsChecked == true)
+                CmbGuardWeeklyIncrement.Items.Add("Custom...");
+
+            bool matched = false;
+            if (currentValue.HasValue)
+            {
+                for (int i = 0; i < WeeklyIncrementValues.Length; i++)
+                {
+                    if (Math.Abs(WeeklyIncrementValues[i] - currentValue.Value) < 0.001)
+                    {
+                        CmbGuardWeeklyIncrement.SelectedIndex = i;
+                        matched = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                CmbGuardWeeklyIncrement.SelectedIndex = 2; // Standard default
+                matched = true;
+            }
+            if (!matched)
+            {
+                if (!CmbGuardWeeklyIncrement.Items.Contains("Custom..."))
+                    CmbGuardWeeklyIncrement.Items.Add("Custom...");
+                CmbGuardWeeklyIncrement.SelectedIndex = CmbGuardWeeklyIncrement.Items.Count - 1;
+                TxtPropIncrementCustom.Text = currentValue!.Value.ToString("G", CultureInfo.InvariantCulture);
+            }
+            TxtPropIncrementCustom.Visibility =
+                CmbGuardWeeklyIncrement.SelectedItem as string == "Custom..."
+                ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         // ── Property panel event handlers ─────────────────────────────────────
 
-        private void TxtConnectionName_TextChanged(object sender, TextChangedEventArgs e)
+        private void ChkPropAdvanced_Changed(object sender, RoutedEventArgs e)
         {
-            if (_suppressPropertyEvents || _selectedConnection is null) return;
-            string val = TxtConnectionName.Text.Trim();
-            _selectedConnection.Name = val.Length > 0 ? val : null;
-            ConnectionsWereModified = true;
+            bool advanced = ChkPropAdvanced.IsChecked == true;
+            PnlPropsAdvanced.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
 
-            // Duplicate-name warning (yellow border)
-            bool isDuplicate = val.Length > 0 && _connections
-                .Where(c => !ReferenceEquals(c, _selectedConnection))
-                .Any(c => string.Equals(c.Name, val, StringComparison.OrdinalIgnoreCase));
-            TxtConnectionName.BorderBrush = isDuplicate
-                ? new SolidColorBrush(Colors.Yellow)
-                : BrushNormalBorder;
+            if (_selectedConnection is null) return;
+            ZoneTier tier = HigherTierOf(_selectedConnection.From, _selectedConnection.To);
+
+            // Add/remove "Custom..." from guard-value combo
+            bool gvHasCustom = CmbGuardValue.Items.Contains("Custom...");
+            if (advanced && !gvHasCustom)
+            {
+                CmbGuardValue.Items.Add("Custom...");
+            }
+            else if (!advanced && gvHasCustom)
+            {
+                if (CmbGuardValue.SelectedItem as string == "Custom...")
+                {
+                    CmbGuardValue.SelectedIndex = 2;
+                    _selectedConnection.GuardValue = GuardPresets[(int)tier, 2];
+                }
+                CmbGuardValue.Items.Remove("Custom...");
+                TxtPropGuardValueCustom.Text       = "";
+                TxtPropGuardValueCustom.Visibility = Visibility.Collapsed;
+            }
+
+            // Add/remove "Custom..." from weekly-increment combo
+            bool wiHasCustom = CmbGuardWeeklyIncrement.Items.Contains("Custom...");
+            if (advanced && !wiHasCustom)
+            {
+                CmbGuardWeeklyIncrement.Items.Add("Custom...");
+            }
+            else if (!advanced && wiHasCustom)
+            {
+                if (CmbGuardWeeklyIncrement.SelectedItem as string == "Custom...")
+                {
+                    CmbGuardWeeklyIncrement.SelectedIndex = 2;
+                    _selectedConnection.GuardWeeklyIncrement = WeeklyIncrementValues[2];
+                }
+                CmbGuardWeeklyIncrement.Items.Remove("Custom...");
+                TxtPropIncrementCustom.Text       = "";
+                TxtPropIncrementCustom.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void CmbConnectionType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -457,57 +608,68 @@ namespace Olden_Era___Template_Editor
             ConnectionsWereModified = true;
         }
 
-        private void TxtGuardValue_TextChanged(object sender, TextChangedEventArgs e)
+        private void CmbGuardValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
-            string text = TxtGuardValue.Text.Trim();
-            if (text.Length == 0)
+            bool isCustom = CmbGuardValue.SelectedItem as string == "Custom...";
+            TxtPropGuardValueCustom.Visibility = isCustom ? Visibility.Visible : Visibility.Collapsed;
+            if (!isCustom)
             {
-                _selectedConnection.GuardValue = null;
-                TxtGuardValue.BorderBrush = BrushNormalBorder;
+                ZoneTier tier = HigherTierOf(_selectedConnection.From, _selectedConnection.To);
+                int idx = CmbGuardValue.SelectedIndex;
+                if (idx >= 0 && idx < StrengthLabels.Length)
+                {
+                    _selectedConnection.GuardValue = GuardPresets[(int)tier, idx];
+                    ConnectionsWereModified = true;
+                    Refresh();
+                }
             }
-            else if (int.TryParse(text, out int v))
+        }
+
+        private void TxtPropGuardValueCustom_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_suppressPropertyEvents || _selectedConnection is null) return;
+            if (int.TryParse(TxtPropGuardValueCustom.Text.Trim(), out int v))
             {
                 _selectedConnection.GuardValue = v;
-                TxtGuardValue.BorderBrush = BrushNormalBorder;
+                ConnectionsWereModified = true;
+                Refresh();
             }
-            else
-            {
-                TxtGuardValue.BorderBrush = new SolidColorBrush(Colors.Red);
-            }
-            ConnectionsWereModified = true;
-            // Refresh guard label on edge
-            Refresh();
         }
 
-        private void TxtGuardWeeklyIncrement_TextChanged(object sender, TextChangedEventArgs e)
+        private void CmbGuardWeeklyIncrement_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
-            string text = TxtGuardWeeklyIncrement.Text.Trim();
-            if (text.Length == 0)
+            bool isCustom = CmbGuardWeeklyIncrement.SelectedItem as string == "Custom...";
+            TxtPropIncrementCustom.Visibility = isCustom ? Visibility.Visible : Visibility.Collapsed;
+            if (!isCustom)
             {
-                _selectedConnection.GuardWeeklyIncrement = null;
-                TxtGuardWeeklyIncrement.BorderBrush = BrushNormalBorder;
+                int idx = CmbGuardWeeklyIncrement.SelectedIndex;
+                if (idx >= 0 && idx < WeeklyIncrementValues.Length)
+                {
+                    _selectedConnection.GuardWeeklyIncrement = WeeklyIncrementValues[idx];
+                    ConnectionsWereModified = true;
+                }
             }
-            else if (double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out double v))
+        }
+
+        private void TxtPropIncrementCustom_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_suppressPropertyEvents || _selectedConnection is null) return;
+            if (double.TryParse(TxtPropIncrementCustom.Text.Trim(),
+                    NumberStyles.Float, CultureInfo.InvariantCulture, out double v))
             {
                 _selectedConnection.GuardWeeklyIncrement = v;
-                TxtGuardWeeklyIncrement.BorderBrush = BrushNormalBorder;
+                ConnectionsWereModified = true;
             }
-            else
-            {
-                TxtGuardWeeklyIncrement.BorderBrush = new SolidColorBrush(Colors.Red);
-            }
-            ConnectionsWereModified = true;
         }
 
-        private void TxtGuardZone_TextChanged(object sender, TextChangedEventArgs e)
+        private void CmbGuardZone_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
-            string val = TxtGuardZone.Text.Trim();
-            _selectedConnection.GuardZone = val.Length > 0 ? val : null;
+            string? val = CmbGuardZone.SelectedItem as string;
+            _selectedConnection.GuardZone = string.IsNullOrEmpty(val) ? null : val;
             ConnectionsWereModified = true;
-            ValidateGuardZone();
         }
 
         private void TxtGuardMatchGroup_TextChanged(object sender, TextChangedEventArgs e)
@@ -530,42 +692,6 @@ namespace Olden_Era___Template_Editor
             if (_suppressPropertyEvents || _selectedConnection is null) return;
             _selectedConnection.SimTurnSquad = ChkSimTurnSquad.IsChecked;
             ConnectionsWereModified = true;
-        }
-
-        private void ValidatePropertyPanel()
-        {
-            ValidateGuardZone();
-            ValidateGuardValue();
-            ValidateGuardWeeklyIncrement();
-        }
-
-        private void ValidateGuardZone()
-        {
-            string val = TxtGuardZone.Text.Trim();
-            var zoneNames = new HashSet<string>(_zones.Select(z => z.Name), StringComparer.Ordinal);
-            bool isInvalid = val.Length > 0 && !zoneNames.Contains(val);
-            TxtGuardZone.BorderBrush = isInvalid
-                ? new SolidColorBrush(Colors.Red)
-                : BrushNormalBorder;
-        }
-
-        private void ValidateGuardValue()
-        {
-            string text = TxtGuardValue.Text.Trim();
-            bool isInvalid = text.Length > 0 && !int.TryParse(text, out _);
-            TxtGuardValue.BorderBrush = isInvalid
-                ? new SolidColorBrush(Colors.Red)
-                : BrushNormalBorder;
-        }
-
-        private void ValidateGuardWeeklyIncrement()
-        {
-            string text = TxtGuardWeeklyIncrement.Text.Trim();
-            bool isInvalid = text.Length > 0 && !double.TryParse(text,
-                NumberStyles.Float, CultureInfo.InvariantCulture, out _);
-            TxtGuardWeeklyIncrement.BorderBrush = isInvalid
-                ? new SolidColorBrush(Colors.Red)
-                : BrushNormalBorder;
         }
 
         // ── Delete connection ─────────────────────────────────────────────────
@@ -673,66 +799,86 @@ namespace Olden_Era___Template_Editor
         private void ShowAddConfirmation()
         {
             TxtAddFromTo.Text = $"New connection:  {_pendingFromZone}  →  {_pendingToZone}";
-            TxtAddName.Text                    = "";
-            CmbAddType.SelectedIndex           = 0;
-            TxtAddGuardValue.Text              = "";
-            TxtAddGuardZone.Text               = "";
-            TxtAddGuardZone.Tag                = (string)(_pendingFromZone ?? "");   // dynamic placeholder
-            TxtAddGuardMatchGroup.Text         = "";
-            TxtAddGuardMatchGroup.Tag          = (string)$"rnd_guard_{ZoneLetterFromName(_pendingFromZone ?? "")}_{ZoneLetterFromName(_pendingToZone ?? "")}"; // dynamic placeholder
-            TxtAddGuardWeeklyIncrement.Text    = "";
-            ChkAddSimTurnSquad.IsChecked       = true;               // default on
+            CmbAddType.SelectedIndex = 0;
+
+            // Populate guard-zone dropdown with the two connection endpoints
+            CmbAddGuardZone.Items.Clear();
+            if (_pendingFromZone is not null) CmbAddGuardZone.Items.Add(_pendingFromZone);
+            if (_pendingToZone   is not null) CmbAddGuardZone.Items.Add(_pendingToZone);
+            CmbAddGuardZone.SelectedIndex = 0;
+
+            // Infer tier from the higher-value endpoint and update the label
+            ZoneTier tier = HigherTierOf(_pendingFromZone, _pendingToZone);
+            TxtAddTierLabel.Text = $"({tier})";
+
+            // Strength: default to Medium (index 2); keep Advanced state unchanged
+            CmbAddGuardStrength.SelectedIndex = 2;
+            TxtAddGuardValueCustom.Text        = "";
+            TxtAddGuardValueCustom.Visibility  = Visibility.Collapsed;
+
+            // Weekly growth: default to Standard (15%)
+            CmbAddWeeklyIncrement.SelectedIndex = 2;
+
             PnlAddConfirm.Visibility = Visibility.Visible;
-            TxtAddName.Focus();
+            CmbAddGuardStrength.Focus();
         }
+
+        private void CmbAddGuardStrength_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TxtAddGuardValueCustom is null) return;
+            bool isCustom = CmbAddGuardStrength.SelectedItem as string == "Custom...";
+            TxtAddGuardValueCustom.Visibility = isCustom ? Visibility.Visible : Visibility.Collapsed;
+        }
+
 
         private void BtnAddConfirm_Click(object sender, RoutedEventArgs e)
         {
             if (_pendingFromZone is null || _pendingToZone is null) return;
 
-            // GuardValue: default to 15000 when blank or unparseable
-            string gvs = TxtAddGuardValue.Text.Trim();
-            int? guardValue = int.TryParse(gvs, out int gv) ? gv : 15000;
+            // Guard value from preset or custom entry
+            int guardValue;
+            if (CmbAddGuardStrength.SelectedItem as string == "Custom...")
+            {
+                guardValue = int.TryParse(TxtAddGuardValueCustom.Text.Trim(), out int cv) ? cv : 15000;
+            }
+            else
+            {
+                ZoneTier tier = HigherTierOf(_pendingFromZone, _pendingToZone);
+                int strengthIdx = CmbAddGuardStrength.SelectedIndex >= 0
+                    ? Math.Min(CmbAddGuardStrength.SelectedIndex, StrengthLabels.Length - 1)
+                    : 2;
+                guardValue = GuardPresets[(int)tier, strengthIdx];
+            }
 
-            string? addName = TxtAddName.Text.Trim();
-            if (addName.Length == 0) addName = null;
+            // Guard zone from dropdown
+            string? addGuardZone = CmbAddGuardZone.SelectedItem as string;
+            if (string.IsNullOrEmpty(addGuardZone)) addGuardZone = _pendingFromZone;
 
-            // GuardZone: default to the From zone when left blank
-            string? addGuardZone = TxtAddGuardZone.Text.Trim();
-            if (addGuardZone.Length == 0) addGuardZone = _pendingFromZone;
+            // Guard match group: auto-generate
+            string addGuardMatchGroup =
+                $"rnd_guard_{ZoneLetterFromName(_pendingFromZone)}_{ZoneLetterFromName(_pendingToZone)}";
 
-            // GuardMatchGroup: default to rnd_guard_{fromLetter}_{toLetter} when left blank
-            string? addGuardMatchGroup = TxtAddGuardMatchGroup.Text.Trim();
-            if (addGuardMatchGroup.Length == 0)
-                addGuardMatchGroup = $"rnd_guard_{ZoneLetterFromName(_pendingFromZone ?? "")}_{ZoneLetterFromName(_pendingToZone ?? "")}";
-
-            // WeeklyIncrement: default to 0.15 when blank or unparseable
-            string wis = TxtAddGuardWeeklyIncrement.Text.Trim();
-            double? addWeeklyIncrement = double.TryParse(wis,
-                System.Globalization.NumberStyles.Float,
-                System.Globalization.CultureInfo.InvariantCulture,
-                out double wi) ? wi : 0.15;
-
-            // SimTurnSquad: checkbox defaults to checked; null when false to avoid serialising false
-            bool addSimTurnSquad = ChkAddSimTurnSquad.IsChecked == true;
+            // Weekly increment from dropdown
+            int wiIdx = CmbAddWeeklyIncrement.SelectedIndex;
+            double addWeeklyIncrement = wiIdx >= 0 && wiIdx < WeeklyIncrementValues.Length
+                ? WeeklyIncrementValues[wiIdx]
+                : 0.15;
 
             var newConn = new Connection
             {
-                From                 = _pendingFromZone!,
-                To                   = _pendingToZone!,
+                From                 = _pendingFromZone,
+                To                   = _pendingToZone,
                 ConnectionType       = CmbAddType.SelectedItem as string ?? "Direct",
                 GuardValue           = guardValue,
-                Name                 = addName,
                 GuardZone            = addGuardZone,
                 GuardMatchGroup      = addGuardMatchGroup,
                 GuardWeeklyIncrement = addWeeklyIncrement,
-                SimTurnSquad         = addSimTurnSquad ? true : null,
                 IsUserAdded          = true
             };
 
             _connections.Add(newConn);
             ConnectionsWereModified = true;
-            ExitAddMode();   // also calls Refresh()
+            ExitAddMode();
         }
 
         private void BtnAddCancel_Click(object sender, RoutedEventArgs e) => ExitAddMode();

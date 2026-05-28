@@ -85,40 +85,37 @@
                             BorderBrush="{StaticResource BrushBorder}"
                             BorderThickness="0,0,0,1">
                         <StackPanel Orientation="Vertical" Margin="8,5,8,6">
-                            <!-- Row 1: header + primary fields -->
+                            <!-- Row 1: header, type, guard strength, action buttons -->
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
                                 <TextBlock x:Name="TxtAddFromTo" VerticalAlignment="Center"
                                            Foreground="{StaticResource BrushText}" FontSize="12"
                                            Margin="0,0,12,0"/>
-                                <Label Content="Name:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
-                                <TextBox x:Name="TxtAddName" Width="100" Margin="0,0,8,0" TabIndex="20"/>
                                 <Label Content="Type:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
-                                <ComboBox x:Name="CmbAddType" Width="90" Margin="0,0,8,0" TabIndex="21"/>
-                                <Label Content="Guard Value:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
-                                <TextBox x:Name="TxtAddGuardValue" Width="70" Margin="0,0,8,0" TabIndex="22"
-                                         Style="{StaticResource HintTextBox}" Tag="15000"/>
+                                <ComboBox x:Name="CmbAddType" Width="80" Margin="0,0,8,0" TabIndex="21"/>
+                                <Label Content="Guard:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
+                                <ComboBox x:Name="CmbAddGuardStrength" Width="110" Margin="0,0,4,0" TabIndex="22"
+                                          SelectionChanged="CmbAddGuardStrength_SelectionChanged"
+                                          ToolTip="Guard strength preset — tier is inferred from the higher-value connected zone"/>
+                                <TextBox x:Name="TxtAddGuardValueCustom" Width="65" Margin="0,0,4,0" TabIndex="23"
+                                         Visibility="Collapsed"
+                                         Style="{StaticResource HintTextBox}" Tag="value"
+                                         ToolTip="Custom guard value (integer)"/>
+                                <TextBlock x:Name="TxtAddTierLabel" VerticalAlignment="Center"
+                                           Foreground="{StaticResource BrushTextDim}" FontSize="11"
+                                           Margin="0,0,8,0"/>
                                 <Button Content="Add" Click="BtnAddConfirm_Click" Margin="0,0,4,0"
-                                        Style="{StaticResource ToolbarButton}" TabIndex="23"/>
+                                        Style="{StaticResource ToolbarButton}" TabIndex="28"/>
                                 <Button Content="Cancel" Click="BtnAddCancel_Click"
-                                        Style="{StaticResource ToolbarButton}" TabIndex="24"/>
+                                        Style="{StaticResource ToolbarButton}" TabIndex="29"/>
                             </StackPanel>
-                            <!-- Row 2: extra fields -->
-                            <StackPanel Orientation="Horizontal">
+                            <!-- Row 2: guard zone, weekly growth -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                                 <Label Content="Guard Zone:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
-                                <TextBox x:Name="TxtAddGuardZone" Width="90" Margin="0,0,8,0" TabIndex="25"
-                                         Style="{StaticResource HintTextBox}"
-                                         ToolTip="Zone that provides the guard army (defaults to the From zone)"/>
-                                <Label Content="Guard Match Group:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
-                                <TextBox x:Name="TxtAddGuardMatchGroup" Width="130" Margin="0,0,8,0" TabIndex="26"
-                                         Style="{StaticResource HintTextBox}"
-                                         ToolTip="Match group key for synchronising guard levels across connections"/>
-                                <Label Content="Weekly Increment:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
-                                <TextBox x:Name="TxtAddGuardWeeklyIncrement" Width="60" Margin="0,0,8,0" TabIndex="27"
-                                         Style="{StaticResource HintTextBox}" Tag="0.15"
-                                         ToolTip="Guard value added each week (decimal). Defaults to 0.15."/>
-                                <CheckBox x:Name="ChkAddSimTurnSquad" Content="Sim Turn Squad" TabIndex="28"
-                                          VerticalAlignment="Center" Margin="0,0,0,0"
-                                          ToolTip="Simulate an extra squad each turn at this connection"/>
+                                <ComboBox x:Name="CmbAddGuardZone" Width="140" Margin="0,0,8,0" TabIndex="24"
+                                          ToolTip="Zone that provides the guard army"/>
+                                <Label Content="Weekly Growth:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
+                                <ComboBox x:Name="CmbAddWeeklyIncrement" Width="120" Margin="0,0,8,0" TabIndex="25"
+                                          ToolTip="How much the guard grows each week"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -131,64 +128,81 @@
                                   HorizontalScrollBarVisibility="Disabled">
                         <StackPanel x:Name="PnlProperties" Visibility="Collapsed" Margin="10,8">
 
-                            <TextBlock Text="CONNECTION PROPERTIES"
-                                       Style="{StaticResource SectionHeader}" Margin="0,0,0,10"/>
+                            <!-- Header + Advanced toggle (matches MainWindow pattern) -->
+                            <DockPanel LastChildFill="False" Margin="0,0,0,8">
+                                <TextBlock Text="CONNECTION PROPERTIES"
+                                           Style="{StaticResource SectionHeader}"
+                                           DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                                <CheckBox x:Name="ChkPropAdvanced" Content="Advanced"
+                                          DockPanel.Dock="Right" VerticalAlignment="Center"
+                                          FontSize="11" Margin="12,0,0,0"
+                                          Checked="ChkPropAdvanced_Changed"
+                                          Unchecked="ChkPropAdvanced_Changed"/>
+                            </DockPanel>
 
-                            <!-- From / To (read-only) -->
-                            <TextBlock Text="From" Foreground="{StaticResource BrushTextDim}"
-                                       FontSize="11" Margin="0,0,0,2"/>
-                            <TextBox x:Name="TxtFromZone" IsReadOnly="True"
-                                     Foreground="{StaticResource BrushTextDim}"
-                                     Background="#1C1610" TabIndex="100"/>
-
-                            <TextBlock Text="To" Foreground="{StaticResource BrushTextDim}"
-                                       FontSize="11" Margin="0,6,0,2"/>
-                            <TextBox x:Name="TxtToZone" IsReadOnly="True"
-                                     Foreground="{StaticResource BrushTextDim}"
-                                     Background="#1C1610" TabIndex="101"/>
-
-                            <!-- Editable fields -->
-                            <TextBlock Text="Name (optional)" Foreground="{StaticResource BrushTextDim}"
-                                       FontSize="11" Margin="0,6,0,2"/>
-                            <TextBox x:Name="TxtConnectionName" TabIndex="102"
-                                     TextChanged="TxtConnectionName_TextChanged"/>
-
+                            <!-- Connection Type -->
                             <TextBlock Text="Connection Type" Foreground="{StaticResource BrushTextDim}"
-                                       FontSize="11" Margin="0,6,0,2"/>
+                                       FontSize="11" Margin="0,0,0,2"/>
                             <ComboBox x:Name="CmbConnectionType" TabIndex="103"
                                       SelectionChanged="CmbConnectionType_SelectionChanged"/>
 
-                            <TextBlock Text="Guard Value" Foreground="{StaticResource BrushTextDim}"
+                            <!-- Guard Strength -->
+                            <TextBlock Text="Guard Strength" Foreground="{StaticResource BrushTextDim}"
                                        FontSize="11" Margin="0,6,0,2"/>
-                            <TextBox x:Name="TxtGuardValue" TabIndex="104"
-                                     TextChanged="TxtGuardValue_TextChanged"/>
+                            <StackPanel Orientation="Horizontal">
+                                <ComboBox x:Name="CmbGuardValue" Width="130" TabIndex="104"
+                                          SelectionChanged="CmbGuardValue_SelectionChanged"
+                                          ToolTip="Guard strength preset; tier inferred from connected zones"/>
+                                <TextBox x:Name="TxtPropGuardValueCustom" Width="65" Margin="4,0,0,0"
+                                         TabIndex="104" Visibility="Collapsed"
+                                         Style="{StaticResource HintTextBox}" Tag="value"
+                                         TextChanged="TxtPropGuardValueCustom_TextChanged"
+                                         ToolTip="Custom guard value (integer)"/>
+                            </StackPanel>
 
-                            <TextBlock Text="Guard Weekly Increment"
-                                       Foreground="{StaticResource BrushTextDim}"
+                            <!-- Weekly Growth -->
+                            <TextBlock Text="Weekly Growth" Foreground="{StaticResource BrushTextDim}"
                                        FontSize="11" Margin="0,6,0,2"/>
-                            <TextBox x:Name="TxtGuardWeeklyIncrement" TabIndex="105"
-                                     TextChanged="TxtGuardWeeklyIncrement_TextChanged"/>
+                            <StackPanel Orientation="Horizontal">
+                                <ComboBox x:Name="CmbGuardWeeklyIncrement" Width="130" TabIndex="105"
+                                          SelectionChanged="CmbGuardWeeklyIncrement_SelectionChanged"/>
+                                <TextBox x:Name="TxtPropIncrementCustom" Width="65" Margin="4,0,0,0"
+                                         TabIndex="105" Visibility="Collapsed"
+                                         Style="{StaticResource HintTextBox}" Tag="0.15"
+                                         TextChanged="TxtPropIncrementCustom_TextChanged"/>
+                            </StackPanel>
 
+                            <!-- Guard Zone (only the two connected zones) -->
                             <TextBlock Text="Guard Zone" Foreground="{StaticResource BrushTextDim}"
                                        FontSize="11" Margin="0,6,0,2"/>
-                            <TextBox x:Name="TxtGuardZone" TabIndex="106"
-                                     TextChanged="TxtGuardZone_TextChanged"/>
+                            <ComboBox x:Name="CmbGuardZone" TabIndex="106"
+                                      SelectionChanged="CmbGuardZone_SelectionChanged"
+                                      ToolTip="Zone that provides the guard army"/>
 
-                            <TextBlock Text="Guard Match Group"
-                                       Foreground="{StaticResource BrushTextDim}"
-                                       FontSize="11" Margin="0,6,0,2"/>
-                            <TextBox x:Name="TxtGuardMatchGroup" TabIndex="107"
-                                     TextChanged="TxtGuardMatchGroup_TextChanged"/>
+                            <!-- Advanced fields (hidden until Advanced is checked) -->
+                            <StackPanel x:Name="PnlPropsAdvanced" Visibility="Collapsed" Margin="0,8,0,0">
+                                <TextBlock Text="Guard Match Group"
+                                           Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="11" Margin="0,0,0,2"/>
+                                <TextBox x:Name="TxtGuardMatchGroup" TabIndex="107"
+                                         TextChanged="TxtGuardMatchGroup_TextChanged"/>
 
-                            <CheckBox x:Name="ChkGuardEscape" Content="Guard Escape"
-                                      Margin="0,8,0,0" TabIndex="108"
-                                      Checked="ChkGuardEscape_Changed"
-                                      Unchecked="ChkGuardEscape_Changed"/>
+                                <CheckBox x:Name="ChkGuardEscape" Content="Guards can flee"
+                                          Margin="0,8,0,0" TabIndex="108"
+                                          Checked="ChkGuardEscape_Changed"
+                                          Unchecked="ChkGuardEscape_Changed"/>
+                                <TextBlock Text="Defeated guards may retreat instead of dying"
+                                           Foreground="{StaticResource BrushTextDim}" FontSize="10"
+                                           FontStyle="Italic" Margin="0,2,0,0"/>
 
-                            <CheckBox x:Name="ChkSimTurnSquad" Content="Sim Turn Squad"
-                                      Margin="0,6,0,0" TabIndex="109"
-                                      Checked="ChkSimTurnSquad_Changed"
-                                      Unchecked="ChkSimTurnSquad_Changed"/>
+                                <CheckBox x:Name="ChkSimTurnSquad" Content="Sim turn squad"
+                                          Margin="0,6,0,0" TabIndex="109"
+                                          Checked="ChkSimTurnSquad_Changed"
+                                          Unchecked="ChkSimTurnSquad_Changed"/>
+                                <TextBlock Text="Simulates simultaneous turns at this connection"
+                                           Foreground="{StaticResource BrushTextDim}" FontSize="10"
+                                           FontStyle="Italic" Margin="0,2,0,0"/>
+                            </StackPanel>
 
                             <Separator Margin="0,10,0,8" Background="{StaticResource BrushBorder}"/>
 
