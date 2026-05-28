@@ -1867,23 +1867,137 @@ namespace Olden_Era___Template_Editor
         private MapTopology  _generatedTopology;
         private bool _templateOutdated = false;
 
+        // ── Zone Connection Editor state ──────────────────────────────────────
+        /// <summary>True after the user has made any manual connection edits in the editor.</summary>
+        private bool _connectionsEditedByUser = false;
+        /// <summary>Deep clone of the connections produced by the last successful Generate call.</summary>
+        private List<Connection>? _originalGeneratedConnections;
+        /// <summary>Names of player (Spawn-*) zones from the last generation.</summary>
+        private HashSet<string> _playerZoneNames = new(StringComparer.Ordinal);
+        /// <summary>True when the editor reported unresolved zone-reference errors; blocks export.</summary>
+        private bool _connectionsHaveErrors = false;
+
         private void BtnPreview_Click(object sender, RoutedEventArgs e)
         {
             if (!Validate()) return;
+
+            // ── B3: warn when custom connections exist ────────────────────────
+            List<Connection>? savedConnections = null;
+            if (_connectionsEditedByUser)
+            {
+                var keep = MessageBox.Show(
+                    "Re-generating will reset your custom connections. Keep custom connections?",
+                    "Custom Connections",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (keep == MessageBoxResult.Yes)
+                {
+                    // Only preserve connections the user explicitly added (IsUserAdded=true).
+                    // Generated connections will come from the fresh Generate call.
+                    var v0 = _generatedTemplate?.Variants?.FirstOrDefault();
+                    savedConnections = v0?.Connections?
+                        .Where(c => c.IsUserAdded)
+                        .Select(c => ZoneConnectionEditorWindow.CloneConnection(c, isUserAdded: true))
+                        .ToList();
+                }
+                else
+                {
+                    _connectionsEditedByUser = false;
+                    _connectionsHaveErrors   = false;
+                }
+            }
+
             var settings = BuildSettings();
             _generatedTemplate = TemplateGenerator.Generate(settings);
             _generatedTopology = settings.Topology;
+
+            var variant = _generatedTemplate.Variants?.FirstOrDefault();
+
+            // Snapshot the freshly-generated connections for "Reset to Generated"
+            _originalGeneratedConnections = variant?.Connections?
+                .Select(c => ZoneConnectionEditorWindow.CloneConnection(c))
+                .ToList() ?? [];
+
+            // Merge user-added connections into the freshly generated set
+            if (savedConnections is not null && savedConnections.Count > 0 && variant is not null)
+            {
+                variant.Connections ??= [];
+                variant.Connections.AddRange(savedConnections);
+            }
+
+            // Collect player zone names for the editor colour coding
+            _playerZoneNames = variant?.Zones?
+                .Where(z => z.Name.StartsWith("Spawn-", StringComparison.Ordinal))
+                .Select(z => z.Name)
+                .ToHashSet(StringComparer.Ordinal) ?? new(StringComparer.Ordinal);
+
             _templateOutdated = false;
             ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
             lblNoPreview.Content = "?";
-            BtnSaveGenerated.Visibility = Visibility.Visible;
+            BtnSaveGenerated.Visibility   = Visibility.Visible;
+            BtnEditConnections.IsEnabled  = true;
             UpdateOutdatedWarning();
             Validate(); // refresh warnings now that template is up to date
+        }
+
+        private void BtnEditConnections_Click(object sender, RoutedEventArgs e)
+        {
+            // FR-014: if no template has been generated yet, offer to generate one now
+            if (_generatedTemplate is null)
+            {
+                var gen = MessageBox.Show(
+                    "No template generated yet. Generate now?",
+                    "Generate Template",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+                if (gen != MessageBoxResult.Yes) return;
+                BtnPreview_Click(sender, e);
+                if (_generatedTemplate is null) return; // generation failed / user cancelled validation
+            }
+
+            var variant = _generatedTemplate.Variants?.FirstOrDefault();
+            if (variant is null) return;
+
+            // Ensure the connections list is initialised
+            variant.Connections ??= [];
+
+            var editor = new ZoneConnectionEditorWindow(
+                variant.Zones        ?? [],
+                variant.Connections,
+                _originalGeneratedConnections ?? [],
+                _generatedTopology,
+                _playerZoneNames)
+            {
+                Owner = this
+            };
+
+            editor.ShowDialog();
+
+            if (editor.ConnectionsWereModified)
+            {
+                _connectionsEditedByUser = true;
+                // Refresh the preview image to reflect updated connections
+                ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
+            }
+
+            _connectionsHaveErrors = editor.HasUnresolvedErrors;
         }
 
         private void BtnSaveGenerated_Click(object sender, RoutedEventArgs e)
         {
             if (_generatedTemplate is null) return;
+
+            // FR-009: block export when the connection editor reported invalid zone references
+            if (_connectionsHaveErrors)
+            {
+                MessageBox.Show(
+                    "Connection editor contains invalid zone references. Open the editor to resolve them before saving.",
+                    "Export Blocked",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
 
             string? gameTemplatesPath = FindOldenEraTemplatesPath();
 

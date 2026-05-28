@@ -2689,6 +2689,8 @@ ValueChanged="Slider_ValueChanged"/>
                     <RowDefinition Height="6"/>
                     <RowDefinition Height="Auto"/>   <!-- show preview checkbox -->
                     <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>   <!-- edit connections button -->
+                    <RowDefinition Height="6"/>
                     <RowDefinition Height="Auto"/>   <!-- save button -->
                 </Grid.RowDefinitions>
 
@@ -2763,6 +2765,15 @@ ValueChanged="Slider_ValueChanged"/>
                            Text="⚠️ Settings have changed — generate a new template before saving to reflect the latest changes."/>
 
                 <Button Grid.Row="10"
+                        x:Name="BtnEditConnections"
+                        Content="✏  Edit Connections"
+                        Style="{StaticResource GenerateButton}"
+                        Visibility="Visible"
+                        IsEnabled="False"
+                        ToolTip="Open the zone connection editor to view and modify connections"
+                        Click="BtnEditConnections_Click"/>
+
+                <Button Grid.Row="12"
                         x:Name="BtnSaveGenerated"
                         Content="💾  Save Template"
                         Style="{StaticResource GenerateButton}"
