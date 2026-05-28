@@ -95,7 +95,8 @@
                                 <Label Content="Type:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
                                 <ComboBox x:Name="CmbAddType" Width="90" Margin="0,0,8,0" TabIndex="21"/>
                                 <Label Content="Guard Value:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
-                                <TextBox x:Name="TxtAddGuardValue" Width="70" Margin="0,0,8,0" TabIndex="22"/>
+                                <TextBox x:Name="TxtAddGuardValue" Width="70" Margin="0,0,8,0" TabIndex="22"
+                                         Style="{StaticResource HintTextBox}" Tag="15000"/>
                                 <Button Content="Add" Click="BtnAddConfirm_Click" Margin="0,0,4,0"
                                         Style="{StaticResource ToolbarButton}" TabIndex="23"/>
                                 <Button Content="Cancel" Click="BtnAddCancel_Click"
@@ -110,7 +111,6 @@
                                 <Label Content="Guard Match Group:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
                                 <TextBox x:Name="TxtAddGuardMatchGroup" Width="130" Margin="0,0,8,0" TabIndex="26"
                                          Style="{StaticResource HintTextBox}"
-                                         Tag="e.g. tourney_guard_A_B"
                                          ToolTip="Match group key for synchronising guard levels across connections"/>
                                 <Label Content="Weekly Increment:" Padding="0,0,4,0" VerticalAlignment="Center" FontSize="12"/>
                                 <TextBox x:Name="TxtAddGuardWeeklyIncrement" Width="60" Margin="0,0,8,0" TabIndex="27"

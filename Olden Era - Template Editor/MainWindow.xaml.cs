@@ -1881,31 +1881,19 @@ namespace Olden_Era___Template_Editor
         {
             if (!Validate()) return;
 
-            // ── B3: warn when custom connections exist ────────────────────────
-            List<Connection>? savedConnections = null;
+            // ── B3: warn before discarding custom connections ─────────────────
             if (_connectionsEditedByUser)
             {
-                var keep = MessageBox.Show(
-                    "Re-generating will reset your custom connections. Keep custom connections?",
-                    "Custom Connections",
+                var proceed = MessageBox.Show(
+                    "Re-generating will discard all of your custom connections. Proceed?",
+                    "Discard Custom Connections",
                     MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
+                    MessageBoxImage.Warning);
 
-                if (keep == MessageBoxResult.Yes)
-                {
-                    // Only preserve connections the user explicitly added (IsUserAdded=true).
-                    // Generated connections will come from the fresh Generate call.
-                    var v0 = _generatedTemplate?.Variants?.FirstOrDefault();
-                    savedConnections = v0?.Connections?
-                        .Where(c => c.IsUserAdded)
-                        .Select(c => ZoneConnectionEditorWindow.CloneConnection(c, isUserAdded: true))
-                        .ToList();
-                }
-                else
-                {
-                    _connectionsEditedByUser = false;
-                    _connectionsHaveErrors   = false;
-                }
+                if (proceed != MessageBoxResult.Yes) return;
+
+                _connectionsEditedByUser = false;
+                _connectionsHaveErrors   = false;
             }
 
             var settings = BuildSettings();
@@ -1918,13 +1906,6 @@ namespace Olden_Era___Template_Editor
             _originalGeneratedConnections = variant?.Connections?
                 .Select(c => ZoneConnectionEditorWindow.CloneConnection(c))
                 .ToList() ?? [];
-
-            // Merge user-added connections into the freshly generated set
-            if (savedConnections is not null && savedConnections.Count > 0 && variant is not null)
-            {
-                variant.Connections ??= [];
-                variant.Connections.AddRange(savedConnections);
-            }
 
             // Collect player zone names for the editor colour coding
             _playerZoneNames = variant?.Zones?

@@ -636,8 +636,9 @@ namespace Olden_Era___Template_Editor
             CmbAddType.SelectedIndex           = 0;
             TxtAddGuardValue.Text              = "";
             TxtAddGuardZone.Text               = "";
-            TxtAddGuardZone.Tag                = _pendingFromZone;   // dynamic placeholder
+            TxtAddGuardZone.Tag                = (string)(_pendingFromZone ?? "");   // dynamic placeholder
             TxtAddGuardMatchGroup.Text         = "";
+            TxtAddGuardMatchGroup.Tag          = (string)$"rnd_guard_{ZoneLetterFromName(_pendingFromZone ?? "")}_{ZoneLetterFromName(_pendingToZone ?? "")}"; // dynamic placeholder
             TxtAddGuardWeeklyIncrement.Text    = "";
             ChkAddSimTurnSquad.IsChecked       = true;               // default on
             PnlAddConfirm.Visibility = Visibility.Visible;
@@ -648,8 +649,11 @@ namespace Olden_Era___Template_Editor
         {
             if (_pendingFromZone is null || _pendingToZone is null) return;
 
+            // GuardValue: default to 15000 when left blank
+            string gvs = TxtAddGuardValue.Text.Trim();
+            if (gvs.Length == 0) gvs = "15000";
             int? guardValue = null;
-            if (int.TryParse(TxtAddGuardValue.Text.Trim(), out int gv))
+            if (int.TryParse(gvs, out int gv))
                 guardValue = gv;
 
             string? addName = TxtAddName.Text.Trim();
@@ -659,8 +663,10 @@ namespace Olden_Era___Template_Editor
             string? addGuardZone = TxtAddGuardZone.Text.Trim();
             if (addGuardZone.Length == 0) addGuardZone = _pendingFromZone;
 
+            // GuardMatchGroup: default to rnd_guard_{fromLetter}_{toLetter} when left blank
             string? addGuardMatchGroup = TxtAddGuardMatchGroup.Text.Trim();
-            if (addGuardMatchGroup.Length == 0) addGuardMatchGroup = null;
+            if (addGuardMatchGroup.Length == 0)
+                addGuardMatchGroup = $"rnd_guard_{ZoneLetterFromName(_pendingFromZone ?? "")}_{ZoneLetterFromName(_pendingToZone ?? "")}";
 
             // WeeklyIncrement: default to 0.15 when left blank
             string wis = TxtAddGuardWeeklyIncrement.Text.Trim();
@@ -677,8 +683,8 @@ namespace Olden_Era___Template_Editor
 
             var newConn = new Connection
             {
-                From                 = _pendingFromZone,
-                To                   = _pendingToZone,
+                From                 = _pendingFromZone!,
+                To                   = _pendingToZone!,
                 ConnectionType       = CmbAddType.SelectedItem as string ?? "Direct",
                 GuardValue           = guardValue,
                 Name                 = addName,
@@ -729,6 +735,13 @@ namespace Olden_Era___Template_Editor
         }
 
         // ── Deep-clone helper ─────────────────────────────────────────────────
+
+        /// <summary>Extracts the letter/identifier from a zone name, e.g. "Spawn-A" → "A", "Neutral-C" → "C".</summary>
+        private static string ZoneLetterFromName(string zoneName)
+        {
+            int dash = zoneName.IndexOf('-');
+            return dash >= 0 ? zoneName[(dash + 1)..] : zoneName;
+        }
 
         public static Connection CloneConnection(Connection c, bool isUserAdded = false) => new()
         {
