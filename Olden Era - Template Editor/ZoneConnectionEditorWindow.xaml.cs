@@ -46,12 +46,6 @@ namespace Olden_Era___Template_Editor
         // ── Rendering constants ──────────────────────────────────────────────
         private const double NodeRadius = 18.0;
 
-        // Zone layout names (matching TemplatePreviewPngWriter)
-        private const string LayoutSpawns  = "zone_layout_spawns";
-        private const string LayoutSides   = "zone_layout_sides";
-        private const string LayoutTreasure = "zone_layout_treasure_zone";
-        private const string LayoutCenter  = "zone_layout_center";
-
         // ── Colours (mirroring TemplatePreviewPngWriter constants) ──────────
         private static readonly SolidColorBrush BrushPlayerFill    = new(Color.FromRgb( 42,  90,  50));
         private static readonly SolidColorBrush BrushPlayerBorder  = new(Color.FromRgb(100, 200, 120));
@@ -696,12 +690,9 @@ namespace Olden_Era___Template_Editor
         {
             if (_pendingFromZone is null || _pendingToZone is null) return;
 
-            // GuardValue: default to 15000 when left blank
+            // GuardValue: default to 15000 when blank or unparseable
             string gvs = TxtAddGuardValue.Text.Trim();
-            if (gvs.Length == 0) gvs = "15000";
-            int? guardValue = null;
-            if (int.TryParse(gvs, out int gv))
-                guardValue = gv;
+            int? guardValue = int.TryParse(gvs, out int gv) ? gv : 15000;
 
             string? addName = TxtAddName.Text.Trim();
             if (addName.Length == 0) addName = null;
@@ -715,15 +706,12 @@ namespace Olden_Era___Template_Editor
             if (addGuardMatchGroup.Length == 0)
                 addGuardMatchGroup = $"rnd_guard_{ZoneLetterFromName(_pendingFromZone ?? "")}_{ZoneLetterFromName(_pendingToZone ?? "")}";
 
-            // WeeklyIncrement: default to 0.15 when left blank
+            // WeeklyIncrement: default to 0.15 when blank or unparseable
             string wis = TxtAddGuardWeeklyIncrement.Text.Trim();
-            if (wis.Length == 0) wis = "0.15";
-            double? addWeeklyIncrement = null;
-            if (double.TryParse(wis,
-                    System.Globalization.NumberStyles.Float,
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    out double wi))
-                addWeeklyIncrement = wi;
+            double? addWeeklyIncrement = double.TryParse(wis,
+                System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out double wi) ? wi : 0.15;
 
             // SimTurnSquad: checkbox defaults to checked; null when false to avoid serialising false
             bool addSimTurnSquad = ChkAddSimTurnSquad.IsChecked == true;

@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using Olden_Era___Template_Editor.Models;
 using Olden_Era___Template_Editor.Services;
 using OldenEraTemplateEditor.Models;
@@ -1868,20 +1868,17 @@ namespace Olden_Era___Template_Editor
         private bool _templateOutdated = false;
 
         // ── Zone Connection Editor state ──────────────────────────────────────
-        /// <summary>True after the user has made any manual connection edits in the editor.</summary>
         private bool _connectionsEditedByUser = false;
-        /// <summary>Deep clone of the connections produced by the last successful Generate call.</summary>
+        // Snapshot for "Reset to Generated" in the editor.
         private List<Connection>? _originalGeneratedConnections;
-        /// <summary>Names of player (Spawn-*) zones from the last generation.</summary>
         private HashSet<string> _playerZoneNames = new(StringComparer.Ordinal);
-        /// <summary>True when the editor reported unresolved zone-reference errors; blocks export.</summary>
+        // True when the editor reported unresolved zone-reference errors; blocks export.
         private bool _connectionsHaveErrors = false;
 
         private void BtnPreview_Click(object sender, RoutedEventArgs e)
         {
             if (!Validate()) return;
 
-            // ── B3: warn before discarding custom connections ─────────────────
             if (_connectionsEditedByUser)
             {
                 var proceed = MessageBox.Show(
@@ -1924,7 +1921,6 @@ namespace Olden_Era___Template_Editor
 
         private void BtnEditConnections_Click(object sender, RoutedEventArgs e)
         {
-            // FR-014: if no template has been generated yet, offer to generate one now
             if (_generatedTemplate is null)
             {
                 var gen = MessageBox.Show(
@@ -1940,7 +1936,6 @@ namespace Olden_Era___Template_Editor
             var variant = _generatedTemplate.Variants?.FirstOrDefault();
             if (variant is null) return;
 
-            // Ensure the connections list is initialised
             variant.Connections ??= [];
 
             var editor = new ZoneConnectionEditorWindow(
@@ -1958,7 +1953,6 @@ namespace Olden_Era___Template_Editor
             if (editor.ConnectionsWereModified)
             {
                 _connectionsEditedByUser = true;
-                // Refresh the preview image to reflect updated connections
                 ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
             }
 
@@ -1969,7 +1963,6 @@ namespace Olden_Era___Template_Editor
         {
             if (_generatedTemplate is null) return;
 
-            // FR-009: block export when the connection editor reported invalid zone references
             if (_connectionsHaveErrors)
             {
                 MessageBox.Show(
