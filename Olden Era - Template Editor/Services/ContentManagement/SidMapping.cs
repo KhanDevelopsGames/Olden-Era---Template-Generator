@@ -175,6 +175,12 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
         public static readonly SidMapping MythicScrollBoxPickup = new() { Sid = "basic_content_list_pickup_mythic_scroll_box", Name = "Random Mythic Scroll Box" };
         public static readonly SidMapping PandoraBoxArmyLowTier = new() { Sid = "content_list_pickup_pandora_box_army_low_tier", Name = "Pandora Box Army (Low Tier)" };
         public static readonly SidMapping PandoraBoxArmyHighTier = new() { Sid = "content_list_pickup_pandora_box_army_high_tier", Name = "Pandora Box Army (High Tier)" };
+        public static readonly SidMapping PandoraBoxGold = new() { Sid = "basic_content_list_pickup_pandora_box_gold", Name = "Pandora Box Gold (Weighted)" };
+        public static readonly SidMapping PandoraBoxExp = new() { Sid = "basic_content_list_pickup_pandora_box_exp", Name = "Pandora Box Experience (Weighted)" };
+        public static readonly SidMapping PandoraBoxArmy = new() { Sid = "basic_content_list_pickup_pandora_box_units", Name = "Pandora Box Army (Weighted)" };
+        public static readonly SidMapping PandoraBoxHeroStats = new() { Sid = "basic_content_list_pickup_pandora_box_all_stats", Name = "Pandora Box Hero Stats (Weighted)" };
+        public static readonly SidMapping PandoraBoxMagicSchool = new() { Sid = "basic_content_list_pickup_pandora_box_magic_school", Name = "Pandora Box Magic School (Weighted)" };
+        public static readonly SidMapping PandoraBoxMagicTier = new() { Sid = "basic_content_list_pickup_pandora_box_magic_tier", Name = "Pandora Box Magic Tier (Weighted)" };
     }
 
     public static class GlobalContent

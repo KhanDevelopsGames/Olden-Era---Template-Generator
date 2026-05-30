@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using System.Collections.Generic;
 
 namespace Olden_Era___Template_Editor.Models
 {
@@ -22,19 +23,49 @@ namespace Olden_Era___Template_Editor.Models
         public bool IsGroup { get; set; }
 
         /// <summary>Whether the content is guarded.</summary>
+        /// Deprecated, left in for backward-compatibility with old saves. New settings files should use the Rules list instead.
         [JsonPropertyName("isGuarded")]
         public bool IsGuarded { get; set; }
 
         /// <summary>Whether the Near Castle placement rule is active.</summary>
+        /// Deprecated, left in for backward-compatibility with old saves. New settings files should use the Rules list instead.
         [JsonPropertyName("nearCastle")]
         public bool NearCastle { get; set; }
 
         /// <summary>Road-distance label: "Any", "Next To", "Near", "Medium", "Far", "Very Far".</summary>
+        /// Deprecated, left in for backward-compatibility with old saves. New settings files should use the Rules list instead.
         [JsonPropertyName("roadDistance")]
         public string RoadDistance { get; set; } = "Any";
 
         /// <summary>True when this row lives in the Mines collection (affects IsMine on the generated ContentItem).</summary>
         [JsonPropertyName("isMine")]
         public bool IsMine { get; set; }
+
+        /// <summary>
+        /// Serialized content rules for the row. New settings files should use this.
+        /// </summary>
+        [JsonPropertyName("rules")]
+        public List<ContentRuleRowSave>? Rules { get; set; }
+    }
+
+    /// <summary>
+    /// Lightweight, JSON-friendly representation of a single IContentRule value.
+    /// </summary>
+    public sealed class ContentRuleRowSave
+    {
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+
+        [JsonPropertyName("distanceName")]
+        public string? DistanceName { get; set; }
+
+        [JsonPropertyName("isGuarded")]
+        public bool? IsGuarded { get; set; }
+
+        [JsonPropertyName("isSoloEncounter")]
+        public bool? IsSoloEncounter { get; set; }
+
+        [JsonPropertyName("variantId")]
+        public int? VariantId { get; set; }
     }
 }

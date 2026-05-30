@@ -52,6 +52,12 @@ public static class ContentItemGroup
         IncludeListIds.MythicScrollBoxPickup,
         IncludeListIds.PandoraBoxArmyLowTier,
         IncludeListIds.PandoraBoxArmyHighTier,
+        IncludeListIds.PandoraBoxGold,
+        IncludeListIds.PandoraBoxExp,
+        IncludeListIds.PandoraBoxArmy,
+        IncludeListIds.PandoraBoxHeroStats,
+        IncludeListIds.PandoraBoxMagicSchool,
+        IncludeListIds.PandoraBoxMagicTier,
     };
     /* Unit recruitment buildings  */
     public static readonly List<SidMapping> UnitRecruitment = new()
