@@ -134,9 +134,9 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Stretch">
                         <Button Content="-" Style="{StaticResource TitleBarButton}"
                             ToolTip="Minimize" Click="BtnMinimize_Click"/>
-                        <Button x:Name="BtnMaximize" Content="[]" Style="{StaticResource TitleBarButton}"
+                        <Button x:Name="BtnMaximize" Content="🗖" Style="{StaticResource TitleBarButton}"
                             ToolTip="Maximize" Click="BtnMaximize_Click"/>
-                        <Button Content="X" Style="{StaticResource TitleBarCloseButton}"
+                        <Button Content="✕" Style="{StaticResource TitleBarCloseButton}"
                             ToolTip="Close" Click="BtnClose_Click"/>
                 </StackPanel>
             </Grid>
@@ -158,15 +158,15 @@
 
         <!-- Toolbar -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button Content="Reset Settings"      Margin="0,0,6,0" Click="BtnNew_Click"    Style="{StaticResource ToolbarButton}" ToolTip="New (Ctrl+N)"/>
-            <Button Content="Open Settings"      Margin="0,0,6,0" Click="BtnOpen_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Open (Ctrl+O)"/>
-            <Button Content="Save Settings"      Margin="0,0,6,0" Click="BtnSave_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Save (Ctrl+S)"/>
-            <Button Content="Save Settings As"   Margin="0,0,0,0" Click="BtnSaveAs_Click" Style="{StaticResource ToolbarButton}" ToolTip="Save As (Ctrl+Shift+S)"/>
+            <Button Content="📄  Reset Settings"      Margin="0,0,6,0" Click="BtnNew_Click"    Style="{StaticResource ToolbarButton}" ToolTip="New (Ctrl+N)"/>
+            <Button Content="📂  Open Settings"      Margin="0,0,6,0" Click="BtnOpen_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Open (Ctrl+O)"/>
+            <Button Content="💾  Save Settings"      Margin="0,0,6,0" Click="BtnSave_Click"   Style="{StaticResource ToolbarButton}" ToolTip="Save (Ctrl+S)"/>
+            <Button Content="💾  Save Settings As"   Margin="0,0,0,0" Click="BtnSaveAs_Click" Style="{StaticResource ToolbarButton}" ToolTip="Save As (Ctrl+Shift+S)"/>
         </StackPanel>
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
             <Button  Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource ToolbarButton}" Click="BtnPatchNotes_Click">
-                <Label>Patch Notes</Label>
-            </Button>
+            <Label>🖉 Patch Notes</Label>
+            </Button> 
             <Button Margin="8,0,0,0" Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource ToolbarButton}" ToolTip="Check out the project on GitHub. Download the latest release or contribute to the development" Click="BtnGithub_Click">
                 <StackPanel Orientation="Horizontal">
                     <Image RenderOptions.BitmapScalingMode="HighQuality" Height="20" Width="20" Source="/icon_github.png"></Image>
@@ -1858,7 +1858,7 @@ ValueChanged="Slider_ValueChanged"/>
 
                 <Button Grid.Row="0"
                         x:Name="BtnPreview"
-                        Content="&#x25C6; Generate Template"
+                        Content="⚔ Generate Template"
                         Style="{StaticResource GenerateButton}"
                         Click="BtnPreview_Click"/>
 
@@ -1877,7 +1877,7 @@ ValueChanged="Slider_ValueChanged"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0"
-                                               Text="!"
+                                               Text="•"
                                                Foreground="{Binding Foreground}"
                                                FontSize="12"
                                                VerticalAlignment="Top"
@@ -1924,11 +1924,11 @@ ValueChanged="Slider_ValueChanged"/>
                            FontSize="12" TextWrapping="Wrap"
                            Visibility="Hidden"
                            HorizontalAlignment="Stretch" TextAlignment="Center"
-                           Text="Settings have changed - generate a new template before saving to reflect the latest changes."/>
+                           Text="⚠️ Settings have changed - generate a new template before saving to reflect the latest changes."/>
 
                 <Button Grid.Row="10"
                         x:Name="BtnSaveGenerated"
-                    Content="Save Template"
+                        Content="💾  Save Template"
                         Style="{StaticResource GenerateButton}"
                         Visibility="Visible"
                         IsEnabled="False"
