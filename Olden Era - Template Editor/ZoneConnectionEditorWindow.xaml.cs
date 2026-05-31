@@ -187,31 +187,41 @@ namespace Olden_Era___Template_Editor
             var connGeometry = new Dictionary<Connection, (PathGeometry geo, Point labelPt)>(
                 ReferenceEqualityComparer.Instance);
 
-            foreach (var group in pairGroups.Values)
+            foreach (var (key, group) in pairGroups)
             {
                 int n = group.Count;
+
+                // Canonical direction for the group (alphabetically sorted From→To)
+                var (canonFrom, canonTo) = key;
+                var canonFromPos = _nodePositions[canonFrom];
+                var canonToPos   = _nodePositions[canonTo];
+                double cdx  = canonToPos.X - canonFromPos.X;
+                double cdy  = canonToPos.Y - canonFromPos.Y;
+                double clen = Math.Sqrt(cdx * cdx + cdy * cdy);
+
+                // Perpendicular unit normal in canonical direction (rotate 90° CCW)
+                double cnx = clen > 0 ? -cdy / clen : 0;
+                double cny = clen > 0 ?  cdx / clen : 0;
+
+                // Base bulge that clears intermediate nodes that lie on the straight-line path
+                double obstacleBase = ComputeObstacleAvoidanceBulge(
+                    canonFromPos, canonToPos, canonFrom, canonTo);
+
                 for (int i = 0; i < n; i++)
                 {
                     var conn    = group[i];
                     var fromPos = _nodePositions[conn.From];
                     var toPos   = _nodePositions[conn.To];
 
-                    double dx  = toPos.X - fromPos.X;
-                    double dy  = toPos.Y - fromPos.Y;
-                    double len = Math.Sqrt(dx * dx + dy * dy);
-
-                    // Perpendicular unit normal (rotate 90°)
-                    double nx = len > 0 ? -dy / len : 0;
-                    double ny = len > 0 ?  dx / len : 0;
-
-                    // bulge = signed perpendicular displacement at the curve's midpoint
-                    double bulge = (i - (n - 1) / 2.0) * BulgeGap;
+                    // Individual bulge = obstacle offset + parallel-edge spread around it
+                    double bulge = obstacleBase + (i - (n - 1) / 2.0) * BulgeGap;
 
                     var mid     = new Point((fromPos.X + toPos.X) / 2, (fromPos.Y + toPos.Y) / 2);
                     // Control point is 2× the desired midpoint displacement (quadratic Bézier property)
-                    var ctrl    = new Point(mid.X + 2 * bulge * nx, mid.Y + 2 * bulge * ny);
+                    // Use canonical normal so all edges in the group bow in consistent directions
+                    var ctrl    = new Point(mid.X + 2 * bulge * cnx, mid.Y + 2 * bulge * cny);
                     // Actual curve midpoint at t=0.5
-                    var labelPt = new Point(mid.X + bulge * nx, mid.Y + bulge * ny);
+                    var labelPt = new Point(mid.X + bulge * cnx, mid.Y + bulge * cny);
 
                     var figure = new PathFigure { StartPoint = fromPos, IsClosed = false };
                     figure.Segments.Add(new QuadraticBezierSegment(ctrl, toPos, true));
@@ -872,6 +882,58 @@ namespace Olden_Era___Template_Editor
                 _pendingFromZone = null;
                 Refresh();
             }
+        }
+
+        private double ComputeObstacleAvoidanceBulge(
+            Point p0, Point p1, string fromName, string toName)
+        {
+            const double Clearance = NodeRadius + 8.0;
+
+            double dx    = p1.X - p0.X;
+            double dy    = p1.Y - p0.Y;
+            double lenSq = dx * dx + dy * dy;
+            double len   = Math.Sqrt(lenSq);
+            if (len < 1) return 0;
+
+            double maxPos = 0;   // largest positive bulge required
+            double maxNeg = 0;   // largest (most negative) negative bulge required
+
+            foreach (var (name, pos) in _nodePositions)
+            {
+                if (string.Equals(name, fromName, StringComparison.Ordinal)) continue;
+                if (string.Equals(name, toName,   StringComparison.Ordinal)) continue;
+
+                double qx = pos.X - p0.X;
+                double qy = pos.Y - p0.Y;
+
+                // Projection parameter along the segment [0,1]
+                double t = (qx * dx + qy * dy) / lenSq;
+                if (t < 0.05 || t > 0.95) continue;   // outside the span between the two nodes
+
+                // Signed perpendicular distance from the line (positive = left of p0→p1)
+                double d = (dx * qy - dy * qx) / len;
+
+                // Straight line already clears this node?
+                if (Math.Abs(d) >= Clearance) continue;
+
+                // Bézier mid-curve factor at this t: the curve displaces perpendicularly by factor*bulge
+                double factor = 4.0 * t * (1.0 - t);
+                if (factor < 1e-6) continue;
+
+                // Bulge needed to pass on the positive (left) side
+                double bPos = (d + Clearance) / factor;
+                // Bulge needed to pass on the negative (right) side
+                double bNeg = (d - Clearance) / factor;
+
+                if (bPos > 0) maxPos = Math.Max(maxPos, bPos);
+                if (bNeg < 0) maxNeg = Math.Min(maxNeg, bNeg);
+            }
+
+            if (maxPos == 0 && maxNeg == 0) return 0;
+            if (maxPos == 0) return maxNeg;
+            if (maxNeg == 0) return maxPos;
+            // Obstacles on both sides — take the direction with the smaller required deflection
+            return Math.Abs(maxPos) <= Math.Abs(maxNeg) ? maxPos : maxNeg;
         }
 
         private string? HitTestZone(Point pos)
