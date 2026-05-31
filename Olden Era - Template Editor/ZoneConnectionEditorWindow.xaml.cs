@@ -57,6 +57,15 @@ namespace Olden_Era___Template_Editor
             { 18_000,  21_000,  24_000,  27_000,  30_000 },  // Silver
             { 36_000,  42_000,  48_000,  54_000,  60_000 },  // Gold
         };
+        // Per-tier default strength index into GuardPresets (Bronze=Very High, Silver=Medium, Gold=Weak)
+        private static readonly int[] DefaultStrengthIndex = [4, 2, 0];
+        // Extra named values appended after the five standard presets in the guard-value dropdown
+        private static readonly (string Label, int Value)[][] TierExtras =
+        [
+            [],                                    // Bronze
+            [("Generator Default", 20_000)],       // Silver
+            [("Generator Default", 25_000)],       // Gold
+        ];
         private static readonly string[] WeeklyIncrementLabels =
             ["Slow (5%)", "Normal (10%)", "Standard (15%)", "Fast (20%)", "Very Fast (25%)"];
         private static readonly double[] WeeklyIncrementValues =
@@ -526,6 +535,17 @@ namespace Olden_Era___Template_Editor
         private void PopulateGuardValueCombo(ZoneTier tier, int? currentValue)
         {
             CmbGuardValue.Items.Clear();
+            var extras     = TierExtras[(int)tier];
+            int extraLen   = extras.Length;
+            int presetOff  = extraLen > 0 ? extraLen + 1 : 0; // +1 accounts for separator
+
+            // Generator Default entries at top
+            foreach (var (label, value) in extras)
+                CmbGuardValue.Items.Add($"{label}  ({value:N0})");
+            if (extraLen > 0)
+                CmbGuardValue.Items.Add(new Separator());
+
+            // Standard presets below
             for (int i = 0; i < StrengthLabels.Length; i++)
                 CmbGuardValue.Items.Add($"{StrengthLabels[i]}  ({GuardPresets[(int)tier, i]:N0})");
             if (ChkPropAdvanced.IsChecked == true)
@@ -538,20 +558,31 @@ namespace Olden_Era___Template_Editor
                 {
                     if (GuardPresets[(int)tier, i] == currentValue.Value)
                     {
-                        CmbGuardValue.SelectedIndex = i;
+                        CmbGuardValue.SelectedIndex = presetOff + i;
                         matched = true;
                         break;
+                    }
+                }
+                if (!matched)
+                {
+                    for (int i = 0; i < extraLen; i++)
+                    {
+                        if (extras[i].Value == currentValue.Value)
+                        {
+                            CmbGuardValue.SelectedIndex = i;
+                            matched = true;
+                            break;
+                        }
                     }
                 }
             }
             else
             {
-                CmbGuardValue.SelectedIndex = 2; // Medium default
+                CmbGuardValue.SelectedIndex = presetOff + 2; // Medium
                 matched = true;
             }
             if (!matched)
             {
-                // Value is non-preset — force Advanced + Custom
                 if (!CmbGuardValue.Items.Contains("Custom..."))
                     CmbGuardValue.Items.Add("Custom...");
                 CmbGuardValue.SelectedIndex = CmbGuardValue.Items.Count - 1;
@@ -657,15 +688,29 @@ namespace Olden_Era___Template_Editor
         private void CmbGuardValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
+            if (CmbGuardValue.SelectedItem is Separator) return;
             bool isCustom = CmbGuardValue.SelectedItem as string == "Custom...";
             TxtPropGuardValueCustom.Visibility = isCustom ? Visibility.Visible : Visibility.Collapsed;
-            if (!isCustom)
+            if (isCustom) return;
+
+            ZoneTier tier  = HigherTierOf(_selectedConnection.From, _selectedConnection.To);
+            var extras     = TierExtras[(int)tier];
+            int extraLen   = extras.Length;
+            int presetOff  = extraLen > 0 ? extraLen + 1 : 0;
+            int idx        = CmbGuardValue.SelectedIndex;
+
+            if (idx < extraLen)
             {
-                ZoneTier tier = HigherTierOf(_selectedConnection.From, _selectedConnection.To);
-                int idx = CmbGuardValue.SelectedIndex;
-                if (idx >= 0 && idx < StrengthLabels.Length)
+                _selectedConnection.GuardValue = extras[idx].Value;
+                ConnectionsWereModified = true;
+                Refresh();
+            }
+            else if (idx >= presetOff)
+            {
+                int presetIdx = idx - presetOff;
+                if (presetIdx < StrengthLabels.Length)
                 {
-                    _selectedConnection.GuardValue = GuardPresets[(int)tier, idx];
+                    _selectedConnection.GuardValue = GuardPresets[(int)tier, presetIdx];
                     ConnectionsWereModified = true;
                     Refresh();
                 }
@@ -956,7 +1001,7 @@ namespace Olden_Era___Template_Editor
                 From                 = from,
                 To                   = to,
                 ConnectionType       = "Direct",
-                GuardValue           = GuardPresets[(int)tier, 2],     // Medium
+                GuardValue           = GuardPresets[(int)tier, DefaultStrengthIndex[(int)tier]],
                 GuardZone            = from,
                 GuardMatchGroup      = $"rnd_guard_{ZoneLetterFromName(from)}_{ZoneLetterFromName(to)}",
                 GuardWeeklyIncrement = WeeklyIncrementValues[2],       // Standard 15%

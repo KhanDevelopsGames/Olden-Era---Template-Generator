@@ -109,28 +109,36 @@
                             <!-- Guard Strength -->
                             <TextBlock Text="Guard Strength" Foreground="{StaticResource BrushTextDim}"
                                        FontSize="11" Margin="0,6,0,2"/>
-                            <StackPanel Orientation="Horizontal">
-                                <ComboBox x:Name="CmbGuardValue" Width="130" TabIndex="104"
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="CmbGuardValue" Grid.Column="0" TabIndex="104"
                                           SelectionChanged="CmbGuardValue_SelectionChanged"
                                           ToolTip="Guard strength preset; tier inferred from connected zones"/>
-                                <TextBox x:Name="TxtPropGuardValueCustom" Width="65" Margin="4,0,0,0"
+                                <TextBox x:Name="TxtPropGuardValueCustom" Grid.Column="1" Width="65" Margin="4,0,0,0"
                                          TabIndex="104" Visibility="Collapsed"
                                          Style="{StaticResource HintTextBox}" Tag="value"
                                          TextChanged="TxtPropGuardValueCustom_TextChanged"
                                          ToolTip="Custom guard value (integer)"/>
-                            </StackPanel>
+                            </Grid>
 
                             <!-- Weekly Growth -->
                             <TextBlock Text="Weekly Growth" Foreground="{StaticResource BrushTextDim}"
                                        FontSize="11" Margin="0,6,0,2"/>
-                            <StackPanel Orientation="Horizontal">
-                                <ComboBox x:Name="CmbGuardWeeklyIncrement" Width="130" TabIndex="105"
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="CmbGuardWeeklyIncrement" Grid.Column="0" TabIndex="105"
                                           SelectionChanged="CmbGuardWeeklyIncrement_SelectionChanged"/>
-                                <TextBox x:Name="TxtPropIncrementCustom" Width="65" Margin="4,0,0,0"
+                                <TextBox x:Name="TxtPropIncrementCustom" Grid.Column="1" Width="65" Margin="4,0,0,0"
                                          TabIndex="105" Visibility="Collapsed"
                                          Style="{StaticResource HintTextBox}" Tag="0.15"
                                          TextChanged="TxtPropIncrementCustom_TextChanged"/>
-                            </StackPanel>
+                            </Grid>
 
                             <!-- Guard Zone (only the two connected zones) -->
                             <TextBlock Text="Guard Zone" Foreground="{StaticResource BrushTextDim}"
