@@ -53,18 +53,17 @@ namespace Olden_Era___Template_Editor
         private static readonly int[,] GuardPresets =
         {
             //   Weak   Moderate  Medium   High  VeryHigh
-            {  3_000,   6_000,   9_000,  12_000,  15_000 },  // Bronze
+            {  3_000,   6_000,   9_000,  12_000,  16_000 },  // Bronze
             { 18_000,  21_000,  24_000,  27_000,  30_000 },  // Silver
             { 36_000,  42_000,  48_000,  54_000,  60_000 },  // Gold
         };
-        // Per-tier default strength index into GuardPresets (Bronze=Very High, Silver=Medium, Gold=Weak)
-        private static readonly int[] DefaultStrengthIndex = [4, 2, 0];
-        // Extra named values appended after the five standard presets in the guard-value dropdown
+        
+        // Extra named values shown at the top of the guard-value dropdown
         private static readonly (string Label, int Value)[][] TierExtras =
         [
-            [],                                    // Bronze
-            [("Generator Default", 20_000)],       // Silver
-            [("Generator Default", 25_000)],       // Gold
+            [("Generator Default", 15_000)],  // Bronze
+            [("Generator Default", 20_000)],  // Silver
+            [("Generator Default", 25_000)],  // Gold
         ];
         private static readonly string[] WeeklyIncrementLabels =
             ["Slow (5%)", "Normal (10%)", "Standard (15%)", "Fast (20%)", "Very Fast (25%)"];
@@ -554,22 +553,23 @@ namespace Olden_Era___Template_Editor
             bool matched = false;
             if (currentValue.HasValue)
             {
-                for (int i = 0; i < StrengthLabels.Length; i++)
+                // Check extras first so Generator Default takes priority over a coincident preset
+                for (int i = 0; i < extraLen; i++)
                 {
-                    if (GuardPresets[(int)tier, i] == currentValue.Value)
+                    if (extras[i].Value == currentValue.Value)
                     {
-                        CmbGuardValue.SelectedIndex = presetOff + i;
+                        CmbGuardValue.SelectedIndex = i;
                         matched = true;
                         break;
                     }
                 }
                 if (!matched)
                 {
-                    for (int i = 0; i < extraLen; i++)
+                    for (int i = 0; i < StrengthLabels.Length; i++)
                     {
-                        if (extras[i].Value == currentValue.Value)
+                        if (GuardPresets[(int)tier, i] == currentValue.Value)
                         {
-                            CmbGuardValue.SelectedIndex = i;
+                            CmbGuardValue.SelectedIndex = presetOff + i;
                             matched = true;
                             break;
                         }
@@ -1001,7 +1001,7 @@ namespace Olden_Era___Template_Editor
                 From                 = from,
                 To                   = to,
                 ConnectionType       = "Direct",
-                GuardValue           = GuardPresets[(int)tier, DefaultStrengthIndex[(int)tier]],
+                GuardValue           = TierExtras[(int)tier][0].Value,  // Generator Default
                 GuardZone            = from,
                 GuardMatchGroup      = $"rnd_guard_{ZoneLetterFromName(from)}_{ZoneLetterFromName(to)}",
                 GuardWeeklyIncrement = WeeklyIncrementValues[2],       // Standard 15%
