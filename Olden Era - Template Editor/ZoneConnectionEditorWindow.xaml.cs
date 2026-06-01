@@ -48,7 +48,7 @@ namespace Olden_Era___Template_Editor
         private const double NodeRadius = 18.0;
 
         // ── Guard-preset tables ──────────────────────────────────────────────
-        private enum ZoneTier { Bronze, Silver, Gold }
+        private enum ZoneTier { Bronze, Silver, Gold, PlayerToPlayer }
         private static readonly string[] StrengthLabels = ["Weak", "Moderate", "Medium", "High", "Very High"];
         private static readonly int[,] GuardPresets =
         {
@@ -56,6 +56,7 @@ namespace Olden_Era___Template_Editor
             {  3_000,   6_000,   9_000,  12_000,  16_000 },  // Bronze
             { 18_000,  21_000,  24_000,  27_000,  30_000 },  // Silver
             { 36_000,  42_000,  48_000,  54_000,  60_000 },  // Gold
+            { 10_000,  22_000,  34_000,  46_000,  58_000 },  // PlayerToPlayer
         };
         
         // Extra named values shown at the top of the guard-value dropdown
@@ -64,6 +65,7 @@ namespace Olden_Era___Template_Editor
             [("Generator Default", 15_000)],  // Bronze
             [("Generator Default", 20_000)],  // Silver
             [("Generator Default", 25_000)],  // Gold
+            [("Generator Default", 30_000)],  // PlayerToPlayer
         ];
         private static readonly string[] WeeklyIncrementLabels =
             ["Slow (5%)", "Normal (10%)", "Standard (15%)", "Fast (20%)", "Very Fast (25%)"];
@@ -475,8 +477,13 @@ namespace Olden_Era___Template_Editor
             return ZoneTier.Bronze;
         }
 
-        private ZoneTier HigherTierOf(string? zoneA, string? zoneB) =>
-            (ZoneTier)Math.Max((int)GetZoneTier(zoneA), (int)GetZoneTier(zoneB));
+        private ZoneTier HigherTierOf(string? zoneA, string? zoneB)
+        {
+            bool aIsPlayer = zoneA is not null && _playerZoneNames.Contains(zoneA);
+            bool bIsPlayer = zoneB is not null && _playerZoneNames.Contains(zoneB);
+            if (aIsPlayer && bIsPlayer) return ZoneTier.PlayerToPlayer;
+            return (ZoneTier)Math.Max((int)GetZoneTier(zoneA), (int)GetZoneTier(zoneB));
+        }
 
         // ── Edge selection ────────────────────────────────────────────────────
 
