@@ -76,6 +76,39 @@
         <Setter Property="Padding"                  Value="5,0"/>
     </Style>
 
+    <!-- TextBox variant with placeholder/hint text: set Tag="hint" on the control  -->
+    <Style x:Key="HintTextBox" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            SnapsToDevicePixels="True">
+                        <Grid>
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          VerticalAlignment="Center"
+                                          Margin="{TemplateBinding Padding}"/>
+                            <TextBlock x:Name="Placeholder"
+                                       Text="{TemplateBinding Tag}"
+                                       VerticalAlignment="Center"
+                                       Margin="{TemplateBinding Padding}"
+                                       Foreground="#7A6040"
+                                       FontStyle="Italic"
+                                       IsHitTestVisible="False"
+                                       Visibility="Collapsed"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- ══════════════════════════════════════════════════════════════════
          COMBOBOX  (dark popup background via ControlTemplate)
     ══════════════════════════════════════════════════════════════════════ -->
