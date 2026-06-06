@@ -1561,56 +1561,109 @@ namespace Olden_Era___Template_Editor.Services
             // Keep from/to names alongside each entry so RefineCtrl can exclude them.
             var drawnRaw = new List<(Point P1, Point Ctrl, Point P2, bool IsPortal, bool HasCurve, string From, string To)>();
 
+            // Perpendicular bulge step between parallel edges (two connections between the same pair of zones).
+            // Scaled relative to the zone radius so it looks correct regardless of template density.
+            double bulgeGap = zoneRadius * 0.55;
+
+            // ── Group connections by unordered zone pair so parallel edges can be fanned apart ──
+            var pairGroups = new Dictionary<(string, string), List<Connection>>(
+                EqualityComparer<(string, string)>.Default);
+
             foreach (Connection conn in connections)
             {
                 if (string.Equals(conn.ConnectionType, "Proximity", StringComparison.Ordinal)) continue;
-                if (!positions.TryGetValue(conn.From, out Point from)) continue;
-                if (!positions.TryGetValue(conn.To,   out Point to))   continue;
+                if (!positions.ContainsKey(conn.From) || !positions.ContainsKey(conn.To)) continue;
+                var key = string.Compare(conn.From, conn.To, StringComparison.Ordinal) <= 0
+                    ? (conn.From, conn.To) : (conn.To, conn.From);
+                if (!pairGroups.TryGetValue(key, out var list))
+                    pairGroups[key] = list = [];
+                list.Add(conn);
+            }
 
-                bool isPortal = string.Equals(conn.ConnectionType, "Portal", StringComparison.Ordinal);
+            foreach (var (_, group) in pairGroups)
+            {
+                // Canonical direction for the group based on the first connection in the group.
+                var first = group[0];
+                Point canonFrom = positions[first.From];
+                Point canonTo   = positions[first.To];
 
-                double dx = to.X - from.X, dy = to.Y - from.Y;
-                double dist = Math.Sqrt(dx * dx + dy * dy);
-                if (dist < 1) continue;
-                double ux = dx / dist, uy = dy / dist;
+                // Ensure canonical direction is alphabetically from→to so the normal is consistent.
+                if (string.Compare(first.From, first.To, StringComparison.Ordinal) > 0)
+                    (canonFrom, canonTo) = (canonTo, canonFrom);
 
-                Point p1 = new Point(from.X + ux * r, from.Y + uy * r);
-                Point p2 = new Point(to.X   - ux * r, to.Y   - uy * r);
+                double cdx  = canonTo.X - canonFrom.X;
+                double cdy  = canonTo.Y - canonFrom.Y;
+                double clen = Math.Sqrt(cdx * cdx + cdy * cdy);
+                if (clen < 1) continue;
 
-                // Find zone closest to the straight chord — if within curveThreshold, add curve.
-                double bestPerp  = curveThreshold;
-                double bestT     = 0.5;
-                Point? blockZone = null;
+                // Perpendicular unit normal (rotate chord 90° CCW)
+                double cnx = -cdy / clen;
+                double cny =  cdx / clen;
 
-                foreach (var kvp in positions)
+                // Base obstacle-avoidance bulge: find the zone closest to the straight chord
+                // and compute the perpendicular displacement needed to clear it.
+                // (Uses canonical from/to so the result is shared across all edges in the group.)
+                double obstacleBase = 0;
                 {
-                    if (kvp.Key == conn.From || kvp.Key == conn.To) continue;
-                    var c = kvp.Value;
-                    double t = ((c.X - from.X) * dx + (c.Y - from.Y) * dy) / (dist * dist);
-                    if (t <= 0.05 || t >= 0.95) continue;
-                    double projX = from.X + t * dx, projY = from.Y + t * dy;
-                    double pd = Math.Sqrt((c.X - projX) * (c.X - projX) + (c.Y - projY) * (c.Y - projY));
-                    if (pd < bestPerp) { bestPerp = pd; bestT = t; blockZone = c; }
+                    double bestPerp0 = curveThreshold;
+                    string canonFromName = string.Compare(first.From, first.To, StringComparison.Ordinal) <= 0
+                        ? first.From : first.To;
+                    string canonToName = string.Compare(first.From, first.To, StringComparison.Ordinal) <= 0
+                        ? first.To : first.From;
+
+                    foreach (var kvp in positions)
+                    {
+                        if (kvp.Key == canonFromName || kvp.Key == canonToName) continue;
+                        var c = kvp.Value;
+                        double t0 = ((c.X - canonFrom.X) * cdx + (c.Y - canonFrom.Y) * cdy) / (clen * clen);
+                        if (t0 <= 0.05 || t0 >= 0.95) continue;
+                        double projX0 = canonFrom.X + t0 * cdx, projY0 = canonFrom.Y + t0 * cdy;
+                        double pd0 = Math.Sqrt((c.X - projX0) * (c.X - projX0) + (c.Y - projY0) * (c.Y - projY0));
+                        if (pd0 < bestPerp0)
+                        {
+                            bestPerp0 = pd0;
+                            // Signed perpendicular distance from the chord (positive = left / CNX direction)
+                            double sd = (cdx * (c.Y - canonFrom.Y) - cdy * (c.X - canonFrom.X)) / clen;
+                            // Bézier bulge needed to clear the blocking zone (use factor ≈ 1 at t=0.5)
+                            double factor = 4.0 * t0 * (1.0 - t0);
+                            if (factor < 1e-6) factor = 1e-6;
+                            obstacleBase = sd >= 0
+                                ? -(curveOffset - sd) / factor   // zone is left → bow right
+                                :  (curveOffset + sd) / factor;  // zone is right → bow left
+                        }
+                    }
                 }
 
-                bool  hasCurve = blockZone.HasValue;
-                Point ctrl;
-                if (hasCurve)
+                int n = group.Count;
+                for (int i = 0; i < n; i++)
                 {
-                    Point mid  = new Point(from.X + bestT * dx, from.Y + bestT * dy);
-                    double px  = mid.X - blockZone!.Value.X;
-                    double py  = mid.Y - blockZone!.Value.Y;
-                    double pl  = Math.Sqrt(px * px + py * py);
-                    if (pl < 0.001) { px = -uy; py = ux; pl = 1; }
-                    ctrl = new Point(mid.X + px / pl * curveOffset, mid.Y + py / pl * curveOffset);
+                    var conn = group[i];
+                    bool isPortal = string.Equals(conn.ConnectionType, "Portal", StringComparison.Ordinal);
+
+                    Point from = positions[conn.From];
+                    Point to   = positions[conn.To];
+
+                    double dx = to.X - from.X, dy = to.Y - from.Y;
+                    double dist = Math.Sqrt(dx * dx + dy * dy);
+                    if (dist < 1) continue;
+                    double ux = dx / dist, uy = dy / dist;
+
+                    Point p1 = new Point(from.X + ux * r, from.Y + uy * r);
+                    Point p2 = new Point(to.X   - ux * r, to.Y   - uy * r);
+
+                    // Per-connection spread offset around the obstacle base
+                    double spreadOffset = (i - (n - 1) / 2.0) * bulgeGap;
+                    double totalBulge   = obstacleBase + spreadOffset;
+
+                    Point mid  = new Point((p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0);
+                    // Quadratic Bézier: control point must be 2× the desired midpoint displacement
+                    Point ctrl = new Point(mid.X + 2 * totalBulge * cnx, mid.Y + 2 * totalBulge * cny);
+
+                    bool hasCurve = Math.Abs(totalBulge) > 1.0;
                     ctrl = RefineCtrl(p1, ctrl, p2, conn.From, conn.To);
-                }
-                else
-                {
-                    ctrl = new Point((p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0);
-                }
 
-                drawnRaw.Add((p1, ctrl, p2, isPortal, hasCurve, conn.From, conn.To));
+                    drawnRaw.Add((p1, ctrl, p2, isPortal, hasCurve, conn.From, conn.To));
+                }
             }
 
             // ── Shared-endpoint curve untangling ─────────────────────────────────
