@@ -2005,6 +2005,7 @@ namespace Olden_Era___Template_Editor
             if (editor.ConnectionsWereModified)
             {
                 _connectionsEditedByUser = true;
+                TemplateGenerator.RegenerateZoneRoads(variant.Zones ?? [], variant.Connections ?? []);
                 ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
             }
 
