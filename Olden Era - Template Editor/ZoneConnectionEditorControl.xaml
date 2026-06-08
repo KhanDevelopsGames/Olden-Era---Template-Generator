@@ -78,7 +78,8 @@
                                 <TextBox x:Name="TxtPropGuardValueCustom" Grid.Column="1" Width="65" Margin="4,0,0,0"
                                          TabIndex="104" Visibility="Collapsed"
                                          Style="{StaticResource HintTextBox}" Tag="value"
-                                         TextChanged="TxtPropGuardValueCustom_TextChanged"
+                                         LostFocus="TxtPropGuardValueCustom_Commit"
+                                         KeyDown="TxtPropGuardValueCustom_KeyDown"
                                          ToolTip="Custom guard value (integer)"/>
                             </Grid>
 
@@ -95,7 +96,8 @@
                                 <TextBox x:Name="TxtPropIncrementCustom" Grid.Column="1" Width="65" Margin="4,0,0,0"
                                          TabIndex="105" Visibility="Collapsed"
                                          Style="{StaticResource HintTextBox}" Tag="0.15"
-                                         TextChanged="TxtPropIncrementCustom_TextChanged"/>
+                                         LostFocus="TxtPropIncrementCustom_Commit"
+                                         KeyDown="TxtPropIncrementCustom_KeyDown"/>
                             </Grid>
 
                             <!-- Guard Zone (only the two connected zones) -->
@@ -111,7 +113,8 @@
                                            Foreground="{StaticResource BrushTextDim}"
                                            FontSize="11" Margin="0,0,0,2"/>
                                 <TextBox x:Name="TxtGuardMatchGroup" TabIndex="107"
-                                         TextChanged="TxtGuardMatchGroup_TextChanged"/>
+                                         LostFocus="TxtGuardMatchGroup_Commit"
+                                         KeyDown="TxtGuardMatchGroup_KeyDown"/>
 
                                 <CheckBox x:Name="ChkGuardEscape" Content="Guards can flee"
                                           Margin="0,8,0,0" TabIndex="108"

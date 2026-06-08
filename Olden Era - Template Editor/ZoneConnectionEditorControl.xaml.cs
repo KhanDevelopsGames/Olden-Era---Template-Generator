@@ -1,6 +1,6 @@
-using Olden_Era___Template_Editor.Models;
 using Olden_Era___Template_Editor.Services;
 using OldenEraTemplateEditor.Models;
+using MapTopology = Olden_Era___Template_Editor.Models.MapTopology;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -565,8 +565,8 @@ namespace Olden_Era___Template_Editor
             {
                 if (CmbGuardValue.SelectedItem as string == "Custom...")
                 {
-                    CmbGuardValue.SelectedIndex = 2;
-                    _selectedConnection.GuardValue = GuardPresets[(int)tier, 2];
+                    CmbGuardValue.SelectedIndex = 0;
+                    _selectedConnection.GuardValue = GuardPresets[(int)tier, 0];
                 }
                 CmbGuardValue.Items.Remove("Custom...");
                 TxtPropGuardValueCustom.Text = "";
@@ -630,15 +630,20 @@ namespace Olden_Era___Template_Editor
             }
         }
 
-        private void TxtPropGuardValueCustom_TextChanged(object sender, TextChangedEventArgs e)
+        private void TxtPropGuardValueCustom_Commit(object sender, RoutedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
-            if (int.TryParse(TxtPropGuardValueCustom.Text.Trim(), out int v))
+            if (int.TryParse(TxtPropGuardValueCustom.Text.Trim(), out int v) && v != _selectedConnection.GuardValue)
             {
                 _selectedConnection.GuardValue = v;
                 MarkConnectionsModified();
                 Refresh();
             }
+        }
+
+        private void TxtPropGuardValueCustom_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtPropGuardValueCustom_Commit(sender, e);
         }
 
         private void CmbGuardWeeklyIncrement_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -657,14 +662,20 @@ namespace Olden_Era___Template_Editor
             }
         }
 
-        private void TxtPropIncrementCustom_TextChanged(object sender, TextChangedEventArgs e)
+        private void TxtPropIncrementCustom_Commit(object sender, RoutedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
-            if (double.TryParse(TxtPropIncrementCustom.Text.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out double v))
+            if (double.TryParse(TxtPropIncrementCustom.Text.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out double v)
+                && Math.Abs(v - (_selectedConnection.GuardWeeklyIncrement ?? 0)) > 1e-9)
             {
                 _selectedConnection.GuardWeeklyIncrement = v;
                 MarkConnectionsModified();
             }
+        }
+
+        private void TxtPropIncrementCustom_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtPropIncrementCustom_Commit(sender, e);
         }
 
         private void CmbGuardZone_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -675,12 +686,21 @@ namespace Olden_Era___Template_Editor
             MarkConnectionsModified();
         }
 
-        private void TxtGuardMatchGroup_TextChanged(object sender, TextChangedEventArgs e)
+        private void TxtGuardMatchGroup_Commit(object sender, RoutedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
             string val = TxtGuardMatchGroup.Text.Trim();
-            _selectedConnection.GuardMatchGroup = val.Length > 0 ? val : null;
-            MarkConnectionsModified();
+            string? newValue = val.Length > 0 ? val : null;
+            if (!string.Equals(_selectedConnection.GuardMatchGroup, newValue, StringComparison.Ordinal))
+            {
+                _selectedConnection.GuardMatchGroup = newValue;
+                MarkConnectionsModified();
+            }
+        }
+
+        private void TxtGuardMatchGroup_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtGuardMatchGroup_Commit(sender, e);
         }
 
         private void ChkGuardEscape_Changed(object sender, RoutedEventArgs e)
@@ -847,9 +867,11 @@ namespace Olden_Era___Template_Editor
         private void AddConnectionWithDefaults(string from, string to)
         {
             ZoneTier tier = HigherTierOf(from, to);
+            string baseName = $"Conn-{ZoneLetterFromName(from)}-{ZoneLetterFromName(to)}";
+            string uniqueName = GetUniqueConnectionName(baseName);
             var newConn = new Connection
             {
-                Name = $"Conn-{ZoneLetterFromName(from)}-{ZoneLetterFromName(to)}",
+                Name = uniqueName,
                 From = from,
                 To = to,
                 ConnectionType = "Direct",
@@ -868,6 +890,28 @@ namespace Olden_Era___Template_Editor
             PnlProperties.Visibility = Visibility.Visible;
             PopulatePropertyPanel(newConn);
             Refresh();
+        }
+
+        private string GetUniqueConnectionName(string baseName)
+        {
+            var existing = _connections
+                .Select(c => c.Name)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToHashSet(StringComparer.Ordinal);
+
+            if (!existing.Contains(baseName))
+                return baseName;
+
+            int suffix = 2;
+            string candidate;
+            do
+            {
+                candidate = $"{baseName}-{suffix}";
+                suffix++;
+            }
+            while (existing.Contains(candidate));
+
+            return candidate;
         }
 
         private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

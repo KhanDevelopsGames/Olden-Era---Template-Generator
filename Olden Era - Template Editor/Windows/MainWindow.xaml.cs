@@ -13,6 +13,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace Olden_Era___Template_Editor
 {
@@ -29,7 +30,6 @@ namespace Olden_Era___Template_Editor
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
-            WriteIndented = true,
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
@@ -65,6 +65,7 @@ namespace Olden_Era___Template_Editor
 
             ConnectionEditorControl.ConnectionsModified += ConnectionEditorControl_ConnectionsModified;
             ConnectionEditorControl.ErrorsChanged += ConnectionEditorControl_ErrorsChanged;
+            _connectionPreviewRefreshDebounce.Tick += ConnectionPreviewRefreshDebounce_Tick;
 
             // Clamp startup size to the available work area so the window never
             // overflows the screen at high-DPI scaling (e.g. 125 %, 150 %, 200 %).
@@ -1929,6 +1930,8 @@ namespace Olden_Era___Template_Editor
         private HashSet<string> _playerZoneNames = new(StringComparer.Ordinal);
         // True when the editor reported unresolved zone-reference errors; blocks export.
         private bool _connectionsHaveErrors = false;
+        private readonly DispatcherTimer _connectionPreviewRefreshDebounce = new() { Interval = TimeSpan.FromMilliseconds(120) };
+        private bool _connectionPreviewRefreshPending = false;
 
         private void BtnPreview_Click(object sender, RoutedEventArgs e)
         {
@@ -1995,13 +1998,31 @@ namespace Olden_Era___Template_Editor
 
         private void ConnectionEditorControl_ConnectionsModified(object? sender, EventArgs e)
         {
+            _connectionsEditedByUser = true;
+            _connectionPreviewRefreshPending = true;
+            _connectionPreviewRefreshDebounce.Stop();
+            _connectionPreviewRefreshDebounce.Start();
+            _connectionsHaveErrors = ConnectionEditorControl.HasUnresolvedErrors;
+        }
+
+        private void ConnectionPreviewRefreshDebounce_Tick(object? sender, EventArgs e)
+        {
+            _connectionPreviewRefreshDebounce.Stop();
+            FlushPendingConnectionPreviewRefresh();
+        }
+
+        private void FlushPendingConnectionPreviewRefresh()
+        {
+            if (!_connectionPreviewRefreshPending)
+                return;
+
+            _connectionPreviewRefreshPending = false;
+
             if (_generatedTemplate?.Variants?.FirstOrDefault() is not Variant variant)
                 return;
 
-            _connectionsEditedByUser = true;
             TemplateGenerator.RegenerateZoneRoads(variant.Zones ?? [], variant.Connections ?? []);
             ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
-            _connectionsHaveErrors = ConnectionEditorControl.HasUnresolvedErrors;
         }
 
         private void ConnectionEditorControl_ErrorsChanged(object? sender, EventArgs e)
@@ -2012,6 +2033,8 @@ namespace Olden_Era___Template_Editor
         private void BtnSaveGenerated_Click(object sender, RoutedEventArgs e)
         {
             if (_generatedTemplate is null) return;
+
+            FlushPendingConnectionPreviewRefresh();
 
             if (_connectionsHaveErrors)
             {
