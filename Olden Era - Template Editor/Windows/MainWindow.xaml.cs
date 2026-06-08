@@ -63,6 +63,9 @@ namespace Olden_Era___Template_Editor
         {
             InitializeComponent();
 
+            ConnectionEditorControl.ConnectionsModified += ConnectionEditorControl_ConnectionsModified;
+            ConnectionEditorControl.ErrorsChanged += ConnectionEditorControl_ErrorsChanged;
+
             // Clamp startup size to the available work area so the window never
             // overflows the screen at high-DPI scaling (e.g. 125 %, 150 %, 200 %).
             var area = SystemParameters.WorkArea;
@@ -1966,50 +1969,44 @@ namespace Olden_Era___Template_Editor
             ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
             lblNoPreview.Content = "?";
             BtnSaveGenerated.Visibility   = Visibility.Visible;
-            BtnEditConnections.IsEnabled  = true;
+            InitializeConnectionEditorForGeneratedTemplate();
             UpdateOutdatedWarning();
             Validate(); // refresh warnings now that template is up to date
         }
 
-        private void BtnEditConnections_Click(object sender, RoutedEventArgs e)
+        private void InitializeConnectionEditorForGeneratedTemplate()
         {
-            if (_generatedTemplate is null)
-            {
-                var gen = MessageBox.Show(
-                    "No template generated yet. Generate now?",
-                    "Generate Template",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
-                if (gen != MessageBoxResult.Yes) return;
-                BtnPreview_Click(sender, e);
-                if (_generatedTemplate is null) return; // generation failed / user cancelled validation
-            }
-
-            var variant = _generatedTemplate.Variants?.FirstOrDefault();
+            var variant = _generatedTemplate?.Variants?.FirstOrDefault();
             if (variant is null) return;
 
             variant.Connections ??= [];
 
-            var editor = new ZoneConnectionEditorWindow(
-                variant.Zones        ?? [],
+            ConnectionEditorControl.InitializeEditor(
+                variant.Zones ?? [],
                 variant.Connections,
                 _originalGeneratedConnections ?? [],
                 _generatedTopology,
-                _playerZoneNames)
-            {
-                Owner = this
-            };
+                _playerZoneNames);
 
-            editor.ShowDialog();
+            ConnectionEditorControl.Visibility = Visibility.Visible;
+            PnlConnectionEditorHint.Visibility = Visibility.Collapsed;
+            _connectionsHaveErrors = ConnectionEditorControl.HasUnresolvedErrors;
+        }
 
-            if (editor.ConnectionsWereModified)
-            {
-                _connectionsEditedByUser = true;
-                TemplateGenerator.RegenerateZoneRoads(variant.Zones ?? [], variant.Connections ?? []);
-                ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
-            }
+        private void ConnectionEditorControl_ConnectionsModified(object? sender, EventArgs e)
+        {
+            if (_generatedTemplate?.Variants?.FirstOrDefault() is not Variant variant)
+                return;
 
-            _connectionsHaveErrors = editor.HasUnresolvedErrors;
+            _connectionsEditedByUser = true;
+            TemplateGenerator.RegenerateZoneRoads(variant.Zones ?? [], variant.Connections ?? []);
+            ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
+            _connectionsHaveErrors = ConnectionEditorControl.HasUnresolvedErrors;
+        }
+
+        private void ConnectionEditorControl_ErrorsChanged(object? sender, EventArgs e)
+        {
+            _connectionsHaveErrors = ConnectionEditorControl.HasUnresolvedErrors;
         }
 
         private void BtnSaveGenerated_Click(object sender, RoutedEventArgs e)
