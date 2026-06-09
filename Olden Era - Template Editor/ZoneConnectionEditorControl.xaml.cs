@@ -1,4 +1,5 @@
 using Olden_Era___Template_Editor.Services;
+using Olden_Era___Template_Editor.Models;
 using OldenEraTemplateEditor.Models;
 using MapTopology = Olden_Era___Template_Editor.Models.MapTopology;
 using System.Globalization;
@@ -21,22 +22,43 @@ namespace Olden_Era___Template_Editor
 
         private Connection? _selectedConnection;
         private Shape? _selectedVisibleLine;
+        private string? _selectedZoneName;
 
         private string? _pendingFromZone;
+        private Point _dragStartPoint;
         private Line? _rubberBandLine;
+        private bool _isPotentialDrag;
         private bool _isDragging;
 
         private bool _suppressPropertyEvents;
 
         private List<(Connection conn, PathGeometry geo, Path visiblePath)> _connectionGeometries = [];
+        private Dictionary<string, ZoneSnapshot> _originalZonesByName = new(StringComparer.Ordinal);
+        private Dictionary<string, ZoneOverrideSettings> _zoneOverridesByName = new(StringComparer.Ordinal);
 
         public bool ConnectionsWereModified { get; private set; }
         public bool HasUnresolvedErrors { get; private set; }
 
         public event EventHandler? ConnectionsModified;
+        public event EventHandler? ZoneOverridesModified;
         public event EventHandler? ErrorsChanged;
 
         private const double NodeRadius = 18.0;
+        private const double DragStartThreshold = 6.0;
+
+        private sealed record ZoneSnapshot(
+            double? Size,
+            string? Layout,
+            int? GuardCutoffValue,
+            double? GuardRandomization,
+            double? GuardMultiplier,
+            double? GuardWeeklyIncrement,
+            int? GuardedContentValue,
+            int? GuardedContentValuePerArea,
+            int? UnguardedContentValue,
+            int? UnguardedContentValuePerArea,
+            int? ResourcesValue,
+            int? ResourcesValuePerArea);
 
         private enum ZoneTier { Bronze, Silver, Gold, PlayerToPlayer }
         private static readonly string[] StrengthLabels = ["Weak", "Moderate", "Medium", "High", "Very High"];
@@ -99,20 +121,34 @@ namespace Olden_Era___Template_Editor
             _originalConnections = originalConnections;
             _topology = topology;
             _playerZoneNames = playerZoneNames;
+            _originalZonesByName = _zones
+                .Where(zone => !string.IsNullOrWhiteSpace(zone.Name))
+                .ToDictionary(zone => zone.Name, CreateSnapshot, StringComparer.Ordinal);
+            _zoneOverridesByName = new Dictionary<string, ZoneOverrideSettings>(StringComparer.Ordinal);
 
             ConnectionsWereModified = false;
             _selectedConnection = null;
             _selectedVisibleLine = null;
+            _selectedZoneName = null;
             PnlProperties.Visibility = Visibility.Collapsed;
             CancelDragAdd();
             RenderAll();
         }
+
+        public IReadOnlyList<ZoneOverrideSettings> GetZoneOverridesSnapshot()
+            => _zoneOverridesByName.Values
+                .OrderBy(overrideSettings => overrideSettings.ZoneName, StringComparer.Ordinal)
+                .Select(CloneZoneOverride)
+                .ToList();
 
         private void MarkConnectionsModified()
         {
             ConnectionsWereModified = true;
             ConnectionsModified?.Invoke(this, EventArgs.Empty);
         }
+
+        private void MarkZoneOverridesModified()
+            => ZoneOverridesModified?.Invoke(this, EventArgs.Empty);
 
         private void ZoneConnectionEditorControl_PreviewKeyDown(object sender, KeyEventArgs e)
         {
@@ -317,8 +353,10 @@ namespace Olden_Era___Template_Editor
                     Width = NodeRadius * 2,
                     Height = NodeRadius * 2,
                     Fill = fillBrush,
-                    Stroke = borderBrush,
-                    StrokeThickness = 2,
+                    Stroke = string.Equals(_selectedZoneName, zone.Name, StringComparison.Ordinal)
+                        ? BrushEdgeSelected
+                        : borderBrush,
+                    StrokeThickness = string.Equals(_selectedZoneName, zone.Name, StringComparison.Ordinal) ? 3 : 2,
                     Cursor = Cursors.Hand
                 };
 
@@ -415,12 +453,90 @@ namespace Olden_Era___Template_Editor
                 _selectedVisibleLine.Stroke = wasPortal ? BrushEdgePortal : BrushEdgeDirect;
             }
 
+            _selectedZoneName = null;
             _selectedConnection = conn;
             _selectedVisibleLine = visibleLine;
             visibleLine.Stroke = BrushEdgeSelected;
 
-            PnlProperties.Visibility = Visibility.Visible;
+            ShowConnectionPropertyPanel();
             PopulatePropertyPanel(conn);
+        }
+
+        private void SelectZone(string zoneName)
+        {
+            Zone? zone = _zones.FirstOrDefault(z => string.Equals(z.Name, zoneName, StringComparison.Ordinal));
+            if (zone is null)
+                return;
+
+            if (_selectedVisibleLine is not null && _selectedConnection is not null)
+            {
+                bool wasPortal = string.Equals(_selectedConnection.ConnectionType, "Portal", StringComparison.Ordinal);
+                _selectedVisibleLine.Stroke = wasPortal ? BrushEdgePortal : BrushEdgeDirect;
+            }
+
+            _selectedConnection = null;
+            _selectedVisibleLine = null;
+            _selectedZoneName = zone.Name;
+
+            ShowZonePropertyPanel();
+            PopulateZonePropertyPanel(zone);
+            Refresh();
+        }
+
+        private void ShowConnectionPropertyPanel()
+        {
+            PnlProperties.Visibility = Visibility.Visible;
+            TxtPropertiesHeader.Text = "CONNECTION PROPERTIES";
+            PnlConnectionProperties.Visibility = Visibility.Visible;
+            PnlZoneProperties.Visibility = Visibility.Collapsed;
+            ChkPropAdvanced.Visibility = Visibility.Visible;
+        }
+
+        private void ShowZonePropertyPanel()
+        {
+            PnlProperties.Visibility = Visibility.Visible;
+            TxtPropertiesHeader.Text = "ZONE PROPERTIES";
+            PnlConnectionProperties.Visibility = Visibility.Collapsed;
+            PnlZoneProperties.Visibility = Visibility.Visible;
+            ChkPropAdvanced.Visibility = Visibility.Visible;
+            bool advanced = ChkPropAdvanced.IsChecked == true;
+            PnlZoneAdvanced.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+            PnlZoneAdvancedContentValues.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+            PnlZoneContentMultipliers.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void PopulateZonePropertyPanel(Zone zone)
+        {
+            _suppressPropertyEvents = true;
+            try
+            {
+                TxtZoneNameDisplay.Text = zone.Name;
+                SldZoneSize.Value = Math.Round((zone.Size ?? 1.0) * 100.0, 0, MidpointRounding.AwayFromZero);
+                TxtZoneGuardCutoff.Text = zone.GuardCutoffValue?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+                TxtZoneGuardedContentValue.Text = zone.GuardedContentValue?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+                TxtZoneGuardedContentValuePerArea.Text = zone.GuardedContentValuePerArea?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+                TxtZoneUnguardedContentValue.Text = zone.UnguardedContentValue?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+                TxtZoneUnguardedContentValuePerArea.Text = zone.UnguardedContentValuePerArea?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+                TxtZoneResourcesValue.Text = zone.ResourcesValue?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+                TxtZoneResourcesValuePerArea.Text = zone.ResourcesValuePerArea?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+
+                SldZoneGuardRandomization.Value = Math.Round((zone.GuardRandomization ?? 0.05) * 100.0, 0, MidpointRounding.AwayFromZero);
+                SldZoneGuardMultiplier.Value = Math.Round((zone.GuardMultiplier ?? 1.0) * 100.0, 0, MidpointRounding.AwayFromZero);
+                SldZoneGuardWeeklyIncrement.Value = SnapWeeklyPercent(Math.Round((zone.GuardWeeklyIncrement ?? 0.15) * 100.0, 0, MidpointRounding.AwayFromZero));
+
+                ZoneSnapshot original = _originalZonesByName.TryGetValue(zone.Name, out ZoneSnapshot? snapshot)
+                    ? snapshot
+                    : CreateSnapshot(zone);
+
+                SldZoneGuardedContentValueMultiplier.Value = ComputeContentMultiplierPercent(original.GuardedContentValue, zone.GuardedContentValue);
+                SldZoneUnguardedContentValueMultiplier.Value = ComputeContentMultiplierPercent(original.UnguardedContentValue, zone.UnguardedContentValue);
+                SldZoneResourcesValueMultiplier.Value = ComputeContentMultiplierPercent(original.ResourcesValue, zone.ResourcesValue);
+                UpdateZoneSliderLabels();
+            }
+            finally
+            {
+                _suppressPropertyEvents = false;
+            }
         }
 
         private void PopulatePropertyPanel(Connection conn)
@@ -552,6 +668,14 @@ namespace Olden_Era___Template_Editor
         {
             bool advanced = ChkPropAdvanced.IsChecked == true;
             PnlPropsAdvanced.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+
+            if (_selectedZoneName is not null)
+            {
+                PnlZoneAdvanced.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+                PnlZoneAdvancedContentValues.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
+                PnlZoneContentMultipliers.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
+                return;
+            }
 
             if (_selectedConnection is null) return;
             ZoneTier tier = HigherTierOf(_selectedConnection.From, _selectedConnection.To);
@@ -717,6 +841,364 @@ namespace Olden_Era___Template_Editor
             MarkConnectionsModified();
         }
 
+        private void TxtZoneGuardCutoff_Commit(object sender, RoutedEventArgs e)
+            => CommitSelectedZoneInt(TxtZoneGuardCutoff, value => Math.Max(0, value), (zone, value) => zone.GuardCutoffValue = value, z => z.GuardCutoffValue);
+
+        private void TxtZoneGuardCutoff_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtZoneGuardCutoff_Commit(sender, e);
+        }
+
+        private void TxtZoneGuardedContentValue_Commit(object sender, RoutedEventArgs e)
+            => CommitSelectedZoneNullableInt(TxtZoneGuardedContentValue, value => Math.Max(0, value), (zone, value) => zone.GuardedContentValue = value, z => z.GuardedContentValue);
+
+        private void TxtZoneGuardedContentValue_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtZoneGuardedContentValue_Commit(sender, e);
+        }
+
+        private void TxtZoneUnguardedContentValue_Commit(object sender, RoutedEventArgs e)
+            => CommitSelectedZoneNullableInt(TxtZoneUnguardedContentValue, value => Math.Max(0, value), (zone, value) => zone.UnguardedContentValue = value, z => z.UnguardedContentValue);
+
+        private void TxtZoneUnguardedContentValue_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtZoneUnguardedContentValue_Commit(sender, e);
+        }
+
+        private void TxtZoneResourcesValue_Commit(object sender, RoutedEventArgs e)
+            => CommitSelectedZoneNullableInt(TxtZoneResourcesValue, value => Math.Max(0, value), (zone, value) => zone.ResourcesValue = value, z => z.ResourcesValue);
+
+        private void TxtZoneResourcesValue_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtZoneResourcesValue_Commit(sender, e);
+        }
+
+        private void TxtZoneGuardedContentValuePerArea_Commit(object sender, RoutedEventArgs e)
+            => CommitSelectedZoneNullableInt(TxtZoneGuardedContentValuePerArea, value => Math.Max(0, value), (zone, value) => zone.GuardedContentValuePerArea = value, z => z.GuardedContentValuePerArea);
+
+        private void TxtZoneGuardedContentValuePerArea_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtZoneGuardedContentValuePerArea_Commit(sender, e);
+        }
+
+        private void TxtZoneUnguardedContentValuePerArea_Commit(object sender, RoutedEventArgs e)
+            => CommitSelectedZoneNullableInt(TxtZoneUnguardedContentValuePerArea, value => Math.Max(0, value), (zone, value) => zone.UnguardedContentValuePerArea = value, z => z.UnguardedContentValuePerArea);
+
+        private void TxtZoneUnguardedContentValuePerArea_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtZoneUnguardedContentValuePerArea_Commit(sender, e);
+        }
+
+        private void TxtZoneResourcesValuePerArea_Commit(object sender, RoutedEventArgs e)
+            => CommitSelectedZoneNullableInt(TxtZoneResourcesValuePerArea, value => Math.Max(0, value), (zone, value) => zone.ResourcesValuePerArea = value, z => z.ResourcesValuePerArea);
+
+        private void TxtZoneResourcesValuePerArea_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtZoneResourcesValuePerArea_Commit(sender, e);
+        }
+
+        private void SldZoneSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            UpdateZoneSliderLabels();
+            if (_suppressPropertyEvents) return;
+            if (_selectedZoneName is null) return;
+
+            Zone? zone = _zones.FirstOrDefault(z => string.Equals(z.Name, _selectedZoneName, StringComparison.Ordinal));
+            if (zone is null) return;
+
+            double value = Math.Round(Math.Clamp(SldZoneSize.Value / 100.0, 0.25, 2.0), 2, MidpointRounding.AwayFromZero);
+            if (AreClose(zone.Size, value)) return;
+            zone.Size = value;
+            UpdateZoneOverride(zone);
+        }
+
+        private void SldZoneGuardRandomization_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            UpdateZoneSliderLabels();
+            if (_suppressPropertyEvents) return;
+            if (_selectedZoneName is null) return;
+            Zone? zone = _zones.FirstOrDefault(z => string.Equals(z.Name, _selectedZoneName, StringComparison.Ordinal));
+            if (zone is null) return;
+
+            double value = Math.Round(Math.Clamp(SldZoneGuardRandomization.Value / 100.0, 0.0, 0.5), 3, MidpointRounding.AwayFromZero);
+            if (AreClose(zone.GuardRandomization, value)) return;
+            zone.GuardRandomization = value;
+            UpdateZoneOverride(zone);
+        }
+
+        private void SldZoneGuardMultiplier_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            UpdateZoneSliderLabels();
+            if (_suppressPropertyEvents) return;
+            if (_selectedZoneName is null) return;
+            Zone? zone = _zones.FirstOrDefault(z => string.Equals(z.Name, _selectedZoneName, StringComparison.Ordinal));
+            if (zone is null) return;
+
+            double value = Math.Round(Math.Clamp(SldZoneGuardMultiplier.Value / 100.0, 0.25, 3.0), 3, MidpointRounding.AwayFromZero);
+            if (AreClose(zone.GuardMultiplier, value)) return;
+            zone.GuardMultiplier = value;
+            UpdateZoneOverride(zone);
+        }
+
+        private void SldZoneGuardWeeklyIncrement_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_suppressPropertyEvents)
+            {
+                UpdateZoneSliderLabels();
+                return;
+            }
+
+            double snapped = SnapWeeklyPercent(SldZoneGuardWeeklyIncrement.Value);
+            if (Math.Abs(SldZoneGuardWeeklyIncrement.Value - snapped) > 0.001)
+            {
+                _suppressPropertyEvents = true;
+                SldZoneGuardWeeklyIncrement.Value = snapped;
+                _suppressPropertyEvents = false;
+            }
+
+            UpdateZoneSliderLabels();
+
+            if (_selectedZoneName is null) return;
+            Zone? zone = _zones.FirstOrDefault(z => string.Equals(z.Name, _selectedZoneName, StringComparison.Ordinal));
+            if (zone is null) return;
+
+            double value = Math.Round(snapped / 100.0, 3, MidpointRounding.AwayFromZero);
+            if (AreClose(zone.GuardWeeklyIncrement, value)) return;
+            zone.GuardWeeklyIncrement = value;
+            UpdateZoneOverride(zone);
+        }
+
+        private void SldZoneGuardedContentValueMultiplier_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            UpdateZoneSliderLabels();
+            if (_suppressPropertyEvents || _selectedZoneName is null)
+                return;
+
+            Zone? zone = _zones.FirstOrDefault(z => string.Equals(z.Name, _selectedZoneName, StringComparison.Ordinal));
+            if (zone is null)
+                return;
+
+            ZoneSnapshot original = _originalZonesByName.TryGetValue(zone.Name, out ZoneSnapshot? snapshot)
+                ? snapshot
+                : CreateSnapshot(zone);
+
+            int value = ScaleContentValueFromMultiplier(original.GuardedContentValue, SldZoneGuardedContentValueMultiplier.Value);
+            if (zone.GuardedContentValue == value)
+                return;
+
+            zone.GuardedContentValue = value;
+            TxtZoneGuardedContentValue.Text = value.ToString(CultureInfo.InvariantCulture);
+            UpdateZoneOverride(zone);
+        }
+
+        private void SldZoneUnguardedContentValueMultiplier_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            UpdateZoneSliderLabels();
+            if (_suppressPropertyEvents || _selectedZoneName is null)
+                return;
+
+            Zone? zone = _zones.FirstOrDefault(z => string.Equals(z.Name, _selectedZoneName, StringComparison.Ordinal));
+            if (zone is null)
+                return;
+
+            ZoneSnapshot original = _originalZonesByName.TryGetValue(zone.Name, out ZoneSnapshot? snapshot)
+                ? snapshot
+                : CreateSnapshot(zone);
+
+            int value = ScaleContentValueFromMultiplier(original.UnguardedContentValue, SldZoneUnguardedContentValueMultiplier.Value);
+            if (zone.UnguardedContentValue == value)
+                return;
+
+            zone.UnguardedContentValue = value;
+            TxtZoneUnguardedContentValue.Text = value.ToString(CultureInfo.InvariantCulture);
+            UpdateZoneOverride(zone);
+        }
+
+        private void SldZoneResourcesValueMultiplier_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            UpdateZoneSliderLabels();
+            if (_suppressPropertyEvents || _selectedZoneName is null)
+                return;
+
+            Zone? zone = _zones.FirstOrDefault(z => string.Equals(z.Name, _selectedZoneName, StringComparison.Ordinal));
+            if (zone is null)
+                return;
+
+            ZoneSnapshot original = _originalZonesByName.TryGetValue(zone.Name, out ZoneSnapshot? snapshot)
+                ? snapshot
+                : CreateSnapshot(zone);
+
+            int value = ScaleContentValueFromMultiplier(original.ResourcesValue, SldZoneResourcesValueMultiplier.Value);
+            if (zone.ResourcesValue == value)
+                return;
+
+            zone.ResourcesValue = value;
+            TxtZoneResourcesValue.Text = value.ToString(CultureInfo.InvariantCulture);
+            UpdateZoneOverride(zone);
+        }
+
+        private void UpdateZoneSliderLabels()
+        {
+            if (TxtZoneSizeValue is null
+                || TxtZoneGuardRandomizationValue is null
+                || TxtZoneGuardMultiplierValue is null
+                || TxtZoneGuardWeeklyIncrementValue is null
+                || TxtZoneGuardedContentValueMultiplierValue is null
+                || TxtZoneUnguardedContentValueMultiplierValue is null
+                || TxtZoneResourcesValueMultiplierValue is null
+                || TxtZoneGuardedContentBaseValue is null
+                || TxtZoneUnguardedContentBaseValue is null
+                || TxtZoneResourcesBaseValue is null)
+            {
+                return;
+            }
+
+            TxtZoneSizeValue.Text = $"{Math.Round(SldZoneSize.Value, 0, MidpointRounding.AwayFromZero)}%";
+            TxtZoneGuardRandomizationValue.Text = $"{Math.Round(SldZoneGuardRandomization.Value, 0, MidpointRounding.AwayFromZero)}%";
+            TxtZoneGuardMultiplierValue.Text = $"{Math.Round(SldZoneGuardMultiplier.Value, 0, MidpointRounding.AwayFromZero)}%";
+            TxtZoneGuardWeeklyIncrementValue.Text = $"{Math.Round(SldZoneGuardWeeklyIncrement.Value, 0, MidpointRounding.AwayFromZero)}%";
+            TxtZoneGuardedContentValueMultiplierValue.Text = $"{Math.Round(SldZoneGuardedContentValueMultiplier.Value, 0, MidpointRounding.AwayFromZero)}%";
+            TxtZoneUnguardedContentValueMultiplierValue.Text = $"{Math.Round(SldZoneUnguardedContentValueMultiplier.Value, 0, MidpointRounding.AwayFromZero)}%";
+            TxtZoneResourcesValueMultiplierValue.Text = $"{Math.Round(SldZoneResourcesValueMultiplier.Value, 0, MidpointRounding.AwayFromZero)}%";
+
+            Zone? zone = _selectedZoneName is null
+                ? null
+                : _zones.FirstOrDefault(z => string.Equals(z.Name, _selectedZoneName, StringComparison.Ordinal));
+
+            TxtZoneGuardedContentBaseValue.Text = $"Current value: {FormatZoneInt(zone?.GuardedContentValue)}";
+            TxtZoneUnguardedContentBaseValue.Text = $"Current value: {FormatZoneInt(zone?.UnguardedContentValue)}";
+            TxtZoneResourcesBaseValue.Text = $"Current value: {FormatZoneInt(zone?.ResourcesValue)}";
+        }
+
+        private static double SnapWeeklyPercent(double value)
+        {
+            double[] allowed = [5.0, 10.0, 15.0, 20.0, 25.0, 30.0];
+            return allowed.OrderBy(candidate => Math.Abs(candidate - value)).First();
+        }
+
+        private static string FormatZoneInt(int? value)
+            => value.HasValue ? value.Value.ToString("N0", CultureInfo.InvariantCulture) : "(none)";
+
+        private static double ComputeContentMultiplierPercent(int? originalValue, int? currentValue)
+        {
+            int baseline = Math.Max(0, originalValue ?? 0);
+            if (baseline == 0)
+                return 100.0;
+
+            int current = Math.Max(0, currentValue ?? 0);
+            double raw = current * 100.0 / baseline;
+            return SnapStepFivePercent(Math.Clamp(raw, 25.0, 300.0));
+        }
+
+        private static int ScaleContentValueFromMultiplier(int? originalValue, double multiplierPercent)
+        {
+            int baseline = Math.Max(0, originalValue ?? 0);
+            if (baseline == 0)
+                return 0;
+
+            double scaled = baseline * (multiplierPercent / 100.0);
+            return (int)Math.Clamp(Math.Round(scaled, 0, MidpointRounding.AwayFromZero), 0, int.MaxValue);
+        }
+
+        private static double SnapStepFivePercent(double value)
+            => Math.Round(value / 5.0, MidpointRounding.AwayFromZero) * 5.0;
+
+        private void CommitSelectedZoneInt(TextBox source, Func<int, int> normalize, Action<Zone, int> applyValue, Func<Zone, int?> readValue)
+        {
+            if (_suppressPropertyEvents || _selectedZoneName is null)
+                return;
+
+            Zone? zone = _zones.FirstOrDefault(z => string.Equals(z.Name, _selectedZoneName, StringComparison.Ordinal));
+            if (zone is null)
+                return;
+
+            if (!int.TryParse(source.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsed))
+            {
+                PopulateZonePropertyPanel(zone);
+                return;
+            }
+
+            int normalized = normalize(parsed);
+            if (readValue(zone) == normalized)
+            {
+                source.Text = normalized.ToString(CultureInfo.InvariantCulture);
+                return;
+            }
+
+            applyValue(zone, normalized);
+            source.Text = normalized.ToString(CultureInfo.InvariantCulture);
+            UpdateZoneOverride(zone);
+        }
+
+        private void CommitSelectedZoneNullableInt(TextBox source, Func<int, int> normalize, Action<Zone, int?> applyValue, Func<Zone, int?> readValue)
+        {
+            if (_suppressPropertyEvents || _selectedZoneName is null)
+                return;
+
+            Zone? zone = _zones.FirstOrDefault(z => string.Equals(z.Name, _selectedZoneName, StringComparison.Ordinal));
+            if (zone is null)
+                return;
+
+            string text = source.Text.Trim();
+            if (text.Length == 0)
+            {
+                if (readValue(zone).HasValue)
+                {
+                    applyValue(zone, null);
+                    PopulateZonePropertyPanel(zone);
+                    UpdateZoneOverride(zone);
+                }
+                return;
+            }
+
+            if (!int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsed))
+            {
+                PopulateZonePropertyPanel(zone);
+                return;
+            }
+
+            int normalized = normalize(parsed);
+            if (readValue(zone) == normalized)
+            {
+                source.Text = normalized.ToString(CultureInfo.InvariantCulture);
+                return;
+            }
+
+            applyValue(zone, normalized);
+            source.Text = normalized.ToString(CultureInfo.InvariantCulture);
+            PopulateZonePropertyPanel(zone);
+            UpdateZoneOverride(zone);
+        }
+
+        private void CommitSelectedZoneDouble(TextBox source, Func<double, double> normalize, Action<Zone, double> applyValue, Func<Zone, double?> readValue)
+        {
+            if (_suppressPropertyEvents || _selectedZoneName is null)
+                return;
+
+            Zone? zone = _zones.FirstOrDefault(z => string.Equals(z.Name, _selectedZoneName, StringComparison.Ordinal));
+            if (zone is null)
+                return;
+
+            if (!double.TryParse(source.Text.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out double parsed)
+                || double.IsNaN(parsed)
+                || double.IsInfinity(parsed))
+            {
+                PopulateZonePropertyPanel(zone);
+                return;
+            }
+
+            double normalized = normalize(parsed);
+            if (AreClose(readValue(zone), normalized))
+            {
+                source.Text = normalized.ToString("0.###", CultureInfo.InvariantCulture);
+                return;
+            }
+
+            applyValue(zone, normalized);
+            source.Text = normalized.ToString("0.###", CultureInfo.InvariantCulture);
+            UpdateZoneOverride(zone);
+        }
+
         private void BtnDeleteConnection_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedConnection is null) return;
@@ -737,6 +1219,7 @@ namespace Olden_Era___Template_Editor
         private void CancelDragAdd()
         {
             _pendingFromZone = null;
+            _isPotentialDrag = false;
             _isDragging = false;
             if (_rubberBandLine is not null)
             {
@@ -752,47 +1235,73 @@ namespace Olden_Era___Template_Editor
             e.Handled = true;
 
             _pendingFromZone = zoneName;
-            _isDragging = true;
-            ZoneCanvas.Cursor = Cursors.Cross;
-
-            if (_selectedVisibleLine is not null && _selectedConnection is not null)
-            {
-                bool wasPortal = string.Equals(_selectedConnection.ConnectionType, "Portal", StringComparison.Ordinal);
-                _selectedVisibleLine.Stroke = wasPortal ? BrushEdgePortal : BrushEdgeDirect;
-            }
-            _selectedConnection = null;
-            _selectedVisibleLine = null;
-            PnlProperties.Visibility = Visibility.Collapsed;
-
-            Refresh();
-
-            var fromPos = _nodePositions.GetValueOrDefault(zoneName);
-            _rubberBandLine = new Line
-            {
-                X1 = fromPos.X,
-                Y1 = fromPos.Y,
-                X2 = fromPos.X,
-                Y2 = fromPos.Y,
-                Stroke = BrushEdgeSelected,
-                StrokeThickness = 1.5,
-                StrokeDashArray = [4.0, 3.0],
-                IsHitTestVisible = false
-            };
-            ZoneCanvas.Children.Add(_rubberBandLine);
-            ZoneCanvas.CaptureMouse();
+            _dragStartPoint = e.GetPosition(ZoneCanvas);
+            _isPotentialDrag = true;
+            _isDragging = false;
         }
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!_isDragging || _rubberBandLine is null) return;
             var pos = e.GetPosition(ZoneCanvas);
-            _rubberBandLine.X2 = pos.X;
-            _rubberBandLine.Y2 = pos.Y;
+
+            if (_pendingFromZone is null)
+                return;
+
+            if (_isPotentialDrag && !_isDragging)
+            {
+                if (e.LeftButton != MouseButtonState.Pressed)
+                {
+                    CancelDragAdd();
+                    return;
+                }
+
+                double dx = pos.X - _dragStartPoint.X;
+                double dy = pos.Y - _dragStartPoint.Y;
+                if (Math.Sqrt(dx * dx + dy * dy) >= DragStartThreshold)
+                {
+                    _isDragging = true;
+                    _isPotentialDrag = false;
+                    ZoneCanvas.Cursor = Cursors.Cross;
+
+                    var fromPos = _nodePositions.GetValueOrDefault(_pendingFromZone);
+                    _rubberBandLine = new Line
+                    {
+                        X1 = fromPos.X,
+                        Y1 = fromPos.Y,
+                        X2 = fromPos.X,
+                        Y2 = fromPos.Y,
+                        Stroke = BrushEdgeSelected,
+                        StrokeThickness = 1.5,
+                        StrokeDashArray = [4.0, 3.0],
+                        IsHitTestVisible = false
+                    };
+                    ZoneCanvas.Children.Add(_rubberBandLine);
+                    ZoneCanvas.CaptureMouse();
+                }
+            }
+
+            if (_isDragging && _rubberBandLine is not null)
+            {
+                _rubberBandLine.X2 = pos.X;
+                _rubberBandLine.Y2 = pos.Y;
+            }
         }
 
         private void Canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (!_isDragging) return;
+            if (_pendingFromZone is null)
+                return;
+
+            if (_isPotentialDrag && !_isDragging)
+            {
+                string zoneName = _pendingFromZone;
+                CancelDragAdd();
+                SelectZone(zoneName);
+                return;
+            }
+
+            if (!_isDragging)
+                return;
 
             var pos = e.GetPosition(ZoneCanvas);
             string? targetZone = HitTestZone(pos);
@@ -885,9 +1394,10 @@ namespace Olden_Era___Template_Editor
             MarkConnectionsModified();
 
             _selectedConnection = newConn;
+            _selectedZoneName = null;
             CancelDragAdd();
 
-            PnlProperties.Visibility = Visibility.Visible;
+            ShowConnectionPropertyPanel();
             PopulatePropertyPanel(newConn);
             Refresh();
         }
@@ -925,10 +1435,19 @@ namespace Olden_Era___Template_Editor
                 e.Handled = true;
                 CancelDragAdd();
                 SelectEdge(hit.Value.conn, hit.Value.visiblePath);
+                Refresh();
             }
             else
             {
                 CancelDragAdd();
+                if (_selectedConnection is not null || _selectedZoneName is not null)
+                {
+                    _selectedConnection = null;
+                    _selectedVisibleLine = null;
+                    _selectedZoneName = null;
+                    PnlProperties.Visibility = Visibility.Collapsed;
+                    Refresh();
+                }
             }
         }
 
@@ -985,6 +1504,157 @@ namespace Olden_Era___Template_Editor
             }
 
             return minDist;
+        }
+
+        private static ZoneSnapshot CreateSnapshot(Zone zone)
+            => new(
+                zone.Size,
+                zone.Layout,
+                zone.GuardCutoffValue,
+                zone.GuardRandomization,
+                zone.GuardMultiplier,
+                zone.GuardWeeklyIncrement,
+                zone.GuardedContentValue,
+                zone.GuardedContentValuePerArea,
+                zone.UnguardedContentValue,
+                zone.UnguardedContentValuePerArea,
+                zone.ResourcesValue,
+                zone.ResourcesValuePerArea);
+
+        private void UpdateZoneOverride(Zone zone)
+        {
+            if (!_originalZonesByName.TryGetValue(zone.Name, out ZoneSnapshot? original))
+                return;
+
+            ZoneOverrideSettings? computed = BuildZoneOverride(zone, original);
+            if (computed is null)
+                _zoneOverridesByName.Remove(zone.Name);
+            else
+                _zoneOverridesByName[zone.Name] = computed;
+
+            MarkZoneOverridesModified();
+            Refresh();
+        }
+
+        private static ZoneOverrideSettings? BuildZoneOverride(Zone zone, ZoneSnapshot original)
+        {
+            var overrideSettings = new ZoneOverrideSettings
+            {
+                ZoneName = zone.Name
+            };
+
+            if (!AreClose(zone.Size, original.Size))
+                overrideSettings.Size = zone.Size;
+
+            if (!string.Equals(zone.Layout, original.Layout, StringComparison.Ordinal))
+                overrideSettings.Layout = zone.Layout;
+
+            if (zone.GuardCutoffValue != original.GuardCutoffValue)
+                overrideSettings.GuardCutoffValue = zone.GuardCutoffValue;
+
+            if (!AreClose(zone.GuardRandomization, original.GuardRandomization))
+                overrideSettings.GuardRandomization = zone.GuardRandomization;
+
+            if (!AreClose(zone.GuardMultiplier, original.GuardMultiplier))
+                overrideSettings.GuardMultiplier = zone.GuardMultiplier;
+
+            if (!AreClose(zone.GuardWeeklyIncrement, original.GuardWeeklyIncrement))
+                overrideSettings.GuardWeeklyIncrement = zone.GuardWeeklyIncrement;
+
+            if (zone.GuardedContentValue != original.GuardedContentValue)
+                overrideSettings.GuardedContentValue = zone.GuardedContentValue;
+
+            if (zone.GuardedContentValuePerArea != original.GuardedContentValuePerArea)
+                overrideSettings.GuardedContentValuePerArea = zone.GuardedContentValuePerArea;
+
+            if (zone.UnguardedContentValue != original.UnguardedContentValue)
+                overrideSettings.UnguardedContentValue = zone.UnguardedContentValue;
+
+            if (zone.UnguardedContentValuePerArea != original.UnguardedContentValuePerArea)
+                overrideSettings.UnguardedContentValuePerArea = zone.UnguardedContentValuePerArea;
+
+            if (zone.ResourcesValue != original.ResourcesValue)
+                overrideSettings.ResourcesValue = zone.ResourcesValue;
+
+            if (zone.ResourcesValuePerArea != original.ResourcesValuePerArea)
+                overrideSettings.ResourcesValuePerArea = zone.ResourcesValuePerArea;
+
+            return HasChangedFields(overrideSettings) ? overrideSettings : null;
+        }
+
+        private static bool HasChangedFields(ZoneOverrideSettings value)
+            => value.Size.HasValue
+               || value.Layout != null
+               || value.GuardCutoffValue.HasValue
+               || value.GuardRandomization.HasValue
+               || value.GuardMultiplier.HasValue
+               || value.GuardWeeklyIncrement.HasValue
+               || value.GuardReactionDistribution is { Count: > 0 }
+               || value.DiplomacyModifier.HasValue
+               || value.GuardedContentPool is { Count: > 0 }
+               || value.UnguardedContentPool is { Count: > 0 }
+               || value.ResourcesContentPool is { Count: > 0 }
+               || value.MandatoryContent is { Count: > 0 }
+               || value.ContentCountLimits is { Count: > 0 }
+               || value.GuardedContentValue.HasValue
+               || value.GuardedContentValuePerArea.HasValue
+               || value.UnguardedContentValue.HasValue
+               || value.UnguardedContentValuePerArea.HasValue
+               || value.ResourcesValue.HasValue
+               || value.ResourcesValuePerArea.HasValue
+               || value.MainObjects is { Count: > 0 };
+
+        private static ZoneOverrideSettings CloneZoneOverride(ZoneOverrideSettings value)
+            => new()
+            {
+                ZoneName = value.ZoneName,
+                Size = value.Size,
+                Layout = value.Layout,
+                GuardCutoffValue = value.GuardCutoffValue,
+                GuardRandomization = value.GuardRandomization,
+                GuardMultiplier = value.GuardMultiplier,
+                GuardWeeklyIncrement = value.GuardWeeklyIncrement,
+                GuardReactionDistribution = value.GuardReactionDistribution == null ? null : [.. value.GuardReactionDistribution],
+                DiplomacyModifier = value.DiplomacyModifier,
+                GuardedContentPool = value.GuardedContentPool == null ? null : [.. value.GuardedContentPool],
+                UnguardedContentPool = value.UnguardedContentPool == null ? null : [.. value.UnguardedContentPool],
+                ResourcesContentPool = value.ResourcesContentPool == null ? null : [.. value.ResourcesContentPool],
+                MandatoryContent = value.MandatoryContent == null ? null : [.. value.MandatoryContent],
+                ContentCountLimits = value.ContentCountLimits == null ? null : [.. value.ContentCountLimits],
+                GuardedContentValue = value.GuardedContentValue,
+                GuardedContentValuePerArea = value.GuardedContentValuePerArea,
+                UnguardedContentValue = value.UnguardedContentValue,
+                UnguardedContentValuePerArea = value.UnguardedContentValuePerArea,
+                ResourcesValue = value.ResourcesValue,
+                ResourcesValuePerArea = value.ResourcesValuePerArea,
+                MainObjects = value.MainObjects == null ? null : value.MainObjects.Select(CloneMainObjectOverride).ToList(),
+            };
+
+        private static ZoneMainObjectOverride CloneMainObjectOverride(ZoneMainObjectOverride value)
+            => new()
+            {
+                Type = value.Type,
+                Spawn = value.Spawn,
+                Owner = value.Owner,
+                GuardChance = value.GuardChance,
+                GuardValue = value.GuardValue,
+                GuardWeeklyIncrement = value.GuardWeeklyIncrement,
+                RemoveGuardIfHasOwner = value.RemoveGuardIfHasOwner,
+                BuildingsConstructionSid = value.BuildingsConstructionSid,
+                Faction = value.Faction,
+                Placement = value.Placement,
+                PlacementArgs = value.PlacementArgs == null ? null : [.. value.PlacementArgs],
+                HoldCityWinCon = value.HoldCityWinCon,
+            };
+
+        private static bool AreClose(double? left, double? right)
+        {
+            if (!left.HasValue && !right.HasValue)
+                return true;
+            if (!left.HasValue || !right.HasValue)
+                return false;
+
+            return Math.Abs(left.Value - right.Value) < 1e-9;
         }
 
         private static string ZoneLetterFromName(string zoneName)

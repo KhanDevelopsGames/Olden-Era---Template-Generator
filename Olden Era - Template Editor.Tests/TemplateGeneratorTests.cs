@@ -1119,6 +1119,160 @@ public class TemplateGeneratorTests
         Assert.NotNull(bans.Magics);
     }
 
+    [Fact]
+    public void Generate_AppliesZoneOverridesToTargetZoneOnly()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            Topology = MapTopology.Default,
+            ZoneOverrides =
+            [
+                new ZoneOverrideSettings
+                {
+                    ZoneName = "Spawn-A",
+                    Size = 1.75,
+                    Layout = "zone_layout_treasure_zone",
+                    GuardCutoffValue = 3210,
+                    GuardRandomization = 0.22,
+                    GuardMultiplier = 2.5,
+                    GuardWeeklyIncrement = 0.35,
+                    GuardedContentPool = ["custom_guarded"],
+                    MandatoryContent = ["custom_mandatory"],
+                    ContentCountLimits = ["custom_limits"],
+                    GuardedContentValue = 654321,
+                    MainObjects =
+                    [
+                        new ZoneMainObjectOverride
+                        {
+                            Type = "City",
+                            GuardValue = 9999,
+                            Placement = "Center"
+                        }
+                    ]
+                }
+            ]
+        };
+
+        Variant variant = SingleVariant(TemplateGenerator.Generate(settings));
+        Zone spawnA = RequiredZones(variant).Single(zone => zone.Name == "Spawn-A");
+        Zone spawnB = RequiredZones(variant).Single(zone => zone.Name == "Spawn-B");
+
+        Assert.Equal(1.75, spawnA.Size);
+        Assert.Equal("zone_layout_treasure_zone", spawnA.Layout);
+        Assert.Equal(3210, spawnA.GuardCutoffValue);
+        Assert.Equal(0.22, spawnA.GuardRandomization);
+        Assert.Equal(2.5, spawnA.GuardMultiplier);
+        Assert.Equal(0.35, spawnA.GuardWeeklyIncrement);
+        Assert.Equal(["custom_guarded"], spawnA.GuardedContentPool);
+        Assert.Equal(["custom_mandatory"], spawnA.MandatoryContent);
+        Assert.Equal(["custom_limits"], spawnA.ContentCountLimits);
+        Assert.Equal(654321, spawnA.GuardedContentValue);
+        Assert.Single(spawnA.MainObjects ?? []);
+        Assert.Equal("City", Assert.Single(spawnA.MainObjects ?? []).Type);
+        Assert.Equal(9999, Assert.Single(spawnA.MainObjects ?? []).GuardValue);
+
+        Assert.Equal(1500, spawnB.GuardCutoffValue);
+        Assert.NotEqual(654321, spawnB.GuardedContentValue);
+    }
+
+    [Fact]
+    public void Generate_ZoneOverrideUnknownZoneThrows()
+    {
+        var settings = new GeneratorSettings
+        {
+            ZoneOverrides = [new ZoneOverrideSettings { ZoneName = "No-Such-Zone", GuardCutoffValue = 1000 }]
+        };
+
+        var ex = Assert.Throws<ArgumentException>(() => TemplateGenerator.Generate(settings));
+        Assert.Contains("No-Such-Zone", ex.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_ZoneOverrideWithNoFieldsSetKeepsZoneDefaults()
+    {
+        var baseline = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            Topology = MapTopology.Default
+        };
+
+        var withNoopOverride = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            Topology = MapTopology.Default,
+            ZoneOverrides = [new ZoneOverrideSettings { ZoneName = "Spawn-A" }]
+        };
+
+        Zone baselineZone = RequiredZones(SingleVariant(TemplateGenerator.Generate(baseline)))
+            .Single(zone => zone.Name == "Spawn-A");
+        Zone overriddenZone = RequiredZones(SingleVariant(TemplateGenerator.Generate(withNoopOverride)))
+            .Single(zone => zone.Name == "Spawn-A");
+
+        Assert.Equal(baselineZone.Layout, overriddenZone.Layout);
+        Assert.Equal(baselineZone.Size, overriddenZone.Size);
+        Assert.Equal(baselineZone.GuardCutoffValue, overriddenZone.GuardCutoffValue);
+        Assert.Equal(baselineZone.GuardRandomization, overriddenZone.GuardRandomization);
+        Assert.Equal(baselineZone.GuardMultiplier, overriddenZone.GuardMultiplier);
+        Assert.Equal(baselineZone.GuardedContentValue, overriddenZone.GuardedContentValue);
+    }
+
+    [Fact]
+    public void ApplyZoneOverridesInPlace_UpdatesCurrentTemplateWithoutRegeneration()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            Topology = MapTopology.Default
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+
+        TemplateGenerator.ApplyZoneOverridesInPlace(
+            template,
+            [
+                new ZoneOverrideSettings
+                {
+                    ZoneName = "Spawn-A",
+                    GuardCutoffValue = 4242,
+                    GuardMultiplier = 1.9,
+                    MandatoryContent = ["custom_mandatory_spawn_a"]
+                }
+            ]);
+
+        Zone spawnA = RequiredZones(SingleVariant(template)).Single(zone => zone.Name == "Spawn-A");
+        Assert.Equal(4242, spawnA.GuardCutoffValue);
+        Assert.Equal(1.9, spawnA.GuardMultiplier);
+        Assert.Equal(["custom_mandatory_spawn_a"], spawnA.MandatoryContent);
+    }
+
+    [Fact]
+    public void ApplyZoneOverridesInPlace_DoesNotResetConnections()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            Topology = MapTopology.Default
+        };
+
+        RmgTemplate template = TemplateGenerator.Generate(settings);
+        Variant variant = SingleVariant(template);
+        var beforeConnections = RequiredConnections(variant)
+            .Select(connection => connection.Name)
+            .ToList();
+
+        TemplateGenerator.ApplyZoneOverridesInPlace(
+            template,
+            [new ZoneOverrideSettings { ZoneName = "Spawn-A", Size = 1.6 }]);
+
+        var afterConnections = RequiredConnections(SingleVariant(template))
+            .Select(connection => connection.Name)
+            .ToList();
+
+        Assert.Equal(beforeConnections.Count, afterConnections.Count);
+        Assert.Equal(beforeConnections, afterConnections);
+    }
+
     private static List<MainObject> Cities(int count) =>
         Enumerable.Range(0, count).Select(_ => new MainObject { Type = "City" }).ToList();
 

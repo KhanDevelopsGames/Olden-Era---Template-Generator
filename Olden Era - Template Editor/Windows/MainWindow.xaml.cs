@@ -64,6 +64,7 @@ namespace Olden_Era___Template_Editor
             InitializeComponent();
 
             ConnectionEditorControl.ConnectionsModified += ConnectionEditorControl_ConnectionsModified;
+            ConnectionEditorControl.ZoneOverridesModified += ConnectionEditorControl_ZoneOverridesModified;
             ConnectionEditorControl.ErrorsChanged += ConnectionEditorControl_ErrorsChanged;
             _connectionPreviewRefreshDebounce.Tick += ConnectionPreviewRefreshDebounce_Tick;
 
@@ -2005,6 +2006,14 @@ namespace Olden_Era___Template_Editor
             _connectionsHaveErrors = ConnectionEditorControl.HasUnresolvedErrors;
         }
 
+        private void ConnectionEditorControl_ZoneOverridesModified(object? sender, EventArgs e)
+        {
+            _connectionPreviewRefreshPending = true;
+            _connectionPreviewRefreshDebounce.Stop();
+            _connectionPreviewRefreshDebounce.Start();
+            _connectionsHaveErrors = ConnectionEditorControl.HasUnresolvedErrors;
+        }
+
         private void ConnectionPreviewRefreshDebounce_Tick(object? sender, EventArgs e)
         {
             _connectionPreviewRefreshDebounce.Stop();
@@ -2205,6 +2214,7 @@ namespace Olden_Era___Template_Editor
             BannedMagics       = string.Join("\n", _bannedMagics.Select(e => e.Id)),
             ValueOverridesText = TxtValueOverrides.Text,
             Bonuses            = [.. _bonuses],
+            ZoneOverrides      = [.. ConnectionEditorControl.GetZoneOverridesSnapshot()],
         };
         
         /* Creates list of ContentItems for the zone mandatory content, according to the UI settings. */
