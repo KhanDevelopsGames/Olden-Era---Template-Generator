@@ -341,7 +341,44 @@ namespace Olden_Era___Template_Editor
                 label.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
                 Canvas.SetLeft(label, pos.X - label.DesiredSize.Width / 2.0);
                 Canvas.SetTop(label, pos.Y - label.DesiredSize.Height / 2.0);
+
+                int castleCount = ZoneCastleCount(zone);
+                if (castleCount > 0)
+                {
+                    var badge = new System.Windows.Controls.Border
+                    {
+                        Background = new SolidColorBrush(Color.FromRgb(28, 60, 35)),
+                        BorderBrush = new SolidColorBrush(Color.FromRgb(100, 200, 120)),
+                        BorderThickness = new Thickness(1),
+                        CornerRadius = new CornerRadius(4),
+                        Padding = new Thickness(3, 1, 3, 1),
+                        IsHitTestVisible = false,
+                        Child = new TextBlock
+                        {
+                            Text = $"🏰{castleCount}",
+                            FontSize = 9,
+                            Foreground = new SolidColorBrush(Color.FromRgb(200, 245, 210)),
+                        }
+                    };
+
+                    ZoneCanvas.Children.Add(badge);
+                    badge.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                    Canvas.SetLeft(badge, pos.X + NodeRadius * 0.55 - badge.DesiredSize.Width / 2.0);
+                    Canvas.SetTop(badge, pos.Y + NodeRadius * 0.55 - badge.DesiredSize.Height / 2.0);
+                }
             }
+        }
+
+        private static int ZoneCastleCount(Zone zone)
+        {
+            int count = 0;
+            foreach (var obj in zone.MainObjects ?? [])
+            {
+                if (obj.Type is "City" or "Spawn")
+                    count++;
+            }
+
+            return count;
         }
 
         private static string ZoneDisplayLabel(Zone zone)
