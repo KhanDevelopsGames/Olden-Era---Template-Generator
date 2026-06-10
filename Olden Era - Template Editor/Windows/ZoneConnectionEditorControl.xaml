@@ -1,71 +1,29 @@
-<Window x:Class="Olden_Era___Template_Editor.ZoneConnectionEditorWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Zone Connection Editor"
-        Width="1050" Height="700"
-        MinWidth="800" MinHeight="500"
-        WindowStartupLocation="CenterOwner"
-        ResizeMode="CanResize"
-        WindowStyle="None"
-        Background="#1A1510"
-        Foreground="#E8D5A3"
-        FontFamily="Segoe UI" FontSize="13">
+<UserControl x:Class="Olden_Era___Template_Editor.ZoneConnectionEditorControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#1A1510"
+             Foreground="#E8D5A3"
+             FontFamily="Segoe UI"
+             FontSize="13"
+             Focusable="True">
 
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="32" ResizeBorderThickness="5"
-                      GlassFrameThickness="0,0,0,1" UseAeroCaptionButtons="False"/>
-    </WindowChrome.WindowChrome>
-
-    <Window.Resources>
+    <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Themes/MedievalTheme.xaml"/>
+                <ResourceDictionary Source="../Themes/MedievalTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </Window.Resources>
+    </UserControl.Resources>
 
     <Border BorderBrush="{StaticResource BrushBorder}" BorderThickness="1">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="32"/>    <!-- custom title bar -->
-                <RowDefinition Height="1"/>     <!-- gold divider -->
-                <RowDefinition Height="Auto"/>  <!-- editor toolbar -->
-                <RowDefinition Height="*"/>     <!-- canvas + property panel -->
-                <RowDefinition Height="Auto"/>  <!-- status bar -->
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- ═══ TITLE BAR ═══════════════════════════════════════════════ -->
-            <Grid Grid.Row="0" Background="#0F0D09">
-                <TextBlock Text="Zone Connection Editor"
-                           FontSize="12" FontWeight="SemiBold"
-                           Foreground="{StaticResource BrushText}"
-                           VerticalAlignment="Center" Margin="10,0,0,0"
-                           MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"/>
-                <Button Content="✕" Style="{StaticResource TitleBarCloseButton}"
-                        HorizontalAlignment="Right"
-                        ToolTip="Close" Click="BtnClose_Click"/>
-            </Grid>
-
-            <!-- Gold divider -->
-            <Rectangle Grid.Row="1" Fill="{StaticResource BrushBorder}"/>
-
-            <!-- ═══ TOOLBAR ══════════════════════════════════════════════════ -->
-            <Border Grid.Row="2" Background="#221E15" BorderBrush="{StaticResource BrushBorder}"
-                    BorderThickness="0,0,0,1" Padding="8,4">
-                <StackPanel Orientation="Horizontal">
-                    <Button x:Name="BtnAddMode" Content="+ Add Connection"
-                            Margin="0,0,8,0" Click="BtnAddMode_Click"
-                            Style="{StaticResource ToolbarButton}" TabIndex="0"
-                            ToolTip="Drag from one zone to another to create a new Direct connection"/>
-                    <Button Content="↺  Reset to Generated"
-                            Click="BtnReset_Click"
-                            Style="{StaticResource ToolbarButton}" TabIndex="1"
-                            ToolTip="Restore the auto-generated connection set — all manual edits will be discarded"/>
-                </StackPanel>
-            </Border>
-
             <!-- ═══ MAIN CONTENT ═════════════════════════════════════════════ -->
-            <Grid Grid.Row="3">
+            <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="7*"/>
                     <ColumnDefinition Width="3*" MinWidth="230"/>
@@ -120,7 +78,8 @@
                                 <TextBox x:Name="TxtPropGuardValueCustom" Grid.Column="1" Width="65" Margin="4,0,0,0"
                                          TabIndex="104" Visibility="Collapsed"
                                          Style="{StaticResource HintTextBox}" Tag="value"
-                                         TextChanged="TxtPropGuardValueCustom_TextChanged"
+                                         LostFocus="TxtPropGuardValueCustom_Commit"
+                                         KeyDown="TxtPropGuardValueCustom_KeyDown"
                                          ToolTip="Custom guard value (integer)"/>
                             </Grid>
 
@@ -137,7 +96,8 @@
                                 <TextBox x:Name="TxtPropIncrementCustom" Grid.Column="1" Width="65" Margin="4,0,0,0"
                                          TabIndex="105" Visibility="Collapsed"
                                          Style="{StaticResource HintTextBox}" Tag="0.15"
-                                         TextChanged="TxtPropIncrementCustom_TextChanged"/>
+                                         LostFocus="TxtPropIncrementCustom_Commit"
+                                         KeyDown="TxtPropIncrementCustom_KeyDown"/>
                             </Grid>
 
                             <!-- Guard Zone (only the two connected zones) -->
@@ -153,7 +113,8 @@
                                            Foreground="{StaticResource BrushTextDim}"
                                            FontSize="11" Margin="0,0,0,2"/>
                                 <TextBox x:Name="TxtGuardMatchGroup" TabIndex="107"
-                                         TextChanged="TxtGuardMatchGroup_TextChanged"/>
+                                         LostFocus="TxtGuardMatchGroup_Commit"
+                                         KeyDown="TxtGuardMatchGroup_KeyDown"/>
 
                                 <CheckBox x:Name="ChkGuardEscape" Content="Guards can flee"
                                           Margin="0,8,0,0" TabIndex="108"
@@ -187,7 +148,7 @@
             </Grid>
 
             <!-- ═══ STATUS BAR ═══════════════════════════════════════════════ -->
-            <Border Grid.Row="4" Background="#1A1510"
+                <Border Grid.Row="1" Background="#1A1510"
                     BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,1,0,0"
                     Padding="8,3">
                 <TextBlock x:Name="TxtStatus"
@@ -196,4 +157,4 @@
             </Border>
         </Grid>
     </Border>
-</Window>
+</UserControl>

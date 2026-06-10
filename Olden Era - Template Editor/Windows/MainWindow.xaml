@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Olden_Era___Template_Editor.Models"
+        xmlns:ui="clr-namespace:Olden_Era___Template_Editor"
         mc:Ignorable="d"
         Title="Olden Era - Simple Template Generator"
         Height="800" Width="1050"
@@ -1838,6 +1839,45 @@ ValueChanged="Slider_ValueChanged"/>
                 </DockPanel>
             </Grid>
         </TabItem>
+
+                        <TabItem Header="Connections">
+                            <Grid Margin="0,8,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Border Grid.Row="0"
+                                        Background="{StaticResource BrushWarnBg}"
+                                        BorderBrush="{StaticResource BrushWarnBorder}"
+                                        BorderThickness="1"
+                                        CornerRadius="3"
+                                        Padding="10,7">
+                                    <TextBlock Text="Generate a template to edit zone connections. Changes are applied directly and reflected in preview immediately."
+                                               Foreground="{StaticResource BrushWarnText}"
+                                               FontSize="11"
+                                               TextWrapping="Wrap"/>
+                                </Border>
+
+                                <Border x:Name="PnlConnectionEditorHint"
+                                        Grid.Row="1"
+                                        Margin="0,8,0,0"
+                                        BorderBrush="{StaticResource BrushBorder}"
+                                        BorderThickness="1"
+                                        Padding="10"
+                                        Background="#211A12"
+                                        Visibility="Visible">
+                                    <TextBlock Text="No generated template yet. Use Generate Template first."
+                                               Foreground="{StaticResource BrushTextDim}"
+                                               FontSize="12"/>
+                                </Border>
+
+                                <ui:ZoneConnectionEditorControl x:Name="ConnectionEditorControl"
+                                                                Grid.Row="1"
+                                                                Margin="0,8,0,0"
+                                                                Visibility="Collapsed"/>
+                            </Grid>
+                        </TabItem>
     </TabControl>
 
             <!-- Preview Column -->
@@ -1852,8 +1892,6 @@ ValueChanged="Slider_ValueChanged"/>
                     <RowDefinition Height="Auto"/>   <!-- outdated warning -->
                     <RowDefinition Height="6"/>
                     <RowDefinition Height="Auto"/>   <!-- show preview checkbox -->
-                    <RowDefinition Height="6"/>
-                    <RowDefinition Height="Auto"/>   <!-- edit connections button -->
                     <RowDefinition Height="6"/>
                     <RowDefinition Height="Auto"/>   <!-- save button -->
                 </Grid.RowDefinitions>
@@ -1929,15 +1967,6 @@ ValueChanged="Slider_ValueChanged"/>
                            Text="⚠️ Settings have changed - generate a new template before saving to reflect the latest changes."/>
 
                 <Button Grid.Row="10"
-                        x:Name="BtnEditConnections"
-                        Content="✏  Edit Connections"
-                        Style="{StaticResource GenerateButton}"
-                        Visibility="Visible"
-                        IsEnabled="False"
-                        ToolTip="Open the zone connection editor to view and modify connections"
-                        Click="BtnEditConnections_Click"/>
-
-                <Button Grid.Row="12"
                         x:Name="BtnSaveGenerated"
                         Content="💾  Save Template"
                         Style="{StaticResource GenerateButton}"

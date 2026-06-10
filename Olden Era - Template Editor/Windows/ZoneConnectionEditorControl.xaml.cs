@@ -1,6 +1,6 @@
-using Olden_Era___Template_Editor.Models;
 using Olden_Era___Template_Editor.Services;
 using OldenEraTemplateEditor.Models;
+using MapTopology = Olden_Era___Template_Editor.Models.MapTopology;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,126 +10,123 @@ using System.Windows.Shapes;
 
 namespace Olden_Era___Template_Editor
 {
-    public partial class ZoneConnectionEditorWindow : Window
+    public partial class ZoneConnectionEditorControl : UserControl
     {
-        // ── Data ─────────────────────────────────────────────────────────────
-        private readonly List<Zone> _zones;
-        private readonly List<Connection> _connections;
-        private readonly List<Connection> _originalConnections;
-        private readonly MapTopology _topology;
-        private readonly HashSet<string> _playerZoneNames;
+        private List<Zone> _zones = [];
+        private List<Connection> _connections = [];
+        private List<Connection> _originalConnections = [];
+        private MapTopology _topology;
+        private HashSet<string> _playerZoneNames = new(StringComparer.Ordinal);
         private Dictionary<string, Point> _nodePositions = new(StringComparer.Ordinal);
 
-        // ── Selection state ──────────────────────────────────────────────────
         private Connection? _selectedConnection;
         private Shape? _selectedVisibleLine;
 
-        // ── Add-connection mode ──────────────────────────────────────────────
-        private bool _addMode;
         private string? _pendingFromZone;
-        private Ellipse? _pendingFromEllipse;
         private Line? _rubberBandLine;
         private bool _isDragging;
 
-        // ── Event-suppression flag ───────────────────────────────────────────
         private bool _suppressPropertyEvents;
 
-        // ── Public result state ──────────────────────────────────────────────
-        /// <summary>True if the user made any changes to the connection list or properties.</summary>
-        public bool ConnectionsWereModified { get; private set; }
+        private List<(Connection conn, PathGeometry geo, Path visiblePath)> _connectionGeometries = [];
 
-        /// <summary>
-        /// True when at least one connection references a zone name that does not exist in
-        /// the zone list.  Recomputed after every canvas refresh.  When true, export is blocked.
-        /// </summary>
+        public bool ConnectionsWereModified { get; private set; }
         public bool HasUnresolvedErrors { get; private set; }
 
-        // ── Rendering constants ──────────────────────────────────────────────
+        public event EventHandler? ConnectionsModified;
+        public event EventHandler? ErrorsChanged;
+
         private const double NodeRadius = 18.0;
 
-        // ── Guard-preset tables ──────────────────────────────────────────────
         private enum ZoneTier { Bronze, Silver, Gold, PlayerToPlayer }
         private static readonly string[] StrengthLabels = ["Weak", "Moderate", "Medium", "High", "Very High"];
         private static readonly int[,] GuardPresets =
         {
-            //   Weak   Moderate  Medium   High  VeryHigh
-            {  3_000,   6_000,   9_000,  12_000,  16_000 },  // Bronze
-            { 18_000,  21_000,  24_000,  27_000,  30_000 },  // Silver
-            { 36_000,  42_000,  48_000,  54_000,  60_000 },  // Gold
-            { 10_000,  22_000,  34_000,  46_000,  58_000 },  // PlayerToPlayer
+            {  3_000,   6_000,   9_000,  12_000,  16_000 },
+            { 18_000,  21_000,  24_000,  27_000,  30_000 },
+            { 36_000,  42_000,  48_000,  54_000,  60_000 },
+            { 10_000,  22_000,  34_000,  46_000,  58_000 },
         };
-        
-        // Extra named values shown at the top of the guard-value dropdown
+
         private static readonly (string Label, int Value)[][] TierExtras =
         [
-            [("Generator Default", 15_000)],  // Bronze
-            [("Generator Default", 20_000)],  // Silver
-            [("Generator Default", 25_000)],  // Gold
-            [("Generator Default", 30_000)],  // PlayerToPlayer
+            [("Generator Default", 15_000)],
+            [("Generator Default", 20_000)],
+            [("Generator Default", 25_000)],
+            [("Generator Default", 30_000)],
         ];
         private static readonly string[] WeeklyIncrementLabels =
             ["Slow (5%)", "Normal (10%)", "Standard (15%)", "Fast (20%)", "Very Fast (25%)"];
         private static readonly double[] WeeklyIncrementValues =
             [0.05, 0.10, 0.15, 0.20, 0.25];
 
-        // ── Colours (mirroring TemplatePreviewPngWriter constants) ──────────
-        private static readonly SolidColorBrush BrushPlayerFill    = new(Color.FromRgb( 42,  90,  50));
-        private static readonly SolidColorBrush BrushPlayerBorder  = new(Color.FromRgb(100, 200, 120));
-        private static readonly SolidColorBrush BrushBronzeFill    = new(Color.FromRgb(101,  67,  33));
-        private static readonly SolidColorBrush BrushBronzeBorder  = new(Color.FromRgb(205, 127,  50));
-        private static readonly SolidColorBrush BrushSilverFill    = new(Color.FromRgb( 72,  76,  80));
-        private static readonly SolidColorBrush BrushSilverBorder  = new(Color.FromRgb(192, 192, 192));
-        private static readonly SolidColorBrush BrushGoldFill      = new(Color.FromRgb(120,  90,  20));
-        private static readonly SolidColorBrush BrushGoldBorder    = new(Color.FromRgb(255, 210,  50));
-        private static readonly SolidColorBrush BrushHubFill       = new(Color.FromRgb( 55,  80,  95));
-        private static readonly SolidColorBrush BrushHubBorder     = new(Color.FromRgb(130, 180, 200));
-        private static readonly SolidColorBrush BrushEdgeDirect    = new(Color.FromRgb(180, 145,  60));
-        private static readonly SolidColorBrush BrushEdgePortal    = new(Color.FromArgb(210,  90, 170, 210));
-        private static readonly SolidColorBrush BrushEdgeSelected  = new(Color.FromRgb(255, 140,   0));
+        private static readonly SolidColorBrush BrushPlayerFill = new(Color.FromRgb(42, 90, 50));
+        private static readonly SolidColorBrush BrushPlayerBorder = new(Color.FromRgb(100, 200, 120));
+        private static readonly SolidColorBrush BrushBronzeFill = new(Color.FromRgb(101, 67, 33));
+        private static readonly SolidColorBrush BrushBronzeBorder = new(Color.FromRgb(205, 127, 50));
+        private static readonly SolidColorBrush BrushSilverFill = new(Color.FromRgb(72, 76, 80));
+        private static readonly SolidColorBrush BrushSilverBorder = new(Color.FromRgb(192, 192, 192));
+        private static readonly SolidColorBrush BrushGoldFill = new(Color.FromRgb(120, 90, 20));
+        private static readonly SolidColorBrush BrushGoldBorder = new(Color.FromRgb(255, 210, 50));
+        private static readonly SolidColorBrush BrushHubFill = new(Color.FromRgb(55, 80, 95));
+        private static readonly SolidColorBrush BrushHubBorder = new(Color.FromRgb(130, 180, 200));
+        private static readonly SolidColorBrush BrushEdgeDirect = new(Color.FromRgb(180, 145, 60));
+        private static readonly SolidColorBrush BrushEdgePortal = new(Color.FromArgb(210, 90, 170, 210));
+        private static readonly SolidColorBrush BrushEdgeSelected = new(Color.FromRgb(255, 140, 0));
 
-        // ── Constructor ──────────────────────────────────────────────────────
-
-        static ZoneConnectionEditorWindow()
+        public ZoneConnectionEditorControl()
         {
+            InitializeComponent();
+
+            CmbConnectionType.Items.Add("Direct");
+            CmbConnectionType.Items.Add("Portal");
+            CmbConnectionType.SelectedIndex = 0;
+
+            Loaded += (_, _) => RenderAll();
+            ZoneCanvas.SizeChanged += (_, _) => RenderAll();
+            PreviewKeyDown += ZoneConnectionEditorControl_PreviewKeyDown;
         }
 
-        public ZoneConnectionEditorWindow(
+        public void InitializeEditor(
             List<Zone> zones,
             List<Connection> connections,
             List<Connection> originalConnections,
             MapTopology topology,
             HashSet<string> playerZoneNames)
         {
-            _zones               = zones;
-            _connections         = connections;
+            _zones = zones;
+            _connections = connections;
             _originalConnections = originalConnections;
-            _topology            = topology;
-            _playerZoneNames     = playerZoneNames;
+            _topology = topology;
+            _playerZoneNames = playerZoneNames;
 
-            InitializeComponent();
-
-            // Edit connection-type combobox (Proximity is not user-creatable)
-            CmbConnectionType.Items.Add("Direct");
-            CmbConnectionType.Items.Add("Portal");
-            CmbConnectionType.SelectedIndex = 0;
-
-            // Guard-zone combobox (property panel): populated per-connection in PopulatePropertyPanel
-
-            Loaded           += (_, _) => RenderAll();
-            ZoneCanvas.SizeChanged += (_, _) => RenderAll();
+            ConnectionsWereModified = false;
+            _selectedConnection = null;
+            _selectedVisibleLine = null;
+            PnlProperties.Visibility = Visibility.Collapsed;
+            CancelDragAdd();
+            RenderAll();
         }
 
-        // ── Window chrome ────────────────────────────────────────────────────
-
-        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void MarkConnectionsModified()
         {
-            if (e.ButtonState == MouseButtonState.Pressed)
-                DragMove();
+            ConnectionsWereModified = true;
+            ConnectionsModified?.Invoke(this, EventArgs.Empty);
         }
 
-        private void BtnClose_Click(object sender, RoutedEventArgs e) => Close();
-
-        // ── Layout / position computation ────────────────────────────────────
+        private void ZoneConnectionEditorControl_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete && _selectedConnection is not null)
+            {
+                DeleteSelectedConnection();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Escape)
+            {
+                CancelDragAdd();
+                e.Handled = true;
+            }
+        }
 
         private void ComputeNodePositions()
         {
@@ -137,16 +134,12 @@ namespace Olden_Era___Template_Editor
             double ch = ZoneCanvas.ActualHeight;
             if (cw <= 0 || ch <= 0) return;
 
-            // Build a minimal RmgTemplate so we can reuse TemplatePreviewPngWriter's
-            // already-correct layout algorithm for every topology type.
             var miniTemplate = new RmgTemplate
             {
                 Variants = [new Variant { Zones = _zones, Connections = _connections }]
             };
             var rawPositions = TemplatePreviewPngWriter.ComputeLayout(miniTemplate, _topology);
 
-            // The PNG writer computes positions in a 700×700 coordinate space.
-            // Scale them to the current canvas size.
             double sx = cw / 700.0;
             double sy = ch / 700.0;
 
@@ -155,32 +148,26 @@ namespace Olden_Era___Template_Editor
                 _nodePositions[name] = new Point(pos.X * sx, pos.Y * sy);
         }
 
-        // ── Main render entry points ─────────────────────────────────────────
-
-        /// <summary>Recompute node positions from the current canvas size, then redraw everything.</summary>
         private void RenderAll()
         {
             ComputeNodePositions();
             Refresh();
         }
 
-        /// <summary>Redraw the canvas without recomputing node positions.</summary>
         private void Refresh()
         {
             ZoneCanvas.Children.Clear();
-            RenderEdges();   // edges added first → lower z-order than nodes
-            RenderNodes();   // nodes drawn on top of edges
+            RenderEdges();
+            RenderNodes();
         }
-
-        // ── Edge rendering ────────────────────────────────────────────────────
 
         private void RenderEdges()
         {
-            // Group connections by unordered zone pair so parallel edges can be curved apart.
-            const double BulgeGap = 18.0;   // perpendicular bulge step between parallel edges
+            const double BulgeGap = 18.0;
 
-            var pairGroups = new Dictionary<(string, string), List<Connection>>(
-                EqualityComparer<(string, string)>.Default);
+            _connectionGeometries.Clear();
+
+            var pairGroups = new Dictionary<(string, string), List<Connection>>(EqualityComparer<(string, string)>.Default);
 
             foreach (var conn in _connections)
             {
@@ -193,44 +180,34 @@ namespace Olden_Era___Template_Editor
                 list.Add(conn);
             }
 
-            // Build per-connection geometry (quadratic Bézier; control point at midpoint for N=1 → straight)
-            var connGeometry = new Dictionary<Connection, (PathGeometry geo, Point labelPt)>(
-                ReferenceEqualityComparer.Instance);
+            var connGeometry = new Dictionary<Connection, (PathGeometry geo, Point labelPt)>(ReferenceEqualityComparer.Instance);
 
             foreach (var (key, group) in pairGroups)
             {
                 int n = group.Count;
 
-                // Canonical direction for the group (alphabetically sorted From→To)
                 var (canonFrom, canonTo) = key;
                 var canonFromPos = _nodePositions[canonFrom];
-                var canonToPos   = _nodePositions[canonTo];
-                double cdx  = canonToPos.X - canonFromPos.X;
-                double cdy  = canonToPos.Y - canonFromPos.Y;
+                var canonToPos = _nodePositions[canonTo];
+                double cdx = canonToPos.X - canonFromPos.X;
+                double cdy = canonToPos.Y - canonFromPos.Y;
                 double clen = Math.Sqrt(cdx * cdx + cdy * cdy);
 
-                // Perpendicular unit normal in canonical direction (rotate 90° CCW)
                 double cnx = clen > 0 ? -cdy / clen : 0;
-                double cny = clen > 0 ?  cdx / clen : 0;
+                double cny = clen > 0 ? cdx / clen : 0;
 
-                // Base bulge that clears intermediate nodes that lie on the straight-line path
-                double obstacleBase = ComputeObstacleAvoidanceBulge(
-                    canonFromPos, canonToPos, canonFrom, canonTo);
+                double obstacleBase = ComputeObstacleAvoidanceBulge(canonFromPos, canonToPos, canonFrom, canonTo);
 
                 for (int i = 0; i < n; i++)
                 {
-                    var conn    = group[i];
+                    var conn = group[i];
                     var fromPos = _nodePositions[conn.From];
-                    var toPos   = _nodePositions[conn.To];
+                    var toPos = _nodePositions[conn.To];
 
-                    // Individual bulge = obstacle offset + parallel-edge spread around it
                     double bulge = obstacleBase + (i - (n - 1) / 2.0) * BulgeGap;
 
-                    var mid     = new Point((fromPos.X + toPos.X) / 2, (fromPos.Y + toPos.Y) / 2);
-                    // Control point is 2× the desired midpoint displacement (quadratic Bézier property)
-                    // Use canonical normal so all edges in the group bow in consistent directions
-                    var ctrl    = new Point(mid.X + 2 * bulge * cnx, mid.Y + 2 * bulge * cny);
-                    // Actual curve midpoint at t=0.5
+                    var mid = new Point((fromPos.X + toPos.X) / 2, (fromPos.Y + toPos.Y) / 2);
+                    var ctrl = new Point(mid.X + 2 * bulge * cnx, mid.Y + 2 * bulge * cny);
                     var labelPt = new Point(mid.X + bulge * cnx, mid.Y + bulge * cny);
 
                     var figure = new PathFigure { StartPoint = fromPos, IsClosed = false };
@@ -242,13 +219,12 @@ namespace Olden_Era___Template_Editor
                 }
             }
 
-            // Draw each connection
             foreach (var conn in _connections)
             {
                 if (!connGeometry.TryGetValue(conn, out var entry)) continue;
                 var (geo, labelPt) = entry;
 
-                bool isPortal   = string.Equals(conn.ConnectionType, "Portal", StringComparison.Ordinal);
+                bool isPortal = string.Equals(conn.ConnectionType, "Portal", StringComparison.Ordinal);
                 bool isSelected = ReferenceEquals(conn, _selectedConnection);
 
                 var normalBrush = isPortal ? BrushEdgePortal : BrushEdgeDirect;
@@ -277,19 +253,11 @@ namespace Olden_Era___Template_Editor
                     Cursor = Cursors.Hand
                 };
 
-                var capturedConn = conn;
-                var capturedPath = visiblePath;
-                hitPath.MouseLeftButtonDown += (_, e) =>
-                {
-                    if (_addMode) return;
-                    e.Handled = true;
-                    SelectEdge(capturedConn, capturedPath);
-                };
+                _connectionGeometries.Add((conn, geo, visiblePath));
 
                 ZoneCanvas.Children.Add(hitPath);
                 ZoneCanvas.Children.Add(visiblePath);
 
-                // Guard-value label at the curve's midpoint
                 if (conn.GuardValue.HasValue)
                 {
                     var guardLabel = new TextBlock
@@ -301,15 +269,16 @@ namespace Olden_Era___Template_Editor
                     };
                     ZoneCanvas.Children.Add(guardLabel);
                     guardLabel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                    Canvas.SetLeft(guardLabel, labelPt.X - guardLabel.DesiredSize.Width  / 2.0);
-                    Canvas.SetTop( guardLabel, labelPt.Y - guardLabel.DesiredSize.Height / 2.0);
+                    Canvas.SetLeft(guardLabel, labelPt.X - guardLabel.DesiredSize.Width / 2.0);
+                    Canvas.SetTop(guardLabel, labelPt.Y - guardLabel.DesiredSize.Height / 2.0);
                 }
             }
 
-            // Recompute HasUnresolvedErrors
             var zoneNameSet = new HashSet<string>(_zones.Select(z => z.Name), StringComparer.Ordinal);
-            HasUnresolvedErrors = _connections.Any(c =>
-                !zoneNameSet.Contains(c.From) || !zoneNameSet.Contains(c.To));
+            bool oldHasErrors = HasUnresolvedErrors;
+            HasUnresolvedErrors = _connections.Any(c => !zoneNameSet.Contains(c.From) || !zoneNameSet.Contains(c.To));
+            if (oldHasErrors != HasUnresolvedErrors)
+                ErrorsChanged?.Invoke(this, EventArgs.Empty);
 
             UpdateStatusBar();
         }
@@ -319,24 +288,21 @@ namespace Olden_Era___Template_Editor
             int count = _connections.Count;
             string status = $"{count} connection(s)";
 
-            var zoneNameSet = new HashSet<string>(_zones.Select(z => z.Name), StringComparer.Ordinal);
             var isolated = _zones
                 .Where(z => !_connections.Any(c =>
                     string.Equals(c.From, z.Name, StringComparison.Ordinal) ||
-                    string.Equals(c.To,   z.Name, StringComparison.Ordinal)))
+                    string.Equals(c.To, z.Name, StringComparison.Ordinal)))
                 .Select(z => z.Name)
                 .ToList();
 
             if (isolated.Count > 0)
-                status += $"  ⚠ Isolated zones: {string.Join(", ", isolated)}";
+                status += $"  Isolated zones: {string.Join(", ", isolated)}";
 
             if (HasUnresolvedErrors)
-                status += "  ⛔ Invalid zone references — export blocked";
+                status += "  Invalid zone references; export blocked";
 
             TxtStatus.Text = status;
         }
-
-        // ── Node rendering ────────────────────────────────────────────────────
 
         private void RenderNodes()
         {
@@ -348,29 +314,21 @@ namespace Olden_Era___Template_Editor
 
                 var ellipse = new Ellipse
                 {
-                    Width  = NodeRadius * 2,
+                    Width = NodeRadius * 2,
                     Height = NodeRadius * 2,
-                    Fill   = fillBrush,
+                    Fill = fillBrush,
                     Stroke = borderBrush,
                     StrokeThickness = 2,
-                    Cursor = _addMode ? Cursors.Hand : Cursors.Arrow
+                    Cursor = Cursors.Hand
                 };
-
-                // Highlight the pending "from" zone in add mode
-                if (_addMode && string.Equals(zone.Name, _pendingFromZone, StringComparison.Ordinal))
-                {
-                    ellipse.Stroke      = BrushEdgeSelected;
-                    _pendingFromEllipse = ellipse;
-                }
 
                 string zoneName = zone.Name;
                 ellipse.MouseLeftButtonDown += (s, e) => ZoneNode_MouseLeftButtonDown(s, e, zoneName);
 
                 Canvas.SetLeft(ellipse, pos.X - NodeRadius);
-                Canvas.SetTop( ellipse, pos.Y - NodeRadius);
+                Canvas.SetTop(ellipse, pos.Y - NodeRadius);
                 ZoneCanvas.Children.Add(ellipse);
 
-                // Zone name label (centred over the node)
                 var label = new TextBlock
                 {
                     Text = ZoneDisplayLabel(zone),
@@ -381,33 +339,32 @@ namespace Olden_Era___Template_Editor
                 };
                 ZoneCanvas.Children.Add(label);
                 label.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                Canvas.SetLeft(label, pos.X - label.DesiredSize.Width  / 2.0);
-                Canvas.SetTop( label, pos.Y - label.DesiredSize.Height / 2.0);
+                Canvas.SetLeft(label, pos.X - label.DesiredSize.Width / 2.0);
+                Canvas.SetTop(label, pos.Y - label.DesiredSize.Height / 2.0);
 
-                // Castle-count badge — bottom-right of the node circle
                 int castleCount = ZoneCastleCount(zone);
                 if (castleCount > 0)
                 {
                     var badge = new System.Windows.Controls.Border
                     {
-                        Background        = new SolidColorBrush(Color.FromRgb(28, 60, 35)),
-                        BorderBrush       = new SolidColorBrush(Color.FromRgb(100, 200, 120)),
-                        BorderThickness   = new Thickness(1),
-                        CornerRadius      = new CornerRadius(4),
-                        Padding           = new Thickness(3, 1, 3, 1),
-                        IsHitTestVisible  = false,
+                        Background = new SolidColorBrush(Color.FromRgb(28, 60, 35)),
+                        BorderBrush = new SolidColorBrush(Color.FromRgb(100, 200, 120)),
+                        BorderThickness = new Thickness(1),
+                        CornerRadius = new CornerRadius(4),
+                        Padding = new Thickness(3, 1, 3, 1),
+                        IsHitTestVisible = false,
                         Child = new TextBlock
                         {
-                            Text       = $"🏰{castleCount}",
-                            FontSize   = 9,
+                            Text = $"🏰{castleCount}",
+                            FontSize = 9,
                             Foreground = new SolidColorBrush(Color.FromRgb(200, 245, 210)),
                         }
                     };
+
                     ZoneCanvas.Children.Add(badge);
                     badge.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                    // Place at bottom-right edge of the circle
-                    Canvas.SetLeft(badge, pos.X + NodeRadius * 0.55 - badge.DesiredSize.Width  / 2.0);
-                    Canvas.SetTop( badge, pos.Y + NodeRadius * 0.55 - badge.DesiredSize.Height / 2.0);
+                    Canvas.SetLeft(badge, pos.X + NodeRadius * 0.55 - badge.DesiredSize.Width / 2.0);
+                    Canvas.SetTop(badge, pos.Y + NodeRadius * 0.55 - badge.DesiredSize.Height / 2.0);
                 }
             }
         }
@@ -416,12 +373,14 @@ namespace Olden_Era___Template_Editor
         {
             int count = 0;
             foreach (var obj in zone.MainObjects ?? [])
+            {
                 if (obj.Type is "City" or "Spawn")
                     count++;
+            }
+
             return count;
         }
 
-        /// <summary>Returns a short display label for the zone node. Spawn zones show their player number (A=1, B=2…).</summary>
         private static string ZoneDisplayLabel(Zone zone)
         {
             if (zone.Name.StartsWith("Spawn-", StringComparison.Ordinal) && zone.Name.Length > 6)
@@ -446,7 +405,7 @@ namespace Olden_Era___Template_Editor
             {
                 string pool = zone.GuardedContentPool?.FirstOrDefault() ?? "";
                 if (pool.Contains("_t4_") || pool.Contains("_t5_"))
-                    return (BrushGoldFill,   BrushGoldBorder);
+                    return (BrushGoldFill, BrushGoldBorder);
                 if (pool.Contains("_t2_") || pool.Contains("_t1_"))
                     return (BrushBronzeFill, BrushBronzeBorder);
                 return (BrushSilverFill, BrushSilverBorder);
@@ -485,20 +444,17 @@ namespace Olden_Era___Template_Editor
             return (ZoneTier)Math.Max((int)GetZoneTier(zoneA), (int)GetZoneTier(zoneB));
         }
 
-        // ── Edge selection ────────────────────────────────────────────────────
-
         private void SelectEdge(Connection conn, Shape visibleLine)
         {
-            // Restore the previously selected edge to its normal colour
             if (_selectedConnection is not null && _selectedVisibleLine is not null)
             {
                 bool wasPortal = string.Equals(_selectedConnection.ConnectionType, "Portal", StringComparison.Ordinal);
                 _selectedVisibleLine.Stroke = wasPortal ? BrushEdgePortal : BrushEdgeDirect;
             }
 
-            _selectedConnection  = conn;
+            _selectedConnection = conn;
             _selectedVisibleLine = visibleLine;
-            visibleLine.Stroke   = BrushEdgeSelected;
+            visibleLine.Stroke = BrushEdgeSelected;
 
             PnlProperties.Visibility = Visibility.Visible;
             PopulatePropertyPanel(conn);
@@ -509,27 +465,21 @@ namespace Olden_Era___Template_Editor
             _suppressPropertyEvents = true;
             try
             {
-                // Connection type
                 int typeIdx = CmbConnectionType.Items.IndexOf(conn.ConnectionType ?? "Direct");
                 CmbConnectionType.SelectedIndex = typeIdx >= 0 ? typeIdx : 0;
 
-                // Guard zone — only the two connected nodes
                 CmbGuardZone.Items.Clear();
                 CmbGuardZone.Items.Add(conn.From);
                 CmbGuardZone.Items.Add(conn.To);
                 int gzIdx = CmbGuardZone.Items.IndexOf(conn.GuardZone ?? conn.From);
                 CmbGuardZone.SelectedIndex = gzIdx >= 0 ? gzIdx : 0;
 
-                // Guard value — presets derived from tier, auto-expand Advanced if custom
                 ZoneTier tier = HigherTierOf(conn.From, conn.To);
                 PopulateGuardValueCombo(tier, conn.GuardValue);
-
-                // Weekly increment — preset list, auto-expand Advanced if custom
                 PopulateWeeklyIncrementCombo(conn.GuardWeeklyIncrement);
 
-                // Advanced fields
-                TxtGuardMatchGroup.Text   = conn.GuardMatchGroup ?? "";
-                ChkGuardEscape.IsChecked  = conn.GuardEscape  ?? false;
+                TxtGuardMatchGroup.Text = conn.GuardMatchGroup ?? "";
+                ChkGuardEscape.IsChecked = conn.GuardEscape ?? false;
                 ChkSimTurnSquad.IsChecked = conn.SimTurnSquad ?? false;
             }
             finally
@@ -541,17 +491,15 @@ namespace Olden_Era___Template_Editor
         private void PopulateGuardValueCombo(ZoneTier tier, int? currentValue)
         {
             CmbGuardValue.Items.Clear();
-            var extras     = TierExtras[(int)tier];
-            int extraLen   = extras.Length;
-            int presetOff  = extraLen > 0 ? extraLen + 1 : 0; // +1 accounts for separator
+            var extras = TierExtras[(int)tier];
+            int extraLen = extras.Length;
+            int presetOff = extraLen > 0 ? extraLen + 1 : 0;
 
-            // Generator Default entries at top
             foreach (var (label, value) in extras)
                 CmbGuardValue.Items.Add($"{label}  ({value:N0})");
             if (extraLen > 0)
                 CmbGuardValue.Items.Add(new Separator());
 
-            // Standard presets below
             for (int i = 0; i < StrengthLabels.Length; i++)
                 CmbGuardValue.Items.Add($"{StrengthLabels[i]}  ({GuardPresets[(int)tier, i]:N0})");
             if (ChkPropAdvanced.IsChecked == true)
@@ -560,7 +508,6 @@ namespace Olden_Era___Template_Editor
             bool matched = false;
             if (currentValue.HasValue)
             {
-                // Check extras first so Generator Default takes priority over a coincident preset
                 for (int i = 0; i < extraLen; i++)
                 {
                     if (extras[i].Value == currentValue.Value)
@@ -585,7 +532,7 @@ namespace Olden_Era___Template_Editor
             }
             else
             {
-                CmbGuardValue.SelectedIndex = presetOff + 2; // Medium
+                CmbGuardValue.SelectedIndex = presetOff + 2;
                 matched = true;
             }
             if (!matched)
@@ -623,7 +570,7 @@ namespace Olden_Era___Template_Editor
             }
             else
             {
-                CmbGuardWeeklyIncrement.SelectedIndex = 2; // Standard default
+                CmbGuardWeeklyIncrement.SelectedIndex = 2;
                 matched = true;
             }
             if (!matched)
@@ -638,8 +585,6 @@ namespace Olden_Era___Template_Editor
                 ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        // ── Property panel event handlers ─────────────────────────────────────
-
         private void ChkPropAdvanced_Changed(object sender, RoutedEventArgs e)
         {
             bool advanced = ChkPropAdvanced.IsChecked == true;
@@ -648,7 +593,6 @@ namespace Olden_Era___Template_Editor
             if (_selectedConnection is null) return;
             ZoneTier tier = HigherTierOf(_selectedConnection.From, _selectedConnection.To);
 
-            // Add/remove "Custom..." from guard-value combo
             bool gvHasCustom = CmbGuardValue.Items.Contains("Custom...");
             if (advanced && !gvHasCustom)
             {
@@ -658,15 +602,14 @@ namespace Olden_Era___Template_Editor
             {
                 if (CmbGuardValue.SelectedItem as string == "Custom...")
                 {
-                    CmbGuardValue.SelectedIndex = 2;
-                    _selectedConnection.GuardValue = GuardPresets[(int)tier, 2];
+                    CmbGuardValue.SelectedIndex = 0;
+                    _selectedConnection.GuardValue = GuardPresets[(int)tier, 0];
                 }
                 CmbGuardValue.Items.Remove("Custom...");
-                TxtPropGuardValueCustom.Text       = "";
+                TxtPropGuardValueCustom.Text = "";
                 TxtPropGuardValueCustom.Visibility = Visibility.Collapsed;
             }
 
-            // Add/remove "Custom..." from weekly-increment combo
             bool wiHasCustom = CmbGuardWeeklyIncrement.Items.Contains("Custom...");
             if (advanced && !wiHasCustom)
             {
@@ -680,7 +623,7 @@ namespace Olden_Era___Template_Editor
                     _selectedConnection.GuardWeeklyIncrement = WeeklyIncrementValues[2];
                 }
                 CmbGuardWeeklyIncrement.Items.Remove("Custom...");
-                TxtPropIncrementCustom.Text       = "";
+                TxtPropIncrementCustom.Text = "";
                 TxtPropIncrementCustom.Visibility = Visibility.Collapsed;
             }
         }
@@ -689,7 +632,7 @@ namespace Olden_Era___Template_Editor
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
             _selectedConnection.ConnectionType = CmbConnectionType.SelectedItem as string;
-            ConnectionsWereModified = true;
+            MarkConnectionsModified();
         }
 
         private void CmbGuardValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -700,16 +643,16 @@ namespace Olden_Era___Template_Editor
             TxtPropGuardValueCustom.Visibility = isCustom ? Visibility.Visible : Visibility.Collapsed;
             if (isCustom) return;
 
-            ZoneTier tier  = HigherTierOf(_selectedConnection.From, _selectedConnection.To);
-            var extras     = TierExtras[(int)tier];
-            int extraLen   = extras.Length;
-            int presetOff  = extraLen > 0 ? extraLen + 1 : 0;
-            int idx        = CmbGuardValue.SelectedIndex;
+            ZoneTier tier = HigherTierOf(_selectedConnection.From, _selectedConnection.To);
+            var extras = TierExtras[(int)tier];
+            int extraLen = extras.Length;
+            int presetOff = extraLen > 0 ? extraLen + 1 : 0;
+            int idx = CmbGuardValue.SelectedIndex;
 
             if (idx < extraLen)
             {
                 _selectedConnection.GuardValue = extras[idx].Value;
-                ConnectionsWereModified = true;
+                MarkConnectionsModified();
                 Refresh();
             }
             else if (idx >= presetOff)
@@ -718,21 +661,26 @@ namespace Olden_Era___Template_Editor
                 if (presetIdx < StrengthLabels.Length)
                 {
                     _selectedConnection.GuardValue = GuardPresets[(int)tier, presetIdx];
-                    ConnectionsWereModified = true;
+                    MarkConnectionsModified();
                     Refresh();
                 }
             }
         }
 
-        private void TxtPropGuardValueCustom_TextChanged(object sender, TextChangedEventArgs e)
+        private void TxtPropGuardValueCustom_Commit(object sender, RoutedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
-            if (int.TryParse(TxtPropGuardValueCustom.Text.Trim(), out int v))
+            if (int.TryParse(TxtPropGuardValueCustom.Text.Trim(), out int v) && v != _selectedConnection.GuardValue)
             {
                 _selectedConnection.GuardValue = v;
-                ConnectionsWereModified = true;
+                MarkConnectionsModified();
                 Refresh();
             }
+        }
+
+        private void TxtPropGuardValueCustom_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtPropGuardValueCustom_Commit(sender, e);
         }
 
         private void CmbGuardWeeklyIncrement_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -746,20 +694,25 @@ namespace Olden_Era___Template_Editor
                 if (idx >= 0 && idx < WeeklyIncrementValues.Length)
                 {
                     _selectedConnection.GuardWeeklyIncrement = WeeklyIncrementValues[idx];
-                    ConnectionsWereModified = true;
+                    MarkConnectionsModified();
                 }
             }
         }
 
-        private void TxtPropIncrementCustom_TextChanged(object sender, TextChangedEventArgs e)
+        private void TxtPropIncrementCustom_Commit(object sender, RoutedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
-            if (double.TryParse(TxtPropIncrementCustom.Text.Trim(),
-                    NumberStyles.Float, CultureInfo.InvariantCulture, out double v))
+            if (double.TryParse(TxtPropIncrementCustom.Text.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out double v)
+                && Math.Abs(v - (_selectedConnection.GuardWeeklyIncrement ?? 0)) > 1e-9)
             {
                 _selectedConnection.GuardWeeklyIncrement = v;
-                ConnectionsWereModified = true;
+                MarkConnectionsModified();
             }
+        }
+
+        private void TxtPropIncrementCustom_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtPropIncrementCustom_Commit(sender, e);
         }
 
         private void CmbGuardZone_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -767,32 +720,39 @@ namespace Olden_Era___Template_Editor
             if (_suppressPropertyEvents || _selectedConnection is null) return;
             string? val = CmbGuardZone.SelectedItem as string;
             _selectedConnection.GuardZone = string.IsNullOrEmpty(val) ? null : val;
-            ConnectionsWereModified = true;
+            MarkConnectionsModified();
         }
 
-        private void TxtGuardMatchGroup_TextChanged(object sender, TextChangedEventArgs e)
+        private void TxtGuardMatchGroup_Commit(object sender, RoutedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
             string val = TxtGuardMatchGroup.Text.Trim();
-            _selectedConnection.GuardMatchGroup = val.Length > 0 ? val : null;
-            ConnectionsWereModified = true;
+            string? newValue = val.Length > 0 ? val : null;
+            if (!string.Equals(_selectedConnection.GuardMatchGroup, newValue, StringComparison.Ordinal))
+            {
+                _selectedConnection.GuardMatchGroup = newValue;
+                MarkConnectionsModified();
+            }
+        }
+
+        private void TxtGuardMatchGroup_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter) TxtGuardMatchGroup_Commit(sender, e);
         }
 
         private void ChkGuardEscape_Changed(object sender, RoutedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
             _selectedConnection.GuardEscape = ChkGuardEscape.IsChecked;
-            ConnectionsWereModified = true;
+            MarkConnectionsModified();
         }
 
         private void ChkSimTurnSquad_Changed(object sender, RoutedEventArgs e)
         {
             if (_suppressPropertyEvents || _selectedConnection is null) return;
             _selectedConnection.SimTurnSquad = ChkSimTurnSquad.IsChecked;
-            ConnectionsWereModified = true;
+            MarkConnectionsModified();
         }
-
-        // ── Delete connection ─────────────────────────────────────────────────
 
         private void BtnDeleteConnection_Click(object sender, RoutedEventArgs e)
         {
@@ -804,94 +764,52 @@ namespace Olden_Era___Template_Editor
         {
             if (_selectedConnection is null) return;
             _connections.Remove(_selectedConnection);
-            _selectedConnection  = null;
+            _selectedConnection = null;
             _selectedVisibleLine = null;
             PnlProperties.Visibility = Visibility.Collapsed;
-            ConnectionsWereModified = true;
+            MarkConnectionsModified();
             Refresh();
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
+        private void CancelDragAdd()
         {
-            base.OnKeyDown(e);
-            if (e.Key == Key.Delete && _selectedConnection is not null)
-            {
-                DeleteSelectedConnection();
-                e.Handled = true;
-            }
-            else if (e.Key == Key.Escape)
-            {
-                if (_addMode)
-                    ExitAddMode();
-                e.Handled = true;
-            }
-        }
-
-        // ── Add-connection mode ───────────────────────────────────────────────
-
-        private void BtnAddMode_Click(object sender, RoutedEventArgs e)
-        {
-            if (_addMode)
-                ExitAddMode();
-            else
-                EnterAddMode();
-        }
-
-        private void EnterAddMode()
-        {
-            _addMode         = true;
             _pendingFromZone = null;
-            _pendingFromEllipse = null;
-            ZoneCanvas.Cursor = Cursors.Cross;
-            BtnAddMode.Content = "✕  Cancel Add Mode";
-
-            // Deselect any currently selected edge
-            if (_selectedVisibleLine is not null && _selectedConnection is not null)
-            {
-                bool wasPortal = string.Equals(_selectedConnection.ConnectionType, "Portal", StringComparison.Ordinal);
-                _selectedVisibleLine.Stroke = wasPortal ? BrushEdgePortal : BrushEdgeDirect;
-            }
-            _selectedConnection  = null;
-            _selectedVisibleLine = null;
-            PnlProperties.Visibility = Visibility.Collapsed;
-
-            Refresh();
-        }
-
-        private void ExitAddMode()
-        {
-            _addMode            = false;
-            _pendingFromZone    = null;
-            _pendingFromEllipse = null;
-            _isDragging         = false;
+            _isDragging = false;
             if (_rubberBandLine is not null)
             {
                 ZoneCanvas.Children.Remove(_rubberBandLine);
                 _rubberBandLine = null;
             }
             ZoneCanvas.ReleaseMouseCapture();
-            ZoneCanvas.Cursor  = Cursors.Arrow;
-            BtnAddMode.Content = "+ Add Connection";
-
-            Refresh();
+            ZoneCanvas.Cursor = Cursors.Arrow;
         }
 
         private void ZoneNode_MouseLeftButtonDown(object sender, MouseButtonEventArgs e, string zoneName)
         {
-            if (!_addMode) return;
             e.Handled = true;
 
             _pendingFromZone = zoneName;
-            _isDragging      = true;
+            _isDragging = true;
+            ZoneCanvas.Cursor = Cursors.Cross;
 
-            // Highlight source node and draw initial rubber-band
-            Refresh();   // picks up _pendingFromZone to colour the node
+            if (_selectedVisibleLine is not null && _selectedConnection is not null)
+            {
+                bool wasPortal = string.Equals(_selectedConnection.ConnectionType, "Portal", StringComparison.Ordinal);
+                _selectedVisibleLine.Stroke = wasPortal ? BrushEdgePortal : BrushEdgeDirect;
+            }
+            _selectedConnection = null;
+            _selectedVisibleLine = null;
+            PnlProperties.Visibility = Visibility.Collapsed;
+
+            Refresh();
 
             var fromPos = _nodePositions.GetValueOrDefault(zoneName);
             _rubberBandLine = new Line
             {
-                X1 = fromPos.X, Y1 = fromPos.Y,
-                X2 = fromPos.X, Y2 = fromPos.Y,
+                X1 = fromPos.X,
+                Y1 = fromPos.Y,
+                X2 = fromPos.X,
+                Y2 = fromPos.Y,
                 Stroke = BrushEdgeSelected,
                 StrokeThickness = 1.5,
                 StrokeDashArray = [4.0, 3.0],
@@ -916,65 +834,49 @@ namespace Olden_Era___Template_Editor
             var pos = e.GetPosition(ZoneCanvas);
             string? targetZone = HitTestZone(pos);
 
-            if (targetZone is not null
-                && !string.Equals(targetZone, _pendingFromZone, StringComparison.Ordinal))
+            if (targetZone is not null && !string.Equals(targetZone, _pendingFromZone, StringComparison.Ordinal))
             {
                 AddConnectionWithDefaults(_pendingFromZone!, targetZone);
             }
             else
             {
-                // Drag landed on the same zone or empty space — clean up and stay in add mode
-                _isDragging = false;
-                if (_rubberBandLine is not null)
-                {
-                    ZoneCanvas.Children.Remove(_rubberBandLine);
-                    _rubberBandLine = null;
-                }
-                ZoneCanvas.ReleaseMouseCapture();
-                _pendingFromZone = null;
+                CancelDragAdd();
                 Refresh();
             }
         }
 
-        private double ComputeObstacleAvoidanceBulge(
-            Point p0, Point p1, string fromName, string toName)
+        private double ComputeObstacleAvoidanceBulge(Point p0, Point p1, string fromName, string toName)
         {
             const double Clearance = NodeRadius + 8.0;
 
-            double dx    = p1.X - p0.X;
-            double dy    = p1.Y - p0.Y;
+            double dx = p1.X - p0.X;
+            double dy = p1.Y - p0.Y;
             double lenSq = dx * dx + dy * dy;
-            double len   = Math.Sqrt(lenSq);
+            double len = Math.Sqrt(lenSq);
             if (len < 1) return 0;
 
-            double maxPos = 0;   // largest positive bulge required
-            double maxNeg = 0;   // largest (most negative) negative bulge required
+            double maxPos = 0;
+            double maxNeg = 0;
 
             foreach (var (name, pos) in _nodePositions)
             {
                 if (string.Equals(name, fromName, StringComparison.Ordinal)) continue;
-                if (string.Equals(name, toName,   StringComparison.Ordinal)) continue;
+                if (string.Equals(name, toName, StringComparison.Ordinal)) continue;
 
                 double qx = pos.X - p0.X;
                 double qy = pos.Y - p0.Y;
 
-                // Projection parameter along the segment [0,1]
                 double t = (qx * dx + qy * dy) / lenSq;
-                if (t < 0.05 || t > 0.95) continue;   // outside the span between the two nodes
+                if (t < 0.05 || t > 0.95) continue;
 
-                // Signed perpendicular distance from the line (positive = left of p0→p1)
                 double d = (dx * qy - dy * qx) / len;
 
-                // Straight line already clears this node?
                 if (Math.Abs(d) >= Clearance) continue;
 
-                // Bézier mid-curve factor at this t: the curve displaces perpendicularly by factor*bulge
                 double factor = 4.0 * t * (1.0 - t);
                 if (factor < 1e-6) continue;
 
-                // Bulge needed to pass on the positive (left) side
                 double bPos = (d + Clearance) / factor;
-                // Bulge needed to pass on the negative (right) side
                 double bNeg = (d - Clearance) / factor;
 
                 if (bPos > 0) maxPos = Math.Max(maxPos, bPos);
@@ -984,7 +886,6 @@ namespace Olden_Era___Template_Editor
             if (maxPos == 0 && maxNeg == 0) return 0;
             if (maxPos == 0) return maxNeg;
             if (maxNeg == 0) return maxPos;
-            // Obstacles on both sides — take the direction with the smaller required deflection
             return Math.Abs(maxPos) <= Math.Abs(maxNeg) ? maxPos : maxNeg;
         }
 
@@ -1003,63 +904,126 @@ namespace Olden_Era___Template_Editor
         private void AddConnectionWithDefaults(string from, string to)
         {
             ZoneTier tier = HigherTierOf(from, to);
+            string baseName = $"Conn-{ZoneLetterFromName(from)}-{ZoneLetterFromName(to)}";
+            string uniqueName = GetUniqueConnectionName(baseName);
             var newConn = new Connection
             {
-                From                 = from,
-                To                   = to,
-                ConnectionType       = "Direct",
-                GuardValue           = TierExtras[(int)tier][0].Value,  // Generator Default
-                GuardZone            = from,
-                GuardMatchGroup      = $"rnd_guard_{ZoneLetterFromName(from)}_{ZoneLetterFromName(to)}",
-                GuardWeeklyIncrement = WeeklyIncrementValues[2],       // Standard 15%
-                IsUserAdded          = true
+                Name = uniqueName,
+                From = from,
+                To = to,
+                ConnectionType = "Direct",
+                GuardValue = TierExtras[(int)tier][0].Value,
+                GuardZone = from,
+                GuardMatchGroup = $"rnd_guard_{ZoneLetterFromName(from)}_{ZoneLetterFromName(to)}",
+                GuardWeeklyIncrement = WeeklyIncrementValues[2],
+                IsUserAdded = true
             };
             _connections.Add(newConn);
-            ConnectionsWereModified = true;
+            MarkConnectionsModified();
 
-            // Pre-select so Refresh() in ExitAddMode sets _selectedVisibleLine
             _selectedConnection = newConn;
-            ExitAddMode();
+            CancelDragAdd();
 
-            // Show property panel for the new connection
             PnlProperties.Visibility = Visibility.Visible;
             PopulatePropertyPanel(newConn);
+            Refresh();
+        }
+
+        private string GetUniqueConnectionName(string baseName)
+        {
+            var existing = _connections
+                .Select(c => c.Name)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToHashSet(StringComparer.Ordinal);
+
+            if (!existing.Contains(baseName))
+                return baseName;
+
+            int suffix = 2;
+            string candidate;
+            do
+            {
+                candidate = $"{baseName}-{suffix}";
+                suffix++;
+            }
+            while (existing.Contains(candidate));
+
+            return candidate;
         }
 
         private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // Fires only when clicking the canvas background (no child handled it).
-            if (!_addMode || _isDragging) return;
-            ExitAddMode();
+            if (_isDragging) return;
+
+            var pos = e.GetPosition(ZoneCanvas);
+            var hit = FindNearestConnection(pos, threshold: 14.0);
+            if (hit is not null)
+            {
+                e.Handled = true;
+                CancelDragAdd();
+                SelectEdge(hit.Value.conn, hit.Value.visiblePath);
+            }
+            else
+            {
+                CancelDragAdd();
+            }
         }
 
-        // ── Reset to generated ────────────────────────────────────────────────
-
-        private void BtnReset_Click(object sender, RoutedEventArgs e)
+        private (Connection conn, Path visiblePath)? FindNearestConnection(Point pos, double threshold)
         {
-            var result = MessageBox.Show(
-                "Reset all connections to the auto-generated set? This will discard your edits.",
-                "Reset Connections",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
+            double minDist = threshold;
+            Connection? nearest = null;
+            Path? nearestPath = null;
 
-            if (result != MessageBoxResult.Yes) return;
+            foreach (var (conn, geo, visiblePath) in _connectionGeometries)
+            {
+                double dist = DistanceToQuadraticBezier(pos, geo);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    nearest = conn;
+                    nearestPath = visiblePath;
+                }
+            }
 
-            _connections.Clear();
-            foreach (var orig in _originalConnections)
-                _connections.Add(CloneConnection(orig, isUserAdded: false));
-
-            _selectedConnection  = null;
-            _selectedVisibleLine = null;
-            PnlProperties.Visibility = Visibility.Collapsed;
-            ConnectionsWereModified = true;
-
-            Refresh();
+            return nearest is not null ? (nearest, nearestPath!) : null;
         }
 
-        // ── Deep-clone helper ─────────────────────────────────────────────────
+        private static double DistanceToQuadraticBezier(Point p, PathGeometry geo)
+        {
+            const int Samples = 48;
+            double minDist = double.MaxValue;
 
-        /// <summary>Extracts the letter/identifier from a zone name, e.g. "Spawn-A" → "A", "Neutral-C" → "C".</summary>
+            foreach (var figure in geo.Figures)
+            {
+                var start = figure.StartPoint;
+                foreach (var segment in figure.Segments)
+                {
+                    if (segment is not QuadraticBezierSegment qbs) continue;
+
+                    var p0 = start;
+                    var p1 = qbs.Point1;
+                    var p2 = qbs.Point2;
+
+                    for (int i = 0; i <= Samples; i++)
+                    {
+                        double t  = i / (double)Samples;
+                        double mt = 1.0 - t;
+                        double x  = mt * mt * p0.X + 2 * mt * t * p1.X + t * t * p2.X;
+                        double y  = mt * mt * p0.Y + 2 * mt * t * p1.Y + t * t * p2.Y;
+                        double dx = p.X - x;
+                        double dy = p.Y - y;
+                        double d  = Math.Sqrt(dx * dx + dy * dy);
+                        if (d < minDist) minDist = d;
+                    }
+
+                    start = p2;
+                }
+            }
+
+            return minDist;
+        }
+
         private static string ZoneLetterFromName(string zoneName)
         {
             int dash = zoneName.IndexOf('-');
@@ -1068,22 +1032,22 @@ namespace Olden_Era___Template_Editor
 
         public static Connection CloneConnection(Connection c, bool isUserAdded = false) => new()
         {
-            Name                     = c.Name,
-            From                     = c.From,
-            To                       = c.To,
-            ConnectionType           = c.ConnectionType,
-            GuardZone                = c.GuardZone,
-            GuardEscape              = c.GuardEscape,
-            SimTurnSquad             = c.SimTurnSquad,
-            GuardValue               = c.GuardValue,
-            GuardWeeklyIncrement     = c.GuardWeeklyIncrement,
-            GuardMatchGroup          = c.GuardMatchGroup,
+            Name = c.Name,
+            From = c.From,
+            To = c.To,
+            ConnectionType = c.ConnectionType,
+            GuardZone = c.GuardZone,
+            GuardEscape = c.GuardEscape,
+            SimTurnSquad = c.SimTurnSquad,
+            GuardValue = c.GuardValue,
+            GuardWeeklyIncrement = c.GuardWeeklyIncrement,
+            GuardMatchGroup = c.GuardMatchGroup,
             PortalPlacementRulesFrom = c.PortalPlacementRulesFrom,
-            PortalPlacementRulesTo   = c.PortalPlacementRulesTo,
-            Road                     = c.Road,
-            GatePlacement            = c.GatePlacement,
-            Length                   = c.Length,
-            IsUserAdded              = isUserAdded
+            PortalPlacementRulesTo = c.PortalPlacementRulesTo,
+            Road = c.Road,
+            GatePlacement = c.GatePlacement,
+            Length = c.Length,
+            IsUserAdded = isUserAdded
         };
     }
 }
