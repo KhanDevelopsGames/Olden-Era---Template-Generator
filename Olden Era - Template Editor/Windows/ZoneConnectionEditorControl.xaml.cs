@@ -62,6 +62,41 @@ namespace Olden_Era___Template_Editor
             List<MainObject>? MainObjects);
 
         private enum ZoneTier { Bronze, Silver, Gold, PlayerToPlayer }
+        private enum FactionPresetKind
+        {
+            Random,
+            Match,
+            DifferentFrom,
+        }
+
+        private sealed record FactionPresetItem(string Label, FactionPresetKind Kind, string? ZoneName = null)
+        {
+            public override string ToString() => Label;
+        }
+
+        private sealed record FactionTargetItem(string Label, int MainObjectIndex, string? ZoneName = null)
+        {
+            public override string ToString() => Label;
+
+            public string ToSelectorArg(string currentZoneName)
+                => string.IsNullOrWhiteSpace(ZoneName) || string.Equals(ZoneName, currentZoneName, StringComparison.Ordinal)
+                    ? MainObjectIndex.ToString(CultureInfo.InvariantCulture)
+                    : $"{MainObjectIndex.ToString(CultureInfo.InvariantCulture)} {ZoneName}";
+
+            public List<string> ToMatchArgs(string currentZoneName)
+            {
+                var args = new List<string> { MainObjectIndex.ToString(CultureInfo.InvariantCulture) };
+                if (!string.IsNullOrWhiteSpace(ZoneName) && !string.Equals(ZoneName, currentZoneName, StringComparison.Ordinal))
+                    args.Add(ZoneName);
+                return args;
+            }
+        }
+
+        private sealed record FactionZoneItem(string Label, string ZoneName)
+        {
+            public override string ToString() => Label;
+        }
+
         private static readonly string[] StrengthLabels = ["Weak", "Moderate", "Medium", "High", "Very High"];
         private static readonly int[,] GuardPresets =
         {
@@ -974,6 +1009,8 @@ namespace Olden_Era___Template_Editor
                 clone.Type = type;
                 if (!string.Equals(type, "Spawn", StringComparison.OrdinalIgnoreCase))
                     clone.Spawn = null;
+                if (!string.Equals(type, "City", StringComparison.OrdinalIgnoreCase))
+                    clone.Faction = null;
                 return clone;
             }
 
@@ -984,8 +1021,11 @@ namespace Olden_Era___Template_Editor
                 GuardValue = string.Equals(type, "AbandonedOutpost", StringComparison.OrdinalIgnoreCase) ? 10_000 : 4_000,
                 GuardWeeklyIncrement = 0.10,
                 BuildingsConstructionSid = "poor_buildings_construction",
+                Faction = string.Equals(type, "City", StringComparison.OrdinalIgnoreCase)
+                    ? new TypedSelector { Type = "FromList", Args = [] }
+                    : null,
                 Placement = "Uniform",
-                PlacementArgs = ["true", "0.8", "2"],
+                PlacementArgs = ["false", "0.8", "2"],
             };
         }
 
@@ -1008,6 +1048,10 @@ namespace Olden_Era___Template_Editor
                     Foreground = (Brush)FindResource("BrushTextDim"),
                     FontStyle = FontStyles.Italic,
                 });
+            }
+            else if (!advanced && GetFactionConfigurableMainObjectIndexes(zone).Count > 0)
+            {
+                PnlZoneMainObjectsEditor.Children.Add(BuildSimpleZoneFactionPanel(zone));
             }
 
             for (int index = 0; index < zone.MainObjects.Count; index++)
@@ -1101,7 +1145,7 @@ namespace Olden_Era___Template_Editor
 
                 rowAdvanced.Children.Add(new TextBlock
                 {
-                    Text = isSpawn ? "Spawn" : mainObject.Type,
+                    Text = $"{(isSpawn ? "Spawn" : mainObject.Type)} - {DescribeFactionSelector(mainObject.Faction, zone.Name)}",
                     VerticalAlignment = VerticalAlignment.Center,
                     FontWeight = FontWeights.SemiBold,
                 });
@@ -1110,6 +1154,393 @@ namespace Olden_Era___Template_Editor
             }
 
             PnlZoneMainObjectsActions.Visibility = Visibility.Visible;
+        }
+
+        private FrameworkElement BuildSimpleZoneFactionPanel(Zone zone)
+        {
+            var root = new StackPanel { Margin = new Thickness(0, 0, 0, 8) };
+            root.Children.Add(new TextBlock
+            {
+                Text = "Faction Rule",
+                Foreground = (Brush)FindResource("BrushTextDim"),
+                FontSize = 11,
+                Margin = new Thickness(0, 0, 0, 2),
+            });
+
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            var ruleCombo = new ComboBox { Margin = new Thickness(0, 0, 4, 0) };
+            ruleCombo.Items.Add(new FactionPresetItem("Random", FactionPresetKind.Random));
+            ruleCombo.Items.Add(new FactionPresetItem("Match", FactionPresetKind.Match));
+            ruleCombo.Items.Add(new FactionPresetItem("Different from", FactionPresetKind.DifferentFrom));
+
+            var targetCombo = new ComboBox { Margin = new Thickness(4, 0, 0, 0) };
+
+            if (TryGetCommonZoneFactionPreset(zone, out FactionPresetKind kind, out string? arg))
+            {
+                ruleCombo.SelectedItem = ruleCombo.Items
+                    .OfType<FactionPresetItem>()
+                    .FirstOrDefault(item => item.Kind == kind);
+            }
+
+            void PopulateTargetCombo(string? selectedArg = null)
+            {
+                targetCombo.Items.Clear();
+
+                FactionPresetKind selectedKind = (ruleCombo.SelectedItem as FactionPresetItem)?.Kind ?? FactionPresetKind.Random;
+                foreach (FactionTargetItem item in BuildSimpleFactionTargetItems(zone, selectedKind))
+                    targetCombo.Items.Add(item);
+
+                if (selectedArg is not null)
+                    SelectTargetByArg(targetCombo, selectedArg, zone.Name);
+
+                if (targetCombo.SelectedItem is null && targetCombo.Items.Count > 0)
+                    targetCombo.SelectedIndex = 0;
+            }
+
+            void UpdateTargetVisibility()
+            {
+                targetCombo.Visibility =
+                    ruleCombo.SelectedItem is FactionPresetItem { Kind: FactionPresetKind.Match or FactionPresetKind.DifferentFrom }
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+            }
+
+            void Commit()
+            {
+                if (_suppressPropertyEvents)
+                    return;
+                if (ruleCombo.SelectedItem is not FactionPresetItem rule)
+                    return;
+                if (rule.Kind != FactionPresetKind.Random && targetCombo.SelectedItem is not FactionTargetItem)
+                    return;
+
+                Zone? selectedZone = GetSelectedZone();
+                if (selectedZone?.MainObjects is null)
+                    return;
+
+                FactionTargetItem? target = targetCombo.SelectedItem as FactionTargetItem;
+                foreach (int index in GetFactionConfigurableMainObjectIndexes(selectedZone))
+                    selectedZone.MainObjects[index].Faction = CreateFactionSelector(rule.Kind, target, selectedZone.Name);
+
+                UpdateZoneOverride(selectedZone);
+                PopulateZonePropertyPanel(selectedZone);
+            }
+
+            ruleCombo.SelectionChanged += (_, _) =>
+            {
+                PopulateTargetCombo();
+                UpdateTargetVisibility();
+                Commit();
+            };
+            targetCombo.SelectionChanged += (_, _) => Commit();
+            PopulateTargetCombo(arg);
+            UpdateTargetVisibility();
+
+            Grid.SetColumn(ruleCombo, 0);
+            Grid.SetColumn(targetCombo, 1);
+            grid.Children.Add(ruleCombo);
+            grid.Children.Add(targetCombo);
+            root.Children.Add(grid);
+
+            return root;
+        }
+
+        private bool TryGetCommonZoneFactionPreset(Zone zone, out FactionPresetKind kind, out string? arg)
+        {
+            kind = FactionPresetKind.Random;
+            arg = null;
+
+            var indexes = GetFactionConfigurableMainObjectIndexes(zone);
+            if (indexes.Count == 0)
+                return false;
+
+            if (!TryParseSimpleFactionSelector(zone.MainObjects![indexes[0]].Faction, out kind, out arg))
+                return false;
+
+            foreach (int index in indexes.Skip(1))
+            {
+                if (!TryParseSimpleFactionSelector(zone.MainObjects[index].Faction, out FactionPresetKind otherKind, out string? otherArg)
+                    || otherKind != kind
+                    || !string.Equals(otherArg, arg, StringComparison.Ordinal))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool TryParseSimpleFactionSelector(TypedSelector? selector, out FactionPresetKind kind, out string? arg)
+        {
+            kind = FactionPresetKind.Random;
+            arg = null;
+
+            string type = selector?.Type ?? string.Empty;
+            List<string> args = selector?.Args ?? [];
+
+            if (string.Equals(type, "FromList", StringComparison.Ordinal) && args.Count == 0)
+                return true;
+
+            if (string.Equals(type, "Match", StringComparison.Ordinal) && args.Count is 1 or 2)
+            {
+                kind = FactionPresetKind.Match;
+                arg = args.Count == 1 ? args[0] : $"{args[0]} {args[1]}";
+                return true;
+            }
+
+            if (string.Equals(type, "FromList", StringComparison.Ordinal) && args.Count == 1
+                && TryParseDifferentFromArg(args[0], out string? differentFromArg))
+            {
+                kind = FactionPresetKind.DifferentFrom;
+                arg = differentFromArg;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryParseDifferentFromArg(string value, out string? selectorArg)
+        {
+            const string Prefix = "differentFrom:";
+            selectorArg = null;
+            if (!value.StartsWith(Prefix, StringComparison.Ordinal))
+                return false;
+
+            selectorArg = value[Prefix.Length..].Trim();
+            return selectorArg.Length > 0;
+        }
+
+        private TypedSelector CreateFactionSelector(FactionPresetKind kind, FactionTargetItem? target, string currentZoneName)
+        {
+            string targetArg = target?.ToSelectorArg(currentZoneName) ?? "0";
+            return kind switch
+            {
+                FactionPresetKind.Match => new TypedSelector { Type = "Match", Args = target?.ToMatchArgs(currentZoneName) ?? ["0"] },
+                FactionPresetKind.DifferentFrom => new TypedSelector { Type = "FromList", Args = [$"differentFrom: {targetArg}"] },
+                _ => new TypedSelector { Type = "FromList", Args = [] },
+            };
+        }
+
+        private List<int> GetFactionConfigurableMainObjectIndexes(Zone zone)
+        {
+            var result = new List<int>();
+            for (int i = 0; i < (zone.MainObjects?.Count ?? 0); i++)
+            {
+                if (IsFactionConfigurableMainObject(zone.MainObjects![i]))
+                    result.Add(i);
+            }
+
+            return result;
+        }
+
+        private static bool IsFactionConfigurableMainObject(MainObject mainObject)
+            => !string.Equals(mainObject.Type, "Spawn", StringComparison.OrdinalIgnoreCase)
+               && string.Equals(mainObject.Type, "City", StringComparison.OrdinalIgnoreCase);
+
+        private List<FactionTargetItem> BuildSimpleFactionTargetItems(Zone currentZone, FactionPresetKind kind)
+        {
+            var items = new List<FactionTargetItem>();
+
+            if (kind == FactionPresetKind.Match)
+                items.Add(new("Current zone", 0));
+
+            foreach (string playerZoneName in _playerZoneNames.OrderBy(name => name, StringComparer.Ordinal))
+            {
+                if (_zones.FirstOrDefault(zone => string.Equals(zone.Name, playerZoneName, StringComparison.Ordinal))?.MainObjects?.Count > 0)
+                    items.Add(new(PlayerLabelFromZoneName(playerZoneName), 0, playerZoneName));
+            }
+
+            return items;
+        }
+
+        private List<FactionTargetItem> BuildAllFactionTargetItems()
+        {
+            var items = new List<FactionTargetItem>();
+            foreach (Zone zone in OrderedFactionTargetZones())
+            {
+                foreach (FactionTargetItem item in BuildFactionCityTargetItems(zone.Name, includeZoneNameInLabel: true))
+                    items.Add(item);
+            }
+
+            return items;
+        }
+
+        private List<FactionZoneItem> BuildFactionZoneItems()
+            => OrderedFactionTargetZones()
+                .Select(zone => new FactionZoneItem(
+                    _playerZoneNames.Contains(zone.Name) ? PlayerLabelFromZoneName(zone.Name) : zone.Name,
+                    zone.Name))
+                .ToList();
+
+        private IEnumerable<Zone> OrderedFactionTargetZones()
+            => _zones
+                .Where(zone => BuildFactionCityTargetItems(zone.Name, includeZoneNameInLabel: false).Count > 0)
+                .OrderBy(zone => _playerZoneNames.Contains(zone.Name) ? 0 : 1)
+                .ThenBy(zone => zone.Name, StringComparer.Ordinal);
+
+        private List<FactionTargetItem> BuildFactionCityTargetItems(string zoneName, bool includeZoneNameInLabel)
+        {
+            Zone? zone = _zones.FirstOrDefault(candidate => string.Equals(candidate.Name, zoneName, StringComparison.Ordinal));
+            var items = new List<FactionTargetItem>();
+            if (zone?.MainObjects is null)
+                return items;
+
+            bool playerZone = _playerZoneNames.Contains(zone.Name);
+            int cityOrdinal = 1;
+
+            for (int i = 0; i < zone.MainObjects.Count; i++)
+            {
+                MainObject mainObject = zone.MainObjects[i];
+                if (!IsCastleTargetMainObject(mainObject))
+                    continue;
+
+                string cityLabel = playerZone && i == 0
+                    ? "Spawn"
+                    : $"City {cityOrdinal.ToString(CultureInfo.InvariantCulture)}";
+                string label = includeZoneNameInLabel
+                    ? $"{(playerZone ? PlayerLabelFromZoneName(zone.Name) : zone.Name)} {cityLabel}"
+                    : cityLabel;
+                items.Add(new(label, i, zone.Name));
+                cityOrdinal++;
+            }
+
+            return items;
+        }
+
+        private static bool IsCastleTargetMainObject(MainObject mainObject)
+            => string.Equals(mainObject.Type, "Spawn", StringComparison.OrdinalIgnoreCase)
+               || string.Equals(mainObject.Type, "City", StringComparison.OrdinalIgnoreCase);
+
+        private string PlayerLabelFromZoneName(string zoneName)
+        {
+            var ordered = _playerZoneNames.OrderBy(name => name, StringComparer.Ordinal).ToList();
+            int index = ordered.FindIndex(name => string.Equals(name, zoneName, StringComparison.Ordinal));
+            return index >= 0
+                ? $"Player {(index + 1).ToString(CultureInfo.InvariantCulture)}"
+                : zoneName;
+        }
+
+        private void SelectTargetByArg(ComboBox comboBox, string arg, string currentZoneName)
+        {
+            foreach (object item in comboBox.Items)
+            {
+                if (item is FactionTargetItem target
+                    && string.Equals(target.ToSelectorArg(currentZoneName), arg, StringComparison.Ordinal))
+                {
+                    comboBox.SelectedItem = target;
+                    return;
+                }
+            }
+        }
+
+        private Grid BuildFactionTargetPicker(
+            string currentZoneName,
+            out ComboBox zoneCombo,
+            out ComboBox cityCombo,
+            string? selectedArg = null)
+        {
+            var grid = new Grid { Margin = new Thickness(0, 6, 0, 0) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            ComboBox localZoneCombo = new() { Margin = new Thickness(0, 0, 4, 0) };
+            ComboBox localCityCombo = new() { Margin = new Thickness(4, 0, 0, 0) };
+
+            foreach (FactionZoneItem item in BuildFactionZoneItems())
+                localZoneCombo.Items.Add(item);
+
+            if (localZoneCombo.Items.Count > 0)
+                localZoneCombo.SelectedIndex = 0;
+
+            void RefreshCityCombo()
+            {
+                localCityCombo.Items.Clear();
+                if (localZoneCombo.SelectedItem is not FactionZoneItem zoneItem)
+                    return;
+
+                foreach (FactionTargetItem item in BuildFactionCityTargetItems(zoneItem.ZoneName, includeZoneNameInLabel: false))
+                    localCityCombo.Items.Add(item);
+
+                if (localCityCombo.Items.Count > 0)
+                    localCityCombo.SelectedIndex = 0;
+            }
+
+            localZoneCombo.SelectionChanged += (_, _) => RefreshCityCombo();
+            RefreshCityCombo();
+
+            if (selectedArg is not null)
+                SelectTargetPickerByArg(localZoneCombo, localCityCombo, selectedArg, currentZoneName);
+
+            Grid.SetColumn(localZoneCombo, 0);
+            Grid.SetColumn(localCityCombo, 1);
+            grid.Children.Add(localZoneCombo);
+            grid.Children.Add(localCityCombo);
+            zoneCombo = localZoneCombo;
+            cityCombo = localCityCombo;
+            return grid;
+        }
+
+        private void SelectTargetPickerByArg(ComboBox zoneCombo, ComboBox cityCombo, string arg, string currentZoneName)
+        {
+            (int index, string zoneName) = ParseFactionTargetArg(arg, currentZoneName);
+
+            foreach (object item in zoneCombo.Items)
+            {
+                if (item is FactionZoneItem zoneItem
+                    && string.Equals(zoneItem.ZoneName, zoneName, StringComparison.Ordinal))
+                {
+                    zoneCombo.SelectedItem = zoneItem;
+                    break;
+                }
+            }
+
+            foreach (object item in cityCombo.Items)
+            {
+                if (item is FactionTargetItem target && target.MainObjectIndex == index)
+                {
+                    cityCombo.SelectedItem = target;
+                    return;
+                }
+            }
+        }
+
+        private static (int Index, string ZoneName) ParseFactionTargetArg(string arg, string currentZoneName)
+        {
+            string[] parts = arg.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            int index = parts.Length > 0 && int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsed)
+                ? parsed
+                : 0;
+            string zoneName = parts.Length > 1 ? parts[1] : currentZoneName;
+            return (index, zoneName);
+        }
+
+        private string DescribeFactionSelector(TypedSelector? selector, string currentZoneName)
+        {
+            if (TryParseSimpleFactionSelector(selector, out FactionPresetKind kind, out string? arg))
+            {
+                if (kind == FactionPresetKind.Random)
+                    return "Random";
+
+                string target = arg ?? "0";
+                string prefix = kind == FactionPresetKind.Match ? "Matches" : "Different from";
+                return $"{prefix} {DescribeFactionTarget(target, currentZoneName)}";
+            }
+
+            return $"{(string.IsNullOrWhiteSpace(selector?.Type) ? "FromList" : selector.Type)} ({selector?.Args?.Count ?? 0} args)";
+        }
+
+        private string DescribeFactionTarget(string arg, string currentZoneName)
+        {
+            foreach (FactionTargetItem target in BuildAllFactionTargetItems())
+            {
+                if (string.Equals(target.ToSelectorArg(currentZoneName), arg, StringComparison.Ordinal))
+                    return target.Label;
+            }
+
+            return arg;
         }
 
         private void OpenMainObjectAdvancedDialog(int mainObjectIndex)
@@ -1170,6 +1601,145 @@ namespace Olden_Era___Template_Editor
 
             root.Children.Add(sidCombo);
 
+            ComboBox? factionRuleCombo = null;
+            ComboBox? factionMatchZoneCombo = null;
+            ComboBox? factionMatchCityCombo = null;
+            var factionDifferentFromArgs = new List<string>();
+
+            if (!isSpawn)
+            {
+                root.Children.Add(new TextBlock
+                {
+                    Text = "Faction Rule",
+                    Foreground = (Brush)FindResource("BrushTextDim"),
+                    FontSize = 11,
+                    Margin = new Thickness(0, 8, 0, 2),
+                });
+
+                factionRuleCombo = new ComboBox();
+                factionRuleCombo.Items.Add(new FactionPresetItem("Random", FactionPresetKind.Random));
+                factionRuleCombo.Items.Add(new FactionPresetItem("Match", FactionPresetKind.Match));
+                factionRuleCombo.Items.Add(new FactionPresetItem("Different from", FactionPresetKind.DifferentFrom));
+
+                FactionPresetKind initialKind = FactionPresetKind.Random;
+                string? initialMatchArg = null;
+                TypedSelector? workingFaction = working.Faction;
+                if (workingFaction is not null
+                    && string.Equals(workingFaction.Type, "Match", StringComparison.Ordinal)
+                    && workingFaction.Args is { Count: > 0 } matchArgs)
+                {
+                    initialKind = FactionPresetKind.Match;
+                    initialMatchArg = matchArgs[0];
+                }
+                else if (workingFaction is not null
+                    && string.Equals(workingFaction.Type, "FromList", StringComparison.Ordinal)
+                    && workingFaction.Args is { Count: > 0 } fromListArgs)
+                {
+                    initialKind = FactionPresetKind.DifferentFrom;
+                    foreach (string rule in fromListArgs)
+                    {
+                        if (TryParseDifferentFromArg(rule, out string? parsedArg) && parsedArg is not null)
+                            factionDifferentFromArgs.Add(parsedArg);
+                    }
+                }
+
+                factionRuleCombo.SelectedItem = factionRuleCombo.Items
+                    .OfType<FactionPresetItem>()
+                    .First(item => item.Kind == initialKind);
+                root.Children.Add(factionRuleCombo);
+
+                Grid factionMatchTargetGrid = BuildFactionTargetPicker(
+                    selectedZone.Name,
+                    out factionMatchZoneCombo,
+                    out factionMatchCityCombo,
+                    initialMatchArg);
+                root.Children.Add(factionMatchTargetGrid);
+
+                var differentFromPanel = new StackPanel { Margin = new Thickness(0, 6, 0, 0) };
+                root.Children.Add(differentFromPanel);
+
+                void RenderDifferentFromPanel()
+                {
+                    differentFromPanel.Children.Clear();
+
+                    foreach (string arg in factionDifferentFromArgs.ToList())
+                    {
+                        var row = new DockPanel { Margin = new Thickness(0, 0, 0, 4) };
+                        var removeButton = new Button
+                        {
+                            Content = "X",
+                            MinWidth = 28,
+                            Padding = new Thickness(6, 1, 6, 1),
+                            Foreground = (Brush)FindResource("BrushError"),
+                            Style = (Style)FindResource("ToolbarButton"),
+                        };
+                        removeButton.Click += (_, _) =>
+                        {
+                            factionDifferentFromArgs.Remove(arg);
+                            RenderDifferentFromPanel();
+                        };
+                        DockPanel.SetDock(removeButton, Dock.Right);
+                        row.Children.Add(removeButton);
+
+                        row.Children.Add(new TextBlock
+                        {
+                            Text = DescribeFactionTarget(arg, selectedZone.Name),
+                            VerticalAlignment = VerticalAlignment.Center,
+                        });
+
+                        differentFromPanel.Children.Add(row);
+                    }
+
+                    var addGrid = new Grid { Margin = new Thickness(0, 2, 0, 0) };
+                    addGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                    addGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                    Grid addTargetGrid = BuildFactionTargetPicker(
+                        selectedZone.Name,
+                        out ComboBox addZoneCombo,
+                        out ComboBox addCityCombo);
+                    addTargetGrid.Margin = new Thickness(0, 0, 6, 0);
+
+                    var addButton = new Button
+                    {
+                        Content = "Add",
+                        MinWidth = 56,
+                        Style = (Style)FindResource("ToolbarButton"),
+                    };
+                    addButton.Click += (_, _) =>
+                    {
+                        if (addCityCombo.SelectedItem is not FactionTargetItem target)
+                            return;
+
+                        string arg = target.ToSelectorArg(selectedZone.Name);
+                        if (!factionDifferentFromArgs.Contains(arg, StringComparer.Ordinal))
+                            factionDifferentFromArgs.Add(arg);
+                        RenderDifferentFromPanel();
+                    };
+
+                    Grid.SetColumn(addTargetGrid, 0);
+                    Grid.SetColumn(addButton, 1);
+                    addGrid.Children.Add(addTargetGrid);
+                    addGrid.Children.Add(addButton);
+                    differentFromPanel.Children.Add(addGrid);
+                }
+
+                void UpdateFactionRuleVisibility()
+                {
+                    FactionPresetKind selectedKind = (factionRuleCombo.SelectedItem as FactionPresetItem)?.Kind ?? FactionPresetKind.Random;
+                    factionMatchTargetGrid.Visibility = selectedKind == FactionPresetKind.Match
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+                    differentFromPanel.Visibility = selectedKind == FactionPresetKind.DifferentFrom
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
+                }
+
+                factionRuleCombo.SelectionChanged += (_, _) => UpdateFactionRuleVisibility();
+                RenderDifferentFromPanel();
+                UpdateFactionRuleVisibility();
+            }
+
             Slider? guardChanceSlider = null;
             TextBox? guardValueTextBox = null;
             Slider? guardWeeklySlider = null;
@@ -1205,7 +1775,7 @@ namespace Olden_Era___Template_Editor
                 };
 
                 void UpdateGuardChanceLabel()
-                    => guardChanceValue.Text = $"{Math.Round(guardChanceSlider.Value, 0, MidpointRounding.AwayFromZero)}%";
+                    => guardChanceValue.Text = $"{Math.Round(guardChanceSlider!.Value, 0, MidpointRounding.AwayFromZero)}%";
 
                 guardChanceSlider.ValueChanged += (_, _) => UpdateGuardChanceLabel();
                 UpdateGuardChanceLabel();
@@ -1258,7 +1828,7 @@ namespace Olden_Era___Template_Editor
                 };
 
                 void UpdateGuardWeeklyLabel()
-                    => guardWeeklyValue.Text = $"{Math.Round(guardWeeklySlider.Value, 0, MidpointRounding.AwayFromZero)}%";
+                    => guardWeeklyValue.Text = $"{Math.Round(guardWeeklySlider!.Value, 0, MidpointRounding.AwayFromZero)}%";
 
                 guardWeeklySlider.ValueChanged += (_, _) => UpdateGuardWeeklyLabel();
                 UpdateGuardWeeklyLabel();
@@ -1299,6 +1869,37 @@ namespace Olden_Era___Template_Editor
 
                 if (!isSpawn)
                 {
+                    if (factionRuleCombo?.SelectedItem is not FactionPresetItem selectedFactionRule)
+                    {
+                        MessageBox.Show(dialog, "Faction rule must be selected.", "Invalid Faction", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    if (selectedFactionRule.Kind == FactionPresetKind.Match)
+                    {
+                        if (factionMatchCityCombo?.SelectedItem is not FactionTargetItem target)
+                        {
+                            MessageBox.Show(dialog, "Select a faction match target.", "Invalid Faction", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+
+                        working.Faction = CreateFactionSelector(FactionPresetKind.Match, target, selectedZone.Name);
+                    }
+                    else if (selectedFactionRule.Kind == FactionPresetKind.DifferentFrom)
+                    {
+                        working.Faction = new TypedSelector
+                        {
+                            Type = "FromList",
+                            Args = factionDifferentFromArgs
+                                .Select(arg => $"differentFrom: {arg}")
+                                .ToList(),
+                        };
+                    }
+                    else
+                    {
+                        working.Faction = CreateFactionSelector(FactionPresetKind.Random, null, selectedZone.Name);
+                    }
+
                     if (!int.TryParse(guardValueTextBox!.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int guardValue))
                     {
                         MessageBox.Show(dialog, "Guard Value must be a non-negative integer.", "Invalid Value", MessageBoxButton.OK, MessageBoxImage.Warning);

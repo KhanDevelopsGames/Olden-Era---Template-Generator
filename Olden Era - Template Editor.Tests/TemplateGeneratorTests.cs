@@ -1177,6 +1177,101 @@ public class TemplateGeneratorTests
     }
 
     [Fact]
+    public void Generate_ZoneOverridePreservesMainObjectFactionSelectors()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            Topology = MapTopology.Default,
+            ZoneOverrides =
+            [
+                new ZoneOverrideSettings
+                {
+                    ZoneName = "Spawn-A",
+                    MainObjects =
+                    [
+                        new ZoneMainObjectOverride
+                        {
+                            Type = "City",
+                            Faction = new TypedSelector
+                            {
+                                Type = "FromList",
+                                Args = ["differentFrom: 0 Spawn-A", "differentFrom: 0 Spawn-B"]
+                            }
+                        },
+                        new ZoneMainObjectOverride
+                        {
+                            Type = "City",
+                            Faction = new TypedSelector
+                            {
+                                Type = "Match",
+                                Args = ["0", "Spawn-A"]
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        Zone spawnA = RequiredZones(SingleVariant(TemplateGenerator.Generate(settings)))
+            .Single(zone => zone.Name == "Spawn-A");
+
+        var mainObjects = spawnA.MainObjects ?? [];
+        Assert.Equal(2, mainObjects.Count);
+        Assert.Equal("FromList", mainObjects[0].Faction?.Type);
+        Assert.Equal(["differentFrom: 0 Spawn-A", "differentFrom: 0 Spawn-B"], mainObjects[0].Faction?.Args);
+        Assert.Equal("Match", mainObjects[1].Faction?.Type);
+        Assert.Equal(["0", "Spawn-A"], mainObjects[1].Faction?.Args);
+    }
+
+    [Fact]
+    public void Generate_ZoneOverrideKeepsMatchFactionTargetAsSeparateArgs()
+    {
+        var settings = new GeneratorSettings
+        {
+            PlayerCount = 2,
+            Topology = MapTopology.Default,
+            ZoneOverrides =
+            [
+                new ZoneOverrideSettings
+                {
+                    ZoneName = "Spawn-A",
+                    MainObjects =
+                    [
+                        new ZoneMainObjectOverride
+                        {
+                            Type = "City",
+                            Faction = new TypedSelector
+                            {
+                                Type = "Match",
+                                Args = ["0", "Spawn-B"]
+                            }
+                        },
+                        new ZoneMainObjectOverride
+                        {
+                            Type = "City",
+                            Faction = new TypedSelector
+                            {
+                                Type = "FromList",
+                                Args = ["differentFrom: 0 Spawn-B"]
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        Zone spawnA = RequiredZones(SingleVariant(TemplateGenerator.Generate(settings)))
+            .Single(zone => zone.Name == "Spawn-A");
+
+        var mainObjects = spawnA.MainObjects ?? [];
+        Assert.Equal("Match", mainObjects[0].Faction?.Type);
+        Assert.Equal(["0", "Spawn-B"], mainObjects[0].Faction?.Args);
+        Assert.Equal("FromList", mainObjects[1].Faction?.Type);
+        Assert.Equal(["differentFrom: 0 Spawn-B"], mainObjects[1].Faction?.Args);
+    }
+
+    [Fact]
     public void Generate_ZoneOverrideUnknownZoneThrows()
     {
         var settings = new GeneratorSettings
