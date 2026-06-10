@@ -58,7 +58,8 @@ namespace Olden_Era___Template_Editor
             int? UnguardedContentValue,
             int? UnguardedContentValuePerArea,
             int? ResourcesValue,
-            int? ResourcesValuePerArea);
+            int? ResourcesValuePerArea,
+            List<MainObject>? MainObjects);
 
         private enum ZoneTier { Bronze, Silver, Gold, PlayerToPlayer }
         private static readonly string[] StrengthLabels = ["Weak", "Moderate", "Medium", "High", "Very High"];
@@ -412,7 +413,7 @@ namespace Olden_Era___Template_Editor
             int count = 0;
             foreach (var obj in zone.MainObjects ?? [])
             {
-                if (obj.Type is "City" or "Spawn")
+                if (obj.Type is "City" or "Spawn" or "AbandonedOutpost")
                     count++;
             }
 
@@ -569,6 +570,7 @@ namespace Olden_Era___Template_Editor
                 SldZoneUnguardedContentValueMultiplier.Value = ComputeContentMultiplierPercent(original.UnguardedContentValue, zone.UnguardedContentValue);
                 SldZoneResourcesValueMultiplier.Value = ComputeContentMultiplierPercent(original.ResourcesValue, zone.ResourcesValue);
                 UpdateZoneSliderLabels();
+                RenderZoneMainObjectsEditor(zone);
             }
             finally
             {
@@ -711,6 +713,9 @@ namespace Olden_Era___Template_Editor
                 PnlZoneAdvanced.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
                 PnlZoneAdvancedContentValues.Visibility = advanced ? Visibility.Visible : Visibility.Collapsed;
                 PnlZoneContentMultipliers.Visibility = advanced ? Visibility.Collapsed : Visibility.Visible;
+                Zone? selectedZone = GetSelectedZone();
+                if (selectedZone is not null)
+                    RenderZoneMainObjectsEditor(selectedZone);
                 return;
             }
 
@@ -932,6 +937,421 @@ namespace Olden_Era___Template_Editor
         private void TxtZoneResourcesValuePerArea_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter) TxtZoneResourcesValuePerArea_Commit(sender, e);
+        }
+
+        private void BtnZoneAddCity_Click(object sender, RoutedEventArgs e)
+            => AddMainObjectToSelectedZone("City");
+
+        private void BtnZoneAddAbandonedOutpost_Click(object sender, RoutedEventArgs e)
+            => AddMainObjectToSelectedZone("AbandonedOutpost");
+
+        private Zone? GetSelectedZone()
+            => _selectedZoneName is null
+                ? null
+                : _zones.FirstOrDefault(zone => string.Equals(zone.Name, _selectedZoneName, StringComparison.Ordinal));
+
+        private void AddMainObjectToSelectedZone(string type)
+        {
+            Zone? zone = GetSelectedZone();
+            if (zone is null)
+                return;
+
+            zone.MainObjects ??= [];
+            zone.MainObjects.Add(CreateNewMainObject(zone, type));
+            UpdateZoneOverride(zone);
+            PopulateZonePropertyPanel(zone);
+        }
+
+        private MainObject CreateNewMainObject(Zone zone, string type)
+        {
+            MainObject? template = zone.MainObjects?
+                .FirstOrDefault(mainObject => string.Equals(mainObject.Type, type, StringComparison.OrdinalIgnoreCase))
+                ?? zone.MainObjects?.FirstOrDefault(mainObject => !string.Equals(mainObject.Type, "Spawn", StringComparison.OrdinalIgnoreCase));
+
+            if (template is not null)
+            {
+                MainObject clone = CloneMainObject(template);
+                clone.Type = type;
+                if (!string.Equals(type, "Spawn", StringComparison.OrdinalIgnoreCase))
+                    clone.Spawn = null;
+                return clone;
+            }
+
+            return new MainObject
+            {
+                Type = type,
+                GuardChance = 1.0,
+                GuardValue = string.Equals(type, "AbandonedOutpost", StringComparison.OrdinalIgnoreCase) ? 10_000 : 4_000,
+                GuardWeeklyIncrement = 0.10,
+                BuildingsConstructionSid = "poor_buildings_construction",
+                Placement = "Uniform",
+                PlacementArgs = ["true", "0.8", "2"],
+            };
+        }
+
+        private void RenderZoneMainObjectsEditor(Zone zone)
+        {
+            if (PnlZoneMainObjectsEditor is null)
+                return;
+
+            PnlZoneMainObjectsEditor.Children.Clear();
+
+            zone.MainObjects ??= [];
+            bool advanced = ChkPropAdvanced.IsChecked == true;
+            bool playerZone = _playerZoneNames.Contains(zone.Name);
+
+            if (zone.MainObjects.Count == 0)
+            {
+                PnlZoneMainObjectsEditor.Children.Add(new TextBlock
+                {
+                    Text = "No main objects in this zone.",
+                    Foreground = (Brush)FindResource("BrushTextDim"),
+                    FontStyle = FontStyles.Italic,
+                });
+            }
+
+            for (int index = 0; index < zone.MainObjects.Count; index++)
+            {
+                MainObject mainObject = zone.MainObjects[index];
+                bool isSpawn = string.Equals(mainObject.Type, "Spawn", StringComparison.OrdinalIgnoreCase);
+
+                if (isSpawn && !playerZone)
+                    continue;
+
+                if (!advanced)
+                {
+                    var row = new DockPanel { Margin = new Thickness(0, 0, 0, 6) };
+
+                    if (!isSpawn)
+                    {
+                        var deleteButton = new Button
+                        {
+                            Content = "Delete",
+                            Style = (Style)FindResource("ToolbarButton"),
+                            Padding = new Thickness(8, 2, 8, 2),
+                            Margin = new Thickness(8, 0, 0, 0),
+                        };
+                        int removeIndex = index;
+                        deleteButton.Click += (_, _) =>
+                        {
+                            Zone? selectedZone = GetSelectedZone();
+                            if (selectedZone is null || selectedZone.MainObjects is null)
+                                return;
+                            if (removeIndex < 0 || removeIndex >= selectedZone.MainObjects.Count)
+                                return;
+
+                            selectedZone.MainObjects.RemoveAt(removeIndex);
+                            UpdateZoneOverride(selectedZone);
+                            PopulateZonePropertyPanel(selectedZone);
+                        };
+                        DockPanel.SetDock(deleteButton, Dock.Right);
+                        row.Children.Add(deleteButton);
+                    }
+
+                    row.Children.Add(new TextBlock
+                    {
+                        Text = isSpawn ? "Spawn" : mainObject.Type,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        FontWeight = FontWeights.SemiBold,
+                    });
+
+                    PnlZoneMainObjectsEditor.Children.Add(row);
+                    continue;
+                }
+
+                var rowAdvanced = new DockPanel { Margin = new Thickness(0, 0, 0, 6) };
+
+                if (!isSpawn)
+                {
+                    var deleteButton = new Button
+                    {
+                        Content = "Delete",
+                        Style = (Style)FindResource("ToolbarButton"),
+                        Padding = new Thickness(8, 2, 8, 2),
+                        Margin = new Thickness(8, 0, 0, 0),
+                    };
+                    int removeIndex = index;
+                    deleteButton.Click += (_, _) =>
+                    {
+                        Zone? selectedZone = GetSelectedZone();
+                        if (selectedZone is null || selectedZone.MainObjects is null)
+                            return;
+                        if (removeIndex < 0 || removeIndex >= selectedZone.MainObjects.Count)
+                            return;
+
+                        selectedZone.MainObjects.RemoveAt(removeIndex);
+                        UpdateZoneOverride(selectedZone);
+                        PopulateZonePropertyPanel(selectedZone);
+                    };
+                    DockPanel.SetDock(deleteButton, Dock.Right);
+                    rowAdvanced.Children.Add(deleteButton);
+                }
+
+                var editButton = new Button
+                {
+                    Content = "Edit",
+                    Style = (Style)FindResource("ToolbarButton"),
+                    Padding = new Thickness(8, 2, 8, 2),
+                    Margin = new Thickness(8, 0, 0, 0),
+                };
+                int editIndex = index;
+                editButton.Click += (_, _) => OpenMainObjectAdvancedDialog(editIndex);
+                DockPanel.SetDock(editButton, Dock.Right);
+                rowAdvanced.Children.Add(editButton);
+
+                rowAdvanced.Children.Add(new TextBlock
+                {
+                    Text = isSpawn ? "Spawn" : mainObject.Type,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontWeight = FontWeights.SemiBold,
+                });
+
+                PnlZoneMainObjectsEditor.Children.Add(rowAdvanced);
+            }
+
+            PnlZoneMainObjectsActions.Visibility = Visibility.Visible;
+        }
+
+        private void OpenMainObjectAdvancedDialog(int mainObjectIndex)
+        {
+            Zone? selectedZone = GetSelectedZone();
+            if (selectedZone?.MainObjects is null)
+                return;
+            if (mainObjectIndex < 0 || mainObjectIndex >= selectedZone.MainObjects.Count)
+                return;
+
+            bool playerZone = _playerZoneNames.Contains(selectedZone.Name);
+            MainObject original = selectedZone.MainObjects[mainObjectIndex];
+            bool isSpawn = string.Equals(original.Type, "Spawn", StringComparison.OrdinalIgnoreCase);
+            if (isSpawn && !playerZone)
+                return;
+
+            MainObject working = CloneMainObject(original);
+
+            var dialog = new Window
+            {
+                Title = isSpawn ? "Edit Spawn" : $"Edit {working.Type}",
+                Width = 420,
+                SizeToContent = SizeToContent.Height,
+                ResizeMode = ResizeMode.NoResize,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Background = new SolidColorBrush(Color.FromRgb(34, 30, 21)),
+                Foreground = new SolidColorBrush(Color.FromRgb(232, 213, 163)),
+            };
+
+            Window? owner = Window.GetWindow(this);
+            if (owner is not null)
+                dialog.Owner = owner;
+
+            var root = new StackPanel
+            {
+                Margin = new Thickness(12),
+            };
+
+            root.Children.Add(new TextBlock
+            {
+                Text = "Buildings Construction",
+                Foreground = (Brush)FindResource("BrushTextDim"),
+                FontSize = 11,
+                Margin = new Thickness(0, 0, 0, 2),
+            });
+
+            var sidCombo = new ComboBox
+            {
+                Margin = new Thickness(0, 0, 0, 2),
+            };
+
+            foreach (object item in BuildOrderedBuildingsConstructionSidItems())
+                sidCombo.Items.Add(item);
+
+            sidCombo.SelectedItem = working.BuildingsConstructionSid;
+            if (sidCombo.SelectedItem is null)
+                sidCombo.SelectedItem = "default_buildings_construction";
+
+            root.Children.Add(sidCombo);
+
+            Slider? guardChanceSlider = null;
+            TextBox? guardValueTextBox = null;
+            Slider? guardWeeklySlider = null;
+
+            if (!isSpawn)
+            {
+                root.Children.Add(new TextBlock
+                {
+                    Text = "Guard Chance",
+                    Foreground = (Brush)FindResource("BrushTextDim"),
+                    FontSize = 11,
+                    Margin = new Thickness(0, 8, 0, 2),
+                });
+
+                var guardChanceGrid = new Grid();
+                guardChanceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                guardChanceGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                guardChanceSlider = new Slider
+                {
+                    Minimum = 0,
+                    Maximum = 100,
+                    TickFrequency = 5,
+                    IsSnapToTickEnabled = true,
+                    Value = Math.Round(Math.Clamp((working.GuardChance ?? 1.0) * 100.0, 0.0, 100.0), 0, MidpointRounding.AwayFromZero),
+                };
+
+                var guardChanceValue = new TextBlock
+                {
+                    Margin = new Thickness(8, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontWeight = FontWeights.SemiBold,
+                };
+
+                void UpdateGuardChanceLabel()
+                    => guardChanceValue.Text = $"{Math.Round(guardChanceSlider.Value, 0, MidpointRounding.AwayFromZero)}%";
+
+                guardChanceSlider.ValueChanged += (_, _) => UpdateGuardChanceLabel();
+                UpdateGuardChanceLabel();
+
+                Grid.SetColumn(guardChanceSlider, 0);
+                Grid.SetColumn(guardChanceValue, 1);
+                guardChanceGrid.Children.Add(guardChanceSlider);
+                guardChanceGrid.Children.Add(guardChanceValue);
+                root.Children.Add(guardChanceGrid);
+
+                root.Children.Add(new TextBlock
+                {
+                    Text = "Guard Value",
+                    Foreground = (Brush)FindResource("BrushTextDim"),
+                    FontSize = 11,
+                    Margin = new Thickness(0, 8, 0, 2),
+                });
+                guardValueTextBox = new TextBox
+                {
+                    Text = working.GuardValue?.ToString(CultureInfo.InvariantCulture) ?? string.Empty,
+                };
+                root.Children.Add(guardValueTextBox);
+
+                root.Children.Add(new TextBlock
+                {
+                    Text = "Guard Weekly Increment",
+                    Foreground = (Brush)FindResource("BrushTextDim"),
+                    FontSize = 11,
+                    Margin = new Thickness(0, 8, 0, 2),
+                });
+
+                var guardWeeklyGrid = new Grid();
+                guardWeeklyGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                guardWeeklyGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                guardWeeklySlider = new Slider
+                {
+                    Minimum = 0,
+                    Maximum = 25,
+                    TickFrequency = 5,
+                    IsSnapToTickEnabled = true,
+                    Value = Math.Round(Math.Clamp((working.GuardWeeklyIncrement ?? 0.10) * 100.0, 0.0, 25.0), 0, MidpointRounding.AwayFromZero),
+                };
+
+                var guardWeeklyValue = new TextBlock
+                {
+                    Margin = new Thickness(8, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontWeight = FontWeights.SemiBold,
+                };
+
+                void UpdateGuardWeeklyLabel()
+                    => guardWeeklyValue.Text = $"{Math.Round(guardWeeklySlider.Value, 0, MidpointRounding.AwayFromZero)}%";
+
+                guardWeeklySlider.ValueChanged += (_, _) => UpdateGuardWeeklyLabel();
+                UpdateGuardWeeklyLabel();
+
+                Grid.SetColumn(guardWeeklySlider, 0);
+                Grid.SetColumn(guardWeeklyValue, 1);
+                guardWeeklyGrid.Children.Add(guardWeeklySlider);
+                guardWeeklyGrid.Children.Add(guardWeeklyValue);
+                root.Children.Add(guardWeeklyGrid);
+            }
+
+            var buttons = new StackPanel
+            {
+                Orientation = System.Windows.Controls.Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Margin = new Thickness(0, 12, 0, 0),
+            };
+
+            var cancelButton = new Button
+            {
+                Content = "Cancel",
+                MinWidth = 90,
+                Margin = new Thickness(0, 0, 8, 0),
+            };
+            cancelButton.Click += (_, _) => dialog.Close();
+            buttons.Children.Add(cancelButton);
+
+            var saveButton = new Button
+            {
+                Content = "Save",
+                MinWidth = 90,
+                IsDefault = true,
+            };
+            saveButton.Click += (_, _) =>
+            {
+                if (sidCombo.SelectedItem is string selectedSid)
+                    working.BuildingsConstructionSid = selectedSid;
+
+                if (!isSpawn)
+                {
+                    if (!int.TryParse(guardValueTextBox!.Text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int guardValue))
+                    {
+                        MessageBox.Show(dialog, "Guard Value must be a non-negative integer.", "Invalid Value", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    working.GuardChance = Math.Clamp(Math.Round((guardChanceSlider?.Value ?? 100.0) / 100.0, 2, MidpointRounding.AwayFromZero), 0.0, 1.0);
+                    working.GuardValue = Math.Max(0, guardValue);
+                    working.GuardWeeklyIncrement = Math.Clamp(Math.Round((guardWeeklySlider?.Value ?? 10.0) / 100.0, 2, MidpointRounding.AwayFromZero), 0.0, 0.25);
+                }
+
+                selectedZone.MainObjects[mainObjectIndex] = working;
+                UpdateZoneOverride(selectedZone);
+                PopulateZonePropertyPanel(selectedZone);
+                dialog.DialogResult = true;
+                dialog.Close();
+            };
+            buttons.Children.Add(saveButton);
+
+            root.Children.Add(buttons);
+            dialog.Content = root;
+            dialog.ShowDialog();
+        }
+
+        private static List<object> BuildOrderedBuildingsConstructionSidItems()
+        {
+            string[] preferredOrder =
+            [
+                "default_buildings_construction",
+                "extra_poor_buildings_construction",
+                "poor_buildings_construction",
+                "medium_buildings_construction",
+                "rich_buildings_construction",
+                "extra_rich_buildings_construction",
+                "ultra_rich_buildings_construction",
+            ];
+
+            var known = new HashSet<string>(KnownValues.BuildingsConstructionSids, StringComparer.Ordinal);
+            var items = new List<object>();
+
+            foreach (string sid in preferredOrder)
+            {
+                if (known.Remove(sid))
+                    items.Add(sid);
+            }
+
+            if (known.Count > 0)
+                items.Add(new Separator());
+
+            foreach (string sid in known.OrderBy(value => value, StringComparer.Ordinal))
+                items.Add(sid);
+
+            return items;
         }
 
         private void SldZoneSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -1556,7 +1976,8 @@ namespace Olden_Era___Template_Editor
                 zone.UnguardedContentValue,
                 zone.UnguardedContentValuePerArea,
                 zone.ResourcesValue,
-                zone.ResourcesValuePerArea);
+                zone.ResourcesValuePerArea,
+                CloneMainObjects(zone.MainObjects));
 
         private void UpdateZoneOverride(Zone zone)
         {
@@ -1616,8 +2037,119 @@ namespace Olden_Era___Template_Editor
             if (zone.ResourcesValuePerArea != original.ResourcesValuePerArea)
                 overrideSettings.ResourcesValuePerArea = zone.ResourcesValuePerArea;
 
+            if (!AreMainObjectsEquivalent(zone.MainObjects, original.MainObjects))
+                overrideSettings.MainObjects = ToZoneMainObjectOverrides(zone.MainObjects);
+
             return HasChangedFields(overrideSettings) ? overrideSettings : null;
         }
+
+        private static List<MainObject>? CloneMainObjects(List<MainObject>? source)
+            => source == null ? null : source.Select(CloneMainObject).ToList();
+
+        private static MainObject CloneMainObject(MainObject source)
+            => new()
+            {
+                Type = source.Type,
+                Spawn = source.Spawn,
+                Owner = source.Owner,
+                GuardChance = source.GuardChance,
+                GuardValue = source.GuardValue,
+                GuardWeeklyIncrement = source.GuardWeeklyIncrement,
+                RemoveGuardIfHasOwner = source.RemoveGuardIfHasOwner,
+                BuildingsConstructionSid = source.BuildingsConstructionSid,
+                Faction = source.Faction == null
+                    ? null
+                    : new TypedSelector
+                    {
+                        Type = source.Faction.Type,
+                        Args = source.Faction.Args == null ? null : [.. source.Faction.Args],
+                    },
+                Placement = source.Placement,
+                PlacementArgs = source.PlacementArgs == null ? null : [.. source.PlacementArgs],
+                HoldCityWinCon = source.HoldCityWinCon,
+            };
+
+        private static bool AreMainObjectsEquivalent(List<MainObject>? left, List<MainObject>? right)
+        {
+            int leftCount = left?.Count ?? 0;
+            int rightCount = right?.Count ?? 0;
+            if (leftCount != rightCount)
+                return false;
+
+            for (int i = 0; i < leftCount; i++)
+            {
+                MainObject leftItem = left![i];
+                MainObject rightItem = right![i];
+
+                if (!string.Equals(leftItem.Type, rightItem.Type, StringComparison.Ordinal)
+                    || !string.Equals(leftItem.Spawn, rightItem.Spawn, StringComparison.Ordinal)
+                    || !string.Equals(leftItem.Owner, rightItem.Owner, StringComparison.Ordinal)
+                    || !AreClose(leftItem.GuardChance, rightItem.GuardChance)
+                    || leftItem.GuardValue != rightItem.GuardValue
+                    || !AreClose(leftItem.GuardWeeklyIncrement, rightItem.GuardWeeklyIncrement)
+                    || leftItem.RemoveGuardIfHasOwner != rightItem.RemoveGuardIfHasOwner
+                    || !string.Equals(leftItem.BuildingsConstructionSid, rightItem.BuildingsConstructionSid, StringComparison.Ordinal)
+                    || !string.Equals(leftItem.Placement, rightItem.Placement, StringComparison.Ordinal)
+                    || leftItem.HoldCityWinCon != rightItem.HoldCityWinCon)
+                {
+                    return false;
+                }
+
+                if (!AreStringListsEqual(leftItem.PlacementArgs, rightItem.PlacementArgs)
+                    || !AreTypedSelectorsEqual(leftItem.Faction, rightItem.Faction))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool AreStringListsEqual(List<string>? left, List<string>? right)
+        {
+            int leftCount = left?.Count ?? 0;
+            int rightCount = right?.Count ?? 0;
+            if (leftCount != rightCount)
+                return false;
+
+            for (int i = 0; i < leftCount; i++)
+            {
+                if (!string.Equals(left![i], right![i], StringComparison.Ordinal))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool AreTypedSelectorsEqual(TypedSelector? left, TypedSelector? right)
+        {
+            if (left is null && right is null)
+                return true;
+            if (left is null || right is null)
+                return false;
+
+            return string.Equals(left.Type, right.Type, StringComparison.Ordinal)
+                && AreStringListsEqual(left.Args, right.Args);
+        }
+
+        private static List<ZoneMainObjectOverride>? ToZoneMainObjectOverrides(List<MainObject>? source)
+            => source == null
+                ? null
+                : source.Select(mainObject => new ZoneMainObjectOverride
+                {
+                    Type = mainObject.Type,
+                    Spawn = mainObject.Spawn,
+                    Owner = mainObject.Owner,
+                    GuardChance = mainObject.GuardChance,
+                    GuardValue = mainObject.GuardValue,
+                    GuardWeeklyIncrement = mainObject.GuardWeeklyIncrement,
+                    RemoveGuardIfHasOwner = mainObject.RemoveGuardIfHasOwner,
+                    BuildingsConstructionSid = mainObject.BuildingsConstructionSid,
+                    Faction = mainObject.Faction,
+                    Placement = mainObject.Placement,
+                    PlacementArgs = mainObject.PlacementArgs == null ? null : [.. mainObject.PlacementArgs],
+                    HoldCityWinCon = mainObject.HoldCityWinCon,
+                }).ToList();
 
         private static bool HasChangedFields(ZoneOverrideSettings value)
             => value.Size.HasValue
