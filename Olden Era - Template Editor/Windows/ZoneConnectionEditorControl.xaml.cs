@@ -117,6 +117,10 @@ namespace Olden_Era___Template_Editor
             ["Slow (5%)", "Normal (10%)", "Standard (15%)", "Fast (20%)", "Very Fast (25%)"];
         private static readonly double[] WeeklyIncrementValues =
             [0.05, 0.10, 0.15, 0.20, 0.25];
+        private static readonly string[] PlacementDistanceLabels =
+            ["Furthest", "Far", "Further", "Halfway", "Near", "Center"];
+        private static readonly double[] PlacementDistanceValues =
+            [-1.0, -0.7, -0.3, 0.0, 0.4, 1.0];
 
         private static readonly SolidColorBrush BrushPlayerFill = new(Color.FromRgb(42, 90, 50));
         private static readonly SolidColorBrush BrushPlayerBorder = new(Color.FromRgb(100, 200, 120));
@@ -1025,7 +1029,7 @@ namespace Olden_Era___Template_Editor
                     ? new TypedSelector { Type = "FromList", Args = [] }
                     : null,
                 Placement = "Uniform",
-                PlacementArgs = ["false", "0.8", "2"],
+                PlacementArgs = ["false", "-0.4", "3"],
             };
         }
 
@@ -1743,6 +1747,7 @@ namespace Olden_Era___Template_Editor
             Slider? guardChanceSlider = null;
             TextBox? guardValueTextBox = null;
             Slider? guardWeeklySlider = null;
+            Slider? placementDistanceSlider = null;
 
             if (!isSpawn)
             {
@@ -1840,6 +1845,54 @@ namespace Olden_Era___Template_Editor
                 root.Children.Add(guardWeeklyGrid);
             }
 
+            if (string.Equals(working.Placement, "Uniform", StringComparison.Ordinal))
+            {
+                root.Children.Add(new TextBlock
+                {
+                    Text = "Distance From Center",
+                    Foreground = (Brush)FindResource("BrushTextDim"),
+                    FontSize = 11,
+                    Margin = new Thickness(0, 8, 0, 2),
+                });
+
+                var placementGrid = new Grid();
+                placementGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                placementGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                placementDistanceSlider = new Slider
+                {
+                    Minimum = 0,
+                    Maximum = PlacementDistanceValues.Length - 1,
+                    TickFrequency = 1,
+                    IsSnapToTickEnabled = true,
+                    Value = NearestPlacementDistanceIndex(GetUniformPlacementDistanceValue(working)),
+                };
+
+                var placementValue = new TextBlock
+                {
+                    Margin = new Thickness(8, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontWeight = FontWeights.SemiBold,
+                    MinWidth = 58,
+                };
+
+                void UpdatePlacementDistanceLabel()
+                {
+                    int index = (int)Math.Round(placementDistanceSlider!.Value, 0, MidpointRounding.AwayFromZero);
+                    index = Math.Clamp(index, 0, PlacementDistanceLabels.Length - 1);
+                    placementValue.Text = PlacementDistanceLabels[index];
+                }
+
+                placementDistanceSlider.ValueChanged += (_, _) => UpdatePlacementDistanceLabel();
+                UpdatePlacementDistanceLabel();
+
+                Grid.SetColumn(placementDistanceSlider, 0);
+                Grid.SetColumn(placementValue, 1);
+                placementGrid.Children.Add(placementDistanceSlider);
+                placementGrid.Children.Add(placementValue);
+                root.Children.Add(placementGrid);
+            }
+
             var buttons = new StackPanel
             {
                 Orientation = System.Windows.Controls.Orientation.Horizontal,
@@ -1911,6 +1964,13 @@ namespace Olden_Era___Template_Editor
                     working.GuardWeeklyIncrement = Math.Clamp(Math.Round((guardWeeklySlider?.Value ?? 10.0) / 100.0, 2, MidpointRounding.AwayFromZero), 0.0, 0.25);
                 }
 
+                if (placementDistanceSlider is not null)
+                {
+                    int placementIndex = (int)Math.Round(placementDistanceSlider.Value, 0, MidpointRounding.AwayFromZero);
+                    placementIndex = Math.Clamp(placementIndex, 0, PlacementDistanceValues.Length - 1);
+                    SetUniformPlacementDistanceValue(working, PlacementDistanceValues[placementIndex]);
+                }
+
                 selectedZone.MainObjects[mainObjectIndex] = working;
                 UpdateZoneOverride(selectedZone);
                 PopulateZonePropertyPanel(selectedZone);
@@ -1953,6 +2013,47 @@ namespace Olden_Era___Template_Editor
                 items.Add(sid);
 
             return items;
+        }
+
+        private static double GetUniformPlacementDistanceValue(MainObject mainObject)
+        {
+            if (mainObject.PlacementArgs is { Count: > 1 }
+                && double.TryParse(mainObject.PlacementArgs[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double value))
+            {
+                return Math.Clamp(value, -1.0, 1.0);
+            }
+
+            return -0.7;
+        }
+
+        private static int NearestPlacementDistanceIndex(double value)
+        {
+            int bestIndex = 0;
+            double bestDistance = double.MaxValue;
+            for (int i = 0; i < PlacementDistanceValues.Length; i++)
+            {
+                double distance = Math.Abs(PlacementDistanceValues[i] - value);
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    bestIndex = i;
+                }
+            }
+
+            return bestIndex;
+        }
+
+        private static void SetUniformPlacementDistanceValue(MainObject mainObject, double value)
+        {
+            mainObject.PlacementArgs ??= [];
+            if (mainObject.PlacementArgs.Count == 0)
+                mainObject.PlacementArgs.Add("false");
+            if (mainObject.PlacementArgs.Count == 1)
+                mainObject.PlacementArgs.Add("-0.7");
+            if (mainObject.PlacementArgs.Count == 2)
+                mainObject.PlacementArgs.Add("3");
+
+            mainObject.PlacementArgs[1] = value.ToString("0.###", CultureInfo.InvariantCulture);
         }
 
         private void SldZoneSize_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
