@@ -1029,7 +1029,7 @@ namespace Olden_Era___Template_Editor
                     ? new TypedSelector { Type = "FromList", Args = [] }
                     : null,
                 Placement = "Uniform",
-                PlacementArgs = ["false", "-0.4", "3"],
+                PlacementArgs = ["false", "-0.7", "3"],
             };
         }
 
