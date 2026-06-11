@@ -416,7 +416,7 @@ namespace Olden_Era___Template_Editor
         {
             int count = 0;
             foreach (var obj in zone.MainObjects ?? [])
-                if (obj.Type is "City" or "Spawn")
+                if (obj.Type is "City" or "Spawn" or "AbandonedOutpost")
                     count++;
             return count;
         }
@@ -1003,8 +1003,11 @@ namespace Olden_Era___Template_Editor
         private void AddConnectionWithDefaults(string from, string to)
         {
             ZoneTier tier = HigherTierOf(from, to);
+            string baseName = $"Conn-{ZoneLetterFromName(from)}-{ZoneLetterFromName(to)}";
+            string uniqueName = GetUniqueConnectionName(baseName);
             var newConn = new Connection
             {
+                Name                 = uniqueName,
                 From                 = from,
                 To                   = to,
                 ConnectionType       = "Direct",
@@ -1064,6 +1067,28 @@ namespace Olden_Era___Template_Editor
         {
             int dash = zoneName.IndexOf('-');
             return dash >= 0 ? zoneName[(dash + 1)..] : zoneName;
+        }
+
+        private string GetUniqueConnectionName(string baseName)
+        {
+            var existing = _connections
+                .Select(c => c.Name)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .ToHashSet(StringComparer.Ordinal);
+
+            if (!existing.Contains(baseName))
+                return baseName;
+
+            int suffix = 2;
+            string candidate;
+            do
+            {
+                candidate = $"{baseName}-{suffix}";
+                suffix++;
+            }
+            while (existing.Contains(candidate));
+
+            return candidate;
         }
 
         public static Connection CloneConnection(Connection c, bool isUserAdded = false) => new()

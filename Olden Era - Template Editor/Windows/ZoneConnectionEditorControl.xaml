@@ -1,0 +1,406 @@
+<UserControl x:Class="Olden_Era___Template_Editor.ZoneConnectionEditorControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#1A1510"
+             Foreground="#E8D5A3"
+             FontFamily="Segoe UI"
+             FontSize="13"
+             Focusable="True">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Themes/MedievalTheme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Border BorderBrush="{StaticResource BrushBorder}" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- ═══ MAIN CONTENT ═════════════════════════════════════════════ -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="7*"/>
+                    <ColumnDefinition Width="3*" MinWidth="230"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- ─── Canvas area ────────────────────────────────────────── -->
+                <Grid Grid.Column="0">
+                    <Canvas x:Name="ZoneCanvas"
+                            Background="#1C1610"
+                            MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
+                            MouseMove="Canvas_MouseMove"
+                            MouseLeftButtonUp="Canvas_MouseLeftButtonUp"
+                            ClipToBounds="True"/>
+                </Grid>
+
+                <!-- ─── Property panel ─────────────────────────────────────── -->
+                <Border Grid.Column="1" Background="#221E15"
+                        BorderBrush="{StaticResource BrushBorder}" BorderThickness="1,0,0,0">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel x:Name="PnlProperties" Visibility="Collapsed" Margin="10,8">
+
+                            <!-- Header + Advanced toggle (matches MainWindow pattern) -->
+                            <DockPanel LastChildFill="False" Margin="0,0,0,8">
+                                <TextBlock x:Name="TxtPropertiesHeader" Text="CONNECTION PROPERTIES"
+                                           Style="{StaticResource SectionHeader}"
+                                           DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                                <CheckBox x:Name="ChkPropAdvanced" Content="Advanced"
+                                          DockPanel.Dock="Right" VerticalAlignment="Center"
+                                          FontSize="11" Margin="12,0,0,0"
+                                          Checked="ChkPropAdvanced_Changed"
+                                          Unchecked="ChkPropAdvanced_Changed"/>
+                            </DockPanel>
+
+                            <StackPanel x:Name="PnlConnectionProperties">
+
+                            <!-- Connection Type -->
+                            <TextBlock Text="Connection Type" Foreground="{StaticResource BrushTextDim}"
+                                       FontSize="11" Margin="0,0,0,2"/>
+                            <ComboBox x:Name="CmbConnectionType" TabIndex="103"
+                                      SelectionChanged="CmbConnectionType_SelectionChanged"/>
+
+                            <!-- Guard Strength -->
+                            <TextBlock Text="Guard Strength" Foreground="{StaticResource BrushTextDim}"
+                                       FontSize="11" Margin="0,6,0,2"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="CmbGuardValue" Grid.Column="0" TabIndex="104"
+                                          SelectionChanged="CmbGuardValue_SelectionChanged"
+                                          ToolTip="Guard strength preset; tier inferred from connected zones"/>
+                                <TextBox x:Name="TxtPropGuardValueCustom" Grid.Column="1" Width="65" Margin="4,0,0,0"
+                                         TabIndex="104" Visibility="Collapsed"
+                                         Style="{StaticResource HintTextBox}" Tag="value"
+                                         LostFocus="TxtPropGuardValueCustom_Commit"
+                                         KeyDown="TxtPropGuardValueCustom_KeyDown"
+                                         ToolTip="Custom guard value (integer)"/>
+                            </Grid>
+
+                            <!-- Weekly Growth -->
+                            <TextBlock Text="Weekly Growth" Foreground="{StaticResource BrushTextDim}"
+                                       FontSize="11" Margin="0,6,0,2"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <ComboBox x:Name="CmbGuardWeeklyIncrement" Grid.Column="0" TabIndex="105"
+                                          SelectionChanged="CmbGuardWeeklyIncrement_SelectionChanged"/>
+                                <TextBox x:Name="TxtPropIncrementCustom" Grid.Column="1" Width="65" Margin="4,0,0,0"
+                                         TabIndex="105" Visibility="Collapsed"
+                                         Style="{StaticResource HintTextBox}" Tag="0.15"
+                                         LostFocus="TxtPropIncrementCustom_Commit"
+                                         KeyDown="TxtPropIncrementCustom_KeyDown"/>
+                            </Grid>
+
+                            <!-- Guard Zone (only the two connected zones) -->
+                            <TextBlock Text="Guard Zone" Foreground="{StaticResource BrushTextDim}"
+                                       FontSize="11" Margin="0,6,0,2"/>
+                            <ComboBox x:Name="CmbGuardZone" TabIndex="106"
+                                      SelectionChanged="CmbGuardZone_SelectionChanged"
+                                      ToolTip="Zone that provides the guard army"/>
+
+                            <!-- Advanced fields (hidden until Advanced is checked) -->
+                            <StackPanel x:Name="PnlPropsAdvanced" Visibility="Collapsed" Margin="0,8,0,0">
+                                <TextBlock Text="Guard Match Group"
+                                           Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="11" Margin="0,0,0,2"/>
+                                <TextBox x:Name="TxtGuardMatchGroup" TabIndex="107"
+                                         LostFocus="TxtGuardMatchGroup_Commit"
+                                         KeyDown="TxtGuardMatchGroup_KeyDown"/>
+
+                                <CheckBox x:Name="ChkGuardEscape" Content="Guards can flee"
+                                          Margin="0,8,0,0" TabIndex="108"
+                                          Checked="ChkGuardEscape_Changed"
+                                          Unchecked="ChkGuardEscape_Changed"/>
+                                <TextBlock Text="Defeated guards may retreat instead of dying"
+                                           Foreground="{StaticResource BrushTextDim}" FontSize="10"
+                                           FontStyle="Italic" Margin="0,2,0,0"/>
+
+                                <CheckBox x:Name="ChkSimTurnSquad" Content="Sim turn squad"
+                                          Margin="0,6,0,0" TabIndex="109"
+                                          Checked="ChkSimTurnSquad_Changed"
+                                          Unchecked="ChkSimTurnSquad_Changed"/>
+                                <TextBlock Text="Simulates simultaneous turns at this connection"
+                                           Foreground="{StaticResource BrushTextDim}" FontSize="10"
+                                           FontStyle="Italic" Margin="0,2,0,0"/>
+                            </StackPanel>
+
+                            <Separator Margin="0,10,0,8" Background="{StaticResource BrushBorder}"/>
+
+                            <Button x:Name="BtnDeleteConnection"
+                                    Content="🗑  Delete Connection"
+                                    Click="BtnDeleteConnection_Click"
+                                    Style="{StaticResource ToolbarButton}"
+                                    Foreground="{StaticResource BrushError}"
+                                    TabIndex="110"
+                                    ToolTip="Remove this connection (Delete key)"/>
+                            </StackPanel>
+
+                            <StackPanel x:Name="PnlZoneProperties" Visibility="Collapsed">
+                                <TextBlock Text="Name" Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="11" Margin="0,0,0,2"/>
+                                <TextBlock x:Name="TxtZoneNameDisplay"
+                                           FontWeight="Bold"
+                                           FontSize="14"
+                                           Margin="0,0,0,4"/>
+
+                                <TextBlock Text="Size" Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="11" Margin="0,6,0,2"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="SldZoneSize"
+                                            Grid.Column="0"
+                                            Minimum="25"
+                                            Maximum="200"
+                                            TickFrequency="5"
+                                            IsSnapToTickEnabled="True"
+                                            ValueChanged="SldZoneSize_ValueChanged"/>
+                                    <TextBlock x:Name="TxtZoneSizeValue"
+                                               Grid.Column="1"
+                                               Margin="8,0,0,0"
+                                               VerticalAlignment="Center"
+                                               FontWeight="SemiBold"/>
+                                </Grid>
+
+                                <Separator Margin="0,10,0,8" Background="{StaticResource BrushBorder}"/>
+                                <TextBlock Text="Guards" Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
+
+                                <StackPanel x:Name="PnlZoneAdvanced" Visibility="Collapsed" Margin="0,0,0,2">
+                                    <TextBlock Text="Guard Cutoff Value" Foreground="{StaticResource BrushTextDim}"
+                                               FontSize="11" Margin="0,0,0,2"/>
+                                    <TextBox x:Name="TxtZoneGuardCutoff"
+                                             LostFocus="TxtZoneGuardCutoff_Commit"
+                                             KeyDown="TxtZoneGuardCutoff_KeyDown"/>
+                                </StackPanel>
+
+                                <TextBlock Text="Guard Randomization" Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="11" Margin="0,6,0,2"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="SldZoneGuardRandomization"
+                                            Grid.Column="0"
+                                            Minimum="0"
+                                            Maximum="50"
+                                            TickFrequency="1"
+                                            IsSnapToTickEnabled="False"
+                                            ValueChanged="SldZoneGuardRandomization_ValueChanged"/>
+                                    <TextBlock x:Name="TxtZoneGuardRandomizationValue"
+                                               Grid.Column="1"
+                                               Margin="8,0,0,0"
+                                               VerticalAlignment="Center"
+                                               FontWeight="SemiBold"/>
+                                </Grid>
+
+                                <TextBlock Text="Guard Multiplier" Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="11" Margin="0,6,0,2"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="SldZoneGuardMultiplier"
+                                            Grid.Column="0"
+                                            Minimum="25"
+                                            Maximum="300"
+                                            TickFrequency="5"
+                                            IsSnapToTickEnabled="True"
+                                            ValueChanged="SldZoneGuardMultiplier_ValueChanged"/>
+                                    <TextBlock x:Name="TxtZoneGuardMultiplierValue"
+                                               Grid.Column="1"
+                                               Margin="8,0,0,0"
+                                               VerticalAlignment="Center"
+                                               FontWeight="SemiBold"/>
+                                </Grid>
+
+                                <TextBlock Text="Guard Weekly Increment" Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="11" Margin="0,6,0,2"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="SldZoneGuardWeeklyIncrement"
+                                            Grid.Column="0"
+                                            Minimum="5"
+                                            Maximum="30"
+                                            TickFrequency="5"
+                                            IsSnapToTickEnabled="True"
+                                            ValueChanged="SldZoneGuardWeeklyIncrement_ValueChanged"/>
+                                    <TextBlock x:Name="TxtZoneGuardWeeklyIncrementValue"
+                                               Grid.Column="1"
+                                               Margin="8,0,0,0"
+                                               VerticalAlignment="Center"
+                                               FontWeight="SemiBold"/>
+                                </Grid>
+
+                                <StackPanel x:Name="PnlZoneContentMultipliers">
+                                <Separator Margin="0,10,0,8" Background="{StaticResource BrushBorder}"/>
+                                <TextBlock Text="Content Values" Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
+
+                                <TextBlock Text="Guarded Content Value Multiplier" Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="11" Margin="0,0,0,2"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="SldZoneGuardedContentValueMultiplier"
+                                            Grid.Column="0"
+                                            Minimum="25"
+                                            Maximum="300"
+                                            TickFrequency="5"
+                                            IsSnapToTickEnabled="True"
+                                            ValueChanged="SldZoneGuardedContentValueMultiplier_ValueChanged"/>
+                                    <TextBlock x:Name="TxtZoneGuardedContentValueMultiplierValue"
+                                               Grid.Column="1"
+                                               Margin="8,0,0,0"
+                                               VerticalAlignment="Center"
+                                               FontWeight="SemiBold"/>
+                                </Grid>
+                                <TextBlock x:Name="TxtZoneGuardedContentBaseValue"
+                                           Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="10"
+                                           Margin="0,2,0,0"/>
+
+                                <TextBlock Text="Unguarded Content Value Multiplier" Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="11" Margin="0,6,0,2"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="SldZoneUnguardedContentValueMultiplier"
+                                            Grid.Column="0"
+                                            Minimum="25"
+                                            Maximum="300"
+                                            TickFrequency="5"
+                                            IsSnapToTickEnabled="True"
+                                            ValueChanged="SldZoneUnguardedContentValueMultiplier_ValueChanged"/>
+                                    <TextBlock x:Name="TxtZoneUnguardedContentValueMultiplierValue"
+                                               Grid.Column="1"
+                                               Margin="8,0,0,0"
+                                               VerticalAlignment="Center"
+                                               FontWeight="SemiBold"/>
+                                </Grid>
+                                <TextBlock x:Name="TxtZoneUnguardedContentBaseValue"
+                                           Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="10"
+                                           Margin="0,2,0,0"/>
+
+                                <TextBlock Text="Resources Value Multiplier" Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="11" Margin="0,6,0,2"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider x:Name="SldZoneResourcesValueMultiplier"
+                                            Grid.Column="0"
+                                            Minimum="25"
+                                            Maximum="300"
+                                            TickFrequency="5"
+                                            IsSnapToTickEnabled="True"
+                                            ValueChanged="SldZoneResourcesValueMultiplier_ValueChanged"/>
+                                    <TextBlock x:Name="TxtZoneResourcesValueMultiplierValue"
+                                               Grid.Column="1"
+                                               Margin="8,0,0,0"
+                                               VerticalAlignment="Center"
+                                               FontWeight="SemiBold"/>
+                                </Grid>
+                                <TextBlock x:Name="TxtZoneResourcesBaseValue"
+                                           Foreground="{StaticResource BrushTextDim}"
+                                           FontSize="10"
+                                           Margin="0,2,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel x:Name="PnlZoneAdvancedContentValues" Visibility="Collapsed" Margin="0,10,0,0">
+                                    <Separator Margin="0,0,0,8" Background="{StaticResource BrushBorder}"/>
+                                    <TextBlock Text="Content Values" Foreground="{StaticResource BrushTextDim}"
+                                               FontSize="11" Margin="0,0,0,4"/>
+
+                                    <TextBlock Text="Guarded Content Value" Foreground="{StaticResource BrushTextDim}"
+                                               FontSize="11" Margin="0,0,0,2"/>
+                                    <TextBox x:Name="TxtZoneGuardedContentValue"
+                                             LostFocus="TxtZoneGuardedContentValue_Commit"
+                                             KeyDown="TxtZoneGuardedContentValue_KeyDown"/>
+
+                                    <TextBlock Text="Unguarded Content Value" Foreground="{StaticResource BrushTextDim}"
+                                               FontSize="11" Margin="0,6,0,2"/>
+                                    <TextBox x:Name="TxtZoneUnguardedContentValue"
+                                             LostFocus="TxtZoneUnguardedContentValue_Commit"
+                                             KeyDown="TxtZoneUnguardedContentValue_KeyDown"/>
+
+                                    <TextBlock Text="Resources Value" Foreground="{StaticResource BrushTextDim}"
+                                               FontSize="11" Margin="0,6,0,2"/>
+                                    <TextBox x:Name="TxtZoneResourcesValue"
+                                             LostFocus="TxtZoneResourcesValue_Commit"
+                                             KeyDown="TxtZoneResourcesValue_KeyDown"/>
+
+                                    <TextBlock Text="Guarded Content Value Per Area" Foreground="{StaticResource BrushTextDim}"
+                                               FontSize="11" Margin="0,6,0,2"/>
+                                    <TextBox x:Name="TxtZoneGuardedContentValuePerArea"
+                                             LostFocus="TxtZoneGuardedContentValuePerArea_Commit"
+                                             KeyDown="TxtZoneGuardedContentValuePerArea_KeyDown"/>
+
+                                    <TextBlock Text="Unguarded Content Value Per Area" Foreground="{StaticResource BrushTextDim}"
+                                               FontSize="11" Margin="0,6,0,2"/>
+                                    <TextBox x:Name="TxtZoneUnguardedContentValuePerArea"
+                                             LostFocus="TxtZoneUnguardedContentValuePerArea_Commit"
+                                             KeyDown="TxtZoneUnguardedContentValuePerArea_KeyDown"/>
+
+                                    <TextBlock Text="Resources Value Per Area" Foreground="{StaticResource BrushTextDim}"
+                                               FontSize="11" Margin="0,6,0,2"/>
+                                    <TextBox x:Name="TxtZoneResourcesValuePerArea"
+                                             LostFocus="TxtZoneResourcesValuePerArea_Commit"
+                                             KeyDown="TxtZoneResourcesValuePerArea_KeyDown"/>
+                                </StackPanel>
+
+                                <Separator Margin="0,10,0,8" Background="{StaticResource BrushBorder}"/>
+                                <TextBlock Text="Main Objects" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
+
+                                <StackPanel x:Name="PnlZoneMainObjectsEditor"/>
+
+                                <StackPanel x:Name="PnlZoneMainObjectsActions" Orientation="Horizontal" Margin="0,8,0,0">
+                                    <Button x:Name="BtnZoneAddCity"
+                                            Content="+ City"
+                                            Click="BtnZoneAddCity_Click"
+                                            Style="{StaticResource ToolbarButton}"
+                                            Margin="0,0,8,0"/>
+                                    <Button x:Name="BtnZoneAddAbandonedOutpost"
+                                            Content="+ Abandoned Outpost"
+                                            Click="BtnZoneAddAbandonedOutpost_Click"
+                                            Style="{StaticResource ToolbarButton}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+
+            <!-- ═══ STATUS BAR ═══════════════════════════════════════════════ -->
+                <Border Grid.Row="1" Background="#1A1510"
+                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="0,1,0,0"
+                    Padding="8,3">
+                <TextBlock x:Name="TxtStatus"
+                           Foreground="{StaticResource BrushTextDim}"
+                           FontSize="11" TextWrapping="Wrap"/>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

@@ -13,6 +13,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace Olden_Era___Template_Editor
 {
@@ -29,7 +30,6 @@ namespace Olden_Era___Template_Editor
 
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
-            WriteIndented = true,
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
@@ -62,6 +62,11 @@ namespace Olden_Era___Template_Editor
         public MainWindow()
         {
             InitializeComponent();
+
+            ConnectionEditorControl.ConnectionsModified += ConnectionEditorControl_ConnectionsModified;
+            ConnectionEditorControl.ZoneOverridesModified += ConnectionEditorControl_ZoneOverridesModified;
+            ConnectionEditorControl.ErrorsChanged += ConnectionEditorControl_ErrorsChanged;
+            _connectionPreviewRefreshDebounce.Tick += ConnectionPreviewRefreshDebounce_Tick;
 
             // Clamp startup size to the available work area so the window never
             // overflows the screen at high-DPI scaling (e.g. 125 %, 150 %, 200 %).
@@ -1926,6 +1931,8 @@ namespace Olden_Era___Template_Editor
         private HashSet<string> _playerZoneNames = new(StringComparer.Ordinal);
         // True when the editor reported unresolved zone-reference errors; blocks export.
         private bool _connectionsHaveErrors = false;
+        private readonly DispatcherTimer _connectionPreviewRefreshDebounce = new() { Interval = TimeSpan.FromMilliseconds(120) };
+        private bool _connectionPreviewRefreshPending = false;
 
         private void BtnPreview_Click(object sender, RoutedEventArgs e)
         {
@@ -1966,54 +1973,77 @@ namespace Olden_Era___Template_Editor
             ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
             lblNoPreview.Content = "?";
             BtnSaveGenerated.Visibility   = Visibility.Visible;
-            BtnEditConnections.IsEnabled  = true;
+            InitializeConnectionEditorForGeneratedTemplate();
             UpdateOutdatedWarning();
             Validate(); // refresh warnings now that template is up to date
         }
 
-        private void BtnEditConnections_Click(object sender, RoutedEventArgs e)
+        private void InitializeConnectionEditorForGeneratedTemplate()
         {
-            if (_generatedTemplate is null)
-            {
-                var gen = MessageBox.Show(
-                    "No template generated yet. Generate now?",
-                    "Generate Template",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question);
-                if (gen != MessageBoxResult.Yes) return;
-                BtnPreview_Click(sender, e);
-                if (_generatedTemplate is null) return; // generation failed / user cancelled validation
-            }
-
-            var variant = _generatedTemplate.Variants?.FirstOrDefault();
+            var variant = _generatedTemplate?.Variants?.FirstOrDefault();
             if (variant is null) return;
 
             variant.Connections ??= [];
 
-            var editor = new ZoneConnectionEditorWindow(
-                variant.Zones        ?? [],
+            ConnectionEditorControl.InitializeEditor(
+                variant.Zones ?? [],
                 variant.Connections,
                 _originalGeneratedConnections ?? [],
                 _generatedTopology,
-                _playerZoneNames)
-            {
-                Owner = this
-            };
+                _playerZoneNames);
 
-            editor.ShowDialog();
+            ConnectionEditorControl.Visibility = Visibility.Visible;
+            PnlConnectionEditorHint.Visibility = Visibility.Collapsed;
+            _connectionsHaveErrors = ConnectionEditorControl.HasUnresolvedErrors;
+        }
 
-            if (editor.ConnectionsWereModified)
-            {
-                _connectionsEditedByUser = true;
-                ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
-            }
+        private void ConnectionEditorControl_ConnectionsModified(object? sender, EventArgs e)
+        {
+            _connectionsEditedByUser = true;
+            _connectionPreviewRefreshPending = true;
+            _connectionPreviewRefreshDebounce.Stop();
+            _connectionPreviewRefreshDebounce.Start();
+            _connectionsHaveErrors = ConnectionEditorControl.HasUnresolvedErrors;
+        }
 
-            _connectionsHaveErrors = editor.HasUnresolvedErrors;
+        private void ConnectionEditorControl_ZoneOverridesModified(object? sender, EventArgs e)
+        {
+            _connectionPreviewRefreshPending = true;
+            _connectionPreviewRefreshDebounce.Stop();
+            _connectionPreviewRefreshDebounce.Start();
+            _connectionsHaveErrors = ConnectionEditorControl.HasUnresolvedErrors;
+        }
+
+        private void ConnectionPreviewRefreshDebounce_Tick(object? sender, EventArgs e)
+        {
+            _connectionPreviewRefreshDebounce.Stop();
+            FlushPendingConnectionPreviewRefresh();
+        }
+
+        private void FlushPendingConnectionPreviewRefresh()
+        {
+            if (!_connectionPreviewRefreshPending)
+                return;
+
+            _connectionPreviewRefreshPending = false;
+
+            if (_generatedTemplate?.Variants?.FirstOrDefault() is not Variant variant)
+                return;
+
+            TemplateGenerator.RegenerateZoneRoads(variant.Zones ?? [], variant.Connections ?? []);
+            ImgPreview.Source = TemplatePreviewPngWriter.Render(_generatedTemplate, _generatedTopology);
+        }
+
+        private void ConnectionEditorControl_ErrorsChanged(object? sender, EventArgs e)
+        {
+            _connectionsHaveErrors = ConnectionEditorControl.HasUnresolvedErrors;
         }
 
         private void BtnSaveGenerated_Click(object sender, RoutedEventArgs e)
         {
             if (_generatedTemplate is null) return;
+
+            FlushPendingConnectionPreviewRefresh();
 
             if (_connectionsHaveErrors)
             {
@@ -2184,6 +2214,7 @@ namespace Olden_Era___Template_Editor
             BannedMagics       = string.Join("\n", _bannedMagics.Select(e => e.Id)),
             ValueOverridesText = TxtValueOverrides.Text,
             Bonuses            = [.. _bonuses],
+            ZoneOverrides      = [.. ConnectionEditorControl.GetZoneOverridesSnapshot()],
         };
         
         /* Creates list of ContentItems for the zone mandatory content, according to the UI settings. */

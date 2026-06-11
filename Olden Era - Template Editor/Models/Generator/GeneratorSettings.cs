@@ -69,6 +69,47 @@ namespace Olden_Era___Template_Editor.Models
         public List<ContentItem> HubZoneMandatoryContent { get; set; } = new List<ContentItem>();
     }
 
+    public class ZoneMainObjectOverride
+    {
+        public string Type { get; set; } = string.Empty;
+        public string? Spawn { get; set; }
+        public string? Owner { get; set; }
+        public double? GuardChance { get; set; }
+        public int? GuardValue { get; set; }
+        public double? GuardWeeklyIncrement { get; set; }
+        public bool? RemoveGuardIfHasOwner { get; set; }
+        public string? BuildingsConstructionSid { get; set; }
+        public TypedSelector? Faction { get; set; }
+        public string? Placement { get; set; }
+        public List<string>? PlacementArgs { get; set; }
+        public bool? HoldCityWinCon { get; set; }
+    }
+
+    public class ZoneOverrideSettings
+    {
+        public string ZoneName { get; set; } = string.Empty;
+        public double? Size { get; set; }
+        public string? Layout { get; set; }
+        public int? GuardCutoffValue { get; set; }
+        public double? GuardRandomization { get; set; }
+        public double? GuardMultiplier { get; set; }
+        public double? GuardWeeklyIncrement { get; set; }
+        public List<int>? GuardReactionDistribution { get; set; }
+        public double? DiplomacyModifier { get; set; }
+        public List<string>? GuardedContentPool { get; set; }
+        public List<string>? UnguardedContentPool { get; set; }
+        public List<string>? ResourcesContentPool { get; set; }
+        public List<string>? MandatoryContent { get; set; }
+        public List<string>? ContentCountLimits { get; set; }
+        public int? GuardedContentValue { get; set; }
+        public int? GuardedContentValuePerArea { get; set; }
+        public int? UnguardedContentValue { get; set; }
+        public int? UnguardedContentValuePerArea { get; set; }
+        public int? ResourcesValue { get; set; }
+        public int? ResourcesValuePerArea { get; set; }
+        public List<ZoneMainObjectOverride>? MainObjects { get; set; }
+    }
+
     public class GeneratorSettings
     {
         public string TemplateName { get; set; } = "Custom Template";
@@ -95,6 +136,7 @@ namespace Olden_Era___Template_Editor.Models
         public string ValueOverridesText { get; set; } = "";
         public System.Collections.Generic.List<OldenEraTemplateEditor.Models.BonusEntry> Bonuses { get; set; } = new List<OldenEraTemplateEditor.Models.BonusEntry>();
         public ZoneContent ZoneContent { get; set; } = new ZoneContent();
+        public List<ZoneOverrideSettings> ZoneOverrides { get; set; } = new List<ZoneOverrideSettings>();
         public GameEndConditions GameEndConditions { get; set; } = new GameEndConditions();
         public GladiatorArenaRules GladiatorArenaRules { get; set; } = new GladiatorArenaRules();
         public TournamentRules TournamentRules { get; set; } = new TournamentRules();

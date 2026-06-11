@@ -80,8 +80,154 @@ namespace Olden_Era___Template_Editor.Services
                 ContentLists = []
             };
 
+            ApplyZoneOverridesInPlace(template, settings.ZoneOverrides);
+
             return template;
         }
+
+        public static void ApplyZoneOverridesInPlace(RmgTemplate template, IReadOnlyList<ZoneOverrideSettings>? overrides)
+        {
+            ArgumentNullException.ThrowIfNull(template);
+
+            if (overrides == null || overrides.Count == 0)
+                return;
+
+            Variant? variant = template.Variants?.FirstOrDefault();
+            if (variant?.Zones == null)
+                return;
+
+            var zonesByName = variant.Zones
+                .Where(zone => !string.IsNullOrWhiteSpace(zone.Name))
+                .ToDictionary(zone => zone.Name, StringComparer.Ordinal);
+
+            foreach (ZoneOverrideSettings zoneOverride in overrides)
+            {
+                string zoneName = zoneOverride.ZoneName?.Trim() ?? string.Empty;
+                if (zoneName.Length == 0)
+                    throw new ArgumentException("Zone override must include a zone name.");
+
+                if (!zonesByName.TryGetValue(zoneName, out Zone? zone))
+                    throw new ArgumentException($"Zone override target '{zoneName}' was not found in generated zones.");
+
+                ApplyZoneOverride(zone, zoneOverride);
+            }
+        }
+
+        private static void ApplyZoneOverride(Zone zone, ZoneOverrideSettings zoneOverride)
+        {
+            if (zoneOverride.Size.HasValue)
+                zone.Size = NormalizeZoneSize(zoneOverride.Size.Value);
+
+            if (!string.IsNullOrWhiteSpace(zoneOverride.Layout))
+                zone.Layout = zoneOverride.Layout.Trim();
+
+            if (zoneOverride.GuardCutoffValue.HasValue)
+                zone.GuardCutoffValue = ClampNonNegative(zoneOverride.GuardCutoffValue.Value, nameof(zoneOverride.GuardCutoffValue), zone.Name);
+
+            if (zoneOverride.GuardRandomization.HasValue)
+                zone.GuardRandomization = ClampAndRound(zoneOverride.GuardRandomization.Value, 0.0, 0.5, nameof(zoneOverride.GuardRandomization), zone.Name);
+
+            if (zoneOverride.GuardMultiplier.HasValue)
+                zone.GuardMultiplier = ClampAndRound(zoneOverride.GuardMultiplier.Value, 0.0, 10.0, nameof(zoneOverride.GuardMultiplier), zone.Name);
+
+            if (zoneOverride.GuardWeeklyIncrement.HasValue)
+                zone.GuardWeeklyIncrement = ClampAndRound(zoneOverride.GuardWeeklyIncrement.Value, 0.0, 1.0, nameof(zoneOverride.GuardWeeklyIncrement), zone.Name);
+
+            if (zoneOverride.GuardReactionDistribution != null)
+            {
+                if (zoneOverride.GuardReactionDistribution.Count != 6)
+                    throw new ArgumentException($"Zone '{zone.Name}' override '{nameof(zoneOverride.GuardReactionDistribution)}' must contain exactly 6 values.");
+
+                if (zoneOverride.GuardReactionDistribution.Any(value => value < 0))
+                    throw new ArgumentException($"Zone '{zone.Name}' override '{nameof(zoneOverride.GuardReactionDistribution)}' cannot contain negative values.");
+
+                zone.GuardReactionDistribution = [.. zoneOverride.GuardReactionDistribution];
+            }
+
+            if (zoneOverride.DiplomacyModifier.HasValue)
+                zone.DiplomacyModifier = Math.Round(zoneOverride.DiplomacyModifier.Value, 3, MidpointRounding.AwayFromZero);
+
+            if (zoneOverride.GuardedContentPool != null)
+                zone.GuardedContentPool = SanitizeStringList(zoneOverride.GuardedContentPool);
+
+            if (zoneOverride.UnguardedContentPool != null)
+                zone.UnguardedContentPool = SanitizeStringList(zoneOverride.UnguardedContentPool);
+
+            if (zoneOverride.ResourcesContentPool != null)
+                zone.ResourcesContentPool = SanitizeStringList(zoneOverride.ResourcesContentPool);
+
+            if (zoneOverride.MandatoryContent != null)
+                zone.MandatoryContent = SanitizeStringList(zoneOverride.MandatoryContent);
+
+            if (zoneOverride.ContentCountLimits != null)
+                zone.ContentCountLimits = SanitizeStringList(zoneOverride.ContentCountLimits);
+
+            if (zoneOverride.GuardedContentValue.HasValue)
+                zone.GuardedContentValue = ClampNonNegative(zoneOverride.GuardedContentValue.Value, nameof(zoneOverride.GuardedContentValue), zone.Name);
+
+            if (zoneOverride.GuardedContentValuePerArea.HasValue)
+                zone.GuardedContentValuePerArea = ClampNonNegative(zoneOverride.GuardedContentValuePerArea.Value, nameof(zoneOverride.GuardedContentValuePerArea), zone.Name);
+
+            if (zoneOverride.UnguardedContentValue.HasValue)
+                zone.UnguardedContentValue = ClampNonNegative(zoneOverride.UnguardedContentValue.Value, nameof(zoneOverride.UnguardedContentValue), zone.Name);
+
+            if (zoneOverride.UnguardedContentValuePerArea.HasValue)
+                zone.UnguardedContentValuePerArea = ClampNonNegative(zoneOverride.UnguardedContentValuePerArea.Value, nameof(zoneOverride.UnguardedContentValuePerArea), zone.Name);
+
+            if (zoneOverride.ResourcesValue.HasValue)
+                zone.ResourcesValue = ClampNonNegative(zoneOverride.ResourcesValue.Value, nameof(zoneOverride.ResourcesValue), zone.Name);
+
+            if (zoneOverride.ResourcesValuePerArea.HasValue)
+                zone.ResourcesValuePerArea = ClampNonNegative(zoneOverride.ResourcesValuePerArea.Value, nameof(zoneOverride.ResourcesValuePerArea), zone.Name);
+
+            if (zoneOverride.MainObjects != null)
+                zone.MainObjects = zoneOverride.MainObjects.Select(mainObject => ConvertMainObject(mainObject, zone.Name)).ToList();
+        }
+
+        private static MainObject ConvertMainObject(ZoneMainObjectOverride source, string zoneName)
+        {
+            string type = source.Type?.Trim() ?? string.Empty;
+            if (type.Length == 0)
+                throw new ArgumentException($"Zone '{zoneName}' override main object type cannot be empty.");
+
+            return new MainObject
+            {
+                Type = type,
+                Spawn = string.IsNullOrWhiteSpace(source.Spawn) ? null : source.Spawn.Trim(),
+                Owner = string.IsNullOrWhiteSpace(source.Owner) ? null : source.Owner.Trim(),
+                GuardChance = source.GuardChance,
+                GuardValue = source.GuardValue,
+                GuardWeeklyIncrement = source.GuardWeeklyIncrement,
+                RemoveGuardIfHasOwner = source.RemoveGuardIfHasOwner,
+                BuildingsConstructionSid = string.IsNullOrWhiteSpace(source.BuildingsConstructionSid) ? null : source.BuildingsConstructionSid.Trim(),
+                Faction = source.Faction,
+                Placement = string.IsNullOrWhiteSpace(source.Placement) ? null : source.Placement.Trim(),
+                PlacementArgs = source.PlacementArgs == null ? null : SanitizeStringList(source.PlacementArgs),
+                HoldCityWinCon = source.HoldCityWinCon,
+            };
+        }
+
+        private static int ClampNonNegative(int value, string fieldName, string zoneName)
+        {
+            if (value < 0)
+                throw new ArgumentException($"Zone '{zoneName}' override '{fieldName}' cannot be negative.");
+
+            return value;
+        }
+
+        private static double ClampAndRound(double value, double min, double max, string fieldName, string zoneName)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value))
+                throw new ArgumentException($"Zone '{zoneName}' override '{fieldName}' must be a finite number.");
+
+            return Math.Round(Math.Clamp(value, min, max), 3, MidpointRounding.AwayFromZero);
+        }
+
+        private static List<string> SanitizeStringList(List<string> values)
+            => values
+                .Where(value => !string.IsNullOrWhiteSpace(value))
+                .Select(value => value.Trim())
+                .ToList();
 
         private static string BuildTemplateDescription(GeneratorSettings settings, int neutralZoneCount)
         {
@@ -3097,7 +3243,7 @@ namespace Olden_Era___Template_Editor.Services
         /// roads to each adjacent ring connection, to the secondary city (index 1),
         /// and to the remote foothold.
         /// </summary>
-        private static List<Road> BuildOuterZoneRoads(string[] ringConns, int castleCount, bool includeFoothold, bool generateRoads)
+        internal static List<Road> BuildOuterZoneRoads(string[] ringConns, int castleCount, bool includeFoothold, bool generateRoads)
         {
             var roads = new List<Road>();
             if (!generateRoads || castleCount == 0) return roads;
@@ -3112,7 +3258,40 @@ namespace Olden_Era___Template_Editor.Services
             return roads;
         }
 
-        private static List<Road> BuildConnectorZoneRoads(string[] connectionNames, bool generateRoads)
+        // Rebuilds Zone.Roads for every zone in the variant based on the current connection list.
+        // Call this whenever connections are edited outside of full template generation.
+        internal static void RegenerateZoneRoads(List<Zone> zones, List<Connection> connections)
+        {
+            // Map each zone name to the connection names that touch it
+            var connsByZone = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+            foreach (var zone in zones)
+                connsByZone[zone.Name] = [];
+
+            foreach (var conn in connections)
+            {
+                if (string.IsNullOrEmpty(conn.Name)) continue;
+                if (connsByZone.TryGetValue(conn.From, out var fromList)) fromList.Add(conn.Name);
+                if (connsByZone.TryGetValue(conn.To,   out var toList))   toList.Add(conn.Name);
+            }
+
+            foreach (var zone in zones)
+            {
+                if (!connsByZone.TryGetValue(zone.Name, out var nameList)) continue;
+                string[] names = [.. nameList.Distinct()];
+                int castleCount = zone.MainObjects?.Count ?? 0;
+
+                // Preserve existing foothold road if present
+                bool hasFoothold = zone.Roads?.Any(r =>
+                    r.To?.Type == "MandatoryContent" &&
+                    r.To.Args?.Contains("name_remote_foothold_1") == true) == true;
+
+                zone.Roads = castleCount > 0
+                    ? BuildOuterZoneRoads(names, castleCount, hasFoothold, generateRoads: true)
+                    : BuildConnectorZoneRoads(names, generateRoads: true);
+            }
+        }
+
+        internal static List<Road> BuildConnectorZoneRoads(string[] connectionNames, bool generateRoads)
         {
             var roads = new List<Road>();
             if (!generateRoads) return roads;
@@ -3137,16 +3316,16 @@ namespace Olden_Era___Template_Editor.Services
             return roads;
         }
 
-        private static Road PlainRoad(RoadEndpoint from, RoadEndpoint to) =>
+        internal static Road PlainRoad(RoadEndpoint from, RoadEndpoint to) =>
             new() { From = from, To = to };
 
-        private static RoadEndpoint MainObjectEndpoint(string index) =>
+        internal static RoadEndpoint MainObjectEndpoint(string index) =>
             new() { Type = "MainObject", Args = [index] };
 
-        private static RoadEndpoint ConnectionEndpoint(string name) =>
+        internal static RoadEndpoint ConnectionEndpoint(string name) =>
             new() { Type = "Connection", Args = [name] };
 
-        private static RoadEndpoint MandatoryContentEndpoint(string name) =>
+        internal static RoadEndpoint MandatoryContentEndpoint(string name) =>
             new() { Type = "MandatoryContent", Args = [name] };
 
         // ── Zone layouts ─────────────────────────────────────────────────────────
