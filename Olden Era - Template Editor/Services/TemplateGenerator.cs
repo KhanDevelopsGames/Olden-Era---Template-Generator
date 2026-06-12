@@ -64,7 +64,7 @@ namespace Olden_Era___Template_Editor.Services
             var template = new RmgTemplate
             {
                 Name = settings.TemplateName,
-                GameMode = settings.GameMode,
+                GameMode = settings.SingleHeroMode ? "SingleHero" : settings.GameMode,
                 Description = BuildTemplateDescription(settings, neutralCount),
                 DisplayWinCondition = effectiveVictoryCondition,
                 SizeX = settings.MapSize,
@@ -167,20 +167,12 @@ namespace Olden_Era___Template_Editor.Services
                 }
             }
 
-            if (settings.ZoneCfg.Advanced.Enabled)
-            {
-                Add(settings.ZoneCfg.Advanced.NeutralLowNoCastleCount, NeutralZoneQuality.Low, 0);
-                Add(settings.ZoneCfg.Advanced.NeutralLowCastleCount, NeutralZoneQuality.Low, castleZoneCastleCount);
-                Add(settings.ZoneCfg.Advanced.NeutralMediumNoCastleCount, NeutralZoneQuality.Medium, 0);
-                Add(settings.ZoneCfg.Advanced.NeutralMediumCastleCount, NeutralZoneQuality.Medium, castleZoneCastleCount);
-                Add(settings.ZoneCfg.Advanced.NeutralHighNoCastleCount, NeutralZoneQuality.High, 0);
-                Add(settings.ZoneCfg.Advanced.NeutralHighCastleCount, NeutralZoneQuality.High, castleZoneCastleCount);
-            }
-            else
-            {
-                int castleCount = Math.Clamp(settings.ZoneCfg.NeutralZoneCastles, 0, 4);
-                Add(settings.ZoneCfg.NeutralZoneCount, NeutralZoneQuality.Medium, castleCount);
-            }
+            Add(settings.ZoneCfg.Advanced.NeutralLowNoCastleCount, NeutralZoneQuality.Low, 0);
+            Add(settings.ZoneCfg.Advanced.NeutralLowCastleCount, NeutralZoneQuality.Low, castleZoneCastleCount);
+            Add(settings.ZoneCfg.Advanced.NeutralMediumNoCastleCount, NeutralZoneQuality.Medium, 0);
+            Add(settings.ZoneCfg.Advanced.NeutralMediumCastleCount, NeutralZoneQuality.Medium, castleZoneCastleCount);
+            Add(settings.ZoneCfg.Advanced.NeutralHighNoCastleCount, NeutralZoneQuality.High, 0);
+            Add(settings.ZoneCfg.Advanced.NeutralHighCastleCount, NeutralZoneQuality.High, castleZoneCastleCount);
 
             if (settings.Topology == MapTopology.SharedWeb && plans.Count == 0 && maxNeutralZones > 0)
             {
@@ -346,10 +338,10 @@ namespace Olden_Era___Template_Editor.Services
 
         private static GameRules BuildGameRules(GeneratorSettings settings, string effectiveVictoryCondition) => new()
         {
-            HeroCountMin = settings.HeroSettings.HeroCountMin-settings.HeroSettings.HeroCountIncrement,
-            HeroCountMax = settings.HeroSettings.HeroCountMax,
-            HeroCountIncrement = settings.HeroSettings.HeroCountIncrement,
-            HeroHireBan = false,
+            HeroCountMin = settings.SingleHeroMode ? 1 : settings.HeroSettings.HeroCountMin - settings.HeroSettings.HeroCountIncrement,
+            HeroCountMax = settings.SingleHeroMode ? 1 : settings.HeroSettings.HeroCountMax,
+            HeroCountIncrement = settings.SingleHeroMode ? 1 : settings.HeroSettings.HeroCountIncrement,
+            HeroHireBan = settings.SingleHeroMode,
             EncounterHoles = false,
             FactionLawsExpModifier = PercentToModifier(settings.FactionLawsExpPercent),
             AstrologyExpModifier = PercentToModifier(settings.AstrologyExpPercent),
@@ -620,7 +612,7 @@ namespace Olden_Era___Template_Editor.Services
                     ? BuildBalancedRingLetters(playerLetters, neutralZones, honoredSeparation)
                     : BuildBalancedChainLetters(playerLetters, neutralZones, honoredSeparation);
             }
-
+            /* // Comenting out unreachable code to suppress warnings.
             int min = settings.MinNeutralZonesBetweenPlayers;
             if (min <= 0 || settings.RandomPortals || !CanHonorNeutralSeparation(settings, neutralLetters.Count))
                 return playerLetters.Concat(neutralLetters).ToList();
@@ -641,7 +633,7 @@ namespace Olden_Era___Template_Editor.Services
             while (remainingNeutrals.Count > 0)
                 ordered.Add(remainingNeutrals.Dequeue());
 
-            return ordered.Count > 0 ? ordered : playerLetters.Concat(neutralLetters).ToList();
+            return ordered.Count > 0 ? ordered : playerLetters.Concat(neutralLetters).ToList();*/
         }
 
         private static List<string> BuildBalancedRingLetters(
@@ -1044,7 +1036,7 @@ namespace Olden_Era___Template_Editor.Services
 
                 if (i == 0)
                     zones.Add(BuildSpawnZone(letter, $"Player{playerIndex + 1}", myConns.ToArray(),
-                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions,
+                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerStartsWithCastles,
                         settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
                     zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns.ToArray(),
@@ -1134,7 +1126,7 @@ namespace Olden_Era___Template_Editor.Services
 
                 if (i == 0)
                     zones.Add(BuildSpawnZone(letter, $"Player{playerIndex + 1}", myConns,
-                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions,
+                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerStartsWithCastles,
                         settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
                     zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns,
@@ -1199,7 +1191,7 @@ namespace Olden_Era___Template_Editor.Services
                 size: settings.ZoneCfg.HubZoneSize,
                 castleCount: settings.ZoneCfg.HubZoneCastles,
                 generateRoads: settings.GenerateRoads,
-                hubContentGroupName: settings.HubZoneMandatoryContent.Count > 0 ? "mandatory_content_hub" : null);
+                hubContentGroupName: settings.ZoneContent.HubZoneMandatoryContent.Count > 0 ? "mandatory_content_hub" : null);
             hubZone.Name = hubName;
             zones.Add(hubZone);
 
@@ -1211,7 +1203,7 @@ namespace Olden_Era___Template_Editor.Services
 
                 if (i == 0)
                     zones.Add(BuildSpawnZone(letter, $"Player{playerIndex + 1}", [connName],
-                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions,
+                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerStartsWithCastles,
                         settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
                     zones.Add(BuildNeutralZone(neutralByLetter[letter], [connName],
@@ -1317,12 +1309,11 @@ namespace Olden_Era___Template_Editor.Services
                 Zone zone;
                 if (i == 0)
                     zone = BuildSpawnZone(letter, $"Player{playerIndex + 1}", myConns,
-                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions,
+                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerStartsWithCastles,
                         settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
                 else
                     zone = BuildNeutralZone(neutralByLetter[letter], myConns,
-                        settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
-                // Stamp preview position so the renderer places each cluster in its own canvas half.
+                        settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);                // Stamp preview position so the renderer places each cluster in its own canvas half.
                 if (i < previewPositions.Count)
                     zone.GeneratorPosition = previewPositions[i];
                 zones.Add(zone);
@@ -1501,7 +1492,7 @@ namespace Olden_Era___Template_Editor.Services
                 Zone zone;
                 if (letter == playerLetter)
                     zone = BuildSpawnZone(letter, $"Player{playerIndex + 1}", myConns,
-                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions,
+                        settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerStartsWithCastles,
                         settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
                 else
                     zone = BuildNeutralZone(neutralByLetter[letter], myConns,
@@ -1549,7 +1540,7 @@ namespace Olden_Era___Template_Editor.Services
 
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerStartsWithCastles, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
                     zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns, settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning, letter == holdCityNeutralLetter));
             }
@@ -1619,7 +1610,7 @@ namespace Olden_Era___Template_Editor.Services
                 int playerIdx = playerLetters.IndexOf(letter);
                 Zone zone;
                 if (playerIdx >= 0)
-                    zone = BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
+                    zone = BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerStartsWithCastles, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
                 else
                     zone = BuildNeutralZone(neutralByLetter[letter], myConns, settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning, letter == holdCityNeutralLetter);
                 // Stamp the Delaunay position so the preview can reproduce the exact geometry.
@@ -1791,7 +1782,7 @@ namespace Olden_Era___Template_Editor.Services
                 int playerIdx = playerLetters.IndexOf(letter);
                 Zone zone;
                 if (playerIdx >= 0)
-                    zone = BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
+                    zone = BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns, settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerStartsWithCastles, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning);
                 else
                     zone = BuildNeutralZone(neutralByLetter[letter], myConns, settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning, letter == holdCityNeutralLetter);
                 // Stamp the position and tier so the preview can reproduce the exact geometry.
@@ -2024,7 +2015,7 @@ namespace Olden_Era___Template_Editor.Services
 
             // Hub zone (neutral, configurable castles, high loot).
             var hubConns = outerLetters.Select(l => $"Hub-{l}").ToArray();
-            zones.Add(BuildHubZone(hubConns, tuning, hubIsHoldCity, settings.ZoneCfg.HubZoneSize, settings.ZoneCfg.HubZoneCastles, settings.GenerateRoads, settings.HubZoneMandatoryContent.Count > 0 ? "mandatory_content_hub" : null));
+            zones.Add(BuildHubZone(hubConns, tuning, hubIsHoldCity, settings.ZoneCfg.HubZoneSize, settings.ZoneCfg.HubZoneCastles, settings.GenerateRoads, settings.ZoneContent.HubZoneMandatoryContent.Count > 0 ? "mandatory_content_hub" : null));
 
             // Outer zones each connect only to the hub.
             for (int i = 0; i < outerLetters.Count; i++)
@@ -2033,7 +2024,7 @@ namespace Olden_Era___Template_Editor.Services
                 var spokeConns = new[] { $"Hub-{letter}" };
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", spokeConns, settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", spokeConns, settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerStartsWithCastles, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
                     zones.Add(BuildNeutralZone(neutralByLetter[letter], spokeConns, settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
             }
@@ -2138,7 +2129,7 @@ namespace Olden_Era___Template_Editor.Services
 
                 int playerIdx = playerLetters.IndexOf(letter);
                 if (playerIdx >= 0)
-                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns.ToArray(), settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                    zones.Add(BuildSpawnZone(letter, $"Player{playerIdx + 1}", myConns.ToArray(), settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerStartsWithCastles, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
                 else
                     zones.Add(BuildNeutralZone(neutralByLetter[letter], myConns.ToArray(), settings.ZoneCfg.Advanced.NeutralZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning, letter == holdCityNeutralLetter));
             }
@@ -2235,7 +2226,7 @@ namespace Olden_Era___Template_Editor.Services
             {
                 var spokeConns = spokeConnsByPlayer[playerLetters[i]];
 
-                zones.Add(BuildSpawnZone(playerLetters[i], $"Player{i + 1}", spokeConns.ToArray(), settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
+                zones.Add(BuildSpawnZone(playerLetters[i], $"Player{i + 1}", spokeConns.ToArray(), settings.ZoneCfg.PlayerZoneCastles, settings.MatchPlayerCastleFactions, settings.PlayerStartsWithCastles, settings.ZoneCfg.Advanced.PlayerZoneSize, settings.SpawnRemoteFootholds, settings.GenerateRoads, tuning));
 
                 // Player → neutral Direct connections.
                 foreach (var connName in spokeConns)
@@ -2654,7 +2645,7 @@ namespace Olden_Era___Template_Editor.Services
 
         // ── Spawn zone ───────────────────────────────────────────────────────────
 
-        private static Zone BuildSpawnZone(string letter, string player, string[] ringConns, int castleCount, bool matchCastleFactions, double zoneSize, bool spawnFootholds, bool generateRoads, GenerationTuning tuning)
+        private static Zone BuildSpawnZone(string letter, string player, string[] ringConns, int castleCount, bool matchCastleFactions, bool playerStartsWithCastles, double zoneSize, bool spawnFootholds, bool generateRoads, GenerationTuning tuning)
         {
             // Index 0 = Spawn (player town), indices 1..castleCount-1 = extra cities.
             var mainObjects = new List<MainObject>
@@ -2678,11 +2669,13 @@ namespace Olden_Era___Template_Editor.Services
                 mainObjects.Add(new MainObject
                 {
                     Type = "City",
+                    Owner = playerStartsWithCastles ? player : null,
                     Faction = matchCastleFactions
                         ? new TypedSelector { Type = "Match", Args = ["0"] }
                         : new TypedSelector { Type = "Random", Args = [] },
-                    GuardChance = 1,
+                    GuardChance = playerStartsWithCastles ? 1 : 1,
                     GuardValue = ScaleNeutralGuardValue(2500, tuning),
+                    RemoveGuardIfHasOwner = playerStartsWithCastles ? true : null,
                     GuardWeeklyIncrement = 0.10,
                     BuildingsConstructionSid = "poor_buildings_construction",
                     Placement = "Uniform",
@@ -3218,11 +3211,11 @@ namespace Olden_Era___Template_Editor.Services
             foreach (var neutralZone in neutralZones)
                 groups.Add(BuildNeutralMandatoryContent(neutralZone.Letter, neutralZone.CastleCount, neutralZone.Quality, settings));
 
-            if (settings.HubZoneMandatoryContent.Count > 0)
+            if (settings.ZoneContent.HubZoneMandatoryContent.Count > 0)
             {
                 var hubContent = settings.ZoneCfg.HubZoneCastles == 0
-                    ? ZoneContentManager.StripNearCastleRules([.. settings.HubZoneMandatoryContent])
-                    : [.. settings.HubZoneMandatoryContent];
+                    ? ZoneContentManager.StripNearCastleRules([.. settings.ZoneContent.HubZoneMandatoryContent])
+                    : [.. settings.ZoneContent.HubZoneMandatoryContent];
                 groups.Add(new MandatoryContentGroup
                 {
                     Name = "mandatory_content_hub",

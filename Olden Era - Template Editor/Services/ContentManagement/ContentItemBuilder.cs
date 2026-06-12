@@ -30,7 +30,7 @@ public class ContentItemBuilder
         return this;
     }
 
-    public ContentItemBuilder Guarded(bool value = true)
+    public ContentItemBuilder Guarded(bool? value = null)
     {
         _item.IsGuarded = value;
         return this;
@@ -42,7 +42,7 @@ public class ContentItemBuilder
         return this;
     }
 
-    public ContentItemBuilder SoloEncounter(bool value = true)
+    public ContentItemBuilder SoloEncounter(bool? value = null)
     {
         _item.SoloEncounter = value;
         return this;
@@ -59,10 +59,6 @@ public class ContentItemBuilder
         _item.Rules.AddRange(rules);
         return this;
     }
-
-    // Helper for common rule for content items regarding distance from roads.
-    public ContentItemBuilder RoadDistance(DistanceVariation distance, int weight = 1) => AddRule(RulePresets.RoadDistance(distance, weight));
-
     public ContentItemBuilder AddIncludeList(string list)
     {
         _item.IncludeLists ??= new List<string>();

@@ -1,5 +1,6 @@
 using Olden_Era___Template_Editor.Models;
 using OldenEraTemplateEditor.Models;
+using OldenEraTemplateEditor.Services.ContentManagement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -99,7 +100,7 @@ namespace Olden_Era___Template_Editor.Services
 
             var playerMandatory = template.MandatoryContent?
                 .FirstOrDefault(g => g.Name.StartsWith("mandatory_content_side_", StringComparison.OrdinalIgnoreCase));
-            settings.PlayerZoneMandatoryContent = playerMandatory?.Content;
+            settings.PlayerZoneContentRows = BuildZoneContentRows(playerMandatory?.Content);
 
             InferNeutralZoneSettings(settings, neutralZones, settings.CityHold);
 
@@ -122,6 +123,99 @@ namespace Olden_Era___Template_Editor.Services
 
             return settings;
         }
+
+        /// <summary>
+        /// Converts imported mandatory-content items into the editor's content-row save model.
+        /// Mirrors the legacy load path: items that are identical (same SID, group/mine/guarded
+        /// flags, and placement rules) collapse into one row with a Count. The deprecated row
+        /// fields (IsGuarded / NearCastle / RoadDistance) are populated so the settings loader's
+        /// legacy-restore path rebuilds the same content rules on the new ZoneContent model.
+        /// </summary>
+        private static List<ZoneContentRowSave>? BuildZoneContentRows(List<ContentItem>? contentItems)
+        {
+            if (contentItems is null || contentItems.Count == 0)
+                return null;
+
+            var counts = new Dictionary<ContentRowKey, int>();
+            var order  = new List<ContentRowKey>();
+
+            foreach (var item in contentItems)
+            {
+                /* Grouped entries carry their include-list id as the SID, matching the load path. */
+                bool isGroup = item.IncludeLists is { Count: > 0 };
+                string? sid  = isGroup ? item.IncludeLists![0] : item.Sid;
+                if (string.IsNullOrWhiteSpace(sid))
+                    continue;
+
+                var key = new ContentRowKey(
+                    sid,
+                    isGroup,
+                    item.IsMine == true,
+                    item.IsGuarded == true,
+                    HasNearCastleRule(item.Rules),
+                    GetRoadDistanceLabel(item.Rules));
+
+                if (counts.TryGetValue(key, out int count))
+                {
+                    counts[key] = count + 1;
+                }
+                else
+                {
+                    counts[key] = 1;
+                    order.Add(key);
+                }
+            }
+
+            if (order.Count == 0)
+                return null;
+
+            return order.Select(key => new ZoneContentRowSave
+            {
+                Sid          = key.Sid,
+                Count        = counts[key],
+                IsGroup      = key.IsGroup,
+                IsMine       = key.IsMine,
+                IsGuarded    = key.IsGuarded,
+                NearCastle   = key.NearCastle,
+                RoadDistance = key.RoadDistance,
+            }).ToList();
+        }
+
+        private readonly record struct ContentRowKey(
+            string Sid,
+            bool IsGroup,
+            bool IsMine,
+            bool IsGuarded,
+            bool NearCastle,
+            string RoadDistance);
+
+        private static bool HasNearCastleRule(List<ContentPlacementRule>? rules)
+            => rules?.Any(rule =>
+                string.Equals(rule.Type, "MainObject", StringComparison.OrdinalIgnoreCase) &&
+                rule.Args?.Any(arg => arg == "0") == true) == true;
+
+        private static string GetRoadDistanceLabel(List<ContentPlacementRule>? rules)
+        {
+            ContentPlacementRule? roadRule = rules?.FirstOrDefault(rule =>
+                string.Equals(rule.Type, "Road", StringComparison.OrdinalIgnoreCase));
+
+            if (roadRule?.TargetMin is null || roadRule.TargetMax is null)
+                return "Any";
+
+            double min = roadRule.TargetMin.Value;
+            double max = roadRule.TargetMax.Value;
+
+            if (IsDistance(min, max, DistancePresets.NextTo)) return "Next To";
+            if (IsDistance(min, max, DistancePresets.Near)) return "Near";
+            if (IsDistance(min, max, DistancePresets.Far)) return "Far";
+            if (IsDistance(min, max, DistancePresets.VeryFar)) return "Very Far";
+            if (IsDistance(min, max, DistancePresets.Medium)) return "Medium";
+
+            return "Medium";
+        }
+
+        private static bool IsDistance(double min, double max, DistanceVariation preset)
+            => Math.Abs(min - preset.Min) < 0.0001 && Math.Abs(max - preset.Max) < 0.0001;
 
         private static string NormalizeVictoryCondition(string? value)
         {

@@ -60,10 +60,20 @@ namespace Olden_Era___Template_Editor.Models
         public AdvancedSettings Advanced { get; set; } = new AdvancedSettings();
     }
 
+    public class ZoneContent
+    {
+        public List<ContentItem> PlayerZoneMandatoryContent { get; set; } = new List<ContentItem>();
+        public List<ContentItem> LowNeutralMandatoryContent { get; set; } = new List<ContentItem>();
+        public List<ContentItem> MediumNeutralMandatoryContent { get; set; } = new List<ContentItem>();
+        public List<ContentItem> HighNeutralMandatoryContent { get; set; } = new List<ContentItem>();
+        public List<ContentItem> HubZoneMandatoryContent { get; set; } = new List<ContentItem>();
+    }
+
     public class GeneratorSettings
     {
         public string TemplateName { get; set; } = "Custom Template";
         public string GameMode { get; set; } = "Classic";
+        public bool SingleHeroMode { get; set; } = false;
         public int PlayerCount { get; set; } = 2;
         public int MapSize { get; set; } = 160;
         public HeroSettings HeroSettings { get; set; } = new HeroSettings();
@@ -74,6 +84,7 @@ namespace Olden_Era___Template_Editor.Models
         public bool SpawnRemoteFootholds { get; set; } = true;
         public bool GenerateRoads { get; set; } = true;
         public bool MatchPlayerCastleFactions { get; set; } = false;
+        public bool PlayerStartsWithCastles { get; set; } = false;
         public int MinNeutralZonesBetweenPlayers { get; set; } = 0;
         public MapTopology Topology { get; set; } = MapTopology.Balanced;
         public ZoneConfiguration ZoneCfg { get; set; } = new ZoneConfiguration();
@@ -82,12 +93,8 @@ namespace Olden_Era___Template_Editor.Models
         public string BannedItems { get; set; } = "";
         public string BannedMagics { get; set; } = "";
         public string ValueOverridesText { get; set; } = "";
-        public System.Collections.Generic.List<OldenEraTemplateEditor.Models.BonusEntry> Bonuses { get; set; } = [];
-        public List<ContentItem> PlayerZoneMandatoryContent { get; set; } = new List<ContentItem>();
-        public List<ContentItem> LowNeutralMandatoryContent { get; set; } = new List<ContentItem>();
-        public List<ContentItem> MediumNeutralMandatoryContent { get; set; } = new List<ContentItem>();
-        public List<ContentItem> HighNeutralMandatoryContent { get; set; } = new List<ContentItem>();
-        public List<ContentItem> HubZoneMandatoryContent { get; set; } = new List<ContentItem>();
+        public System.Collections.Generic.List<OldenEraTemplateEditor.Models.BonusEntry> Bonuses { get; set; } = new List<OldenEraTemplateEditor.Models.BonusEntry>();
+        public ZoneContent ZoneContent { get; set; } = new ZoneContent();
         public GameEndConditions GameEndConditions { get; set; } = new GameEndConditions();
         public GladiatorArenaRules GladiatorArenaRules { get; set; } = new GladiatorArenaRules();
         public TournamentRules TournamentRules { get; set; } = new TournamentRules();

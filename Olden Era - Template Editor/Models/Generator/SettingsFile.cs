@@ -22,7 +22,8 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("neutralMediumCastle")]   public int NeutralMediumCastleCount   { get; set; } = 0;
         [JsonPropertyName("neutralHighNoCastle")]   public int NeutralHighNoCastleCount   { get; set; } = 0;
         [JsonPropertyName("neutralHighCastle")]     public int NeutralHighCastleCount     { get; set; } = 0;
-        [JsonPropertyName("matchPlayerCastleFactions")] public bool MatchPlayerCastleFactions { get; set; } = false;
+        [JsonPropertyName("matchPlayerCastleFactions")] public bool MatchPlayerCastleFactions    { get; set; } = false;
+        [JsonPropertyName("playerStartsWithCastles")]  public bool PlayerStartsWithCastles       { get; set; } = false;
         [JsonPropertyName("minNeutralZonesBetweenPlayers")] public int MinNeutralZonesBetweenPlayers { get; set; } = 0;
         [JsonPropertyName("experimentalBalancedZonePlacement")] [System.Obsolete] public bool ExperimentalBalancedZonePlacement { get; set; } = false;
         [JsonPropertyName("experimentalMapSizes")] public bool ExperimentalMapSizes { get; set; } = false;
@@ -34,6 +35,7 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("heroMin")]           public int     HeroCountMin           { get; set; } = 4;
         [JsonPropertyName("heroMax")]           public int     HeroCountMax           { get; set; } = 8;
         [JsonPropertyName("heroIncrement")]     public int     HeroCountIncrement     { get; set; } = 1;
+        [JsonPropertyName("singleHeroMode")]    public bool    SingleHeroMode         { get; set; } = false;
         [JsonPropertyName("topology")]          public MapTopology Topology           { get; set; } = MapTopology.Balanced;
         [JsonPropertyName("randomPortals")]     public bool    RandomPortals          { get; set; } = false;
         [JsonPropertyName("maxPortalConns")]    public int     MaxPortalConnections   { get; set; } = 32;
@@ -64,11 +66,11 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("bannedMagics")]       public string BannedMagics                 { get; set; } = "";
         [JsonPropertyName("valueOverrides")]     public string ValueOverridesText           { get; set; } = "";
         [JsonPropertyName("bonuses")]            public string BonusesJson                  { get; set; } = "";
-        [JsonPropertyName("playerZoneMandatoryContent")] public List<ContentItem>? PlayerZoneMandatoryContent { get; set; }
-        [JsonPropertyName("lowNeutralMandatoryContent")] public List<ContentItem>? LowNeutralMandatoryContent { get; set; }
-        [JsonPropertyName("mediumNeutralMandatoryContent")] public List<ContentItem>? MediumNeutralMandatoryContent { get; set; }
-        [JsonPropertyName("highNeutralMandatoryContent")] public List<ContentItem>? HighNeutralMandatoryContent { get; set; }
-        [JsonPropertyName("hubZoneMandatoryContent")] public List<ContentItem>? HubZoneMandatoryContent { get; set; }
+        [JsonPropertyName("playerZoneContentRows")]      public List<ZoneContentRowSave>? PlayerZoneContentRows      { get; set; }
+        [JsonPropertyName("lowNeutralContentRows")]      public List<ZoneContentRowSave>? LowNeutralContentRows      { get; set; }
+        [JsonPropertyName("mediumNeutralContentRows")]   public List<ZoneContentRowSave>? MediumNeutralContentRows   { get; set; }
+        [JsonPropertyName("highNeutralContentRows")]     public List<ZoneContentRowSave>? HighNeutralContentRows     { get; set; }
+        [JsonPropertyName("hubZoneContentRows")]         public List<ZoneContentRowSave>? HubZoneContentRows         { get; set; }
 
         // Legacy setting from v0.2 and earlier; when present, it seeds both split density sliders.
         [JsonPropertyName("contentDensity")]    public int?    ContentDensityPercent        { get; set; }

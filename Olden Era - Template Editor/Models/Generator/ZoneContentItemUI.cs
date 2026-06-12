@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Linq;
 using OldenEraTemplateEditor.Services.ContentManagement;
 
 namespace Olden_Era___Template_Editor.Models
@@ -8,16 +9,59 @@ namespace Olden_Era___Template_Editor.Models
     {
         private SidMapping? _sidMapping;
         private int _count;
-        private bool _isGuarded;
-        private bool _nearCastle;
-        private string? _roadDistance;
         // Flag indicating if this is a single content item, or a group added via includeLists.
         private bool _isGroup;
+        // Abstract representation of "content rules" from the UI, to be converted to proper ContentItem fields during its construction.
+        public List<IContentRule> Rules { get; set; } = new List<IContentRule>();
 
         public SidMapping? SidMapping
         {
             get => _sidMapping;
-            set { _sidMapping = value; OnPropertyChanged(); }
+            set
+            {
+                _sidMapping = value;
+                OnPropertyChanged();
+                /* Separate update handling for name changes (variant selection via the rules) */
+                OnPropertyChanged(nameof(DisplayName));
+            }
+        }
+
+        public string DisplayName
+        {
+            get
+            {
+                if (SidMapping is null)
+                    return string.Empty;
+
+                RuleVariant? variantRule = Rules.OfType<RuleVariant>().FirstOrDefault();
+                if (variantRule is null)
+                    return SidMapping.Name;
+
+                return $"{SidMapping.Name} ({variantRule.Value.variantMapping})";
+            }
+        }
+
+        public string RuleMarkers
+        {
+            get
+            {
+                string markers = string.Empty;
+
+                foreach(var rule in Rules)
+                {
+                    if (!string.IsNullOrEmpty(rule.Marker))
+                    {
+                        markers += rule.Marker + " ";
+                    }
+                }
+                return string.Join(" ", markers);
+            }
+        }
+
+        public void NotifyRulesChanged()
+        {
+            OnPropertyChanged(nameof(DisplayName));
+            OnPropertyChanged(nameof(RuleMarkers));
         }
 
         public int Count
@@ -31,24 +75,6 @@ namespace Olden_Era___Template_Editor.Models
             /* Just a flag, no need to notify UI */
             set { _isGroup = value; }
         }
-
-        public bool IsGuarded
-        {
-            get => _isGuarded;
-            set { _isGuarded = value; OnPropertyChanged(); }
-        }
-
-        public string? RoadDistance
-        {
-            get => _roadDistance;
-            set { _roadDistance = value; OnPropertyChanged(); }
-        }
-        public bool NearCastle
-        {
-            get => _nearCastle;
-            set { _nearCastle = value; OnPropertyChanged(); }
-        }
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

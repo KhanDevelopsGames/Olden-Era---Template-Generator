@@ -11,6 +11,9 @@ namespace OldenEraTemplateEditor.Models
         [JsonPropertyName("spawn")]
         public string? Spawn { get; set; }
 
+        [JsonPropertyName("owner")]
+        public string? Owner { get; set; }
+
         [JsonPropertyName("guardChance")]
         public double? GuardChance { get; set; }
 
