@@ -7,8 +7,8 @@
         xmlns:ui="clr-namespace:Olden_Era___Template_Editor"
         mc:Ignorable="d"
         Title="Olden Era - Simple Template Generator"
-        Height="800" Width="1050"
-        MinHeight="800" MinWidth="1050"
+        Height="800" Width="1100"
+        MinHeight="800" MinWidth="1100"
         WindowStyle="None"
         ResizeMode="CanResize"
         WindowStartupLocation="CenterScreen"
@@ -1840,7 +1840,7 @@ ValueChanged="Slider_ValueChanged"/>
             </Grid>
         </TabItem>
 
-                        <TabItem Header="Connections">
+                        <TabItem Header="Connections [EXPERIMENTAL]">
                             <Grid Margin="0,8,0,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
