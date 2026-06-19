@@ -2275,7 +2275,7 @@ namespace Olden_Era___Template_Editor.Services
         {
             int count = 0;
             foreach (MainObject obj in zone.MainObjects ?? [])
-                if (obj.Type is "City" or "Spawn")
+                if (obj.Type is "City" or "AbandonedOutpost" or "Spawn")
                     count++;
             return count;
         }

@@ -15,6 +15,7 @@ namespace Olden_Era___Template_Editor.Models
         [JsonPropertyName("neutralZoneCount")]  public int     NeutralZoneCount       { get; set; } = 0;
         [JsonPropertyName("playerCastles")]     public int     PlayerZoneCastles      { get; set; } = 1;
         [JsonPropertyName("neutralCastles")]    public int     NeutralZoneCastles     { get; set; } = 1;
+        [JsonPropertyName("spawnAbandonedOutposts")] public bool SpawnAbandonedOutposts { get; set; } = false;
         [JsonPropertyName("advancedMode")]      public bool    AdvancedMode           { get; set; } = false;
         [JsonPropertyName("neutralLowNoCastle")]    public int NeutralLowNoCastleCount    { get; set; } = 0;
         [JsonPropertyName("neutralLowCastle")]      public int NeutralLowCastleCount      { get; set; } = 0;

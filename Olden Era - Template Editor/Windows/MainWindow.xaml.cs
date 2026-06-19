@@ -1094,6 +1094,14 @@ namespace Olden_Era___Template_Editor
             Validate();
         }
 
+        private void ChkSpawnAbandonedOutposts_Changed(object sender, RoutedEventArgs e)
+        {
+            if (!IsInitialized) return;
+            UpdateSpawnAbandonedOutpostsDescVisibility();
+            MarkDirty();
+            Validate();
+        }
+
         private void ChkOption_Changed(object sender, RoutedEventArgs e)
         {
             if (!IsInitialized) return;
@@ -1314,6 +1322,14 @@ namespace Olden_Era___Template_Editor
         {
             if (TxtIsolateDesc == null || ChkNoDirectPlayerConn == null) return;
             TxtIsolateDesc.Visibility = ChkNoDirectPlayerConn.IsChecked == true && ChkNoDirectPlayerConn.Visibility == Visibility.Visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        private void UpdateSpawnAbandonedOutpostsDescVisibility()
+        {
+            if (TxtSpawnAbandonedOutpostsDesc == null || ChkSpawnAbandonedOutposts == null) return;
+            TxtSpawnAbandonedOutpostsDesc.Visibility = ChkSpawnAbandonedOutposts.IsChecked == true
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
@@ -1685,6 +1701,7 @@ namespace Olden_Era___Template_Editor
             NeutralZoneCount      = (int)SldNeutral.Value,
             PlayerZoneCastles     = (int)SldPlayerCastles.Value,
             NeutralZoneCastles    = (int)SldNeutralCastles.Value,
+            SpawnAbandonedOutposts = ChkSpawnAbandonedOutposts.IsChecked == true,
             AdvancedMode          = _advancedZoneSettings,
             NeutralLowNoCastleCount = (int)SldNeutralLowNoCastle.Value,
             NeutralLowCastleCount = (int)SldNeutralLowCastle.Value,
@@ -1757,6 +1774,8 @@ namespace Olden_Era___Template_Editor
             SldNeutral.Value        = s.NeutralZoneCount;
             SldPlayerCastles.Value  = s.PlayerZoneCastles;
             SldNeutralCastles.Value = s.NeutralZoneCastles;
+            ChkSpawnAbandonedOutposts.IsChecked = s.SpawnAbandonedOutposts;
+            UpdateSpawnAbandonedOutpostsDescVisibility();
 
             // Legacy compatibility: if the settings were saved with Advanced mode disabled,
             // the neutral zones were all stored as a single count in NeutralZoneCount.
@@ -2147,6 +2166,7 @@ namespace Olden_Era___Template_Editor
                 NeutralZoneCount = (int)SldNeutral.Value,
                 PlayerZoneCastles = (int)SldPlayerCastles.Value,
                 NeutralZoneCastles = (int)SldNeutralCastles.Value,
+                SpawnAbandonedOutposts = ChkSpawnAbandonedOutposts.IsChecked == true,
                 ResourceDensityPercent = (int)SldResourceDensity.Value,
                 StructureDensityPercent = (int)SldStructureDensity.Value,
                 NeutralStackStrengthPercent = (int)SldNeutralStackStrength.Value,

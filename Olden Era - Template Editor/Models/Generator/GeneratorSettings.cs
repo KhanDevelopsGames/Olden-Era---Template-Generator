@@ -51,6 +51,7 @@ namespace Olden_Era___Template_Editor.Models
         public int NeutralZoneCount { get; set; } = 0;
         public int PlayerZoneCastles { get; set; } = 1;
         public int NeutralZoneCastles { get; set; } = 1;
+        public bool SpawnAbandonedOutposts { get; set; } = false;
         public int ResourceDensityPercent { get; set; } = 100;
         public int StructureDensityPercent { get; set; } = 100;
         public int NeutralStackStrengthPercent { get; set; } = 100;
