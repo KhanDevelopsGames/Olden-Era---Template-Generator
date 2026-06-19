@@ -34,7 +34,13 @@ public static class ContentItemGroup
         ContentIds.CrystalTrail,
         ContentIds.SacrificialShrine,
         ContentIds.Chimerologist,
+        ContentIds.EternalDragon,
+        ContentIds.TreeOfAbundance,
+        ContentIds.FlatteringMirror,
         IncludeListIds.VisionBuildingsTier1,
+        ContentIds.InsarasEye,
+        ContentIds.RemoteFoothold,
+        ContentIds.TownGate
     };
     /* ContentIds of treasures */
     public static readonly List<SidMapping> Treasures = new() {
@@ -172,6 +178,9 @@ public static class ContentItemGroup
         ContentIds.MagicAmplifier2,
         ContentIds.MagicAmplifier3,
         ContentIds.MagicAmplifier4,
+        ContentIds.HuntsmansCamp,
+        ContentIds.FickleShrine,
+        ContentIds.Arena
     };
 }
 
