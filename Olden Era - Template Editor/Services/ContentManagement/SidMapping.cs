@@ -39,7 +39,7 @@ namespace OldenEraTemplateEditor.Services.ContentManagement
         public static readonly SidMapping Forge = new() { Sid = "forge", Name = "Forge of the Second Man" };
         public static readonly SidMapping Fort = new() { Sid = "fort", Name = "Pauper Knight Order" };
         public static readonly SidMapping Fountain = new() { Sid = "fountain", Name = "Fountain" };
-        public static readonly SidMapping Fountain2 = new() { Sid = "fountain_2", Name = "Fountain" };
+        public static readonly SidMapping Fountain2 = new() { Sid = "fountain_2", Name = "Fountain 2" };
         public static readonly SidMapping HuntsmansCamp = new() { Sid = "huntsmans_camp", Name = "Explorer's Camp" };
         public static readonly SidMapping InfernalCirque = new() { Sid = "infernal_cirque", Name = "Infernal Cirque" };
         public static readonly SidMapping InsarasEye = new() { Sid = "insaras_eye", Name = "Insara's Eye" };
