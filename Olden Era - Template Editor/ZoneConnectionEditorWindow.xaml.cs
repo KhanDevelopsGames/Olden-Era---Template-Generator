@@ -1005,6 +1005,7 @@ namespace Olden_Era___Template_Editor
             ZoneTier tier = HigherTierOf(from, to);
             var newConn = new Connection
             {
+                Name                 = $"Conn-{ZoneLetterFromName(from)}-{ZoneLetterFromName(to)}",
                 From                 = from,
                 To                   = to,
                 ConnectionType       = "Direct",

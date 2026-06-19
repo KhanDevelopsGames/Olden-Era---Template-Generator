@@ -3097,7 +3097,7 @@ namespace Olden_Era___Template_Editor.Services
         /// roads to each adjacent ring connection, to the secondary city (index 1),
         /// and to the remote foothold.
         /// </summary>
-        private static List<Road> BuildOuterZoneRoads(string[] ringConns, int castleCount, bool includeFoothold, bool generateRoads)
+        internal static List<Road> BuildOuterZoneRoads(string[] ringConns, int castleCount, bool includeFoothold, bool generateRoads)
         {
             var roads = new List<Road>();
             if (!generateRoads || castleCount == 0) return roads;
@@ -3112,7 +3112,40 @@ namespace Olden_Era___Template_Editor.Services
             return roads;
         }
 
-        private static List<Road> BuildConnectorZoneRoads(string[] connectionNames, bool generateRoads)
+        // Rebuilds Zone.Roads for every zone in the variant based on the current connection list.
+        // Call this whenever connections are edited outside of full template generation.
+        internal static void RegenerateZoneRoads(List<Zone> zones, List<Connection> connections)
+        {
+            // Map each zone name to the connection names that touch it
+            var connsByZone = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+            foreach (var zone in zones)
+                connsByZone[zone.Name] = [];
+
+            foreach (var conn in connections)
+            {
+                if (string.IsNullOrEmpty(conn.Name)) continue;
+                if (connsByZone.TryGetValue(conn.From, out var fromList)) fromList.Add(conn.Name);
+                if (connsByZone.TryGetValue(conn.To,   out var toList))   toList.Add(conn.Name);
+            }
+
+            foreach (var zone in zones)
+            {
+                if (!connsByZone.TryGetValue(zone.Name, out var nameList)) continue;
+                string[] names = [.. nameList.Distinct()];
+                int castleCount = zone.MainObjects?.Count ?? 0;
+
+                // Preserve existing foothold road if present
+                bool hasFoothold = zone.Roads?.Any(r =>
+                    r.To?.Type == "MandatoryContent" &&
+                    r.To.Args?.Contains("name_remote_foothold_1") == true) == true;
+
+                zone.Roads = castleCount > 0
+                    ? BuildOuterZoneRoads(names, castleCount, hasFoothold, generateRoads: true)
+                    : BuildConnectorZoneRoads(names, generateRoads: true);
+            }
+        }
+
+        internal static List<Road> BuildConnectorZoneRoads(string[] connectionNames, bool generateRoads)
         {
             var roads = new List<Road>();
             if (!generateRoads) return roads;
@@ -3137,16 +3170,16 @@ namespace Olden_Era___Template_Editor.Services
             return roads;
         }
 
-        private static Road PlainRoad(RoadEndpoint from, RoadEndpoint to) =>
+        internal static Road PlainRoad(RoadEndpoint from, RoadEndpoint to) =>
             new() { From = from, To = to };
 
-        private static RoadEndpoint MainObjectEndpoint(string index) =>
+        internal static RoadEndpoint MainObjectEndpoint(string index) =>
             new() { Type = "MainObject", Args = [index] };
 
-        private static RoadEndpoint ConnectionEndpoint(string name) =>
+        internal static RoadEndpoint ConnectionEndpoint(string name) =>
             new() { Type = "Connection", Args = [name] };
 
-        private static RoadEndpoint MandatoryContentEndpoint(string name) =>
+        internal static RoadEndpoint MandatoryContentEndpoint(string name) =>
             new() { Type = "MandatoryContent", Args = [name] };
 
         // ── Zone layouts ─────────────────────────────────────────────────────────
