@@ -738,17 +738,6 @@
                                     TickFrequency="5" IsSnapToTickEnabled="True"
                                     ValueChanged="Slider_ValueChanged"/>
                         </Grid>
-                        <CheckBox x:Name="ChkSpawnAbandonedOutposts"
-                                  Content="Spawn abandoned outposts instead of neutral cities"
-                                  Margin="0,10,0,0"
-                                  Checked="ChkSpawnAbandonedOutposts_Changed"
-                                  Unchecked="ChkSpawnAbandonedOutposts_Changed"/>
-                        <TextBlock x:Name="TxtSpawnAbandonedOutpostsDesc"
-                                   Visibility="Collapsed"
-                                   Foreground="{StaticResource BrushTextDim}"
-                                   FontSize="12" TextWrapping="Wrap"
-                                   Margin="0,4,0,0"
-                                   Text="Neutral cities will be spawned as abandoned outposts instead of regular cities. When captured, an abandoned outpost always becomes a city of the capturing player's race. This ensures every player gains an additional city of their exact faction type."/>
                         <StackPanel x:Name="PnlAdvancedNeutralZones"
                                     Visibility="Collapsed"
                                     Margin="0,12,0,0">
@@ -877,6 +866,17 @@
           Checked="ChkOption_Changed" Unchecked="ChkOption_Changed" Margin="0,10,0,0"/>
 
                                 <CheckBox x:Name="ChkSpawnFootholds" Content="Spawn remote footholds" IsChecked="True" Margin="0,6,0,0"/>
+                        <CheckBox x:Name="ChkSpawnAbandonedOutposts"
+                                  Content="Spawn abandoned outposts instead of neutral cities"
+                                  Margin="0,6,0,0"
+                                  Checked="ChkSpawnAbandonedOutposts_Changed"
+                                  Unchecked="ChkSpawnAbandonedOutposts_Changed"/>
+                        <TextBlock x:Name="TxtSpawnAbandonedOutpostsDesc"
+                                   Visibility="Collapsed"
+                                   Foreground="{StaticResource BrushTextDim}"
+                                   FontSize="12" TextWrapping="Wrap"
+                                   Margin="0,4,0,0"
+                                   Text="Neutral cities will be spawned as abandoned outposts instead of regular cities. When captured, an abandoned outpost always becomes a city of the capturing player's faction."/>
                         <CheckBox x:Name="ChkRandomPortals"  Content="Spawn additional portals" Margin="0,6,0,0"
                                   Checked="ChkRandomPortals_Changed" Unchecked="ChkRandomPortals_Changed"/>
                         <StackPanel x:Name="PnlMaxPortals" Visibility="Collapsed" Margin="25,4,0,0">
