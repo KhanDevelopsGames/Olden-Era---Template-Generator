@@ -1893,23 +1893,46 @@ namespace Olden_Era___Template_Editor
         {
             var dlg = new OpenFileDialog
             {
-                Title  = "Open Settings File",
-                Filter = "Template Settings (*.oetgs)|*.oetgs|All files (*.*)|*.*",
+                Title  = "Open Settings Or Template File",
+                Filter = "Template Settings (*.oetgs)|*.oetgs|RMG Template (*.rmg.json)|*.rmg.json|All files (*.*)|*.*",
             };
             if (dlg.ShowDialog() != true) return;
             try
             {
                 var json = File.ReadAllText(dlg.FileName);
-                var s = JsonSerializer.Deserialize<SettingsFile>(json, JsonOptions);
-                if (s is null) throw new InvalidDataException("File is empty or invalid.");
-                ApplySettings(s);
-                _currentSettingsPath = dlg.FileName;
+
+                bool isSettingsFile = dlg.FileName.EndsWith(".oetgs", StringComparison.OrdinalIgnoreCase);
+                if (isSettingsFile)
+                {
+                    var s = JsonSerializer.Deserialize<SettingsFile>(json, JsonOptions);
+                    if (s is null) throw new InvalidDataException("File is empty or invalid.");
+                    ApplySettings(s);
+                    _currentSettingsPath = dlg.FileName;
+                }
+                else
+                {
+                    var template = JsonSerializer.Deserialize<RmgTemplate>(json, JsonOptions);
+                    if (template is null) throw new InvalidDataException("Template file is empty or invalid.");
+                    var imported = TemplateImportService.ImportToSettings(template);
+                    ApplySettings(imported);
+                    _currentSettingsPath = null;
+
+                    // Show preview from the imported template so users can edit from this state directly.
+                    _generatedTemplate = template;
+                    _generatedTopology = imported.Topology;
+                    _templateOutdated = false;
+                    ImgPreview.Source = TemplatePreviewPngWriter.Render(template, imported.Topology);
+                    lblNoPreview.Content = "?";
+                    BtnSaveGenerated.Visibility = Visibility.Visible;
+                    UpdateOutdatedWarning();
+                }
+
                 _isDirty = false;
                 UpdateTitle();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to open settings:\n{ex.Message}", "Open Error",
+                MessageBox.Show($"Failed to open file:\n{ex.Message}", "Open Error",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
